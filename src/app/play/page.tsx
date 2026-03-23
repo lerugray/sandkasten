@@ -7,6 +7,7 @@ import { TimeControls } from "@/components/game/TimeControls";
 import { ContactList } from "@/components/game/ContactList";
 import { OrderPanel } from "@/components/game/OrderPanel";
 import { MessageLog } from "@/components/game/MessageLog";
+import { CombatLog } from "@/components/game/CombatLog";
 import { demoScenarioConfig } from "@/lib/scenarios/demoConfig";
 import { useSimulation } from "@/lib/simulation/useSimulation";
 
@@ -14,6 +15,7 @@ export default function PlayPage() {
   const {
     gameState,
     eventState,
+    combatState,
     togglePause,
     setSpeed,
     addWaypoint,
@@ -28,7 +30,7 @@ export default function PlayPage() {
   const [pinnedRingIds, setPinnedRingIds] = useState<Set<string>>(new Set());
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [isPlacingWaypoint, setIsPlacingWaypoint] = useState(false);
-  const [sidebarTab, setSidebarTab] = useState<"forces" | "messages">("forces");
+  const [sidebarTab, setSidebarTab] = useState<"forces" | "messages" | "combat">("forces");
 
   const liveScenario = {
     ...demoScenarioConfig.scenario,
@@ -131,10 +133,25 @@ export default function PlayPage() {
                   : "text-[var(--color-tactical-text-dim)]"
               }`}
             >
-              Messages
+              Intel
               {unreadCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-[var(--color-terminal-amber)] text-[var(--color-tactical-dark)] text-[8px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold">
                   {unreadCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setSidebarTab("combat")}
+              className={`flex-1 py-1.5 text-[10px] uppercase tracking-wider cursor-pointer relative ${
+                sidebarTab === "combat"
+                  ? "text-[var(--color-terminal-red)] border-b border-[var(--color-terminal-red)]"
+                  : "text-[var(--color-tactical-text-dim)]"
+              }`}
+            >
+              Combat
+              {(combatState?.weaponsInFlight.length ?? 0) > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-[var(--color-terminal-red)] text-[var(--color-tactical-dark)] text-[8px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold">
+                  {combatState?.weaponsInFlight.length}
                 </span>
               )}
             </button>
@@ -197,6 +214,29 @@ export default function PlayPage() {
                   messages={messages}
                   simTime={gameState.simTime}
                   onMarkRead={markMessageRead}
+                />
+              </div>
+            )}
+
+            {sidebarTab === "combat" && (
+              <div className="p-2">
+                {(combatState?.weaponsInFlight.length ?? 0) > 0 && (
+                  <div className="mb-2 pb-2 border-b border-[var(--color-tactical-border)]">
+                    <div className="text-[var(--color-terminal-red)] text-[10px] uppercase tracking-wider mb-1">
+                      Weapons in Flight ({combatState?.weaponsInFlight.length})
+                    </div>
+                    {combatState?.weaponsInFlight.map((w) => (
+                      <div key={w.id} className="text-[10px] text-[var(--color-tactical-text)] mb-0.5">
+                        <span className="text-[var(--color-terminal-amber)]">{">>"}</span>{" "}
+                        {w.name} → {w.targetId.split("-").slice(0, 2).join("-")}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <CombatLog
+                  events={combatState?.combatLog ?? []}
+                  simTime={gameState.simTime}
+                  playerSide={gameState.scenario.playerSide}
                 />
               </div>
             )}

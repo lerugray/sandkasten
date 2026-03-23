@@ -8,6 +8,7 @@ import { type AIState, resetAITimer } from "@/lib/ai/aiController";
 import type { EventState, EventMessage } from "@/lib/ai/events";
 import type { Mission } from "@/lib/ai/missions";
 import type { Doctrine } from "@/lib/ai/doctrine";
+import { createCombatState, resetCombatTimer, type CombatState } from "./combat";
 
 const TICK_INTERVAL_MS = 50; // 20 fps simulation
 
@@ -26,6 +27,7 @@ export function useSimulation(config: ScenarioConfig) {
   );
 
   const [eventState, setEventState] = useState<EventState | undefined>(events);
+  const [combatState, setCombatState] = useState<CombatState>(() => createCombatState());
 
   const aiStateRef = useRef<AIState>({
     missions,
@@ -43,6 +45,9 @@ export function useSimulation(config: ScenarioConfig) {
   const eventStateRef = useRef(eventState);
   eventStateRef.current = eventState;
 
+  const combatStateRef = useRef(combatState);
+  combatStateRef.current = combatState;
+
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastTickRef = useRef<number>(Date.now());
 
@@ -58,11 +63,15 @@ export function useSimulation(config: ScenarioConfig) {
           gameStateRef.current,
           dtMs,
           aiStateRef.current,
-          eventStateRef.current
+          eventStateRef.current,
+          combatStateRef.current
         );
         setGameState(result.gameState);
         if (result.eventState) {
           setEventState(result.eventState);
+        }
+        if (result.combatState) {
+          setCombatState(result.combatState);
         }
       }
     }, TICK_INTERVAL_MS);
@@ -160,13 +169,16 @@ export function useSimulation(config: ScenarioConfig) {
   const resetSimulation = useCallback(() => {
     resetDetectionTimer();
     resetAITimer();
+    resetCombatTimer();
     setGameState(createInitialGameState(scenario));
     setEventState(events);
+    setCombatState(createCombatState());
   }, [scenario, events]);
 
   return {
     gameState,
     eventState,
+    combatState,
     togglePause,
     setSpeed,
     cycleSpeed,

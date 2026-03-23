@@ -127,8 +127,20 @@ Full extraction spec documented in `DB_EXTRACTION_SPEC.md` — covers every tabl
 - Auftragstaktik is adding Radar/Sensor Layer, Military Installations, Nuclear/CBRN Layer, Data Model Normalization — all relevant for future Sandkasten OSINT import
 - User wants audio/sound effects — deferred to polish phase (see memory)
 
+### Phase 4 Completed (Session 2 — 2026-03-23, continued)
+- Platform data enriched with combat stats: damage points, missile defense values, weapons (name, type, range, speed, PK, quantity, warhead damage, seeker type), defenses (chaff, ECM, CIWS, decoy with effectiveness ratings)
+- Weapon selection logic: filters by target domain (air/surface), range (adjusted by doctrine engagement range), ammo remaining; prefers guided weapons over guns, higher PK first
+- Missile flight model: weapons tracked as entities in flight with position, heading, speed, range remaining; move toward target each tick; seeker activation at terminal range
+- SAM defense: AI ships engage incoming aircraft/missiles with SAMs based on doctrine ROE
+- Countermeasures: chaff, ECM, CIWS, decoy each roll independently against incoming weapons; effectiveness values from platform data
+- Damage model: warhead damage vs. platform HP; damage ratio determines state transition (undamaged → damaged → mission-kill → destroyed); aircraft are fragile (low HP); ships can absorb multiple hits
+- Combat integrated as Phase 4 in sim tick (after movement, detection, before TCA events)
+- Engagement cooldown: 30 seconds between salvos per unit
+- Combat log UI: 3-tab sidebar (Forces/Intel/Combat); combat tab shows weapons in flight + event log with color-coded entries (launch/hit/miss/defended/destroyed)
+- Weapons-in-flight badge on combat tab
+
 ### Next Steps
-- Begin Phase 4: Combat (weapons engagement, missile flight, SAM, damage model, countermeasures)
+- Begin Phase 5: WeGo Multiplayer (or continue polishing single-player)
 - See `TASKS.md` for full breakdown
 
 ---

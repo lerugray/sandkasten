@@ -8,6 +8,10 @@ import {
   applyStateChanges,
   type EventState,
 } from "@/lib/ai/events";
+import {
+  runCombatPhase,
+  type CombatState,
+} from "./combat";
 
 const DETECTION_INTERVAL_MS = 5000; // run detection every 5 sim-seconds
 let lastDetectionTime = 0;
@@ -22,9 +26,10 @@ export function simulationTick(
   state: GameState,
   dtMs: number,
   aiState?: AIState,
-  eventState?: EventState
-): { gameState: GameState; eventState?: EventState } {
-  if (state.isPaused) return { gameState: state, eventState };
+  eventState?: EventState,
+  combatState?: CombatState
+): { gameState: GameState; eventState?: EventState; combatState?: CombatState } {
+  if (state.isPaused) return { gameState: state, eventState, combatState };
 
   const simDtMs = dtMs * state.speed;
   const simDtSeconds = simDtMs / 1000;
@@ -92,7 +97,20 @@ export function simulationTick(
     orders: currentOrders,
   };
 
-  // --- Phase 4: TCA Events ---
+  // --- Phase 4: Combat ---
+  let newCombatState = combatState;
+  if (combatState) {
+    const combatResult = runCombatPhase(
+      newGameState,
+      combatState,
+      aiState?.sideDoctrine ?? {},
+      simDtSeconds
+    );
+    newGameState = combatResult.state;
+    newCombatState = combatResult.combatState;
+  }
+
+  // --- Phase 5: TCA Events ---
   let newEventState = eventState;
   if (eventState) {
     const eventResult = evaluateEvents(eventState, newGameState, aiState?.missions ?? []);
@@ -103,7 +121,7 @@ export function simulationTick(
     }
   }
 
-  return { gameState: newGameState, eventState: newEventState };
+  return { gameState: newGameState, eventState: newEventState, combatState: newCombatState };
 }
 
 function runDetectionPhase(

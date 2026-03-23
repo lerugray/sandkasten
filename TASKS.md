@@ -114,37 +114,45 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 ## Phase 4: Combat
 
 ### 4.1 Weapons Engagement
-- [ ] Weapon selection logic (choose best weapon for target type using WRA data)
-- [ ] Salvo sizing from WRA (weaponQty vs. target's missileDefense value)
-- [ ] Launch decision based on ROE and engagement range doctrine
-- [ ] Weapon entity creation on launch (missile in flight)
-- [ ] Missile flight path toward target (speed from weapon propulsion data)
+- [x] Weapon selection logic (filter by target domain, range, ammo; prefer guided > guns, higher PK)
+- [x] Launch decision based on ROE and engagement range doctrine
+- [x] Weapon entity creation on launch (missile in flight with position, heading, speed, range)
+- [x] Missile flight path toward target (speed from platform weapon data)
+- [x] Engagement cooldown (30s between salvos per unit)
+- [ ] Salvo sizing from WRA (weaponQty vs. target's missileDefense value) — uses single shots for now
 
 ### 4.2 Anti-Ship Missile Combat
-- [ ] ASM flight model (cruise altitude, terminal pop-up or sea-skim)
-- [ ] ASM seeker activation (active radar seeker at terminal range)
-- [ ] Target PK roll using weapon's SurfacePoK
-- [ ] Miss/hit resolution
+- [x] ASM flight model (cruise toward target, range tracking)
+- [x] ASM seeker activation at terminal range (10km for active radar, 5km for others)
+- [x] Target PK roll using weapon's SurfacePoK
+- [x] Miss/hit resolution
 
 ### 4.3 SAM Defense
-- [ ] SAM engagement of incoming missiles and aircraft
-- [ ] Illumination requirement (SPG-62 style fire control radar)
-- [ ] SAM intercept PK roll using weapon's AirPoK
-- [ ] Multiple engagement capability (how many simultaneous targets)
+- [x] SAM engagement of incoming aircraft (AI fires SAMs at enemy aircraft per doctrine)
+- [x] SAM PK roll using weapon's AirPoK
+- [ ] Illumination requirement (SPG-62 style fire control radar) — future refinement
+- [ ] Multiple engagement capability limits — future refinement
 
 ### 4.4 Countermeasures
-- [ ] Chaff deployment (reduce incoming missile PK)
-- [ ] ECM (reduce radar detection probability, pokReduction from sensor data)
-- [ ] CIWS last-ditch defense (autonomous mount engagement)
-- [ ] Decoy systems (towed decoys, expendables)
+- [x] Chaff deployment (rolls against incoming weapons)
+- [x] ECM (rolls against incoming weapons)
+- [x] CIWS last-ditch defense (rolls against incoming weapons)
+- [x] Decoy systems (rolls against incoming weapons)
+- [ ] Expendable tracking (chaff/flare quantity depletion) — future refinement
 
 ### 4.5 Damage Model
-- [ ] Damage points system (warhead damage vs. platform HP)
-- [ ] Damage states: Undamaged → Damaged → Mission Kill → Destroyed
-- [ ] Damaged: speed/sensor/weapon degradation
-- [ ] Mission Kill: combat ineffective but afloat
-- [ ] Destroyed: unit removed
-- [ ] Aircraft: generally one-hit kills (low damage points)
+- [x] Damage points system (warhead damage vs. platform HP ratio)
+- [x] Damage states: Undamaged → Damaged → Mission Kill → Destroyed
+- [x] Aircraft: low HP, fragile (one-hit kills typical)
+- [ ] Damaged: speed/sensor/weapon degradation — future refinement
+- [ ] Mission Kill: combat ineffective but afloat — state exists, effects not yet applied
+
+### 4.6 Combat UI
+- [x] Combat log with color-coded event types (launch/hit/miss/defended/destroyed)
+- [x] 3-tab sidebar (Forces/Intel/Combat)
+- [x] Weapons-in-flight counter badge on combat tab
+- [x] Weapons-in-flight list showing name → target
+- [ ] Weapon tracks rendered on map (dashed lines from launcher to target)
 
 ---
 
@@ -214,3 +222,4 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 - [x] **Session 1**: Detail panel with tabbed Info/Sensors/Weapons view
 - [x] **Session 1**: Phase 2 simulation core (movement, detection, contacts, fog of war, time controls)
 - [x] **Session 2**: Phase 3 OPFOR AI (doctrine, missions, TCA events, AI controller, demo scenario scripting)
+- [x] **Session 2**: Phase 4 Combat (weapon selection, missile flight, countermeasures, damage model, combat log UI)
