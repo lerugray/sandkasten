@@ -13,7 +13,7 @@ interface UnitLayerProps {
   units: Unit[];
   playerSide: string;
   selectedUnitId: string | null;
-  onUnitSelect: (unitId: string | null) => void;
+  onUnitSelect: (unitId: string | null, shiftKey?: boolean) => void;
 }
 
 export function UnitLayer({
@@ -78,7 +78,7 @@ export function UnitLayer({
 
       el.addEventListener("click", (e) => {
         e.stopPropagation();
-        onUnitSelect(unit.id);
+        onUnitSelect(unit.id, e.shiftKey);
       });
 
       const marker = new maplibregl.Marker({

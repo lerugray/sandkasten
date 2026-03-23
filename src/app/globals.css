@@ -13,6 +13,33 @@
   --color-terminal-amber: #ffbf00;
 }
 
+.theme-light {
+  --color-tactical-dark: #e8e8f0;
+  --color-tactical-panel: #f0f0f8;
+  --color-tactical-border: #c8c8d8;
+  --color-tactical-text: #1a1a2e;
+  --color-tactical-text-dim: #6b6b80;
+  --color-terminal-green: #007830;
+  --color-terminal-red: #cc2222;
+  --color-terminal-blue: #0066cc;
+  --color-terminal-amber: #cc8800;
+}
+
+.theme-light .maplibregl-ctrl-group {
+  background: var(--color-tactical-panel) !important;
+  border: 1px solid var(--color-tactical-border) !important;
+}
+
+.theme-light .maplibregl-ctrl-group button {
+  filter: none;
+}
+
+.theme-light .maplibregl-popup-content {
+  background: var(--color-tactical-panel) !important;
+  color: var(--color-tactical-text) !important;
+  border: 1px solid var(--color-tactical-border) !important;
+}
+
 html,
 body {
   margin: 0;

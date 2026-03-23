@@ -447,7 +447,15 @@ User reviews and adjusts the auto-generated scenario before starting.
 - Autopause settings (configurable triggers)
 - Simulated clock display (date/time in scenario timezone)
 
-### 9.5 Turn Controls (WeGo Multiplayer)
+### 9.5 Client-Side Preferences
+These settings are per-player, stored locally, never synchronized in multiplayer:
+- Theme (dark/light) — each player picks their own
+- Range ring pins — what rings you have toggled on is your business
+- Autopause trigger configuration
+- UI panel positions/sizes
+- Map zoom and center (each player views what they want)
+
+### 9.6 Turn Controls (WeGo Multiplayer)
 - SUBMIT ORDERS button (locks in orders for this turn)
 - Status: "Waiting for opponent..." / "Resolving..." / "Review"
 - Turn counter, simulated clock

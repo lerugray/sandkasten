@@ -10,13 +10,17 @@ import { RangeRingLayer } from "./RangeRingLayer";
 interface TacticalMapProps {
   scenario: Scenario;
   selectedUnitId: string | null;
-  onUnitSelect: (unitId: string | null) => void;
+  pinnedRingIds: Set<string>;
+  theme: "dark" | "light";
+  onUnitSelect: (unitId: string | null, shiftKey?: boolean) => void;
   onMapReady?: () => void;
 }
 
 export function TacticalMap({
   scenario,
   selectedUnitId,
+  pinnedRingIds,
+  theme,
   onUnitSelect,
   onMapReady,
 }: TacticalMapProps) {
@@ -77,6 +81,13 @@ export function TacticalMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Theme switching
+  useEffect(() => {
+    if (!mapRef.current) return;
+    mapRef.current.setStyle(getMapStyle(theme));
+    document.documentElement.className = theme === "light" ? "theme-light" : "";
+  }, [theme]);
+
   const allUnits = scenario.sides.flatMap((s) => s.units);
 
   return (
@@ -97,6 +108,7 @@ export function TacticalMap({
             units={allUnits}
             playerSide={scenario.playerSide}
             selectedUnitId={selectedUnitId}
+            pinnedRingIds={pinnedRingIds}
           />
         </>
       )}

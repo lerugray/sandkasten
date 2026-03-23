@@ -17,6 +17,7 @@ interface RangeRingLayerProps {
   units: Unit[];
   playerSide: string;
   selectedUnitId: string | null;
+  pinnedRingIds: Set<string>;
 }
 
 export function RangeRingLayer({
@@ -24,14 +25,15 @@ export function RangeRingLayer({
   units,
   playerSide,
   selectedUnitId,
+  pinnedRingIds,
 }: RangeRingLayerProps) {
   useEffect(() => {
     const features: Feature<Polygon>[] = [];
 
-    // Show range rings for selected unit, or all units at high zoom
-    const unitsToShow = selectedUnitId
-      ? units.filter((u) => u.id === selectedUnitId)
-      : [];
+    // Show rings for: selected unit + all pinned units
+    const idsToShow = new Set(pinnedRingIds);
+    if (selectedUnitId) idsToShow.add(selectedUnitId);
+    const unitsToShow = units.filter((u) => idsToShow.has(u.id));
 
     unitsToShow.forEach((unit) => {
       const platform = getPlatform(unit.platformId);
@@ -123,7 +125,7 @@ export function RangeRingLayer({
       if (map.getLayer(FILL_LAYER)) map.removeLayer(FILL_LAYER);
       if (map.getSource(SOURCE_ID)) map.removeSource(SOURCE_ID);
     };
-  }, [map, units, playerSide, selectedUnitId]);
+  }, [map, units, playerSide, selectedUnitId, pinnedRingIds]);
 
   return null;
 }
