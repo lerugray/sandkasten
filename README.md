@@ -38,13 +38,15 @@ Sandkasten shares its map renderer and NATO symbology with [Auftragstaktik](http
 
 ## Current State
 
-**Phase 1 (Foundation)** is in progress. You can run the app and see:
+**Phase 1 (Foundation)** is complete. You can run the app and see:
 
 - Dark tactical map with NATO MIL-STD-2525 symbols
 - A demo scenario (US carrier strike group vs. Iranian naval forces in the Strait of Hormuz)
-- Click units to see stats, sensor ranges, weapon ranges
+- Click units to see detailed stats with tabbed Info/Sensors/Weapons panels
 - Shift+click to pin range rings for multiple units
 - Dark/light theme toggle
+- Scenario editor at `/editor` — place units, set sides, save/load scenario JSON
+- Full platform database API backed by 60k+ extracted CMO records
 
 No simulation yet. Units sit on the map. Movement, detection, and combat come in Phases 2-4.
 
@@ -117,7 +119,7 @@ sandkasten/
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| **1. Foundation** | Project scaffold, map, NATO symbols, scenario editor | In progress |
+| **1. Foundation** | Project scaffold, map, NATO symbols, scenario editor | Complete |
 | **2. Simulation Core** | Movement, radar detection, fog of war, time controls | Planned |
 | **3. OPFOR AI** | Doctrine, missions (patrol/strike/CAP), TCA event scripting | Planned |
 | **4. Combat** | Anti-ship missiles, SAM defense, damage model, countermeasures | Planned |

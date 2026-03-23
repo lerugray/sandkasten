@@ -83,8 +83,19 @@ Wrote `scripts/extract_cmo_db.py` — Python script that reads DB3K_512.db3 and 
 
 Full extraction spec documented in `DB_EXTRACTION_SPEC.md` — covers every table, field mapping, what's deferred and why, and schema gotchas (WRA codes, signature meanings, OODA math).
 
+### Phase 1 Completed (Session 1, continued)
+- Next.js 16 + TypeScript + Tailwind scaffold
+- MapLibre tactical map with dark/light theme toggle
+- milsymbol NATO symbol rendering with factory/cache
+- Unit markers with click-to-select, shift+click persistent range ring pinning
+- Detail panel with tabbed view (Info/Sensors/Weapons) pulling full platform data from API
+- Platform database service: API route serving full CMO data with enum resolution
+- TypeScript types for all extracted record types (ship, aircraft, weapon, sensor, mount, loadout)
+- Scenario editor at /editor: place units from platform list, set scenario metadata, save/load JSON
+- Demo scenario: Strait of Hormuz (US CSG vs Iran)
+
 ### Next Steps
-- Begin Phase 1: project scaffold, map, unit rendering
+- Begin Phase 2: simulation core (game state, time controls, movement, detection)
 - See `TASKS.md` for full breakdown
 
 ---

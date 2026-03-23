@@ -7,34 +7,35 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 ## Phase 1: Foundation
 
 ### 1.1 Project Scaffold
-- [ ] Initialize Next.js project with TypeScript and Tailwind
-- [ ] Set up project directory structure per GDD Section 11
-- [ ] Configure ESLint, Prettier, tsconfig
-- [ ] Add core dependencies: MapLibre GL JS, milsymbol
-- [ ] Set up git repo structure (.gitignore for data/, node_modules/, etc.)
+- [x] Initialize Next.js project with TypeScript and Tailwind
+- [x] Set up project directory structure per GDD Section 11
+- [x] Configure ESLint, tsconfig
+- [x] Add core dependencies: MapLibre GL JS, milsymbol
+- [x] Set up git repo structure (.gitignore for data/, node_modules/, etc.)
 
 ### 1.2 Platform Database Integration
-- [ ] Design TypeScript types/interfaces from extracted JSON schema
-- [ ] Build platform lookup service (load ships/aircraft/weapons/sensors by ID)
-- [ ] Build enum resolver (convert enum IDs to human-readable strings)
-- [ ] Select MVP platform subset (~20 platforms for Persian Gulf scenario)
-- [ ] Create platform detail view component (click unit → see specs)
+- [x] Design TypeScript types/interfaces from extracted JSON schema
+- [x] Build platform lookup service (load ships/aircraft/weapons/sensors by ID)
+- [x] Build enum resolver (convert enum IDs to human-readable strings)
+- [x] Select MVP platform subset (~20 platforms for Persian Gulf scenario)
+- [x] Create platform detail view component (click unit → see specs)
 
 ### 1.3 Map & Unit Rendering
-- [ ] Port MapLibre GL JS setup from Auftragstaktik (dark tactical basemap)
-- [ ] Implement milsymbol NATO symbol rendering for units on map
-- [ ] Render unit icons with correct affiliation (friendly/hostile/neutral)
-- [ ] Unit selection (click to select, show info panel)
-- [ ] Range ring rendering for sensors and weapons
+- [x] Port MapLibre GL JS setup from Auftragstaktik (dark tactical basemap)
+- [x] Implement milsymbol NATO symbol rendering for units on map
+- [x] Render unit icons with correct affiliation (friendly/hostile/neutral)
+- [x] Unit selection (click to select, show info panel)
+- [x] Range ring rendering for sensors and weapons
 - [ ] Measurement tools (distance, bearing between points)
 
 ### 1.4 Scenario Editor (Basic)
-- [ ] Create/load/save scenario JSON files matching GDD Section 7.1 format
-- [ ] Place units on map (click to place, drag to move)
-- [ ] Assign units to sides (player/OPFOR)
-- [ ] Set unit properties (platform type, name, heading)
+- [x] Create/load/save scenario JSON files matching GDD Section 7.1 format
+- [x] Place units on map (click to place)
+- [x] Assign units to sides (player/OPFOR)
+- [x] Set unit properties (platform type, name)
+- [ ] Drag to move placed units
 - [ ] Define reference points (point and area types)
-- [ ] Set basic scenario metadata (name, description, briefing, start time, theater bounds)
+- [x] Set basic scenario metadata (name, description, briefing, start time, theater bounds)
 
 ---
 
@@ -191,3 +192,7 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 - [x] **Session 1**: CMO database exploration (174 tables, full schema mapping)
 - [x] **Session 1**: DB extraction spec (`DB_EXTRACTION_SPEC.md`)
 - [x] **Session 1**: Extraction script (`scripts/extract_cmo_db.py`) — 60k+ records extracted
+- [x] **Session 1**: Phase 1 scaffold (map, symbols, demo scenario, theme toggle, range ring pinning)
+- [x] **Session 1**: Platform database integration (TypeScript types, API route, enum resolver)
+- [x] **Session 1**: Scenario editor (place units, save/load JSON, scenario settings)
+- [x] **Session 1**: Detail panel with tabbed Info/Sensors/Weapons view

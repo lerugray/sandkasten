@@ -55,6 +55,10 @@ export function TacticalMap({
     map.on("load", () => {
       setMapReady(true);
       setZoom(map.getZoom());
+      // Expose map instance on DOM for editor unit placement
+      const mapEl = containerRef.current?.querySelector(".maplibregl-canvas")?.closest(".maplibregl-map");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (mapEl) (mapEl as any).__maplibreMap = map;
       onMapReady?.();
     });
 
