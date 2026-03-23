@@ -2,6 +2,12 @@ import type { Unit } from "@/types/game";
 import type { GameState, Contact } from "./gameState";
 import { updateUnitMovement } from "./movement";
 import { runDetectionChecks, mergeContact } from "./detection";
+import { runAIUpdate, type AIState } from "@/lib/ai/aiController";
+import {
+  evaluateEvents,
+  applyStateChanges,
+  type EventState,
+} from "@/lib/ai/events";
 
 const DETECTION_INTERVAL_MS = 5000; // run detection every 5 sim-seconds
 let lastDetectionTime = 0;
@@ -12,25 +18,40 @@ let lastDetectionTime = 0;
  * @param dtMs Real-time milliseconds since last tick
  * @returns Updated game state
  */
-export function simulationTick(state: GameState, dtMs: number): GameState {
-  if (state.isPaused) return state;
+export function simulationTick(
+  state: GameState,
+  dtMs: number,
+  aiState?: AIState,
+  eventState?: EventState
+): { gameState: GameState; eventState?: EventState } {
+  if (state.isPaused) return { gameState: state, eventState };
 
   const simDtMs = dtMs * state.speed;
   const simDtSeconds = simDtMs / 1000;
   const newSimTime = state.simTime + simDtMs;
 
+  // --- Phase 0: AI Decision-making (throttled, same cadence as detection) ---
+  let currentOrders = state.orders;
+  if (aiState) {
+    currentOrders = runAIUpdate(
+      { ...state, simTime: newSimTime },
+      aiState
+    );
+  }
+
   // --- Phase 1: Movement ---
-  const newSides = state.sides.map((side) => ({
+  const stateWithOrders = { ...state, orders: currentOrders };
+  const newSides = stateWithOrders.sides.map((side) => ({
     ...side,
     units: side.units.map((unit) => {
       if (unit.damageState === "destroyed") return unit;
 
-      const orders = state.orders.get(unit.id);
+      const orders = currentOrders.get(unit.id);
       if (!orders) return unit;
 
       const result = updateUnitMovement(unit, orders, simDtSeconds);
       // Update orders if waypoints were consumed
-      state.orders.set(unit.id, result.orders);
+      currentOrders.set(unit.id, result.orders);
       return result.unit;
     }),
   }));
@@ -40,24 +61,20 @@ export function simulationTick(state: GameState, dtMs: number): GameState {
 
   if (newSimTime - lastDetectionTime >= DETECTION_INTERVAL_MS) {
     lastDetectionTime = newSimTime;
-    newContacts = runDetectionPhase(newSides, state);
+    newContacts = runDetectionPhase(newSides, stateWithOrders);
   }
 
   // --- Phase 3: Contact aging ---
-  // Contacts not updated in 60 sim-seconds degrade
   newContacts = newContacts
     .map((contact) => {
       const age = newSimTime - contact.lastUpdateTime;
       if (age > 120000) {
-        // 2 minutes without update — lose contact entirely
         return null;
       }
       if (age > 60000 && contact.classification === "tracked") {
-        // Degrade from tracked to classified
         return { ...contact, classification: "classified" as const };
       }
       if (age > 30000) {
-        // Grow uncertainty over time
         return {
           ...contact,
           positionUncertainty: contact.positionUncertainty + 0.5,
@@ -67,12 +84,26 @@ export function simulationTick(state: GameState, dtMs: number): GameState {
     })
     .filter((c): c is Contact => c !== null);
 
-  return {
+  let newGameState: GameState = {
     ...state,
     simTime: newSimTime,
     sides: newSides,
     contacts: newContacts,
+    orders: currentOrders,
   };
+
+  // --- Phase 4: TCA Events ---
+  let newEventState = eventState;
+  if (eventState) {
+    const eventResult = evaluateEvents(eventState, newGameState, aiState?.missions ?? []);
+    newEventState = eventResult.eventState;
+
+    if (eventResult.stateChanges.length > 0) {
+      newGameState = applyStateChanges(newGameState, eventResult.stateChanges);
+    }
+  }
+
+  return { gameState: newGameState, eventState: newEventState };
 }
 
 function runDetectionPhase(

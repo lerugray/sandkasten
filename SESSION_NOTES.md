@@ -110,8 +110,25 @@ Full extraction spec documented in `DB_EXTRACTION_SPEC.md` — covers every tabl
 - Play page at /play with full simulation running
 - Home page updated with PLAY and EDITOR navigation buttons
 
+### Phase 3 Completed (Session 2 — 2026-03-23)
+- Doctrine system: ROE (weapons-free/tight/hold), engagement range, radar usage (active/passive/mixed), evasion, withdraw on damage, BVR/WVR — cascading side → mission → unit
+- Mission system: patrol (waypoint cycling), CAP (racetrack orbit + intercept), strike (target + RTB), escort (station-keeping near assigned unit), transit (point-to-point), support (orbit area)
+- AI Controller: runs on detection cadence (5 sim-seconds), resolves doctrine per-unit, executes mission behavior, manages radar/throttle, handles prosecution (chase contacts within range) and withdrawal
+- TCA Event System: full trigger-condition-action engine with 10 trigger types (ScenarioLoaded, Time, TimeInterval, UnitDetected, UnitDestroyed, UnitDamaged, UnitEntersArea, UnitLeavesArea, SideScore), 5 condition types (SideIs, RandomChance, EventHasFired/NotFired, UnitCountInArea), 7 action types (DisplayMessage, SpawnUnit, DestroyUnit, ChangeDoctrine, ChangeScore, EndScenario, TriggerEvent)
+- Point-in-polygon geometry for area triggers
+- Demo scenario scripted: 4 Iranian missions (coastal patrol, missile boat patrol, coastal defense escort, CAP station), side doctrine, 6 events (briefing, first contact alert, escalation at T+30m, reinforcement spawn at T+45m with 60% chance, victory at T+2h, defeat if carrier lost)
+- Message log UI: sidebar tab with unread badge, timestamped messages, click to mark read
+- Scenario result overlay: victory/defeat/draw screen with replay button
+- Score tracking per side
+- Simulation engine updated: 4-phase tick (AI decisions → movement → detection → TCA events)
+- useSimulation hook refactored: accepts ScenarioConfig with missions/doctrine/events, exposes eventState and markMessageRead
+
+### Notes
+- Auftragstaktik is adding Radar/Sensor Layer, Military Installations, Nuclear/CBRN Layer, Data Model Normalization — all relevant for future Sandkasten OSINT import
+- User wants audio/sound effects — deferred to polish phase (see memory)
+
 ### Next Steps
-- Begin Phase 3: OPFOR AI (doctrine, missions, TCA events)
+- Begin Phase 4: Combat (weapons engagement, missile flight, SAM, damage model, countermeasures)
 - See `TASKS.md` for full breakdown
 
 ---

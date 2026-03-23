@@ -81,26 +81,33 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 ## Phase 3: OPFOR AI
 
 ### 3.1 Doctrine System
-- [ ] Implement doctrine data structure (ROE, engagement range, radar usage, evasion, withdraw)
-- [ ] Doctrine cascade: side default → mission override → unit override
-- [ ] AI units follow doctrine rules for engagement decisions
+- [x] Implement doctrine data structure (ROE, engagement range, radar usage, evasion, withdraw, BVR/WVR)
+- [x] Doctrine cascade: side default → mission override → unit override
+- [x] AI units follow doctrine rules for engagement and sensor decisions
 
 ### 3.2 Mission System
-- [ ] Mission data structure (type, reference area, prosecution range, assigned units)
-- [ ] Patrol: cycle through waypoints in reference area, engage per doctrine
-- [ ] Strike: proceed to target, attack, return to base/orbit
-- [ ] CAP: orbit area, intercept hostiles entering prosecution range
-- [ ] Escort: stay with assigned unit, engage threats to escorted asset
-- [ ] Transit: move from A to B, minimize engagement
-- [ ] Support: tanker/AEW station-keeping in assigned area
+- [x] Mission data structure (type, reference area, prosecution range, assigned units)
+- [x] Patrol: cycle through waypoints in reference area, prosecute contacts per doctrine
+- [x] Strike: proceed to target, attack, return to base/orbit
+- [x] CAP: racetrack orbit, intercept hostiles entering prosecution range
+- [x] Escort: station-keeping near assigned unit
+- [x] Transit: move from A to B, minimize engagement
+- [x] Support: orbit assigned area
 
 ### 3.3 TCA Event System
-- [ ] Event data structure (name, triggers, conditions, actions, repeatable flag)
-- [ ] Implement trigger checks: ScenarioLoaded, Time, UnitDetected, UnitDestroyed, UnitEntersArea, etc.
-- [ ] Implement conditions: SideIs, UnitTypeIs, UnitCountInArea, RandomChance, EventHasFired
-- [ ] Implement actions: DisplayMessage, SpawnUnit, ChangeMission, ChangeDoctrine, ChangeScore, EndScenario
-- [ ] Event evaluation loop (check triggers each sim tick)
-- [ ] Victory condition evaluation (special events with EndScenario action)
+- [x] Event data structure (name, triggers, conditions, actions, repeatable flag)
+- [x] Implement trigger checks: ScenarioLoaded, Time, TimeInterval, UnitDetected, UnitDestroyed, UnitDamaged, UnitEntersArea, UnitLeavesArea, SideScore
+- [x] Implement conditions: SideIs, RandomChance, EventHasFired, EventHasNotFired, UnitCountInArea
+- [x] Implement actions: DisplayMessage, SpawnUnit, DestroyUnit, ChangeDoctrine, ChangeScore, EndScenario, TriggerEvent
+- [x] Event evaluation loop integrated into simulation tick
+- [x] Victory/defeat condition evaluation with scenario result overlay
+
+### 3.4 Integration
+- [x] AI controller wired into simulation engine (runs on detection cadence)
+- [x] Demo scenario scripted with 4 missions, side doctrine, 6 TCA events
+- [x] Message log UI with unread badge, timestamp, click-to-read
+- [x] Score display in header
+- [x] Scenario result overlay (victory/defeat/draw with replay)
 
 ---
 
@@ -176,7 +183,16 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 - [ ] Scenario tags (era, region, scale, difficulty)
 - [ ] Community platform database contributions (PR-based or in-app editor)
 
-### 6.3 Expanded Content
+### 6.3 Audio
+- [ ] Source public domain sound effects (freesound.org, OpenGameArt)
+- [ ] Radar ping on new contact detection
+- [ ] Missile launch / weapon fire
+- [ ] Explosion / impact
+- [ ] Warning buzzer (unit under attack, autopause trigger)
+- [ ] UI interaction sounds (clicks, button feedback)
+- [ ] Ambient background (optional — ocean, radio chatter)
+
+### 6.4 Expanded Content
 - [ ] Submarine warfare (thermal layers, sprint-and-drift, dipping sonar)
 - [ ] Ground units and ground warfare
 - [ ] Electronic warfare (EMCON, communications jamming)
@@ -197,3 +213,4 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 - [x] **Session 1**: Scenario editor (place units, save/load JSON, scenario settings)
 - [x] **Session 1**: Detail panel with tabbed Info/Sensors/Weapons view
 - [x] **Session 1**: Phase 2 simulation core (movement, detection, contacts, fog of war, time controls)
+- [x] **Session 2**: Phase 3 OPFOR AI (doctrine, missions, TCA events, AI controller, demo scenario scripting)

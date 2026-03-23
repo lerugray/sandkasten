@@ -4,16 +4,44 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import type { Scenario } from "@/types/game";
 import { createInitialGameState, SPEED_OPTIONS, type GameState } from "./gameState";
 import { simulationTick, resetDetectionTimer } from "./engine";
+import { type AIState, resetAITimer } from "@/lib/ai/aiController";
+import type { EventState, EventMessage } from "@/lib/ai/events";
+import type { Mission } from "@/lib/ai/missions";
+import type { Doctrine } from "@/lib/ai/doctrine";
 
 const TICK_INTERVAL_MS = 50; // 20 fps simulation
 
-export function useSimulation(scenario: Scenario) {
+export interface ScenarioConfig {
+  scenario: Scenario;
+  missions?: Mission[];
+  sideDoctrine?: Record<string, Partial<Doctrine>>;
+  events?: EventState;
+}
+
+export function useSimulation(config: ScenarioConfig) {
+  const { scenario, missions = [], sideDoctrine = {}, events } = config;
+
   const [gameState, setGameState] = useState<GameState>(() =>
     createInitialGameState(scenario)
   );
 
+  const [eventState, setEventState] = useState<EventState | undefined>(events);
+
+  const aiStateRef = useRef<AIState>({
+    missions,
+    sideDoctrine,
+  });
+
+  // Keep AI state in sync with config changes
+  useEffect(() => {
+    aiStateRef.current = { missions, sideDoctrine };
+  }, [missions, sideDoctrine]);
+
   const gameStateRef = useRef(gameState);
   gameStateRef.current = gameState;
+
+  const eventStateRef = useRef(eventState);
+  eventStateRef.current = eventState;
 
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastTickRef = useRef<number>(Date.now());
@@ -26,7 +54,16 @@ export function useSimulation(scenario: Scenario) {
       lastTickRef.current = now;
 
       if (!gameStateRef.current.isPaused) {
-        setGameState((prev) => simulationTick(prev, dtMs));
+        const result = simulationTick(
+          gameStateRef.current,
+          dtMs,
+          aiStateRef.current,
+          eventStateRef.current
+        );
+        setGameState(result.gameState);
+        if (result.eventState) {
+          setEventState(result.eventState);
+        }
       }
     }, TICK_INTERVAL_MS);
 
@@ -37,7 +74,7 @@ export function useSimulation(scenario: Scenario) {
 
   const togglePause = useCallback(() => {
     setGameState((prev) => {
-      lastTickRef.current = Date.now(); // prevent time jump
+      lastTickRef.current = Date.now();
       return { ...prev, isPaused: !prev.isPaused };
     });
   }, []);
@@ -108,13 +145,28 @@ export function useSimulation(scenario: Scenario) {
     });
   }, []);
 
+  const markMessageRead = useCallback((messageId: string) => {
+    setEventState((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        messages: prev.messages.map((m) =>
+          m.id === messageId ? { ...m, read: true } : m
+        ),
+      };
+    });
+  }, []);
+
   const resetSimulation = useCallback(() => {
     resetDetectionTimer();
+    resetAITimer();
     setGameState(createInitialGameState(scenario));
-  }, [scenario]);
+    setEventState(events);
+  }, [scenario, events]);
 
   return {
     gameState,
+    eventState,
     togglePause,
     setSpeed,
     cycleSpeed,
@@ -122,6 +174,7 @@ export function useSimulation(scenario: Scenario) {
     clearWaypoints,
     setThrottle,
     toggleRadar,
+    markMessageRead,
     resetSimulation,
   };
 }
