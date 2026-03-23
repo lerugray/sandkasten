@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+:root {
+  --color-tactical-dark: #0a0a0f;
+  --color-tactical-panel: #12121a;
+  --color-tactical-border: #1e1e2e;
+  --color-tactical-text: #c8c8d4;
+  --color-tactical-text-dim: #6b6b80;
+  --color-terminal-green: #00ff41;
+  --color-terminal-red: #ff3333;
+  --color-terminal-blue: #00aaff;
+  --color-terminal-amber: #ffbf00;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--color-tactical-dark);
+  color: var(--color-tactical-text);
+  font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+/* MapLibre overrides */
+.maplibregl-ctrl-group {
+  background: var(--color-tactical-panel) !important;
+  border: 1px solid var(--color-tactical-border) !important;
+}
+
+.maplibregl-ctrl-group button {
+  filter: invert(0.8);
+}
+
+.maplibregl-ctrl-attrib {
+  background: transparent !important;
+  color: var(--color-tactical-text-dim) !important;
+  font-size: 10px !important;
+}
+
+.maplibregl-popup-content {
+  background: var(--color-tactical-panel) !important;
+  color: var(--color-tactical-text) !important;
+  border: 1px solid var(--color-tactical-border) !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  font-family: "Share Tech Mono", monospace !important;
+  font-size: 12px !important;
+}
+
+.maplibregl-popup-tip {
+  border-top-color: var(--color-tactical-border) !important;
+}
