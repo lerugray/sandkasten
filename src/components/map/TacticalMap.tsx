@@ -1,11 +1,14 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState } from "react";
 import maplibregl from "maplibre-gl";
 import { getMapStyle } from "@/lib/map/styles";
-import type { Unit, Scenario } from "@/types/game";
+import type { Scenario } from "@/types/game";
+import type { Contact, UnitOrders } from "@/lib/simulation/gameState";
 import { UnitLayer } from "./UnitLayer";
 import { RangeRingLayer } from "./RangeRingLayer";
+import { ContactLayer } from "./ContactLayer";
+import { WaypointLayer } from "./WaypointLayer";
 
 interface TacticalMapProps {
   scenario: Scenario;
@@ -14,6 +17,11 @@ interface TacticalMapProps {
   theme: "dark" | "light";
   onUnitSelect: (unitId: string | null, shiftKey?: boolean) => void;
   onMapReady?: () => void;
+  // Simulation props (optional — static mode if omitted)
+  contacts?: Contact[];
+  orders?: Map<string, UnitOrders>;
+  fogOfWar?: boolean;
+  onMapClick?: (lngLat: { lng: number; lat: number }) => void;
 }
 
 export function TacticalMap({
@@ -23,6 +31,10 @@ export function TacticalMap({
   theme,
   onUnitSelect,
   onMapReady,
+  contacts,
+  orders,
+  fogOfWar = false,
+  onMapClick,
 }: TacticalMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -55,24 +67,19 @@ export function TacticalMap({
     map.on("load", () => {
       setMapReady(true);
       setZoom(map.getZoom());
-      // Expose map instance on DOM for editor unit placement
       const mapEl = containerRef.current?.querySelector(".maplibregl-canvas")?.closest(".maplibregl-map");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (mapEl) (mapEl as any).__maplibreMap = map;
       onMapReady?.();
     });
 
-    map.on("zoom", () => {
-      setZoom(map.getZoom());
-    });
-
-    map.on("mousemove", (e) => {
-      setCursorPos({ lat: e.lngLat.lat, lng: e.lngLat.lng });
-    });
+    map.on("zoom", () => setZoom(map.getZoom()));
+    map.on("mousemove", (e) => setCursorPos({ lat: e.lngLat.lat, lng: e.lngLat.lng }));
 
     map.on("click", (e) => {
       const target = e.originalEvent.target as HTMLElement;
-      if (target.closest(".unit-marker")) return;
+      if (target.closest(".unit-marker") || target.closest(".contact-marker")) return;
+      onMapClick?.({ lng: e.lngLat.lng, lat: e.lngLat.lat });
       onUnitSelect(null);
     });
 
@@ -92,7 +99,11 @@ export function TacticalMap({
     document.documentElement.className = theme === "light" ? "theme-light" : "";
   }, [theme]);
 
+  // In fog of war mode, only show friendly units directly
   const allUnits = scenario.sides.flatMap((s) => s.units);
+  const visibleUnits = fogOfWar
+    ? allUnits.filter((u) => u.side === scenario.playerSide)
+    : allUnits;
 
   return (
     <div className="relative w-full h-full">
@@ -102,18 +113,33 @@ export function TacticalMap({
         <>
           <UnitLayer
             map={mapRef.current}
-            units={allUnits}
+            units={visibleUnits}
             playerSide={scenario.playerSide}
             selectedUnitId={selectedUnitId}
             onUnitSelect={onUnitSelect}
           />
           <RangeRingLayer
             map={mapRef.current}
-            units={allUnits}
+            units={visibleUnits}
             playerSide={scenario.playerSide}
             selectedUnitId={selectedUnitId}
             pinnedRingIds={pinnedRingIds}
           />
+          {contacts && contacts.length > 0 && (
+            <ContactLayer
+              map={mapRef.current}
+              contacts={contacts}
+            />
+          )}
+          {orders && (
+            <WaypointLayer
+              map={mapRef.current}
+              units={visibleUnits}
+              orders={orders}
+              selectedUnitId={selectedUnitId}
+              playerSide={scenario.playerSide}
+            />
+          )}
         </>
       )}
 
@@ -126,6 +152,7 @@ export function TacticalMap({
           </span>
         )}
         <span>Z{zoom.toFixed(1)}</span>
+        {contacts && <span>{contacts.length} contacts</span>}
         <span className="ml-auto">{scenario.name}</span>
       </div>
     </div>

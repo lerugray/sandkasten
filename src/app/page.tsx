@@ -58,9 +58,21 @@ export default function Home() {
             CLEAR RINGS ({pinnedRingIds.size})
           </button>
         )}
+        <a
+          href="/play"
+          className="ml-auto mr-3 text-[10px] text-[var(--color-tactical-dark)] bg-[var(--color-terminal-green)] hover:brightness-110 px-3 py-0.5 rounded font-bold tracking-wider"
+        >
+          PLAY
+        </a>
+        <a
+          href="/editor"
+          className="mr-3 text-[10px] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded"
+        >
+          EDITOR
+        </a>
         <button
           onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-          className="ml-auto mr-3 text-[10px] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
+          className="mr-3 text-[10px] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
         >
           {theme === "dark" ? "LIGHT" : "DARK"}
         </button>

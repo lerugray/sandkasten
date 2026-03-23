@@ -42,37 +42,37 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 ## Phase 2: Simulation Core
 
 ### 2.1 Game State & Time
-- [ ] Define game state data structure (units, contacts, time, score)
-- [ ] Implement simulation clock (start time, elapsed time, current sim time)
-- [ ] Time controls UI: play/pause button, speed selector (1x-60x)
+- [x] Define game state data structure (units, contacts, time, score)
+- [x] Implement simulation clock (start time, elapsed time, current sim time)
+- [x] Time controls UI: play/pause button, speed selector (1x-60x)
 - [ ] Autopause system with configurable triggers (new contact, unit attacked, etc.)
 - [ ] Game state serialization (save/load mid-game)
 
 ### 2.2 Movement
-- [ ] Waypoint system: place waypoints on map, assign to units
-- [ ] Unit movement along waypoint paths at set speed
-- [ ] Speed/throttle selection per unit (loiter, cruise, full, flank)
+- [x] Waypoint system: place waypoints on map, assign to units
+- [x] Unit movement along waypoint paths at set speed
+- [x] Speed/throttle selection per unit (loiter, cruise, full, flank)
 - [ ] Fuel consumption based on speed profile from platform data
-- [ ] Heading interpolation and turn radius
+- [x] Heading interpolation and turn radius
 - [ ] Aircraft altitude changes and altitude-based speed profiles
 
 ### 2.3 Sensor & Detection Model
-- [ ] Implement radar detection check (range, RCS, probability curve)
-- [ ] ESM detection (detect emitters, bearing only, no range)
-- [ ] Visual/IR detection (range-based, affected by target signature)
-- [ ] Detection probability formula: base_prob × (1 - range/maxRange) × signature_modifier
-- [ ] Contact creation on successful detection roll
+- [x] Implement radar detection check (range, RCS, probability curve)
+- [x] ESM detection (detect emitters, bearing only, no range)
+- [x] Visual/IR detection (range-based, affected by target signature)
+- [x] Detection probability formula: base_prob × (1 - range/maxRange) × signature_modifier
+- [x] Contact creation on successful detection roll
 
 ### 2.4 Contact & Classification System
-- [ ] Contact states: Unknown → Detected → Classified → Tracked
-- [ ] Position uncertainty circles (larger for worse sensor data)
-- [ ] Multi-sensor fusion (radar + ESM improves classification speed)
-- [ ] Contact list UI panel (sorted by threat level)
-- [ ] Contact aging (lose track if no sensor updates)
+- [x] Contact states: Unknown → Detected → Classified → Tracked
+- [x] Position uncertainty circles (larger for worse sensor data)
+- [x] Multi-sensor fusion (radar + ESM improves classification speed)
+- [x] Contact list UI panel (sorted by threat level)
+- [x] Contact aging (lose track if no sensor updates)
 
 ### 2.5 Fog of War
-- [ ] Player sees only own units + detected contacts
-- [ ] Undetected OPFOR units hidden from rendering
+- [x] Player sees only own units + detected contacts
+- [x] Undetected OPFOR units hidden from rendering
 - [ ] Sensor coverage visualization (optional overlay showing radar arcs/ranges)
 - [ ] "God mode" toggle for scenario testing (see everything)
 
@@ -196,3 +196,4 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 - [x] **Session 1**: Platform database integration (TypeScript types, API route, enum resolver)
 - [x] **Session 1**: Scenario editor (place units, save/load JSON, scenario settings)
 - [x] **Session 1**: Detail panel with tabbed Info/Sensors/Weapons view
+- [x] **Session 1**: Phase 2 simulation core (movement, detection, contacts, fog of war, time controls)

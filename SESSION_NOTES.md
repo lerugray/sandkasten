@@ -94,8 +94,24 @@ Full extraction spec documented in `DB_EXTRACTION_SPEC.md` — covers every tabl
 - Scenario editor at /editor: place units from platform list, set scenario metadata, save/load JSON
 - Demo scenario: Strait of Hormuz (US CSG vs Iran)
 
+### Phase 2 Completed (Session 1, continued)
+- Simulation engine with 20fps tick loop and configurable time compression (1x-60x)
+- Game state management: sim clock, pause/play/speed, unit orders, contacts
+- Movement system: waypoint paths, throttle-based speeds, great-circle navigation
+- Radar detection model: range-based probability, radar horizon check, classification
+- ESM detection: passive, detects active emitters at 1.5x range, bearing only
+- Visual detection: short range, good classification
+- Contact system: Unknown → Detected → Classified → Tracked with uncertainty circles
+- Contact aging: degrade classification and grow uncertainty over time, lose contact after 2min
+- Fog of war: player only sees own units + detected contacts in /play mode
+- Waypoint layer: dashed lines showing planned routes
+- Order panel: set waypoints (click map), throttle (loiter/cruise/full/flank), radar on/off
+- Contact list sidebar sorted by threat level with age indicators
+- Play page at /play with full simulation running
+- Home page updated with PLAY and EDITOR navigation buttons
+
 ### Next Steps
-- Begin Phase 2: simulation core (game state, time controls, movement, detection)
+- Begin Phase 3: OPFOR AI (doctrine, missions, TCA events)
 - See `TASKS.md` for full breakdown
 
 ---

@@ -48,7 +48,16 @@ Sandkasten shares its map renderer and NATO symbology with [Auftragstaktik](http
 - Scenario editor at `/editor` — place units, set sides, save/load scenario JSON
 - Full platform database API backed by 60k+ extracted CMO records
 
-No simulation yet. Units sit on the map. Movement, detection, and combat come in Phases 2-4.
+**Phase 2 (Simulation Core)** is also complete:
+
+- Play mode at `/play` with real-time simulation
+- Units move along waypoint paths with throttle control (loiter/cruise/full/flank)
+- Radar detection with range-based probability and radar horizon
+- ESM passive detection of active emitters
+- Contact classification: Unknown, Detected, Classified, Tracked
+- Fog of war: only see your own units and detected contacts
+- Contacts age and degrade over time without sensor updates
+- Time controls: pause/play, 1x-60x speed, sim clock display
 
 ---
 
@@ -120,7 +129,7 @@ sandkasten/
 | Phase | Focus | Status |
 |-------|-------|--------|
 | **1. Foundation** | Project scaffold, map, NATO symbols, scenario editor | Complete |
-| **2. Simulation Core** | Movement, radar detection, fog of war, time controls | Planned |
+| **2. Simulation Core** | Movement, radar detection, fog of war, time controls | Complete |
 | **3. OPFOR AI** | Doctrine, missions (patrol/strike/CAP), TCA event scripting | Planned |
 | **4. Combat** | Anti-ship missiles, SAM defense, damage model, countermeasures | Planned |
 | **5. WeGo Multiplayer** | WebSocket sync, turn system, lobby, server-side fog of war | Planned |
