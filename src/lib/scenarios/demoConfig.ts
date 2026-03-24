@@ -225,4 +225,8 @@ export const demoScenarioConfig: ScenarioConfig = {
     firedEvents: new Set(),
     messages: [],
   },
+  infowar: {
+    enabled: true,
+    model: "mistral",
+  },
 };

@@ -8,8 +8,10 @@ import { ContactList } from "@/components/game/ContactList";
 import { OrderPanel } from "@/components/game/OrderPanel";
 import { MessageLog } from "@/components/game/MessageLog";
 import { CombatLog } from "@/components/game/CombatLog";
+import { MediaFeed } from "@/components/game/infowar/MediaFeed";
 import { demoScenarioConfig } from "@/lib/scenarios/demoConfig";
 import { useSimulation } from "@/lib/simulation/useSimulation";
+import { useInfoWar } from "@/lib/infowar/useInfoWar";
 
 export default function PlayPage() {
   const {
@@ -30,7 +32,18 @@ export default function PlayPage() {
   const [pinnedRingIds, setPinnedRingIds] = useState<Set<string>>(new Set());
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [isPlacingWaypoint, setIsPlacingWaypoint] = useState(false);
-  const [sidebarTab, setSidebarTab] = useState<"forces" | "messages" | "combat">("forces");
+  const [sidebarTab, setSidebarTab] = useState<"forces" | "messages" | "combat" | "media">("forces");
+
+  const { infoWarState, toggleEnabled, markPostRead, resetInfoWar } = useInfoWar(
+    gameState,
+    combatState,
+    eventState,
+    demoScenarioConfig.infowar
+  );
+
+  const unreadMediaCount = infoWarState.posts.filter(
+    (p) => !p.read && p.simTime <= gameState.simTime
+  ).length;
 
   // Spacebar pause/unpause
   useEffect(() => {
@@ -167,6 +180,21 @@ export default function PlayPage() {
                 </span>
               )}
             </button>
+            <button
+              onClick={() => setSidebarTab("media")}
+              className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer ${
+                sidebarTab === "media"
+                  ? "text-[var(--color-terminal-blue)] border-b border-[var(--color-terminal-blue)]"
+                  : "text-[var(--color-tactical-text-dim)]"
+              }`}
+            >
+              Media
+              {unreadMediaCount > 0 && (
+                <span className="ml-1 inline-flex items-center justify-center bg-[var(--color-terminal-blue)] text-[var(--color-tactical-dark)] text-[10px] rounded-full w-5 h-5 font-bold">
+                  {unreadMediaCount}
+                </span>
+              )}
+            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto">
@@ -251,6 +279,14 @@ export default function PlayPage() {
                   playerSide={gameState.scenario.playerSide}
                 />
               </div>
+            )}
+
+            {sidebarTab === "media" && (
+              <MediaFeed
+                infoWarState={infoWarState}
+                simTime={gameState.simTime}
+                onToggleEnabled={toggleEnabled}
+              />
             )}
           </div>
         </div>

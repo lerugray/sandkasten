@@ -9,6 +9,7 @@ import type { EventState, EventMessage } from "@/lib/ai/events";
 import type { Mission } from "@/lib/ai/missions";
 import type { Doctrine } from "@/lib/ai/doctrine";
 import { createCombatState, resetCombatTimer, type CombatState } from "./combat";
+import type { InfoWarConfig } from "@/lib/infowar/types";
 
 const TICK_INTERVAL_MS = 50; // 20 fps simulation
 
@@ -17,6 +18,7 @@ export interface ScenarioConfig {
   missions?: Mission[];
   sideDoctrine?: Record<string, Partial<Doctrine>>;
   events?: EventState;
+  infowar?: InfoWarConfig;
 }
 
 export function useSimulation(config: ScenarioConfig) {
