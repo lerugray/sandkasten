@@ -86,12 +86,12 @@ export function runCombatPhase(
   newState = moveResult.state;
 
   // 2. Check for new engagements (throttled)
-  if (state.simTime - lastEngagementTime >= ENGAGEMENT_INTERVAL_MS) {
-    lastEngagementTime = state.simTime;
-    // Merge static config doctrine with runtime TCA overrides
+  if (newState.simTime - lastEngagementTime >= ENGAGEMENT_INTERVAL_MS) {
+    lastEngagementTime = newState.simTime;
+    // Merge static config doctrine with runtime TCA overrides from GameState
     const effectiveDoctrine = { ...sideDoctrine };
-    if (state.sideDoctrineOverrides) {
-      for (const [side, overrides] of Object.entries(state.sideDoctrineOverrides)) {
+    if (newState.sideDoctrineOverrides) {
+      for (const [side, overrides] of Object.entries(newState.sideDoctrineOverrides)) {
         effectiveDoctrine[side] = { ...effectiveDoctrine[side], ...overrides };
       }
     }
@@ -292,8 +292,6 @@ function checkEngagements(
     // Skip player side — player doesn't auto-engage (manual targeting in future)
     if (!side.isAI) continue;
 
-    console.log(`[COMBAT CHECK] ${side.name}: ROE=${doctrine.roe}, units=${side.units.filter(u => u.damageState !== 'destroyed').length}, sideDocKeys=${Object.keys(sideDoctrine)}`);
-
     for (const unit of side.units) {
       if (unit.damageState === "destroyed" || unit.damageState === "mission-kill") continue;
 
@@ -309,10 +307,7 @@ function checkEngagements(
         (w) => w.targetId === unit.id
       );
 
-      if (!shouldEngage(doctrine, isUnderAttack)) {
-        if (side.isAI) console.log(`[COMBAT] ${unit.name}: ROE=${doctrine.roe} underAttack=${isUnderAttack} -> SKIP`);
-        continue;
-      }
+      if (!shouldEngage(doctrine, isUnderAttack)) continue;
       console.log(`[COMBAT] ${unit.name}: ENGAGING (ROE=${doctrine.roe})`);
 
 

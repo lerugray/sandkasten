@@ -118,6 +118,7 @@ export function evaluateEvents(
     if (!conditionsMet) continue;
 
     // Fire the event
+    console.log(`[TCA] Event fired: "${event.name}" at simTime=${gameState.simTime}`);
     newFired.add(event.name);
 
     // Execute actions
@@ -275,6 +276,7 @@ export function applyStateChanges(
 
       case "doctrine": {
         // Apply doctrine changes to game state so combat system picks them up
+        console.log(`[TCA DOCTRINE] Applying doctrine change:`, JSON.stringify(change.action));
         const docAction = change.action;
         if (docAction.mission) {
           // Mission-level doctrine change — store in game state for AI to read
