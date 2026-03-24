@@ -139,8 +139,35 @@ Full extraction spec documented in `DB_EXTRACTION_SPEC.md` — covers every tabl
 - Combat log UI: 3-tab sidebar (Forces/Intel/Combat); combat tab shows weapons in flight + event log with color-coded entries (launch/hit/miss/defended/destroyed)
 - Weapons-in-flight badge on combat tab
 
+### Session 3 — 2026-03-23 (Testing, Bug Fixes, UI Polish)
+
+**Bugs Found & Fixed:**
+- Range rings flashed/seizure-inducing when clicking units during simulation — layers were being torn down and rebuilt every 250ms. Fixed by separating layer creation (once) from data updates.
+- Combat never triggered — three cascading bugs:
+  1. TCA events ran AFTER combat phase, so doctrine changes were always one tick late
+  2. `ChangeDoctrine` TCA action was a no-op (comment said "handled elsewhere" but wasn't)
+  3. Combat system read static config doctrine, not runtime overrides from GameState
+- Iranian units too far from US fleet (~170km) for C-802 range (120km). Adjusted starting positions and patrol areas.
+- Escalation event required 30min sim timer which meant units sailed past each other. Changed Iran to weapons-free from start.
+- UI text too small across the board (10-12px on what appears to be a high-res display). Bumped to 14-16px.
+- MapLibre compass (N circle) and Next.js dev indicator (N logo) both visible. Hidden via CSS and next.config.
+- Header elements ran together ("SANDKASTENPLAY"). Added spacing.
+- Intel badge clipped by overflow-hidden parent. Changed to inline badge.
+
+**UI Improvements:**
+- Spacebar now pauses/unpauses simulation
+- Speed buttons grouped in dark pill with visual separation
+- Consistent text sizing across home page and play page
+- Status bar text bumped up
+
+**Process Lessons:**
+- Should do a basic smoke test (start sim, wait 30s, check for combat) before asking user to test
+- User is not a programmer — "restart the dev server" means nothing without explicit steps
+- Debug logging should be minimal and filterable — flooding the console with per-unit messages is unhelpful
+- Don't make the user debug — fix it myself and only ask for screenshots if needed
+
 ### Next Steps
-- Begin Phase 5: WeGo Multiplayer (or continue polishing single-player)
+- Continue Phase 5: WeGo Multiplayer (or continue polishing single-player)
 - See `TASKS.md` for full breakdown
 
 ---

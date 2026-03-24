@@ -37,3 +37,12 @@ The core differentiator from CMO: pull real-world OSINT snapshots from Auftragst
 - Session notes tracked in `SESSION_NOTES.md`
 - Design document in `GDD.md`
 - User is not a programmer — do things for them rather than giving instructions
+
+## Testing & Quality Rules
+- **Smoke test before asking user to test.** Run `npm run dev`, verify the page loads, start the simulation, and confirm core functionality (units move, contacts appear, combat triggers) before pushing. The user should never be the one discovering that a feature doesn't work.
+- **Never make the user debug.** Don't ask them to read console logs, check network tabs, or interpret error messages. If something is broken, fix it — only ask for screenshots of visible UI behavior.
+- **When the user reports a bug, fix it in one shot.** Don't push speculative fixes that require multiple test cycles. Read the code, trace the full execution path, find the root cause, then fix it.
+- **"Restart the dev server"** = tell them: Ctrl+C in the terminal, then `npm run dev`
+- **Text must be readable.** Minimum 14px for body text, 12px absolute minimum for labels. The user is on a high-res display.
+- **No flashing/strobing UI.** Any effect that runs on the render loop (every 250ms) must not cause visual teardown/rebuild of map layers, markers, or DOM elements.
+- **Commit and push working code.** Every push should leave the app in a functional state.
