@@ -75,10 +75,10 @@ export default function PlayPage() {
   return (
     <div className={`h-screen w-screen flex flex-col bg-[var(--color-tactical-dark)] ${theme === "light" ? "theme-light" : ""}`}>
       {/* Header with time controls */}
-      <div className="h-10 flex items-center px-3 border-b border-[var(--color-tactical-border)] bg-[var(--color-tactical-panel)] shrink-0">
+      <div className="h-14 flex items-center px-5 border-b border-[var(--color-tactical-border)] bg-[var(--color-tactical-panel)] shrink-0">
         <a
           href="/"
-          className="text-[var(--color-terminal-green)] text-sm font-bold tracking-widest mr-4"
+          className="text-[var(--color-terminal-green)] text-lg font-bold tracking-widest mr-8"
           style={{ fontFamily: "Rajdhani, sans-serif" }}
         >
           SANDKASTEN
@@ -94,7 +94,7 @@ export default function PlayPage() {
         />
 
         {/* Score display */}
-        <div className="ml-4 text-[10px] text-[var(--color-tactical-text-dim)]">
+        <div className="ml-6 text-base text-[var(--color-tactical-text-dim)]">
           {Object.entries(gameState.score).map(([side, score]) => (
             <span key={side} className="mr-3">
               {side}: <span className="text-[var(--color-tactical-text)]">{score}</span>
@@ -104,7 +104,7 @@ export default function PlayPage() {
 
         <button
           onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-          className="ml-auto text-[10px] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
+          className="ml-auto text-sm text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-3 py-1.5 rounded cursor-pointer tracking-wider"
         >
           {theme === "dark" ? "LIGHT" : "DARK"}
         </button>
@@ -112,12 +112,12 @@ export default function PlayPage() {
 
       <div className="flex-1 flex">
         {/* Sidebar */}
-        <div className="w-56 bg-[var(--color-tactical-panel)] border-r border-[var(--color-tactical-border)] flex flex-col text-xs shrink-0 overflow-hidden">
+        <div className="w-80 bg-[var(--color-tactical-panel)] border-r border-[var(--color-tactical-border)] flex flex-col text-base shrink-0 overflow-hidden">
           {/* Tab switcher */}
           <div className="flex border-b border-[var(--color-tactical-border)] shrink-0">
             <button
               onClick={() => setSidebarTab("forces")}
-              className={`flex-1 py-1.5 text-[10px] uppercase tracking-wider cursor-pointer ${
+              className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer ${
                 sidebarTab === "forces"
                   ? "text-[var(--color-terminal-green)] border-b border-[var(--color-terminal-green)]"
                   : "text-[var(--color-tactical-text-dim)]"
@@ -127,7 +127,7 @@ export default function PlayPage() {
             </button>
             <button
               onClick={() => setSidebarTab("messages")}
-              className={`flex-1 py-1.5 text-[10px] uppercase tracking-wider cursor-pointer relative ${
+              className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer relative ${
                 sidebarTab === "messages"
                   ? "text-[var(--color-terminal-amber)] border-b border-[var(--color-terminal-amber)]"
                   : "text-[var(--color-tactical-text-dim)]"
@@ -142,7 +142,7 @@ export default function PlayPage() {
             </button>
             <button
               onClick={() => setSidebarTab("combat")}
-              className={`flex-1 py-1.5 text-[10px] uppercase tracking-wider cursor-pointer relative ${
+              className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer relative ${
                 sidebarTab === "combat"
                   ? "text-[var(--color-terminal-red)] border-b border-[var(--color-terminal-red)]"
                   : "text-[var(--color-tactical-text-dim)]"
@@ -222,11 +222,11 @@ export default function PlayPage() {
               <div className="p-2">
                 {(combatState?.weaponsInFlight.length ?? 0) > 0 && (
                   <div className="mb-2 pb-2 border-b border-[var(--color-tactical-border)]">
-                    <div className="text-[var(--color-terminal-red)] text-[10px] uppercase tracking-wider mb-1">
+                    <div className="text-[var(--color-terminal-red)] text-sm uppercase tracking-wider mb-1">
                       Weapons in Flight ({combatState?.weaponsInFlight.length})
                     </div>
                     {combatState?.weaponsInFlight.map((w) => (
-                      <div key={w.id} className="text-[10px] text-[var(--color-tactical-text)] mb-0.5">
+                      <div key={w.id} className="text-sm text-[var(--color-tactical-text)] mb-0.5">
                         <span className="text-[var(--color-terminal-amber)]">{">>"}</span>{" "}
                         {w.name} → {w.targetId.split("-").slice(0, 2).join("-")}
                       </div>
@@ -266,7 +266,7 @@ export default function PlayPage() {
 
           {/* Waypoint placement indicator */}
           {isPlacingWaypoint && (
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)] px-4 py-1 rounded text-xs font-bold">
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)] px-4 py-1 rounded text-sm font-bold">
               CLICK MAP TO PLACE WAYPOINT
             </div>
           )}
@@ -293,13 +293,13 @@ export default function PlayPage() {
                 <div className="flex gap-3 justify-center">
                   <button
                     onClick={resetSimulation}
-                    className="px-4 py-2 bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)] rounded text-xs font-bold tracking-wider cursor-pointer"
+                    className="px-4 py-2 bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)] rounded text-sm font-bold tracking-wider cursor-pointer"
                   >
                     PLAY AGAIN
                   </button>
                   <a
                     href="/"
-                    className="px-4 py-2 border border-[var(--color-tactical-border)] text-[var(--color-tactical-text)] rounded text-xs tracking-wider"
+                    className="px-4 py-2 border border-[var(--color-tactical-border)] text-[var(--color-tactical-text)] rounded text-sm tracking-wider"
                   >
                     MAIN MENU
                   </a>

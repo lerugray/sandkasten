@@ -66,6 +66,11 @@ body {
   font-size: 10px !important;
 }
 
+/* Hide the compass button */
+.maplibregl-ctrl-compass {
+  display: none !important;
+}
+
 .maplibregl-popup-content {
   background: var(--color-tactical-panel) !important;
   color: var(--color-tactical-text) !important;

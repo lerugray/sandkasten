@@ -56,7 +56,7 @@ export function TacticalMap({
     });
 
     map.addControl(
-      new maplibregl.NavigationControl({ showCompass: true }),
+      new maplibregl.NavigationControl({ showCompass: false }),
       "top-right"
     );
     map.addControl(
@@ -144,7 +144,7 @@ export function TacticalMap({
       )}
 
       {/* Status bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-6 bg-[var(--color-tactical-panel)] border-t border-[var(--color-tactical-border)] flex items-center px-3 text-[10px] text-[var(--color-tactical-text-dim)] gap-4 z-10">
+      <div className="absolute bottom-0 left-0 right-0 h-9 bg-[var(--color-tactical-panel)] border-t border-[var(--color-tactical-border)] flex items-center px-4 text-base text-[var(--color-tactical-text-dim)] gap-6 z-10">
         <span>SANDKASTEN v0.1</span>
         {cursorPos && (
           <span>
