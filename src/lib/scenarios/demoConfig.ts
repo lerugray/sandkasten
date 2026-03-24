@@ -27,8 +27,8 @@ const iranMissions: Mission[] = [
     prosecutionRange: 130, // km — C-802 range is 120km, give slight buffer
     repeating: true,
     doctrineOverrides: {
-      roe: "weapons-tight",
-      radarUsage: "mixed",
+      roe: "weapons-free",
+      radarUsage: "active",
     },
   },
   {
@@ -69,7 +69,7 @@ const iranMissions: Mission[] = [
     prosecutionRange: 80, // km — intercept range for fighters
     repeating: true,
     doctrineOverrides: {
-      roe: "weapons-tight",
+      roe: "weapons-free",
       radarUsage: "active",
     },
   },
@@ -79,9 +79,9 @@ const iranMissions: Mission[] = [
 
 const sideDoctrine: Record<string, Partial<Doctrine>> = {
   Iran: {
-    roe: "weapons-tight",
+    roe: "weapons-free",
     engagementRange: "max",
-    radarUsage: "mixed",
+    radarUsage: "active",
     evasion: "if-attacked",
     withdrawOnDamage: "damaged",
   },
@@ -125,22 +125,19 @@ const scenarioEvents: ScenarioEvent[] = [
     name: "Iranian Escalation",
     repeatable: false,
     triggers: [
-      { type: "Time", time: scenarioStartTime + 30 * 60 * 1000 }, // T+30 minutes
+      { type: "UnitDetected", side: "US Navy", detectedBySide: "Iran" },
     ],
-    conditions: [
-      { type: "EventHasFired", eventName: "First Contact Alert" },
-    ],
+    conditions: [],
     actions: [
       {
         type: "DisplayMessage",
         side: "US Navy",
         title: "INTELLIGENCE UPDATE",
-        text: "SIGINT intercepts indicate Iranian naval command has ordered patrol boats to increase readiness. IRGCN units may be preparing for a closer approach.",
+        text: "SIGINT intercepts indicate Iranian naval command has ordered patrol boats to increase readiness. IRGCN units are going weapons-free.",
       },
       {
         type: "ChangeDoctrine",
         side: "Iran",
-        mission: "Coastal Patrol",
         changes: { roe: "weapons-free", radarUsage: "active" },
       },
     ],
