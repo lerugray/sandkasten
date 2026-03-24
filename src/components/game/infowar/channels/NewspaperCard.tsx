@@ -23,22 +23,22 @@ export function NewspaperCard({ post, age }: NewspaperCardProps) {
     <div className="border border-[var(--color-tactical-border)] rounded p-2">
       <div className="flex items-center gap-2 mb-1">
         <span
-          className="text-[10px] px-1 rounded font-bold"
+          className="text-xs px-1 rounded font-bold"
           style={{ backgroundColor: color, color: "var(--color-tactical-dark)" }}
         >
           {post.persona.avatar}
         </span>
-        <span className="text-[10px] uppercase tracking-wider" style={{ color }}>
+        <span className="text-xs uppercase tracking-wider" style={{ color }}>
           {label}
         </span>
-        <span className="text-[10px] text-[var(--color-tactical-text-dim)] ml-auto shrink-0">
+        <span className="text-xs text-[var(--color-tactical-text-dim)] ml-auto shrink-0">
           {age}
         </span>
       </div>
       <p className="text-sm font-bold leading-snug" style={{ color }}>
         {post.content}
       </p>
-      <div className="text-[10px] text-[var(--color-tactical-text-dim)] mt-1">
+      <div className="text-xs text-[var(--color-tactical-text-dim)] mt-1">
         — {post.persona.name}
       </div>
     </div>

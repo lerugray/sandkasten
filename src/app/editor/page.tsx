@@ -140,19 +140,19 @@ export default function EditorPage() {
         <div className="ml-auto flex items-center gap-2">
           <button
             onClick={loadScenario}
-            className="text-[10px] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
+            className="text-xs text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
           >
             LOAD
           </button>
           <button
             onClick={saveScenario}
-            className="text-[10px] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
+            className="text-xs text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
           >
             SAVE
           </button>
           <button
             onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-            className="text-[10px] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
+            className="text-xs text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
           >
             {theme === "dark" ? "LIGHT" : "DARK"}
           </button>

@@ -24,7 +24,7 @@ export function MessageLog({ messages, simTime, onMarkRead }: MessageLogProps) {
   return (
     <div className="space-y-2">
       {unreadCount > 0 && (
-        <div className="text-[var(--color-terminal-amber)] text-[10px] uppercase tracking-wider">
+        <div className="text-[var(--color-terminal-amber)] text-xs uppercase tracking-wider">
           {unreadCount} unread
         </div>
       )}
@@ -47,7 +47,7 @@ export function MessageLog({ messages, simTime, onMarkRead }: MessageLogProps) {
             <div className="flex items-center justify-between mb-1">
               {msg.title && (
                 <span
-                  className={`font-bold text-[10px] uppercase tracking-wider ${
+                  className={`font-bold text-xs uppercase tracking-wider ${
                     msg.read
                       ? "text-[var(--color-tactical-text-dim)]"
                       : "text-[var(--color-terminal-amber)]"
@@ -56,11 +56,11 @@ export function MessageLog({ messages, simTime, onMarkRead }: MessageLogProps) {
                   {msg.title}
                 </span>
               )}
-              <span className="text-[var(--color-tactical-text-dim)] text-[9px] ml-auto">
+              <span className="text-[var(--color-tactical-text-dim)] text-xs ml-auto">
                 {ageStr}
               </span>
             </div>
-            <div className="text-[var(--color-tactical-text)] text-[11px] leading-relaxed">
+            <div className="text-[var(--color-tactical-text)] text-sm leading-relaxed">
               {msg.text}
             </div>
           </button>

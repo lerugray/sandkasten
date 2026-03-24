@@ -30,7 +30,7 @@ export function OllamaStatus({
       <div className="flex items-center gap-2 mb-1">
         {/* Connection indicator */}
         <div
-          className="w-2 h-2 rounded-full shrink-0"
+          className="w-3 h-3 rounded-full shrink-0"
           style={{
             backgroundColor: !enabled
               ? "var(--color-tactical-text-dim)"
@@ -39,14 +39,15 @@ export function OllamaStatus({
                 : "var(--color-terminal-red)",
           }}
         />
-        <span className="text-[10px] text-[var(--color-tactical-text-dim)] uppercase tracking-wider">
+        <span className="text-xs text-[var(--color-tactical-text-dim)] uppercase tracking-wider">
           {!enabled ? "Disabled" : connected ? `Ollama (${model})` : "Disconnected"}
         </span>
 
         {/* Toggle */}
         <button
           onClick={onToggle}
-          className={`ml-auto text-[10px] px-2 py-0.5 rounded cursor-pointer uppercase tracking-wider ${
+          aria-label={enabled ? "Disable InfoWar feed" : "Enable InfoWar feed"}
+          className={`ml-auto text-xs px-3 py-1 rounded cursor-pointer uppercase tracking-wider ${
             enabled
               ? "bg-[var(--color-terminal-blue)] text-[var(--color-tactical-dark)] font-bold"
               : "border border-[var(--color-tactical-border)] text-[var(--color-tactical-text-dim)]"
@@ -57,11 +58,11 @@ export function OllamaStatus({
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="text-[10px] text-[var(--color-tactical-text-dim)]">
+        <span className="text-xs text-[var(--color-tactical-text-dim)]">
           {ERA_LABELS[era]}
         </span>
         {generatingCount > 0 && (
-          <span className="text-[10px] text-[var(--color-terminal-amber)]">
+          <span className="text-xs text-[var(--color-terminal-amber)]">
             Generating {generatingCount}...
           </span>
         )}

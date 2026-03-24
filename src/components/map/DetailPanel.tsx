@@ -82,7 +82,7 @@ export function DetailPanel({ unit, onClose }: DetailPanelProps) {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`flex-1 py-1 text-[10px] uppercase tracking-wider cursor-pointer ${
+            className={`flex-1 py-1 text-xs uppercase tracking-wider cursor-pointer ${
               tab === t
                 ? "text-[var(--color-terminal-green)] border-b border-[var(--color-terminal-green)]"
                 : "text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)]"
@@ -230,7 +230,7 @@ export function DetailPanel({ unit, onClose }: DetailPanelProps) {
                 {detail?.propulsion?.[0] && (
                   <>
                     <span className="text-[var(--color-tactical-text-dim)]">PROP</span>
-                    <span className="text-[11px]">{detail.propulsion[0].name}</span>
+                    <span className="text-sm">{detail.propulsion[0].name}</span>
                   </>
                 )}
               </>
@@ -309,7 +309,7 @@ function SensorList({ sensorIds }: { sensorIds: number[] }) {
       {unique.map((s, i) => (
         <div key={i} className="border-b border-[var(--color-tactical-border)] pb-1">
           <div className="text-[var(--color-terminal-blue)] font-bold">{s.name}</div>
-          <div className="grid grid-cols-[auto_1fr] gap-x-2 text-[10px]">
+          <div className="grid grid-cols-[auto_1fr] gap-x-2 text-xs">
             {s.typeName && (
               <>
                 <span className="text-[var(--color-tactical-text-dim)]">TYPE</span>
@@ -372,7 +372,7 @@ function MountList({ mountIds }: { mountIds: number[] }) {
       {unique.map((m, i) => (
         <div key={i} className="border-b border-[var(--color-tactical-border)] pb-1">
           <div className="text-[var(--color-terminal-amber)] font-bold">{m.name}</div>
-          <div className="grid grid-cols-[auto_1fr] gap-x-2 text-[10px]">
+          <div className="grid grid-cols-[auto_1fr] gap-x-2 text-xs">
             {m.rof > 0 && (
               <>
                 <span className="text-[var(--color-tactical-text-dim)]">ROF</span>

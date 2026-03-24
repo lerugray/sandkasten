@@ -55,7 +55,7 @@ export function CombatLog({ events, simTime, playerSide }: CombatLogProps) {
         return (
           <div
             key={evt.id}
-            className={`text-[10px] leading-tight ${EVENT_COLORS[evt.type]}`}
+            className={`text-xs leading-tight ${EVENT_COLORS[evt.type]}`}
           >
             <span className="text-[var(--color-tactical-text-dim)] mr-1">
               {ageStr}

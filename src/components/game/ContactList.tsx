@@ -53,7 +53,7 @@ export function ContactList({ contacts, simTime, onContactClick }: ContactListPr
           >
             <div className="flex items-center gap-2">
               <span
-                className="font-bold text-[10px] w-6"
+                className="font-bold text-xs w-6"
                 style={{ color: CLASSIFICATION_COLORS[contact.classification] }}
               >
                 {CLASSIFICATION_LABELS[contact.classification]}
@@ -61,11 +61,11 @@ export function ContactList({ contacts, simTime, onContactClick }: ContactListPr
               <span className="text-[var(--color-tactical-text)] truncate flex-1">
                 {contact.platformName ?? `Contact ${contact.id.slice(-4)}`}
               </span>
-              <span className="text-[var(--color-tactical-text-dim)] text-[10px]">
+              <span className="text-[var(--color-tactical-text-dim)] text-xs">
                 {contact.sensorType.toUpperCase()}
               </span>
             </div>
-            <div className="text-[10px] text-[var(--color-tactical-text-dim)] ml-8">
+            <div className="text-xs text-[var(--color-tactical-text-dim)] ml-8">
               {contact.position.lat.toFixed(2)}N {contact.position.lng.toFixed(2)}E
               {age > 0 && ` · ${age}s ago`}
             </div>

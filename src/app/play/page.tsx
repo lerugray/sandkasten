@@ -45,6 +45,11 @@ export default function PlayPage() {
     (p) => !p.read && p.simTime <= gameState.simTime
   ).length;
 
+  const handleReset = useCallback(() => {
+    resetSimulation();
+    resetInfoWar();
+  }, [resetSimulation, resetInfoWar]);
+
   // Spacebar pause/unpause
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -115,7 +120,7 @@ export default function PlayPage() {
           speed={gameState.speed}
           onTogglePause={togglePause}
           onSetSpeed={setSpeed}
-          onReset={resetSimulation}
+          onReset={handleReset}
         />
 
         {/* Score display */}
@@ -286,6 +291,7 @@ export default function PlayPage() {
                 infoWarState={infoWarState}
                 simTime={gameState.simTime}
                 onToggleEnabled={toggleEnabled}
+                onMarkRead={markPostRead}
               />
             )}
           </div>
@@ -340,7 +346,7 @@ export default function PlayPage() {
                 </p>
                 <div className="flex gap-3 justify-center">
                   <button
-                    onClick={resetSimulation}
+                    onClick={handleReset}
                     className="px-4 py-2 bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)] rounded text-sm font-bold tracking-wider cursor-pointer"
                   >
                     PLAY AGAIN

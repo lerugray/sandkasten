@@ -9,6 +9,7 @@ import { NewspaperCard } from "./channels/NewspaperCard";
 interface MediaPostProps {
   post: MediaPostType;
   simTime: number;
+  onMarkRead: (postId: string) => void;
 }
 
 function formatAge(simTime: number, postTime: number): string {
@@ -22,38 +23,66 @@ function formatAge(simTime: number, postTime: number): string {
   return `${hours}h ago`;
 }
 
-export function MediaPost({ post, simTime }: MediaPostProps) {
+export function MediaPost({ post, simTime, onMarkRead }: MediaPostProps) {
   const age = formatAge(simTime, post.simTime);
+
+  const handleClick = () => {
+    if (!post.read) onMarkRead(post.id);
+  };
+
+  let card: React.ReactNode;
+
+  const TWEET_CHANNEL_LABELS: Record<string, string> = {
+    "tweet": "",
+    "osint-account": "OSINT",
+    "tiktok-caption": "TikTok",
+    "youtube-caption": "YouTube",
+  };
 
   switch (post.channel) {
     case "tweet":
     case "osint-account":
     case "tiktok-caption":
     case "youtube-caption":
-      return <TweetCard post={post} age={age} />;
+      card = <TweetCard post={post} age={age} channelLabel={TWEET_CHANNEL_LABELS[post.channel]} />;
+      break;
 
     case "cable-news-ticker":
     case "tv-anchor":
-      return <NewsTickerCard post={post} age={age} />;
+      card = <NewsTickerCard post={post} age={age} />;
+      break;
 
     case "radio-broadcast":
     case "embedded-journalist":
-      return <RadioCard post={post} age={age} />;
+      card = <RadioCard post={post} age={age} />;
+      break;
 
     case "telegram":
-      return <TelegramCard post={post} age={age} />;
+      card = <TelegramCard post={post} age={age} />;
+      break;
 
     case "web-forum":
     case "reddit":
     case "blog-post":
-      return <ForumCard post={post} age={age} />;
+      card = <ForumCard post={post} age={age} />;
+      break;
 
     case "newspaper-headline":
     case "wire-bulletin":
     case "government-communique":
-      return <NewspaperCard post={post} age={age} />;
+      card = <NewspaperCard post={post} age={age} />;
+      break;
 
     default:
-      return <TweetCard post={post} age={age} />;
+      card = <TweetCard post={post} age={age} />;
   }
+
+  return (
+    <div
+      onClick={handleClick}
+      className={`cursor-pointer transition-opacity ${post.read ? "opacity-70" : ""}`}
+    >
+      {card}
+    </div>
+  );
 }

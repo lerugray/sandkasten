@@ -126,7 +126,7 @@ export function EditorToolbar({
 
       <div className="flex-1" />
 
-      <div className="p-2 text-[var(--color-tactical-text-dim)] text-[10px]">
+      <div className="p-2 text-[var(--color-tactical-text-dim)] text-xs">
         Click map to place units.
         <br />
         Shift+click for range rings.
