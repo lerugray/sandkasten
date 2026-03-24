@@ -97,7 +97,18 @@ export function simulationTick(
     orders: currentOrders,
   };
 
-  // --- Phase 4: Combat ---
+  // --- Phase 4: TCA Events (run BEFORE combat so doctrine changes take effect) ---
+  let newEventState = eventState;
+  if (eventState) {
+    const eventResult = evaluateEvents(eventState, newGameState, aiState?.missions ?? []);
+    newEventState = eventResult.eventState;
+
+    if (eventResult.stateChanges.length > 0) {
+      newGameState = applyStateChanges(newGameState, eventResult.stateChanges);
+    }
+  }
+
+  // --- Phase 5: Combat (uses runtime doctrine overrides from TCA events) ---
   let newCombatState = combatState;
   if (combatState) {
     const combatResult = runCombatPhase(
@@ -108,17 +119,6 @@ export function simulationTick(
     );
     newGameState = combatResult.state;
     newCombatState = combatResult.combatState;
-  }
-
-  // --- Phase 5: TCA Events ---
-  let newEventState = eventState;
-  if (eventState) {
-    const eventResult = evaluateEvents(eventState, newGameState, aiState?.missions ?? []);
-    newEventState = eventResult.eventState;
-
-    if (eventResult.stateChanges.length > 0) {
-      newGameState = applyStateChanges(newGameState, eventResult.stateChanges);
-    }
   }
 
   return { gameState: newGameState, eventState: newEventState, combatState: newCombatState };
