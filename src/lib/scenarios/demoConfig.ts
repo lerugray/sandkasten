@@ -19,12 +19,12 @@ const iranMissions: Mission[] = [
     type: "patrol",
     assignedUnitIds: ["ir-fac-1", "ir-fac-2", "ir-fac-3"],
     referencePoints: [
-      { lng: 56.3, lat: 27.1 },
-      { lng: 56.6, lat: 26.8 },
-      { lng: 56.1, lat: 26.6 },
-      { lng: 55.8, lat: 26.9 },
+      { lng: 56.3, lat: 27.0 },
+      { lng: 56.5, lat: 26.6 },
+      { lng: 56.2, lat: 26.2 },
+      { lng: 55.8, lat: 26.5 },
     ],
-    prosecutionRange: 50, // km
+    prosecutionRange: 130, // km — C-802 range is 120km, give slight buffer
     repeating: true,
     doctrineOverrides: {
       roe: "weapons-tight",
@@ -38,11 +38,11 @@ const iranMissions: Mission[] = [
     type: "patrol",
     assignedUnitIds: ["ir-pc-1", "ir-pc-2"],
     referencePoints: [
-      { lng: 55.8, lat: 26.8 },
-      { lng: 56.4, lat: 26.5 },
-      { lng: 56.0, lat: 26.3 },
+      { lng: 55.8, lat: 26.6 },
+      { lng: 56.4, lat: 26.3 },
+      { lng: 56.0, lat: 26.0 },
     ],
-    prosecutionRange: 40,
+    prosecutionRange: 130,
     repeating: true,
   },
   {
