@@ -9,6 +9,7 @@ import { OrderPanel } from "@/components/game/OrderPanel";
 import { MessageLog } from "@/components/game/MessageLog";
 import { CombatLog } from "@/components/game/CombatLog";
 import { MediaFeed } from "@/components/game/infowar/MediaFeed";
+import { HelpPanel } from "@/components/game/help/HelpPanel";
 import { demoScenarioConfig } from "@/lib/scenarios/demoConfig";
 import { useSimulation } from "@/lib/simulation/useSimulation";
 import { useInfoWar } from "@/lib/infowar/useInfoWar";
@@ -33,6 +34,7 @@ export default function PlayPage() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [isPlacingWaypoint, setIsPlacingWaypoint] = useState(false);
   const [sidebarTab, setSidebarTab] = useState<"forces" | "messages" | "combat" | "media">("forces");
+  const [showHelp, setShowHelp] = useState(false);
 
   const { infoWarState, toggleEnabled, markPostRead, resetInfoWar } = useInfoWar(
     gameState,
@@ -50,17 +52,29 @@ export default function PlayPage() {
     resetInfoWar();
   }, [resetSimulation, resetInfoWar]);
 
-  // Spacebar pause/unpause
+  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === "Space" && e.target === document.body) {
         e.preventDefault();
         togglePause();
       }
+      if ((e.key === "h" || e.key === "H" || e.key === "?") && e.target === document.body) {
+        e.preventDefault();
+        setShowHelp((prev) => !prev);
+      }
+      if (e.key === "Escape") {
+        if (showHelp) {
+          setShowHelp(false);
+        } else if (selectedUnitId) {
+          setSelectedUnitId(null);
+          setIsPlacingWaypoint(false);
+        }
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePause]);
+  }, [togglePause, showHelp, selectedUnitId]);
 
   const liveScenario = {
     ...demoScenarioConfig.scenario,
@@ -133,12 +147,21 @@ export default function PlayPage() {
         </div>
 
         <button
+          onClick={() => setShowHelp(true)}
+          aria-label="Open help"
+          className="ml-auto text-sm text-[var(--color-tactical-text-dim)] hover:text-[var(--color-terminal-green)] border border-[var(--color-tactical-border)] px-3 py-1.5 rounded cursor-pointer tracking-wider font-bold"
+        >
+          ?
+        </button>
+        <button
           onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-          className="ml-auto text-sm text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-3 py-1.5 rounded cursor-pointer tracking-wider"
+          className="ml-2 text-sm text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-3 py-1.5 rounded cursor-pointer tracking-wider"
         >
           {theme === "dark" ? "LIGHT" : "DARK"}
         </button>
       </div>
+
+      {showHelp && <HelpPanel onClose={() => setShowHelp(false)} />}
 
       <div className="flex-1 flex">
         {/* Sidebar */}

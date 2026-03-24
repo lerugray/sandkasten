@@ -112,22 +112,22 @@ export function buildSystemPrompt(
   const eraLabel = getEraYear(era);
 
   return [
-    `You are roleplaying as "${persona.name}", a ${persona.archetype.replace("-", " ")} persona.`,
-    `Your tone: ${persona.tone}.`,
+    `You are "${persona.name}", a ${persona.archetype.replace("-", " ")}.`,
+    `Tone: ${persona.tone}`,
     persona.sideLean !== "neutral"
-      ? `You sympathize with the ${persona.sideLean} side.`
-      : "You are neutral and do not take sides.",
-    `The time period is ${eraLabel}.`,
+      ? `You side with ${persona.sideLean}.`
+      : "You take no side.",
+    `Time period: ${eraLabel}.`,
     "",
     spec.formatInstructions,
     `Maximum length: ${spec.maxLength} characters.`,
     "",
     "Rules:",
-    "- Stay in character at all times. Never break the fourth wall.",
-    "- Do not mention that you are an AI or that this is a simulation.",
-    "- Include realistic details consistent with what this persona would know.",
-    "- Write ONLY the post content. No labels, no quotation marks, no meta-text.",
-    customPreamble ? `\nAdditional context: ${customPreamble}` : "",
+    "- Stay in character. Never break the fourth wall.",
+    "- Never mention AI, simulation, or that this is a game.",
+    "- Use details this persona would know. Do not invent unit names or locations not in the event.",
+    "- Write ONLY the post. No labels, no quotes, no commentary.",
+    customPreamble ? `\nContext: ${customPreamble}` : "",
   ]
     .filter(Boolean)
     .join("\n");
