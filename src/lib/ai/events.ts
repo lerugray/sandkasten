@@ -273,10 +273,35 @@ export function applyStateChanges(
         break;
       }
 
-      case "doctrine":
-        // Doctrine changes are handled by the AI controller via AIState
-        // Just signal that it happened — the caller applies it
+      case "doctrine": {
+        // Apply doctrine changes to game state so combat system picks them up
+        const docAction = change.action;
+        if (docAction.mission) {
+          // Mission-level doctrine change — store in game state for AI to read
+          newState = {
+            ...newState,
+            missionDoctrineOverrides: {
+              ...(newState.missionDoctrineOverrides ?? {}),
+              [docAction.mission]: {
+                ...((newState.missionDoctrineOverrides ?? {})[docAction.mission] ?? {}),
+                ...docAction.changes,
+              },
+            },
+          };
+        }
+        // Also update the side-level doctrine so combat system sees it
+        newState = {
+          ...newState,
+          sideDoctrineOverrides: {
+            ...(newState.sideDoctrineOverrides ?? {}),
+            [docAction.side]: {
+              ...((newState.sideDoctrineOverrides ?? {})[docAction.side] ?? {}),
+              ...docAction.changes,
+            },
+          },
+        };
         break;
+      }
     }
   }
 

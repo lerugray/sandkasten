@@ -1,4 +1,5 @@
 import type { Unit, Side, ReferencePoint, Position } from "@/types/game";
+import type { Doctrine } from "@/lib/ai/doctrine";
 
 export interface Contact {
   id: string;
@@ -44,6 +45,9 @@ export interface GameState {
   referencePoints: ReferencePoint[];
   score: Record<string, number>;
   turnNumber: number;
+  // Doctrine overrides applied by TCA events at runtime
+  sideDoctrineOverrides?: Record<string, Partial<Doctrine>>;
+  missionDoctrineOverrides?: Record<string, Partial<Doctrine>>;
 }
 
 export function createInitialGameState(

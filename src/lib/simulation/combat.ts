@@ -88,7 +88,14 @@ export function runCombatPhase(
   // 2. Check for new engagements (throttled)
   if (state.simTime - lastEngagementTime >= ENGAGEMENT_INTERVAL_MS) {
     lastEngagementTime = state.simTime;
-    const engResult = checkEngagements(newState, newCombat, sideDoctrine);
+    // Merge static config doctrine with runtime TCA overrides
+    const effectiveDoctrine = { ...sideDoctrine };
+    if (state.sideDoctrineOverrides) {
+      for (const [side, overrides] of Object.entries(state.sideDoctrineOverrides)) {
+        effectiveDoctrine[side] = { ...effectiveDoctrine[side], ...overrides };
+      }
+    }
+    const engResult = checkEngagements(newState, newCombat, effectiveDoctrine);
     newCombat = engResult.combatState;
   }
 

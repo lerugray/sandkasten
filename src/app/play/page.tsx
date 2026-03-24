@@ -114,7 +114,7 @@ export default function PlayPage() {
         {/* Sidebar */}
         <div className="w-80 bg-[var(--color-tactical-panel)] border-r border-[var(--color-tactical-border)] flex flex-col text-base shrink-0 overflow-hidden">
           {/* Tab switcher */}
-          <div className="flex border-b border-[var(--color-tactical-border)] shrink-0">
+          <div className="flex border-b border-[var(--color-tactical-border)] shrink-0 overflow-visible">
             <button
               onClick={() => setSidebarTab("forces")}
               className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer ${
@@ -127,7 +127,7 @@ export default function PlayPage() {
             </button>
             <button
               onClick={() => setSidebarTab("messages")}
-              className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer relative ${
+              className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer ${
                 sidebarTab === "messages"
                   ? "text-[var(--color-terminal-amber)] border-b border-[var(--color-terminal-amber)]"
                   : "text-[var(--color-tactical-text-dim)]"
@@ -135,14 +135,14 @@ export default function PlayPage() {
             >
               Intel
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-[var(--color-terminal-amber)] text-[var(--color-tactical-dark)] text-[8px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold">
+                <span className="ml-1 inline-flex items-center justify-center bg-[var(--color-terminal-amber)] text-[var(--color-tactical-dark)] text-[10px] rounded-full w-5 h-5 font-bold">
                   {unreadCount}
                 </span>
               )}
             </button>
             <button
               onClick={() => setSidebarTab("combat")}
-              className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer relative ${
+              className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer ${
                 sidebarTab === "combat"
                   ? "text-[var(--color-terminal-red)] border-b border-[var(--color-terminal-red)]"
                   : "text-[var(--color-tactical-text-dim)]"
@@ -150,7 +150,7 @@ export default function PlayPage() {
             >
               Combat
               {(combatState?.weaponsInFlight.length ?? 0) > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-[var(--color-terminal-red)] text-[var(--color-tactical-dark)] text-[8px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold">
+                <span className="ml-1 inline-flex items-center justify-center bg-[var(--color-terminal-red)] text-[var(--color-tactical-dark)] text-[10px] rounded-full w-5 h-5 font-bold">
                   {combatState?.weaponsInFlight.length}
                 </span>
               )}
