@@ -59,6 +59,29 @@ Sandkasten shares its map renderer and NATO symbology with [Auftragstaktik](http
 - Contacts age and degrade over time without sensor updates
 - Time controls: pause/play, 1x-60x speed, sim clock display
 
+**Phase 3 (OPFOR AI)** is complete:
+
+- Doctrine system: ROE, engagement range, radar usage, evasion, withdrawal
+- Mission types: patrol, strike, CAP, escort, transit
+- Trigger-Condition-Action event scripting for dynamic scenario narratives
+- Cascading doctrine: side → mission → unit overrides
+
+**Phase 4 (Combat)** is complete:
+
+- Anti-ship missile launch, flight, and intercept
+- SAM defense and CIWS point defense
+- Damage model: undamaged → damaged → mission-kill → destroyed
+- Countermeasures: chaff, ECM, decoys
+- Combat log with event history
+
+**InfoWar Feed** (new):
+
+- Era-appropriate media posts generated from in-game events via local LLM (Ollama)
+- Personas: state media, wire services, OSINT accounts, pundits, civilians, troll farms
+- Media channels adapt to scenario era: pre-1980s get radio/newspapers, 2020s+ get tweets/Telegram
+- Requires [Ollama](https://ollama.com) running locally — game works fine without it
+- "Media" sidebar tab with scrolling feed of generated posts
+
 ---
 
 ## Setup
@@ -100,18 +123,20 @@ The script reads CMO's SQLite database files and outputs JSON to `data/extractio
 ```
 sandkasten/
 ├── src/
-│   ├── app/                    # Next.js pages
+│   ├── app/                    # Next.js pages (home, /play, /editor)
 │   ├── components/
 │   │   ├── map/                # TacticalMap, UnitLayer, RangeRings, DetailPanel
-│   │   ├── game/               # Time controls, orders, intel (planned)
-│   │   └── editor/             # Scenario editor (planned)
+│   │   ├── game/               # Time controls, orders, intel, combat log
+│   │   │   └── infowar/        # InfoWar feed UI (media cards, status)
+│   │   └── editor/             # Scenario editor
 │   ├── lib/
 │   │   ├── map/                # Basemap styles, range ring geometry
 │   │   ├── symbols/            # milsymbol factory with caching
 │   │   ├── platforms/          # Platform database lookup
 │   │   ├── scenarios/          # Scenario loader, demo scenario
-│   │   ├── simulation/         # Sim engine (planned)
-│   │   └── ai/                 # OPFOR doctrine and missions (planned)
+│   │   ├── simulation/         # Sim engine, movement, detection, combat
+│   │   ├── ai/                 # OPFOR doctrine, missions, TCA events
+│   │   └── infowar/            # InfoWar engine, Ollama service, personas
 │   └── types/                  # TypeScript interfaces
 ├── scripts/
 │   └── extract_cmo_db.py       # CMO database extraction
@@ -130,8 +155,9 @@ sandkasten/
 |-------|-------|--------|
 | **1. Foundation** | Project scaffold, map, NATO symbols, scenario editor | Complete |
 | **2. Simulation Core** | Movement, radar detection, fog of war, time controls | Complete |
-| **3. OPFOR AI** | Doctrine, missions (patrol/strike/CAP), TCA event scripting | Planned |
-| **4. Combat** | Anti-ship missiles, SAM defense, damage model, countermeasures | Planned |
+| **3. OPFOR AI** | Doctrine, missions (patrol/strike/CAP), TCA event scripting | Complete |
+| **4. Combat** | Anti-ship missiles, SAM defense, damage model, countermeasures | Complete |
+| **InfoWar Feed** | Era-appropriate media posts from game events via local LLM (Ollama) | Complete |
 | **5. WeGo Multiplayer** | WebSocket sync, turn system, lobby, server-side fog of war | Planned |
 | **6. Community** | Scenario sharing, Auftragstaktik OSINT import, campaign mode | Planned |
 

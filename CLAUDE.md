@@ -37,6 +37,7 @@ The core differentiator from CMO: pull real-world OSINT snapshots from Auftragst
 - Session notes tracked in `SESSION_NOTES.md`
 - Design document in `GDD.md`
 - User is not a programmer — do things for them rather than giving instructions
+- **Update README.md whenever features are added or changed.** The README's "Current State" section and roadmap table must reflect reality. Don't let it drift behind the actual app.
 
 ## Testing & Quality Rules
 - **Smoke test before asking user to test.** Run `npm run dev`, verify the page loads, start the simulation, and confirm core functionality (units move, contacts appear, combat triggers) before pushing. The user should never be the one discovering that a feature doesn't work.
