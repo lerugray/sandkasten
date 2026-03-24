@@ -308,7 +308,6 @@ function checkEngagements(
       );
 
       if (!shouldEngage(doctrine, isUnderAttack)) continue;
-      console.log(`[COMBAT] ${unit.name}: ENGAGING (ROE=${doctrine.roe})`);
 
 
       // Find nearest enemy

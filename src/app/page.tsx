@@ -40,43 +40,43 @@ export default function Home() {
   return (
     <div className={`h-screen w-screen flex flex-col bg-[var(--color-tactical-dark)] ${theme === "light" ? "theme-light" : ""}`}>
       {/* Header */}
-      <div className="h-8 flex items-center px-3 border-b border-[var(--color-tactical-border)] bg-[var(--color-tactical-panel)] shrink-0">
+      <div className="h-14 flex items-center px-5 border-b border-[var(--color-tactical-border)] bg-[var(--color-tactical-panel)] shrink-0">
         <span
-          className="text-[var(--color-terminal-green)] text-sm font-bold tracking-widest"
+          className="text-[var(--color-terminal-green)] text-lg font-bold tracking-widest mr-8"
           style={{ fontFamily: "Rajdhani, sans-serif" }}
         >
           SANDKASTEN
         </span>
-        <span className="text-[var(--color-tactical-text-dim)] text-xs ml-3">
+        <span className="text-[var(--color-tactical-text-dim)] text-base">
           {demoScenario.name}
         </span>
         {pinnedRingIds.size > 0 && (
           <button
             onClick={clearPinnedRings}
-            className="ml-3 text-[10px] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
+            className="ml-4 text-sm text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-3 py-1.5 rounded cursor-pointer"
           >
             CLEAR RINGS ({pinnedRingIds.size})
           </button>
         )}
         <a
           href="/play"
-          className="ml-auto mr-3 text-[10px] text-[var(--color-tactical-dark)] bg-[var(--color-terminal-green)] hover:brightness-110 px-3 py-0.5 rounded font-bold tracking-wider"
+          className="ml-auto mr-4 text-sm text-[var(--color-tactical-dark)] bg-[var(--color-terminal-green)] hover:brightness-110 px-4 py-1.5 rounded font-bold tracking-wider"
         >
           PLAY
         </a>
         <a
           href="/editor"
-          className="mr-3 text-[10px] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded"
+          className="mr-4 text-sm text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-3 py-1.5 rounded"
         >
           EDITOR
         </a>
         <button
           onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-          className="mr-3 text-[10px] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
+          className="mr-4 text-sm text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-3 py-1.5 rounded cursor-pointer tracking-wider"
         >
           {theme === "dark" ? "LIGHT" : "DARK"}
         </button>
-        <span className="text-[var(--color-tactical-text-dim)] text-xs">
+        <span className="text-[var(--color-tactical-text-dim)] text-base font-mono">
           {new Date(demoScenario.startTime).toUTCString().slice(0, -4) + " Z"}
         </span>
       </div>
