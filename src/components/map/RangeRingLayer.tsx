@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import { createCircleGeoJSON } from "@/lib/map/rangeRings";
 import { getPlatform } from "@/lib/platforms/lookup";
@@ -27,61 +27,16 @@ export function RangeRingLayer({
   selectedUnitId,
   pinnedRingIds,
 }: RangeRingLayerProps) {
+  const layersAdded = useRef(false);
+
+  // One-time setup: add source and layers
   useEffect(() => {
-    const features: Feature<Polygon>[] = [];
+    if (layersAdded.current) return;
 
-    // Show rings for: selected unit + all pinned units
-    const idsToShow = new Set(pinnedRingIds);
-    if (selectedUnitId) idsToShow.add(selectedUnitId);
-    const unitsToShow = units.filter((u) => idsToShow.has(u.id));
+    const emptyGeoJSON: FeatureCollection = { type: "FeatureCollection", features: [] };
 
-    unitsToShow.forEach((unit) => {
-      const platform = getPlatform(unit.platformId);
-      if (!platform) return;
-
-      const affiliation = getAffiliation(unit, playerSide);
-      const isFriendly = affiliation === "friendly";
-
-      if (platform.sensorRangeKm) {
-        const ring = createCircleGeoJSON(
-          unit.position.lng,
-          unit.position.lat,
-          platform.sensorRangeKm
-        );
-        ring.properties = {
-          friendly: isFriendly,
-          type: "sensor",
-          unitId: unit.id,
-        };
-        features.push(ring);
-      }
-
-      if (platform.weaponRangeKm) {
-        const ring = createCircleGeoJSON(
-          unit.position.lng,
-          unit.position.lat,
-          platform.weaponRangeKm
-        );
-        ring.properties = {
-          friendly: isFriendly,
-          type: "weapon",
-          unitId: unit.id,
-        };
-        features.push(ring);
-      }
-    });
-
-    const geojson: FeatureCollection = {
-      type: "FeatureCollection",
-      features,
-    };
-
-    const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
-
-    if (source) {
-      source.setData(geojson);
-    } else {
-      map.addSource(SOURCE_ID, { type: "geojson", data: geojson });
+    if (!map.getSource(SOURCE_ID)) {
+      map.addSource(SOURCE_ID, { type: "geojson", data: emptyGeoJSON });
 
       map.addLayer({
         id: FILL_LAYER,
@@ -120,11 +75,56 @@ export function RangeRingLayer({
       });
     }
 
+    layersAdded.current = true;
+
     return () => {
       if (map.getLayer(LINE_LAYER)) map.removeLayer(LINE_LAYER);
       if (map.getLayer(FILL_LAYER)) map.removeLayer(FILL_LAYER);
       if (map.getSource(SOURCE_ID)) map.removeSource(SOURCE_ID);
+      layersAdded.current = false;
     };
+  }, [map]);
+
+  // Update data when selection/units change — no teardown
+  useEffect(() => {
+    const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
+    if (!source) return;
+
+    const features: Feature<Polygon>[] = [];
+
+    const idsToShow = new Set(pinnedRingIds);
+    if (selectedUnitId) idsToShow.add(selectedUnitId);
+    const unitsToShow = units.filter((u) => idsToShow.has(u.id));
+
+    unitsToShow.forEach((unit) => {
+      const platform = getPlatform(unit.platformId);
+      if (!platform) return;
+
+      const affiliation = getAffiliation(unit, playerSide);
+      const isFriendly = affiliation === "friendly";
+
+      if (platform.sensorRangeKm) {
+        const ring = createCircleGeoJSON(
+          unit.position.lng,
+          unit.position.lat,
+          platform.sensorRangeKm
+        );
+        ring.properties = { friendly: isFriendly, type: "sensor", unitId: unit.id };
+        features.push(ring);
+      }
+
+      if (platform.weaponRangeKm) {
+        const ring = createCircleGeoJSON(
+          unit.position.lng,
+          unit.position.lat,
+          platform.weaponRangeKm
+        );
+        ring.properties = { friendly: isFriendly, type: "weapon", unitId: unit.id };
+        features.push(ring);
+      }
+    });
+
+    source.setData({ type: "FeatureCollection", features });
   }, [map, units, playerSide, selectedUnitId, pinnedRingIds]);
 
   return null;

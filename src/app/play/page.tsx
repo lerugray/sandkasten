@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { MapWrapper } from "@/components/map/MapWrapper";
 import { DetailPanel } from "@/components/map/DetailPanel";
 import { TimeControls } from "@/components/game/TimeControls";
@@ -31,6 +31,18 @@ export default function PlayPage() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [isPlacingWaypoint, setIsPlacingWaypoint] = useState(false);
   const [sidebarTab, setSidebarTab] = useState<"forces" | "messages" | "combat">("forces");
+
+  // Spacebar pause/unpause
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Space" && e.target === document.body) {
+        e.preventDefault();
+        togglePause();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [togglePause]);
 
   const liveScenario = {
     ...demoScenarioConfig.scenario,
