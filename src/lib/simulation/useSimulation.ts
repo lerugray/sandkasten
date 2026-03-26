@@ -52,8 +52,10 @@ export function useSimulation(config: ScenarioConfig) {
 
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastTickRef = useRef<number>(Date.now());
+  const lastRenderRef = useRef<number>(Date.now());
 
   // Main simulation loop
+  // Sim ticks at 50ms but React only re-renders at ~4fps (250ms) to avoid jitter
   useEffect(() => {
     tickRef.current = setInterval(() => {
       const now = Date.now();
@@ -68,12 +70,27 @@ export function useSimulation(config: ScenarioConfig) {
           eventStateRef.current,
           combatStateRef.current
         );
-        setGameState(result.gameState);
+
+        // Always update refs (sim state is authoritative)
+        gameStateRef.current = result.gameState;
         if (result.eventState) {
-          setEventState(result.eventState);
+          eventStateRef.current = result.eventState;
         }
         if (result.combatState) {
-          setCombatState(result.combatState);
+          combatStateRef.current = result.combatState;
+        }
+
+        // Throttle React re-renders to avoid UI jitter
+        const timeSinceRender = now - lastRenderRef.current;
+        if (timeSinceRender >= 250) {
+          lastRenderRef.current = now;
+          setGameState(result.gameState);
+          if (result.eventState) {
+            setEventState(result.eventState);
+          }
+          if (result.combatState) {
+            setCombatState(result.combatState);
+          }
         }
       }
     }, TICK_INTERVAL_MS);

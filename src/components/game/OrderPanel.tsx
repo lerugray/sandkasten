@@ -30,7 +30,7 @@ export function OrderPanel({
   onToggleRadar,
 }: OrderPanelProps) {
   return (
-    <div className="text-xs space-y-2">
+    <div className="text-sm space-y-3">
       <div className="text-[var(--color-terminal-green)] font-bold uppercase tracking-wider">
         Orders — {unit.name}
       </div>
@@ -43,7 +43,7 @@ export function OrderPanel({
         <div className="flex gap-1">
           <button
             onClick={onToggleWaypointMode}
-            className={`px-2 py-1 rounded text-xs cursor-pointer ${
+            className={`px-2 py-1 rounded text-sm cursor-pointer ${
               isPlacingWaypoint
                 ? "bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)] font-bold"
                 : "border border-[var(--color-tactical-border)] hover:border-[var(--color-terminal-green)]"
@@ -54,7 +54,7 @@ export function OrderPanel({
           {orders.waypoints.length > 0 && (
             <button
               onClick={onClearWaypoints}
-              className="px-2 py-1 rounded text-xs border border-[var(--color-tactical-border)] text-[var(--color-terminal-red)] hover:border-[var(--color-terminal-red)] cursor-pointer"
+              className="px-2 py-1 rounded text-sm border border-[var(--color-tactical-border)] text-[var(--color-terminal-red)] hover:border-[var(--color-terminal-red)] cursor-pointer"
             >
               CLEAR
             </button>
@@ -72,7 +72,7 @@ export function OrderPanel({
             <button
               key={t}
               onClick={() => onSetThrottle(t)}
-              className={`px-2 py-1 rounded text-xs cursor-pointer ${
+              className={`px-2 py-1 rounded text-sm cursor-pointer ${
                 orders.throttle === t
                   ? "bg-[var(--color-terminal-blue)] text-[var(--color-tactical-dark)] font-bold"
                   : "border border-[var(--color-tactical-border)] hover:border-[var(--color-terminal-blue)]"
@@ -91,7 +91,7 @@ export function OrderPanel({
         </div>
         <button
           onClick={onToggleRadar}
-          className={`px-2 py-1 rounded text-xs cursor-pointer ${
+          className={`px-2 py-1 rounded text-sm cursor-pointer ${
             orders.radarActive
               ? "bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)] font-bold"
               : "border border-[var(--color-tactical-border)] text-[var(--color-tactical-text-dim)]"
@@ -100,7 +100,7 @@ export function OrderPanel({
           RADAR {orders.radarActive ? "ACTIVE" : "OFF"}
         </button>
         {orders.radarActive && (
-          <span className="text-xs text-[var(--color-tactical-text-dim)] ml-2">
+          <span className="text-sm text-[var(--color-tactical-text-dim)] ml-2">
             (emitting — detectable by ESM)
           </span>
         )}

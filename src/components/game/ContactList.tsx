@@ -25,7 +25,7 @@ const CLASSIFICATION_LABELS: Record<Contact["classification"], string> = {
 export function ContactList({ contacts, simTime, onContactClick }: ContactListProps) {
   if (contacts.length === 0) {
     return (
-      <div className="text-[var(--color-tactical-text-dim)] text-xs p-2">
+      <div className="text-[var(--color-tactical-text-dim)] text-sm p-2">
         No contacts detected
       </div>
     );
@@ -47,13 +47,13 @@ export function ContactList({ contacts, simTime, onContactClick }: ContactListPr
           <button
             key={contact.id}
             onClick={() => onContactClick?.(contact)}
-            className={`w-full text-left px-2 py-1 rounded text-xs hover:bg-[var(--color-tactical-border)] cursor-pointer ${
+            className={`w-full text-left px-2 py-1 rounded text-sm hover:bg-[var(--color-tactical-border)] cursor-pointer ${
               isStale ? "opacity-50" : ""
             }`}
           >
             <div className="flex items-center gap-2">
               <span
-                className="font-bold text-xs w-6"
+                className="font-bold text-sm w-6"
                 style={{ color: CLASSIFICATION_COLORS[contact.classification] }}
               >
                 {CLASSIFICATION_LABELS[contact.classification]}
@@ -61,11 +61,11 @@ export function ContactList({ contacts, simTime, onContactClick }: ContactListPr
               <span className="text-[var(--color-tactical-text)] truncate flex-1">
                 {contact.platformName ?? `Contact ${contact.id.slice(-4)}`}
               </span>
-              <span className="text-[var(--color-tactical-text-dim)] text-xs">
+              <span className="text-[var(--color-tactical-text-dim)] text-sm">
                 {contact.sensorType.toUpperCase()}
               </span>
             </div>
-            <div className="text-xs text-[var(--color-tactical-text-dim)] ml-8">
+            <div className="text-sm text-[var(--color-tactical-text-dim)] ml-8">
               {contact.position.lat.toFixed(2)}N {contact.position.lng.toFixed(2)}E
               {age > 0 && ` · ${age}s ago`}
             </div>
