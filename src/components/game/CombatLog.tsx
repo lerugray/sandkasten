@@ -15,7 +15,7 @@ const EVENT_COLORS: Record<CombatEvent["type"], string> = {
   miss: "text-[var(--color-tactical-text-dim)]",
   destroyed: "text-[var(--color-terminal-red)]",
   damaged: "text-[var(--color-terminal-amber)]",
-  defended: "text-[var(--color-terminal-green)]",
+  defended: "text-[var(--color-status-green)]",
 };
 
 const EVENT_ICONS: Record<CombatEvent["type"], string> = {

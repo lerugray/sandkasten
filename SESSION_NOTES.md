@@ -166,6 +166,36 @@ Full extraction spec documented in `DB_EXTRACTION_SPEC.md` — covers every tabl
 - Debug logging should be minimal and filterable — flooding the console with per-unit messages is unhelpful
 - Don't make the user debug — fix it myself and only ask for screenshots if needed
 
+### Session 4 — 2026-03-25 (Design System Migration)
+
+**Applied Slate Command design system** to match Auftragstaktik. Source: `../Auftragstaktik/DESIGN_SYSTEM_HANDOFF.md`.
+
+**What changed:**
+- **Fonts**: Share Tech Mono + Rajdhani → IBM Plex Mono + IBM Plex Sans
+- **Colors**: Neon green accent → blue (#3B82F6). Purple-black backgrounds → navy-slate (#0B1120). New `--color-status-green` (#22C55E) for healthy/active/confirmed indicators.
+- **Status indicators**: "undamaged", "defended", "AUTONOMOUS", Ollama connected dot now use status-green (actual green) instead of terminal-green (now blue)
+- **MapLibre controls**: Repositioned to bottom-right to avoid panel overlap
+- **No removals needed**: Sandkasten had no scanlines, glow-borders, or wide letter-spacing
+
+**Also committed earlier this session:**
+- Text sizing bump to `text-sm` (14px) across UI components
+- Render throttle in useSimulation (sim ticks 50ms, React re-renders ~4fps)
+
+**Things to check tomorrow:**
+1. Start the dev server (see below) and load `http://localhost:3000`
+2. Home page — "SANDKASTEN" title and "PLAY" button should be blue, not green
+3. `/play` — sidebar tabs, time controls, order buttons all blue accent
+4. Select a unit — detail panel should show "UNDAMAGED" in green (not blue)
+5. Toggle light/dark theme — both should look clean
+6. Map zoom controls should be bottom-right corner, not top-right
+7. Fonts should feel cleaner — IBM Plex instead of the old monospace everywhere
+
+**How to start the dev server:**
+- Open a terminal in the Sandkasten folder
+- Type `npm run dev` and hit Enter
+- Open `http://localhost:3000` in your browser
+- Or: open Claude Code and say "start the dev server and tell me when it's ready"
+
 ### Next Steps
 - Continue Phase 5: WeGo Multiplayer (or continue polishing single-player)
 - See `TASKS.md` for full breakdown

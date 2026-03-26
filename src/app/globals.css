@@ -2,27 +2,35 @@
 @import "maplibre-gl/dist/maplibre-gl.css";
 
 :root {
-  --color-tactical-dark: #0a0a0f;
-  --color-tactical-panel: #12121a;
-  --color-tactical-border: #1e1e2e;
-  --color-tactical-text: #c8c8d4;
-  --color-tactical-text-dim: #8e8ea2;
-  --color-terminal-green: #00ff41;
-  --color-terminal-red: #ff3333;
-  --color-terminal-blue: #00aaff;
-  --color-terminal-amber: #ffbf00;
+  --color-tactical-dark: #0B1120;
+  --color-tactical-panel: #111827;
+  --color-tactical-border: #334155;
+  --color-tactical-surface: #1F2937;
+  --color-tactical-text: #E2E8F0;
+  --color-tactical-text-dim: #94A3B8;
+  --color-terminal-green: #3B82F6;
+  --color-terminal-green-dim: #2563EB;
+  --color-terminal-red: #EF4444;
+  --color-terminal-blue: #06B6D4;
+  --color-terminal-amber: #F59E0B;
+  --color-status-green: #22C55E;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+  --font-heading: "IBM Plex Sans", "Arial", sans-serif;
 }
 
 .theme-light {
-  --color-tactical-dark: #e8e8f0;
-  --color-tactical-panel: #f0f0f8;
-  --color-tactical-border: #c8c8d8;
-  --color-tactical-text: #1a1a2e;
-  --color-tactical-text-dim: #52526a;
-  --color-terminal-green: #007830;
-  --color-terminal-red: #cc2222;
-  --color-terminal-blue: #0066cc;
-  --color-terminal-amber: #cc8800;
+  --color-tactical-dark: #F1F5F9;
+  --color-tactical-panel: #FFFFFF;
+  --color-tactical-border: #CBD5E1;
+  --color-tactical-surface: #E2E8F0;
+  --color-tactical-text: #0F172A;
+  --color-tactical-text-dim: #475569;
+  --color-terminal-green: #1D4ED8;
+  --color-terminal-green-dim: #1E40AF;
+  --color-terminal-red: #DC2626;
+  --color-terminal-blue: #0E7490;
+  --color-terminal-amber: #B45309;
+  --color-status-green: #15803D;
 }
 
 .theme-light .maplibregl-ctrl-group {
@@ -47,7 +55,7 @@ body {
   height: 100%;
   background: var(--color-tactical-dark);
   color: var(--color-tactical-text);
-  font-family: "Share Tech Mono", "Courier New", monospace;
+  font-family: "IBM Plex Mono", "Courier New", monospace;
 }
 
 /* MapLibre overrides */
@@ -58,6 +66,12 @@ body {
 
 .maplibregl-ctrl-group button {
   filter: invert(0.8);
+}
+
+.maplibregl-ctrl-top-right {
+  top: auto !important;
+  bottom: 80px !important;
+  right: 10px !important;
 }
 
 .maplibregl-ctrl-attrib {
@@ -77,7 +91,7 @@ body {
   border: 1px solid var(--color-tactical-border) !important;
   border-radius: 4px !important;
   padding: 8px 12px !important;
-  font-family: "Share Tech Mono", monospace !important;
+  font-family: "IBM Plex Mono", monospace !important;
   font-size: 12px !important;
 }
 

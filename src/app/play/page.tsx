@@ -123,7 +123,7 @@ export default function PlayPage() {
         <a
           href="/"
           className="text-[var(--color-terminal-green)] text-lg font-bold tracking-widest mr-8"
-          style={{ fontFamily: "Rajdhani, sans-serif" }}
+          style={{ fontFamily: "IBM Plex Sans, sans-serif" }}
         >
           SANDKASTEN
         </a>
@@ -360,7 +360,7 @@ export default function PlayPage() {
                         ? "text-[var(--color-terminal-red)]"
                         : "text-[var(--color-terminal-amber)]"
                   }`}
-                  style={{ fontFamily: "Rajdhani, sans-serif" }}
+                  style={{ fontFamily: "IBM Plex Sans, sans-serif" }}
                 >
                   {scenarioResult.result.toUpperCase()}
                 </div>

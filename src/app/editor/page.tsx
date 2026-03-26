@@ -126,7 +126,7 @@ export default function EditorPage() {
         <a
           href="/"
           className="text-[var(--color-terminal-green)] text-sm font-bold tracking-widest mr-3 hover:underline"
-          style={{ fontFamily: "Rajdhani, sans-serif" }}
+          style={{ fontFamily: "IBM Plex Sans, sans-serif" }}
         >
           SANDKASTEN
         </a>

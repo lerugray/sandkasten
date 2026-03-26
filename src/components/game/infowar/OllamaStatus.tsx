@@ -35,7 +35,7 @@ export function OllamaStatus({
             backgroundColor: !enabled
               ? "var(--color-tactical-text-dim)"
               : connected
-                ? "var(--color-terminal-green)"
+                ? "var(--color-status-green)"
                 : "var(--color-terminal-red)",
           }}
         />

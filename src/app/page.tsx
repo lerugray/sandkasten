@@ -43,7 +43,7 @@ export default function Home() {
       <div className="h-14 flex items-center px-5 border-b border-[var(--color-tactical-border)] bg-[var(--color-tactical-panel)] shrink-0">
         <span
           className="text-[var(--color-terminal-green)] text-lg font-bold tracking-widest mr-8"
-          style={{ fontFamily: "Rajdhani, sans-serif" }}
+          style={{ fontFamily: "IBM Plex Sans, sans-serif" }}
         >
           SANDKASTEN
         </span>

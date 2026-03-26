@@ -139,7 +139,7 @@ export function DetailPanel({ unit, onClose }: DetailPanelProps) {
             <span
               className={
                 unit.damageState === "undamaged"
-                  ? "text-[var(--color-terminal-green)]"
+                  ? "text-[var(--color-status-green)]"
                   : unit.damageState === "damaged"
                   ? "text-[var(--color-terminal-amber)]"
                   : "text-[var(--color-terminal-red)]"
@@ -388,7 +388,7 @@ function MountList({ mountIds }: { mountIds: number[] }) {
             {m.autonomous && (
               <>
                 <span className="text-[var(--color-tactical-text-dim)]">MODE</span>
-                <span className="text-[var(--color-terminal-green)]">AUTONOMOUS</span>
+                <span className="text-[var(--color-status-green)]">AUTONOMOUS</span>
               </>
             )}
           </div>
