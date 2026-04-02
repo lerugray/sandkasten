@@ -40,7 +40,8 @@ The core differentiator from CMO: pull real-world OSINT snapshots from Auftragst
 - **Update README.md whenever features are added or changed.** The README's "Current State" section and roadmap table must reflect reality. Don't let it drift behind the actual app.
 
 ## Testing & Quality Rules
-- **Smoke test before asking user to test.** Run `npm run dev`, verify the page loads, start the simulation, and confirm core functionality (units move, contacts appear, combat triggers) before pushing. The user should never be the one discovering that a feature doesn't work.
+- **Run `npm test` before every push.** Playwright E2E tests cover page loads, simulation gameplay (units move, contacts appear, combat triggers), design system checks, and UI interactions. All 27 tests must pass. The dev server auto-starts on port 3001 (to avoid colliding with Auftragstaktik on 3000).
+- **Smoke test before asking user to test.** If Playwright tests pass, the user should never be the one discovering that a feature doesn't work.
 - **Never make the user debug.** Don't ask them to read console logs, check network tabs, or interpret error messages. If something is broken, fix it — only ask for screenshots of visible UI behavior.
 - **When the user reports a bug, fix it in one shot.** Don't push speculative fixes that require multiple test cycles. Read the code, trace the full execution path, find the root cause, then fix it.
 - **"Restart the dev server"** = tell them: Ctrl+C in the terminal, then `npm run dev`

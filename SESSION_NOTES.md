@@ -181,19 +181,35 @@ Full extraction spec documented in `DB_EXTRACTION_SPEC.md` — covers every tabl
 - Text sizing bump to `text-sm` (14px) across UI components
 - Render throttle in useSimulation (sim ticks 50ms, React re-renders ~4fps)
 
-**Things to check tomorrow:**
-1. Start the dev server (see below) and load `http://localhost:3000`
-2. Home page — "SANDKASTEN" title and "PLAY" button should be blue, not green
-3. `/play` — sidebar tabs, time controls, order buttons all blue accent
-4. Select a unit — detail panel should show "UNDAMAGED" in green (not blue)
-5. Toggle light/dark theme — both should look clean
-6. Map zoom controls should be bottom-right corner, not top-right
-7. Fonts should feel cleaner — IBM Plex instead of the old monospace everywhere
+**Session 4 design checklist — verified by Playwright (Session 5):**
+1. ~~Home page — "SANDKASTEN" title and "PLAY" button should be blue, not green~~ PASS
+2. ~~`/play` — sidebar tabs, time controls, order buttons all blue accent~~ PASS
+3. ~~Select a unit — detail panel should show "UNDAMAGED" in green (not blue)~~ PASS
+4. ~~Toggle light/dark theme — both should look clean~~ PASS
+5. ~~Map zoom controls should be bottom-right corner, not top-right~~ PASS
+6. ~~Fonts should feel cleaner — IBM Plex instead of the old monospace everywhere~~ PASS
+
+### Session 5 — 2026-04-02 (Automated Testing)
+
+**Set up Playwright E2E test suite.** 27 tests across 3 files, all passing.
+
+**Test files:**
+- `tests/smoke.spec.ts` — 12 tests: page loads, nav links, theme toggle, sidebar tabs, help panel, speed controls, unit selection
+- `tests/simulation.spec.ts` — 6 tests: sim clock advances, contacts appear, combat triggers, waypoint mode, intel messages, reset
+- `tests/design-system.spec.ts` — 9 tests: screenshots of all pages/states, blue accent color check, IBM Plex font check, zoom control position
+
+**Infrastructure:**
+- `playwright.config.ts` — Chromium only, auto-starts dev server on port 3001
+- Dev server port changed to 3001 (`npm run dev --port 3001`) to avoid colliding with Auftragstaktik on 3000
+- `npm test` runs all tests headless (~27s)
+- `npm run test:ui` opens Playwright visual UI for debugging
+- Screenshots saved to `test-results/` on failure and for design review
+- CLAUDE.md updated: **run `npm test` before every push** is now a hard rule
 
 **How to start the dev server:**
 - Open a terminal in the Sandkasten folder
 - Type `npm run dev` and hit Enter
-- Open `http://localhost:3000` in your browser
+- Open `http://localhost:3001` in your browser
 - Or: open Claude Code and say "start the dev server and tell me when it's ready"
 
 ### Next Steps
