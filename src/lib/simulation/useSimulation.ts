@@ -10,6 +10,15 @@ import type { Mission } from "@/lib/ai/missions";
 import type { Doctrine } from "@/lib/ai/doctrine";
 import { createCombatState, resetCombatTimer, type CombatState } from "./combat";
 import type { InfoWarConfig } from "@/lib/infowar/types";
+import {
+  type AutopausePreferences,
+  type AutopauseResult,
+  DEFAULT_AUTOPAUSE,
+  loadAutopausePrefs,
+  saveAutopausePrefs,
+  checkAutopauseTriggers,
+  buildFriendlyDamageMap,
+} from "./autopause";
 
 const TICK_INTERVAL_MS = 50; // 20 fps simulation
 
@@ -30,6 +39,15 @@ export function useSimulation(config: ScenarioConfig) {
 
   const [eventState, setEventState] = useState<EventState | undefined>(events);
   const [combatState, setCombatState] = useState<CombatState>(() => createCombatState());
+
+  const [autopauseEvent, setAutopauseEvent] = useState<AutopauseResult | null>(null);
+  const autopausePrefsRef = useRef<AutopausePreferences>(DEFAULT_AUTOPAUSE);
+  const seenTriggersRef = useRef<Set<string>>(new Set());
+
+  // Load autopause prefs from localStorage on mount
+  useEffect(() => {
+    autopausePrefsRef.current = loadAutopausePrefs();
+  }, []);
 
   const aiStateRef = useRef<AIState>({
     missions,
@@ -63,6 +81,14 @@ export function useSimulation(config: ScenarioConfig) {
       lastTickRef.current = now;
 
       if (!gameStateRef.current.isPaused) {
+        const prevContacts = gameStateRef.current.contacts;
+        const prevMsgCount = eventStateRef.current?.messages?.length ?? 0;
+        const prevDamage = buildFriendlyDamageMap(
+          gameStateRef.current,
+          gameStateRef.current.scenario.playerSide
+        );
+        const prevCombat = combatStateRef.current;
+
         const result = simulationTick(
           gameStateRef.current,
           dtMs,
@@ -78,6 +104,37 @@ export function useSimulation(config: ScenarioConfig) {
         }
         if (result.combatState) {
           combatStateRef.current = result.combatState;
+        }
+
+        // Check autopause triggers
+        const nextMsgCount = result.eventState?.messages?.length ?? prevMsgCount;
+        const nextDamage = buildFriendlyDamageMap(
+          result.gameState,
+          result.gameState.scenario.playerSide
+        );
+        const trigger = checkAutopauseTriggers(
+          autopausePrefsRef.current,
+          prevContacts,
+          result.gameState.contacts,
+          prevCombat,
+          result.combatState,
+          prevMsgCount,
+          nextMsgCount,
+          prevDamage,
+          nextDamage,
+          result.gameState.scenario.playerSide,
+          seenTriggersRef.current
+        );
+
+        if (trigger) {
+          // Force pause and immediate render
+          gameStateRef.current = { ...result.gameState, isPaused: true };
+          lastRenderRef.current = now;
+          setGameState(gameStateRef.current);
+          if (result.eventState) setEventState(result.eventState);
+          if (result.combatState) setCombatState(result.combatState);
+          setAutopauseEvent(trigger);
+          return; // skip normal throttled render
         }
 
         // Throttle React re-renders to avoid UI jitter
@@ -103,6 +160,11 @@ export function useSimulation(config: ScenarioConfig) {
   const togglePause = useCallback(() => {
     setGameState((prev) => {
       lastTickRef.current = Date.now();
+      if (prev.isPaused) {
+        // Resuming — clear seen triggers so autopause can fire again
+        seenTriggersRef.current.clear();
+        setAutopauseEvent(null);
+      }
       return { ...prev, isPaused: !prev.isPaused };
     });
   }, []);
@@ -185,10 +247,17 @@ export function useSimulation(config: ScenarioConfig) {
     });
   }, []);
 
+  const setAutopausePrefs = useCallback((prefs: AutopausePreferences) => {
+    autopausePrefsRef.current = prefs;
+    saveAutopausePrefs(prefs);
+  }, []);
+
   const resetSimulation = useCallback(() => {
     resetDetectionTimer();
     resetAITimer();
     resetCombatTimer();
+    seenTriggersRef.current.clear();
+    setAutopauseEvent(null);
     setGameState(createInitialGameState(scenario));
     setEventState(events);
     setCombatState(createCombatState());
@@ -198,6 +267,8 @@ export function useSimulation(config: ScenarioConfig) {
     gameState,
     eventState,
     combatState,
+    autopauseEvent,
+    autopausePrefsRef,
     togglePause,
     setSpeed,
     cycleSpeed,
@@ -207,5 +278,6 @@ export function useSimulation(config: ScenarioConfig) {
     toggleRadar,
     markMessageRead,
     resetSimulation,
+    setAutopausePrefs,
   };
 }

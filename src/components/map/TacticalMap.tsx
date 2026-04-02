@@ -9,6 +9,8 @@ import { UnitLayer } from "./UnitLayer";
 import { RangeRingLayer } from "./RangeRingLayer";
 import { ContactLayer } from "./ContactLayer";
 import { WaypointLayer } from "./WaypointLayer";
+import { WeaponTrackLayer } from "./WeaponTrackLayer";
+import type { WeaponInFlight } from "@/lib/simulation/combat";
 
 interface TacticalMapProps {
   scenario: Scenario;
@@ -21,6 +23,7 @@ interface TacticalMapProps {
   contacts?: Contact[];
   orders?: Map<string, UnitOrders>;
   fogOfWar?: boolean;
+  weaponsInFlight?: WeaponInFlight[];
   onMapClick?: (lngLat: { lng: number; lat: number }) => void;
 }
 
@@ -34,6 +37,7 @@ export function TacticalMap({
   contacts,
   orders,
   fogOfWar = false,
+  weaponsInFlight,
   onMapClick,
 }: TacticalMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -137,6 +141,14 @@ export function TacticalMap({
               units={visibleUnits}
               orders={orders}
               selectedUnitId={selectedUnitId}
+              playerSide={scenario.playerSide}
+            />
+          )}
+          {weaponsInFlight && weaponsInFlight.length > 0 && (
+            <WeaponTrackLayer
+              map={mapRef.current}
+              weaponsInFlight={weaponsInFlight}
+              units={allUnits}
               playerSide={scenario.playerSide}
             />
           )}

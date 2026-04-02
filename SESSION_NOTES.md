@@ -212,6 +212,20 @@ Full extraction spec documented in `DB_EXTRACTION_SPEC.md` — covers every tabl
 - Open `http://localhost:3001` in your browser
 - Or: open Claude Code and say "start the dev server and tell me when it's ready"
 
+### Session 5 continued — Quick-Win Polish Features
+
+**4 features implemented, all 29 tests passing:**
+
+1. **God Mode Toggle** — `GOD` button in header + `G` hotkey. Bypasses fog of war, shows all units from both sides. Useful for testing/debugging scenarios.
+
+2. **WRA-Based Salvo Sizing** — Ships now fire realistic salvos based on target's missile defense value (2x missileDefense, clamped 2-8). A DDG firing at a carrier launches 8 Harpoons, not 1. Combat log shows "4× Harpoon" style messages.
+
+3. **Weapon Tracks on Map** — Dashed lines from missiles in flight to their targets, with colored dots at weapon positions. Blue for friendly, red for hostile. Visible through fog of war for incoming threats.
+
+4. **Autopause System** — Auto-pauses on: new contact, friendly damaged/destroyed, incoming weapon, intel message. Shows amber "NEW CONTACT DETECTED" flash in time controls. Auto-switches sidebar to relevant tab. Configurable via `AUTO` button dropdown. Preferences saved in localStorage. Seen triggers reset on manual unpause.
+
+**Tests added:** autopause trigger verification, god mode toggle test. Simulation tests updated with `runSimFor()` helper that handles autopause interruptions.
+
 ### Next Steps
 - Continue Phase 5: WeGo Multiplayer (or continue polishing single-player)
 - See `TASKS.md` for full breakdown

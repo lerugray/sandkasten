@@ -19,6 +19,8 @@ export default function PlayPage() {
     gameState,
     eventState,
     combatState,
+    autopauseEvent,
+    autopausePrefsRef,
     togglePause,
     setSpeed,
     addWaypoint,
@@ -27,6 +29,7 @@ export default function PlayPage() {
     toggleRadar,
     markMessageRead,
     resetSimulation,
+    setAutopausePrefs,
   } = useSimulation(demoScenarioConfig);
 
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
@@ -35,6 +38,8 @@ export default function PlayPage() {
   const [isPlacingWaypoint, setIsPlacingWaypoint] = useState(false);
   const [sidebarTab, setSidebarTab] = useState<"forces" | "messages" | "combat" | "media">("forces");
   const [showHelp, setShowHelp] = useState(false);
+  const [godMode, setGodMode] = useState(false);
+  const [showAutopauseSettings, setShowAutopauseSettings] = useState(false);
 
   const { infoWarState, toggleEnabled, markPostRead, resetInfoWar } = useInfoWar(
     gameState,
@@ -63,6 +68,10 @@ export default function PlayPage() {
         e.preventDefault();
         setShowHelp((prev) => !prev);
       }
+      if ((e.key === "g" || e.key === "G") && e.target === document.body) {
+        e.preventDefault();
+        setGodMode((prev) => !prev);
+      }
       if (e.key === "Escape") {
         if (showHelp) {
           setShowHelp(false);
@@ -75,6 +84,13 @@ export default function PlayPage() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [togglePause, showHelp, selectedUnitId]);
+
+  // Auto-switch sidebar tab when autopause triggers
+  useEffect(() => {
+    if (autopauseEvent?.suggestedTab) {
+      setSidebarTab(autopauseEvent.suggestedTab);
+    }
+  }, [autopauseEvent]);
 
   const liveScenario = {
     ...demoScenarioConfig.scenario,
@@ -132,6 +148,7 @@ export default function PlayPage() {
           simTime={gameState.simTime}
           isPaused={gameState.isPaused}
           speed={gameState.speed}
+          autopauseReason={autopauseEvent?.reason}
           onTogglePause={togglePause}
           onSetSpeed={setSpeed}
           onReset={handleReset}
@@ -147,9 +164,82 @@ export default function PlayPage() {
         </div>
 
         <button
+          onClick={() => setGodMode((g) => !g)}
+          aria-label="Toggle god mode"
+          className={`ml-auto text-sm border px-3 py-1.5 rounded cursor-pointer tracking-wider font-bold ${
+            godMode
+              ? "text-[var(--color-terminal-green)] border-[var(--color-terminal-green)]"
+              : "text-[var(--color-tactical-text-dim)] border-[var(--color-tactical-border)] hover:text-[var(--color-tactical-text)]"
+          }`}
+        >
+          GOD
+        </button>
+        <div className="relative ml-2">
+          <button
+            onClick={() => setShowAutopauseSettings((s) => !s)}
+            aria-label="Autopause settings"
+            className={`text-sm border px-3 py-1.5 rounded cursor-pointer tracking-wider font-bold ${
+              autopausePrefsRef.current.enabled
+                ? "text-[var(--color-terminal-amber)] border-[var(--color-terminal-amber)]"
+                : "text-[var(--color-tactical-text-dim)] border-[var(--color-tactical-border)] hover:text-[var(--color-tactical-text)]"
+            }`}
+          >
+            AUTO
+          </button>
+          {showAutopauseSettings && (
+            <div className="absolute right-0 top-full mt-1 z-50 bg-[var(--color-tactical-panel)] border border-[var(--color-tactical-border)] rounded p-3 w-64">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-[var(--color-tactical-text)] font-bold tracking-wider">AUTOPAUSE</span>
+                <button
+                  onClick={() => {
+                    const prefs = { ...autopausePrefsRef.current, enabled: !autopausePrefsRef.current.enabled };
+                    setAutopausePrefs(prefs);
+                  }}
+                  className={`text-xs px-2 py-1 rounded cursor-pointer ${
+                    autopausePrefsRef.current.enabled
+                      ? "bg-[var(--color-terminal-amber)] text-[var(--color-tactical-dark)] font-bold"
+                      : "text-[var(--color-tactical-text-dim)] border border-[var(--color-tactical-border)]"
+                  }`}
+                >
+                  {autopausePrefsRef.current.enabled ? "ON" : "OFF"}
+                </button>
+              </div>
+              {(["newContact", "friendlyDamaged", "friendlyDestroyed", "weaponIncoming", "scenarioMessage"] as const).map((key) => {
+                const labels: Record<string, string> = {
+                  newContact: "New contact detected",
+                  friendlyDamaged: "Friendly unit damaged",
+                  friendlyDestroyed: "Friendly unit destroyed",
+                  weaponIncoming: "Incoming weapon",
+                  scenarioMessage: "Intel message",
+                };
+                return (
+                  <label key={key} className="flex items-center gap-2 text-sm text-[var(--color-tactical-text)] py-0.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={autopausePrefsRef.current.triggers[key]}
+                      onChange={() => {
+                        const prefs = {
+                          ...autopausePrefsRef.current,
+                          triggers: {
+                            ...autopausePrefsRef.current.triggers,
+                            [key]: !autopausePrefsRef.current.triggers[key],
+                          },
+                        };
+                        setAutopausePrefs(prefs);
+                      }}
+                      className="accent-[var(--color-terminal-amber)]"
+                    />
+                    {labels[key]}
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        <button
           onClick={() => setShowHelp(true)}
           aria-label="Open help"
-          className="ml-auto text-sm text-[var(--color-tactical-text-dim)] hover:text-[var(--color-terminal-green)] border border-[var(--color-tactical-border)] px-3 py-1.5 rounded cursor-pointer tracking-wider font-bold"
+          className="ml-2 text-sm text-[var(--color-tactical-text-dim)] hover:text-[var(--color-terminal-green)] border border-[var(--color-tactical-border)] px-3 py-1.5 rounded cursor-pointer tracking-wider font-bold"
         >
           ?
         </button>
@@ -330,7 +420,8 @@ export default function PlayPage() {
             onUnitSelect={handleUnitSelect}
             contacts={gameState.contacts}
             orders={gameState.orders}
-            fogOfWar={true}
+            fogOfWar={!godMode}
+            weaponsInFlight={combatState?.weaponsInFlight}
             onMapClick={handleMapClick}
           />
 

@@ -339,34 +339,48 @@ function checkEngagements(
         );
         if (alreadyEngaging) continue;
 
-        // Launch weapon
-        const wif: WeaponInFlight = {
-          id: `wif-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          name: weapon.name,
-          launchedBy: unit.id,
-          launchedBySide: side.name,
-          targetId: enemy.id,
-          position: { ...unit.position },
-          heading: bearingDeg(unit.position, enemy.position),
-          speedKts: weapon.speedKts > 0 ? weapon.speedKts : 530, // default cruise missile speed
-          rangeRemainingKm: weapon.rangeKm,
-          weapon,
-          seekerActive: false,
-          seekerRangeKm: weapon.seekerType === "active-radar" ? 10 : 5,
-        };
+        // Compute salvo size based on target's missile defense
+        const shooterExpended = newExpended.get(unit.id) ?? new Map<string, number>();
+        const firedSoFar = shooterExpended.get(weapon.name) ?? 0;
+        const availableAmmo = weapon.quantity - firedSoFar;
+        const salvoSize = computeSalvoSize(weapon, enemy, availableAmmo);
 
-        newWeapons.push(wif);
+        // Launch salvo
+        const launchHeading = bearingDeg(unit.position, enemy.position);
+        for (let i = 0; i < salvoSize; i++) {
+          // Slight position offset to avoid visual overlap
+          const offset = (i - (salvoSize - 1) / 2) * 0.002;
+          const wif: WeaponInFlight = {
+            id: `wif-${Date.now()}-${i}-${Math.random().toString(36).slice(2, 6)}`,
+            name: weapon.name,
+            launchedBy: unit.id,
+            launchedBySide: side.name,
+            targetId: enemy.id,
+            position: {
+              lat: unit.position.lat + offset,
+              lng: unit.position.lng + offset,
+            },
+            heading: launchHeading,
+            speedKts: weapon.speedKts > 0 ? weapon.speedKts : 530,
+            rangeRemainingKm: weapon.rangeKm,
+            weapon,
+            seekerActive: false,
+            seekerRangeKm: weapon.seekerType === "active-radar" ? 10 : 5,
+          };
+          newWeapons.push(wif);
+        }
 
-        // Track expenditure
+        // Track expenditure for entire salvo
         const unitExpended = newExpended.get(unit.id) ?? new Map<string, number>();
-        unitExpended.set(weapon.name, (unitExpended.get(weapon.name) ?? 0) + 1);
+        unitExpended.set(weapon.name, firedSoFar + salvoSize);
         newExpended.set(unit.id, unitExpended);
 
         // Set cooldown (30 seconds between salvos for this unit)
         newCooldowns.set(unit.id, state.simTime + 30000);
 
+        const salvoLabel = salvoSize > 1 ? `${salvoSize}\u00D7 ${weapon.name}` : weapon.name;
         newLog.push(createEvent(state.simTime, "launch",
-          `${unit.name} launched ${weapon.name} at ${enemy.name}`,
+          `${unit.name} launched ${salvoLabel} at ${enemy.name}`,
           unit.id, enemy.id, side.name));
 
         break; // One engagement per tick per unit
@@ -432,6 +446,25 @@ function selectWeapon(
   });
 
   return candidates[0];
+}
+
+function computeSalvoSize(
+  weapon: PlatformWeapon,
+  target: Unit,
+  availableAmmo: number
+): number {
+  const targetPlatform = getPlatform(target.platformId);
+  const missileDefense = targetPlatform?.missileDefense ?? 0;
+
+  // Guns fire single rounds per engagement cycle
+  if (weapon.type === "gun") return 1;
+
+  // Aircraft and small craft with little/no missile defense: 1-2 shots
+  if (missileDefense <= 1) return Math.min(2, availableAmmo);
+
+  // Surface combatants: 2x their missile defense value, clamped
+  const desired = missileDefense * 2;
+  return Math.min(Math.max(desired, 2), 8, availableAmmo);
 }
 
 // --- Helpers ---

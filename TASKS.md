@@ -45,7 +45,7 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 - [x] Define game state data structure (units, contacts, time, score)
 - [x] Implement simulation clock (start time, elapsed time, current sim time)
 - [x] Time controls UI: play/pause button, speed selector (1x-60x)
-- [ ] Autopause system with configurable triggers (new contact, unit attacked, etc.)
+- [x] Autopause system with configurable triggers (new contact, unit attacked, etc.)
 - [ ] Game state serialization (save/load mid-game)
 
 ### 2.2 Movement
@@ -74,7 +74,7 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 - [x] Player sees only own units + detected contacts
 - [x] Undetected OPFOR units hidden from rendering
 - [ ] Sensor coverage visualization (optional overlay showing radar arcs/ranges)
-- [ ] "God mode" toggle for scenario testing (see everything)
+- [x] "God mode" toggle for scenario testing (see everything)
 
 ---
 
@@ -119,7 +119,7 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 - [x] Weapon entity creation on launch (missile in flight with position, heading, speed, range)
 - [x] Missile flight path toward target (speed from platform weapon data)
 - [x] Engagement cooldown (30s between salvos per unit)
-- [ ] Salvo sizing from WRA (weaponQty vs. target's missileDefense value) — uses single shots for now
+- [x] Salvo sizing from WRA (weaponQty vs. target's missileDefense value)
 
 ### 4.2 Anti-Ship Missile Combat
 - [x] ASM flight model (cruise toward target, range tracking)
@@ -152,7 +152,7 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 - [x] 3-tab sidebar (Forces/Intel/Combat)
 - [x] Weapons-in-flight counter badge on combat tab
 - [x] Weapons-in-flight list showing name → target
-- [ ] Weapon tracks rendered on map (dashed lines from launcher to target)
+- [x] Weapon tracks rendered on map (dashed lines from launcher to target)
 
 ---
 

@@ -6,6 +6,7 @@ interface TimeControlsProps {
   simTime: number;
   isPaused: boolean;
   speed: number;
+  autopauseReason?: string | null;
   onTogglePause: () => void;
   onSetSpeed: (speed: number) => void;
   onReset: () => void;
@@ -15,6 +16,7 @@ export function TimeControls({
   simTime,
   isPaused,
   speed,
+  autopauseReason,
   onTogglePause,
   onSetSpeed,
   onReset,
@@ -34,6 +36,13 @@ export function TimeControls({
       >
         {isPaused ? "PLAY" : "PAUSE"}
       </button>
+
+      {/* Autopause reason */}
+      {autopauseReason && isPaused && (
+        <span className="text-[var(--color-terminal-amber)] text-sm font-bold tracking-wider animate-pulse">
+          {autopauseReason.toUpperCase()}
+        </span>
+      )}
 
       {/* Speed selector */}
       <div className="flex items-center gap-1 bg-[var(--color-tactical-dark)] rounded p-1">
