@@ -224,11 +224,44 @@ Full extraction spec documented in `DB_EXTRACTION_SPEC.md` — covers every tabl
 
 4. **Autopause System** — Auto-pauses on: new contact, friendly damaged/destroyed, incoming weapon, intel message. Shows amber "NEW CONTACT DETECTED" flash in time controls. Auto-switches sidebar to relevant tab. Configurable via `AUTO` button dropdown. Preferences saved in localStorage. Seen triggers reset on manual unpause.
 
-**Tests added:** autopause trigger verification, god mode toggle test. Simulation tests updated with `runSimFor()` helper that handles autopause interruptions.
+### Session 5 continued — Phase 1-2 Gap Features (3 of 6)
 
-### Next Steps
-- Continue Phase 5: WeGo Multiplayer (or continue polishing single-player)
-- See `TASKS.md` for full breakdown
+**3 more features, 29 tests still passing:**
+
+5. **Sensor Coverage Overlay** — `SENSORS` button + `S` hotkey. Shows translucent blue radar coverage circles for friendly units with active radar. Uses existing `createCircleGeoJSON()` from rangeRings.ts. Separate from per-unit range rings (which show on selection/pin).
+
+6. **Measurement Tools** — `MEASURE` button + `M` hotkey. Click two points on the map to see distance (nm/km) and bearing. Yellow dashed line with endpoint dots. Click again to start a new measurement.
+
+7. **Drag-to-Move in Editor** — Units in the scenario editor can now be dragged to reposition. Uses MapLibre's `draggable: true` marker option with `dragend` event. Only enabled in editor (play page doesn't use it).
+
+**Tests added:** simulation clock test uses 10x speed to avoid autopause flakiness at 1x.
+
+### Next Steps — 3 Remaining Phase 1-2 Gaps
+These were planned and explored but deferred to next session:
+
+1. **Fuel consumption** — Add `fuel`/`fuelMax` to Unit type, throttle-based burn rates in movement.ts, fuel bar in DetailPanel, force loiter when empty. MVP rates: ships 50-400/hr by throttle, aircraft 200-1200/hr. Files: `types/game.ts`, `platforms/lookup.ts`, `simulation/movement.ts`, `simulation/gameState.ts`, `map/DetailPanel.tsx`.
+
+2. **Aircraft altitude + speed profiles** — LOW/MED/HIGH altitude bands affecting speed (80%/100%/110% of base). Climb/descend rate ~2000 ft/min fighters, ~1000 patrol. Altitude selector in OrderPanel for aircraft. Files: `types/game.ts`, `simulation/movement.ts`, `game/OrderPanel.tsx`, `platforms/lookup.ts`.
+
+3. **Game state save/load** — Serialize GameState + EventState + CombatState + AIState to JSON. Convert Map→Record for serialization. Download as `.sandkasten` file, upload to resume. Files: new `simulation/saveLoad.ts`, `play/page.tsx`, `simulation/useSimulation.ts`.
+
+After these 3, all Phase 1-2 gaps are filled and the project is ready for Phase 5 (WeGo Multiplayer).
+
+**How to start the dev server:**
+- Open a terminal in the Sandkasten folder
+- Type `npm run dev` and hit Enter
+- Open `http://localhost:3001` in your browser
+- Run tests: `npm test`
+
+### Full Keyboard Shortcuts Reference
+| Key | Action |
+|-----|--------|
+| Space | Pause/resume simulation |
+| H / ? | Toggle help panel |
+| G | Toggle god mode (see all units) |
+| S | Toggle sensor coverage overlay |
+| M | Toggle measurement mode |
+| Escape | Close panels, deselect units, exit modes |
 
 ---
 

@@ -43,8 +43,10 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Demo scenario: US carrier strike group vs. Iranian naval forces, Strait of Hormuz
 - Click units for detailed Info/Sensors/Weapons panels
 - Shift+click to pin sensor range rings
+- Sensor coverage overlay — toggle radar coverage circles (`S` key)
+- Measurement tools — click two points for distance/bearing (`M` key)
 - Dark/light theme
-- Scenario editor at `/editor` — place units, set sides, save/load JSON
+- Scenario editor at `/editor` — place units, drag to reposition, set sides, save/load JSON
 - Platform database API with 60k+ extracted CMO records
 
 ### Simulation
@@ -54,8 +56,10 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - ESM passive detection of active emitters
 - Contact classification: Unknown → Detected → Classified → Tracked
 - Fog of war — you see only what your sensors report
+- God mode toggle to see all units (`G` key)
 - Contacts degrade and fade without fresh sensor data
 - Time controls: pause/play, 1x through 60x speed
+- Autopause on new contacts, damage, incoming weapons, intel messages (configurable)
 
 ### OPFOR AI
 - Doctrine: ROE, engagement range, radar usage, evasion, withdrawal
@@ -65,6 +69,8 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 
 ### Combat
 - Anti-ship missile launch, flight, intercept
+- WRA-based salvo sizing — ships fire 2-8 missiles based on target's missile defense
+- Weapon tracks on map — dashed lines showing missiles in flight
 - SAM defense and CIWS point defense
 - Damage: undamaged → damaged → mission-kill → destroyed
 - Countermeasures: chaff, ECM, decoys
@@ -80,6 +86,10 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - In-game help panel (press `?` or `H`)
 - Covers controls, game concepts, sidebar guide, and media feed setup
 
+### Testing
+- 29 Playwright E2E tests covering page loads, simulation gameplay, combat, autopause, and design system
+- `npm test` runs all tests headless; `npm run test:ui` opens the visual debugger
+
 ---
 
 ## Setup
@@ -93,7 +103,13 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:3001` (port 3001 to avoid colliding with Auftragstaktik on 3000).
+
+To run E2E tests (auto-starts the dev server):
+
+```bash
+npm test
+```
 
 ### Platform Database (Optional)
 
@@ -151,6 +167,7 @@ sandkasten/
 ├── scripts/
 │   └── extract_cmo_db.py       # CMO database extraction
 ├── data/                       # Extracted platform data (gitignored)
+├── tests/                      # Playwright E2E tests
 ├── GDD.md                      # Game Design Document
 ├── TASKS.md                    # Development task breakdown
 ├── DB_EXTRACTION_SPEC.md       # CMO database schema reference
@@ -166,9 +183,10 @@ sandkasten/
 | **Foundation** | Map, NATO symbols, scenario editor, platform database | Complete |
 | **Simulation** | Movement, radar detection, fog of war, time controls | Complete |
 | **OPFOR AI** | Doctrine, missions, TCA event scripting | Complete |
-| **Combat** | Missiles, SAM defense, damage model, countermeasures | Complete |
+| **Combat** | Missiles, SAM defense, damage, salvos, weapon tracks | Complete |
 | **InfoWar Feed** | Media coverage from game events via local LLM | Complete |
-| **Help System** | In-game help panel with controls and concepts | Complete |
+| **Polish** | Autopause, god mode, sensors overlay, measurement, E2E tests | Complete |
+| **Remaining gaps** | Fuel consumption, aircraft altitude, game save/load | Next |
 | **WeGo Multiplayer** | WebSocket sync, turn system, lobby, server-side fog of war | Planned |
 | **Community** | Scenario sharing, Auftragstaktik OSINT import, campaign mode | Planned |
 

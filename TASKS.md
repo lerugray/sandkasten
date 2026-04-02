@@ -26,14 +26,14 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 - [x] Render unit icons with correct affiliation (friendly/hostile/neutral)
 - [x] Unit selection (click to select, show info panel)
 - [x] Range ring rendering for sensors and weapons
-- [ ] Measurement tools (distance, bearing between points)
+- [x] Measurement tools (distance, bearing between points)
 
 ### 1.4 Scenario Editor (Basic)
 - [x] Create/load/save scenario JSON files matching GDD Section 7.1 format
 - [x] Place units on map (click to place)
 - [x] Assign units to sides (player/OPFOR)
 - [x] Set unit properties (platform type, name)
-- [ ] Drag to move placed units
+- [x] Drag to move placed units
 - [ ] Define reference points (point and area types)
 - [x] Set basic scenario metadata (name, description, briefing, start time, theater bounds)
 
@@ -73,7 +73,7 @@ Derived from GDD.md Section 12 (Development Phases). Each phase broken into conc
 ### 2.5 Fog of War
 - [x] Player sees only own units + detected contacts
 - [x] Undetected OPFOR units hidden from rendering
-- [ ] Sensor coverage visualization (optional overlay showing radar arcs/ranges)
+- [x] Sensor coverage visualization (optional overlay showing radar arcs/ranges)
 - [x] "God mode" toggle for scenario testing (see everything)
 
 ---
