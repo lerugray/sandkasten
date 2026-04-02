@@ -10,6 +10,8 @@ import { RangeRingLayer } from "./RangeRingLayer";
 import { ContactLayer } from "./ContactLayer";
 import { WaypointLayer } from "./WaypointLayer";
 import { WeaponTrackLayer } from "./WeaponTrackLayer";
+import { SensorCoverageLayer } from "./SensorCoverageLayer";
+import { MeasurementLayer, type MeasurePoint } from "./MeasurementLayer";
 import type { WeaponInFlight } from "@/lib/simulation/combat";
 
 interface TacticalMapProps {
@@ -24,7 +26,11 @@ interface TacticalMapProps {
   orders?: Map<string, UnitOrders>;
   fogOfWar?: boolean;
   weaponsInFlight?: WeaponInFlight[];
+  showSensorCoverage?: boolean;
+  measureStart?: MeasurePoint | null;
+  measureEnd?: MeasurePoint | null;
   onMapClick?: (lngLat: { lng: number; lat: number }) => void;
+  onUnitDrag?: (unitId: string, position: { lat: number; lng: number }) => void;
 }
 
 export function TacticalMap({
@@ -38,7 +44,11 @@ export function TacticalMap({
   orders,
   fogOfWar = false,
   weaponsInFlight,
+  showSensorCoverage = false,
+  measureStart = null,
+  measureEnd = null,
   onMapClick,
+  onUnitDrag,
 }: TacticalMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -121,7 +131,16 @@ export function TacticalMap({
             playerSide={scenario.playerSide}
             selectedUnitId={selectedUnitId}
             onUnitSelect={onUnitSelect}
+            onUnitDrag={onUnitDrag}
           />
+          {showSensorCoverage && orders && (
+            <SensorCoverageLayer
+              map={mapRef.current}
+              units={visibleUnits}
+              orders={orders}
+              playerSide={scenario.playerSide}
+            />
+          )}
           <RangeRingLayer
             map={mapRef.current}
             units={visibleUnits}
@@ -150,6 +169,13 @@ export function TacticalMap({
               weaponsInFlight={weaponsInFlight}
               units={allUnits}
               playerSide={scenario.playerSide}
+            />
+          )}
+          {(measureStart || measureEnd) && (
+            <MeasurementLayer
+              map={mapRef.current}
+              start={measureStart}
+              end={measureEnd}
             />
           )}
         </>

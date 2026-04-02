@@ -43,7 +43,9 @@ test.describe("Simulation gameplay", () => {
     };
     const t0 = await timeText();
 
-    await runSimFor(page, 3_000);
+    // Use higher speed so clock visibly advances
+    await page.locator("button", { hasText: "10x" }).click();
+    await runSimFor(page, 4_000);
     await ensurePaused(page);
 
     const t1 = await timeText();

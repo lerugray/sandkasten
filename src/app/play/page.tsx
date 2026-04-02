@@ -13,6 +13,7 @@ import { HelpPanel } from "@/components/game/help/HelpPanel";
 import { demoScenarioConfig } from "@/lib/scenarios/demoConfig";
 import { useSimulation } from "@/lib/simulation/useSimulation";
 import { useInfoWar } from "@/lib/infowar/useInfoWar";
+import { formatMeasurement } from "@/components/map/MeasurementLayer";
 
 export default function PlayPage() {
   const {
@@ -39,6 +40,10 @@ export default function PlayPage() {
   const [sidebarTab, setSidebarTab] = useState<"forces" | "messages" | "combat" | "media">("forces");
   const [showHelp, setShowHelp] = useState(false);
   const [godMode, setGodMode] = useState(false);
+  const [showSensorCoverage, setShowSensorCoverage] = useState(false);
+  const [measureMode, setMeasureMode] = useState(false);
+  const [measureStart, setMeasureStart] = useState<{ lng: number; lat: number } | null>(null);
+  const [measureEnd, setMeasureEnd] = useState<{ lng: number; lat: number } | null>(null);
   const [showAutopauseSettings, setShowAutopauseSettings] = useState(false);
 
   const { infoWarState, toggleEnabled, markPostRead, resetInfoWar } = useInfoWar(
@@ -71,6 +76,17 @@ export default function PlayPage() {
       if ((e.key === "g" || e.key === "G") && e.target === document.body) {
         e.preventDefault();
         setGodMode((prev) => !prev);
+      }
+      if ((e.key === "s" || e.key === "S") && e.target === document.body) {
+        e.preventDefault();
+        setShowSensorCoverage((prev) => !prev);
+      }
+      if ((e.key === "m" || e.key === "M") && e.target === document.body) {
+        e.preventDefault();
+        setMeasureMode((prev) => {
+          if (prev) { setMeasureStart(null); setMeasureEnd(null); }
+          return !prev;
+        });
       }
       if (e.key === "Escape") {
         if (showHelp) {
@@ -125,11 +141,22 @@ export default function PlayPage() {
 
   const handleMapClick = useCallback(
     (lngLat: { lng: number; lat: number }) => {
+      if (measureMode) {
+        if (!measureStart || measureEnd) {
+          // Start new measurement
+          setMeasureStart(lngLat);
+          setMeasureEnd(null);
+        } else {
+          // Complete measurement
+          setMeasureEnd(lngLat);
+        }
+        return;
+      }
       if (isPlacingWaypoint && selectedUnitId) {
         addWaypoint(selectedUnitId, lngLat);
       }
     },
-    [isPlacingWaypoint, selectedUnitId, addWaypoint]
+    [measureMode, measureStart, measureEnd, isPlacingWaypoint, selectedUnitId, addWaypoint]
   );
 
   return (
@@ -164,9 +191,36 @@ export default function PlayPage() {
         </div>
 
         <button
+          onClick={() => setShowSensorCoverage((s) => !s)}
+          aria-label="Toggle sensor coverage"
+          className={`ml-auto text-sm border px-3 py-1.5 rounded cursor-pointer tracking-wider font-bold ${
+            showSensorCoverage
+              ? "text-[var(--color-terminal-green)] border-[var(--color-terminal-green)]"
+              : "text-[var(--color-tactical-text-dim)] border-[var(--color-tactical-border)] hover:text-[var(--color-tactical-text)]"
+          }`}
+        >
+          SENSORS
+        </button>
+        <button
+          onClick={() => {
+            setMeasureMode((prev) => {
+              if (prev) { setMeasureStart(null); setMeasureEnd(null); }
+              return !prev;
+            });
+          }}
+          aria-label="Toggle measurement"
+          className={`ml-2 text-sm border px-3 py-1.5 rounded cursor-pointer tracking-wider font-bold ${
+            measureMode
+              ? "text-[var(--color-terminal-amber)] border-[var(--color-terminal-amber)]"
+              : "text-[var(--color-tactical-text-dim)] border-[var(--color-tactical-border)] hover:text-[var(--color-tactical-text)]"
+          }`}
+        >
+          MEASURE
+        </button>
+        <button
           onClick={() => setGodMode((g) => !g)}
           aria-label="Toggle god mode"
-          className={`ml-auto text-sm border px-3 py-1.5 rounded cursor-pointer tracking-wider font-bold ${
+          className={`ml-2 text-sm border px-3 py-1.5 rounded cursor-pointer tracking-wider font-bold ${
             godMode
               ? "text-[var(--color-terminal-green)] border-[var(--color-terminal-green)]"
               : "text-[var(--color-tactical-text-dim)] border-[var(--color-tactical-border)] hover:text-[var(--color-tactical-text)]"
@@ -422,6 +476,9 @@ export default function PlayPage() {
             orders={gameState.orders}
             fogOfWar={!godMode}
             weaponsInFlight={combatState?.weaponsInFlight}
+            showSensorCoverage={showSensorCoverage}
+            measureStart={measureStart}
+            measureEnd={measureEnd}
             onMapClick={handleMapClick}
           />
 
@@ -436,6 +493,17 @@ export default function PlayPage() {
           {isPlacingWaypoint && (
             <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)] px-4 py-1 rounded text-sm font-bold">
               CLICK MAP TO PLACE WAYPOINT
+            </div>
+          )}
+
+          {/* Measurement mode indicator and result */}
+          {measureMode && (
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 bg-[var(--color-terminal-amber)] text-[var(--color-tactical-dark)] px-4 py-1 rounded text-sm font-bold">
+              {measureStart && measureEnd
+                ? formatMeasurement(measureStart, measureEnd)
+                : measureStart
+                  ? "CLICK END POINT"
+                  : "CLICK START POINT"}
             </div>
           )}
 

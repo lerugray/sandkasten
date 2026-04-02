@@ -14,6 +14,7 @@ interface UnitLayerProps {
   playerSide: string;
   selectedUnitId: string | null;
   onUnitSelect: (unitId: string | null, shiftKey?: boolean) => void;
+  onUnitDrag?: (unitId: string, position: { lat: number; lng: number }) => void;
 }
 
 export function UnitLayer({
@@ -22,6 +23,7 @@ export function UnitLayer({
   playerSide,
   selectedUnitId,
   onUnitSelect,
+  onUnitDrag,
 }: UnitLayerProps) {
   const markersRef = useRef<Map<string, maplibregl.Marker>>(new Map());
 
@@ -84,9 +86,17 @@ export function UnitLayer({
       const marker = new maplibregl.Marker({
         element: el,
         anchor: "center",
+        draggable: !!onUnitDrag,
       })
         .setLngLat([unit.position.lng, unit.position.lat])
         .addTo(map);
+
+      if (onUnitDrag) {
+        marker.on("dragend", () => {
+          const lngLat = marker.getLngLat();
+          onUnitDrag(unit.id, { lat: lngLat.lat, lng: lngLat.lng });
+        });
+      }
 
       existingMarkers.set(unit.id, marker);
     });
@@ -95,7 +105,7 @@ export function UnitLayer({
       existingMarkers.forEach((marker) => marker.remove());
       existingMarkers.clear();
     };
-  }, [map, units, playerSide, selectedUnitId, onUnitSelect]);
+  }, [map, units, playerSide, selectedUnitId, onUnitSelect, onUnitDrag]);
 
   return null;
 }

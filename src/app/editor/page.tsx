@@ -64,6 +64,21 @@ export default function EditorPage() {
     []
   );
 
+  const handleUnitDrag = useCallback(
+    (unitId: string, position: { lat: number; lng: number }) => {
+      setScenario((prev) => ({
+        ...prev,
+        sides: prev.sides.map((side) => ({
+          ...side,
+          units: side.units.map((u) =>
+            u.id === unitId ? { ...u, position } : u
+          ),
+        })),
+      }));
+    },
+    []
+  );
+
   const removeUnit = useCallback(
     (unitId: string) => {
       setScenario((prev) => ({
@@ -179,6 +194,7 @@ export default function EditorPage() {
             pinnedRingIds={pinnedRingIds}
             theme={theme}
             onUnitSelect={handleUnitSelect}
+            onUnitDrag={handleUnitDrag}
           />
 
           {activePanel === "place" && (
