@@ -34,3 +34,7 @@ Thumbs.db
 
 # Debug
 npm-debug.log*
+
+# GS state junction (gs-232 parallel-picker workaround)
+state/
+
