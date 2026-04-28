@@ -62,14 +62,21 @@ export function DetailPanel({ unit, onClose }: DetailPanelProps) {
   )?.speed;
 
   return (
-    <div className="absolute bottom-8 left-2 z-20 w-96 bg-[var(--color-tactical-panel)] border border-[var(--color-tactical-border)] rounded text-xs shadow-lg">
+    <div
+      data-testid="detail-panel"
+      className="absolute bottom-8 left-2 z-20 w-96 bg-[var(--color-tactical-panel)] border border-[var(--color-tactical-border)] rounded text-xs shadow-lg"
+    >
       {/* Header */}
       <div className="flex justify-between items-center px-3 py-2 border-b border-[var(--color-tactical-border)]">
-        <span className="text-[var(--color-terminal-green)] font-bold text-sm uppercase tracking-wider truncate mr-2">
+        <span
+          data-testid="detail-panel-title"
+          className="text-[var(--color-terminal-green)] font-bold text-sm uppercase tracking-wider truncate mr-2"
+        >
           {unit.name}
         </span>
         <button
           onClick={onClose}
+          aria-label="Close detail panel"
           className="text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] cursor-pointer shrink-0"
         >
           [X]
@@ -98,7 +105,9 @@ export function DetailPanel({ unit, onClose }: DetailPanelProps) {
         {tab === "info" && (
           <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
             <span className="text-[var(--color-tactical-text-dim)]">CLASS</span>
-            <span>{platform?.name ?? `Platform #${unit.platformId}`}</span>
+            <span data-testid="detail-platform-class">
+              {platform?.name ?? `Platform #${unit.platformId}`}
+            </span>
 
             {detail?.typeName && (
               <>
@@ -118,7 +127,7 @@ export function DetailPanel({ unit, onClose }: DetailPanelProps) {
             <span>{unit.side}</span>
 
             <span className="text-[var(--color-tactical-text-dim)]">POS</span>
-            <span>
+            <span data-testid="detail-unit-pos">
               {unit.position.lat.toFixed(4)}N {unit.position.lng.toFixed(4)}E
             </span>
 
