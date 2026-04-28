@@ -66,7 +66,7 @@ export function simulationTick(
 
   if (newSimTime - lastDetectionTime >= DETECTION_INTERVAL_MS) {
     lastDetectionTime = newSimTime;
-    newContacts = runDetectionPhase(newSides, stateWithOrders);
+    newContacts = runDetectionPhase(newSides, { ...stateWithOrders, simTime: newSimTime });
   }
 
   // --- Phase 3: Contact aging ---

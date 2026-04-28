@@ -241,11 +241,8 @@ export function mergeContact(
   if (newIdx > currentIdx) {
     newClassification = newDetection.classification;
   }
-  if (
-    existing.classification === "classified" &&
-    newDetection.sensorType === "radar" &&
-    simTime - existing.lastUpdateTime < 10000
-  ) {
+  // Treat a "classified" contact as a firm track solution in this simplified model.
+  if (newClassification === "classified" && newDetection.sensorType !== "esm") {
     newClassification = "tracked";
   }
 
