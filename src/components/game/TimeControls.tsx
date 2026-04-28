@@ -28,6 +28,7 @@ export function TimeControls({
       {/* Play/Pause */}
       <button
         onClick={onTogglePause}
+        data-testid="sim-toggle-pause"
         className={`px-5 py-2 rounded border-2 cursor-pointer font-bold tracking-wider text-base ${
           isPaused
             ? "border-[var(--color-terminal-green)] text-[var(--color-terminal-green)]"
@@ -39,7 +40,10 @@ export function TimeControls({
 
       {/* Autopause reason */}
       {autopauseReason && isPaused && (
-        <span className="text-[var(--color-terminal-amber)] text-sm font-bold tracking-wider animate-pulse">
+        <span
+          data-testid="autopause-reason"
+          className="text-[var(--color-terminal-amber)] text-sm font-bold tracking-wider animate-pulse"
+        >
           {autopauseReason.toUpperCase()}
         </span>
       )}
@@ -50,6 +54,8 @@ export function TimeControls({
           <button
             key={s}
             onClick={() => onSetSpeed(s)}
+            data-testid="sim-speed"
+            data-speed={s}
             className={`px-3 py-1.5 rounded text-sm text-center cursor-pointer font-mono ${
               speed === s
                 ? "bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)] font-bold"
@@ -62,7 +68,10 @@ export function TimeControls({
       </div>
 
       {/* Sim clock */}
-      <span className="text-[var(--color-tactical-text)] font-mono text-base tracking-wide">
+      <span
+        data-testid="sim-clock"
+        className="text-[var(--color-tactical-text)] font-mono text-base tracking-wide"
+      >
         {timeStr}
       </span>
 

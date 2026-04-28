@@ -31,7 +31,10 @@ const EVENT_ICONS: Record<CombatEvent["type"], string> = {
 export function CombatLog({ events, simTime, playerSide }: CombatLogProps) {
   if (events.length === 0) {
     return (
-      <div className="text-[var(--color-tactical-text-dim)] text-center py-4 italic">
+      <div
+        data-testid="combat-log-empty"
+        className="text-[var(--color-tactical-text-dim)] text-center py-4 italic"
+      >
         No combat activity
       </div>
     );
@@ -41,7 +44,7 @@ export function CombatLog({ events, simTime, playerSide }: CombatLogProps) {
   const recent = [...events].reverse().slice(0, 50);
 
   return (
-    <div className="space-y-1">
+    <div data-testid="combat-log" className="space-y-1">
       {recent.map((evt) => {
         const ageMs = simTime - evt.time;
         const ageSecs = Math.floor(ageMs / 1000);
@@ -55,6 +58,8 @@ export function CombatLog({ events, simTime, playerSide }: CombatLogProps) {
         return (
           <div
             key={evt.id}
+            data-testid="combat-log-entry"
+            data-event-type={evt.type}
             className={`text-sm leading-tight ${EVENT_COLORS[evt.type]}`}
           >
             <span className="text-[var(--color-tactical-text-dim)] mr-1">

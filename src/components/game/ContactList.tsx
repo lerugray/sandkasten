@@ -25,7 +25,10 @@ const CLASSIFICATION_LABELS: Record<Contact["classification"], string> = {
 export function ContactList({ contacts, simTime, onContactClick }: ContactListProps) {
   if (contacts.length === 0) {
     return (
-      <div className="text-[var(--color-tactical-text-dim)] text-sm p-2">
+      <div
+        data-testid="contact-list-empty"
+        className="text-[var(--color-tactical-text-dim)] text-sm p-2"
+      >
         No contacts detected
       </div>
     );
@@ -38,7 +41,7 @@ export function ContactList({ contacts, simTime, onContactClick }: ContactListPr
   });
 
   return (
-    <div className="space-y-1">
+    <div data-testid="contact-list" className="space-y-1">
       {sorted.map((contact) => {
         const age = Math.floor((simTime - contact.lastUpdateTime) / 1000);
         const isStale = age > 30;
@@ -47,12 +50,15 @@ export function ContactList({ contacts, simTime, onContactClick }: ContactListPr
           <button
             key={contact.id}
             onClick={() => onContactClick?.(contact)}
+            data-testid="contact-row"
+            data-contact-id={contact.id}
             className={`w-full text-left px-2 py-1 rounded text-sm hover:bg-[var(--color-tactical-border)] cursor-pointer ${
               isStale ? "opacity-50" : ""
             }`}
           >
             <div className="flex items-center gap-2">
               <span
+                data-testid="contact-classification"
                 className="font-bold text-sm w-6"
                 style={{ color: CLASSIFICATION_COLORS[contact.classification] }}
               >

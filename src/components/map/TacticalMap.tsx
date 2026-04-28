@@ -152,6 +152,7 @@ export function TacticalMap({
             <ContactLayer
               map={mapRef.current}
               contacts={contacts}
+              fogOfWar={fogOfWar}
             />
           )}
           {orders && (

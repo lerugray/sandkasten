@@ -132,10 +132,10 @@ export function DetailPanel({ unit, onClose }: DetailPanelProps) {
             </span>
 
             <span className="text-[var(--color-tactical-text-dim)]">HDG</span>
-            <span>{unit.heading.toFixed(0)}&deg;</span>
+            <span data-testid="detail-unit-hdg">{unit.heading.toFixed(0)}&deg;</span>
 
             <span className="text-[var(--color-tactical-text-dim)]">SPD</span>
-            <span>{unit.speed} kts</span>
+            <span data-testid="detail-unit-spd">{unit.speed} kts</span>
 
             {unit.altitude !== undefined && (
               <>
