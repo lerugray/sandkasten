@@ -32,6 +32,12 @@ test.describe("sand-004 — Autopause trigger system", () => {
     await expect(page.getByTestId("sim-toggle-pause")).toHaveText("PLAY", { timeout: 30_000 });
     await expect(page.getByTestId("autopause-reason")).toContainText("NEW CONTACT", { timeout: 5_000 });
 
+    // Disable the new-contact trigger so it doesn't keep pre-empting later triggers.
+    const newContactTrigger = page.getByTestId("autopause-trigger-newContact");
+    if (await newContactTrigger.isChecked()) {
+      await newContactTrigger.click();
+    }
+
     // Resume and wait for an incoming-weapon autopause (combat tab suggested).
     await page.getByTestId("sim-toggle-pause").click(); // resume
     await expect(page.getByTestId("sim-toggle-pause")).toHaveText("PLAY", { timeout: 120_000 });
