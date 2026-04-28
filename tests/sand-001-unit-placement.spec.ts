@@ -18,18 +18,58 @@ test.describe("sand-001 — Unit placement + selection (editor)", () => {
 
     const mapCanvas = page.locator("canvas").first();
 
+    const dispatchCanvasClick = async (position: { x: number; y: number }) => {
+      await page.evaluate(({ x, y }) => {
+        const canvas = document.querySelector(".maplibregl-canvas") as HTMLCanvasElement | null;
+        if (!canvas) throw new Error("Map canvas not found");
+        const rect = canvas.getBoundingClientRect();
+        const clientX = rect.left + x;
+        const clientY = rect.top + y;
+        canvas.dispatchEvent(
+          new MouseEvent("click", {
+            bubbles: true,
+            cancelable: true,
+            clientX,
+            clientY,
+            button: 0,
+          }),
+        );
+      }, position);
+    };
+
+    const markers = page.getByTestId("unit-marker");
+    const beforeIds = new Set(
+      await markers.evaluateAll((els) =>
+        els.map((el) => (el instanceof HTMLElement ? el.dataset.unitId : null)).filter(Boolean),
+      ),
+    );
+
     // Place 3 units (re-select platform each time).
     for (let i = 0; i < 3; i++) {
       await platform.click();
       await expect(page.getByTestId("unit-placer-waiting")).toBeVisible();
-      await mapCanvas.click({ position: { x: 300, y: 300 + i * 20 } });
+      await dispatchCanvasClick({ x: 760 + i * 80, y: 140 + i * 160 });
     }
 
-    const markers = page.getByTestId("unit-marker");
-    await expect(markers).toHaveCount(3, { timeout: 10_000 });
+    // Exit placement mode so the overlay doesn't block marker interactions.
+    await page.getByTestId("editor-tool-place-unit").click();
+    await expect(page.getByTestId("unit-placer")).toBeHidden();
+
+    await expect
+      .poll(async () => markers.count(), { timeout: 10_000 })
+      .toBeGreaterThan(beforeIds.size);
+
+    const afterIds = await markers.evaluateAll((els) =>
+      els.map((el) => (el instanceof HTMLElement ? el.dataset.unitId : null)).filter(Boolean),
+    );
+    const placedIds = afterIds.filter((id) => !beforeIds.has(id));
+    expect(placedIds).toHaveLength(3);
+
+    const markerById = (id: string) =>
+      page.locator(`[data-testid="unit-marker"][data-unit-id="${id}"]`);
 
     // Select first unit and read its POS.
-    await markers.nth(0).click();
+    await markerById(placedIds[0]).click();
     await expect(page.getByTestId("detail-panel")).toBeVisible();
     await expect(page.getByTestId("detail-platform-class")).toBeVisible();
 
@@ -37,17 +77,18 @@ test.describe("sand-001 — Unit placement + selection (editor)", () => {
     expect(pos0).toBeTruthy();
 
     // Drag the first unit a bit.
-    const box = await markers.nth(0).boundingBox();
+    const dragged = markerById(placedIds[0]);
+    const box = await dragged.boundingBox();
     expect(box).toBeTruthy();
     if (box) {
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.mouse.down();
-      await page.mouse.move(box.x + box.width / 2 + 60, box.y + box.height / 2 + 40);
+      await page.mouse.move(box.x + box.width / 2 + 220, box.y + box.height / 2 + 160);
       await page.mouse.up();
     }
 
     // Re-select to ensure detail panel reflects updated unit state.
-    await markers.nth(0).click();
+    await dragged.click();
     await expect
       .poll(async () => page.getByTestId("detail-unit-pos").textContent(), {
         timeout: 10_000,
@@ -55,8 +96,8 @@ test.describe("sand-001 — Unit placement + selection (editor)", () => {
       .not.toBe(pos0);
 
     // Click each unit to verify selection populates detail panel.
-    for (let i = 0; i < 3; i++) {
-      await markers.nth(i).click();
+    for (const id of placedIds) {
+      await markerById(id).click();
       await expect(page.getByTestId("detail-panel")).toBeVisible();
       await expect(page.getByTestId("detail-platform-class")).toBeVisible();
     }

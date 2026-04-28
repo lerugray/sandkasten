@@ -27,6 +27,8 @@ export function UnitPlacer({ side, onPlace }: UnitPlacerProps) {
       // Get map container and calculate lng/lat from click
       const mapContainer = document.querySelector(".maplibregl-canvas");
       if (!mapContainer) return;
+      const target = e.target as HTMLElement | null;
+      if (!target || !mapContainer.contains(target)) return;
 
       // Use the maplibre map instance to convert pixel to lnglat
       const mapEl = mapContainer.closest(".maplibregl-map");
