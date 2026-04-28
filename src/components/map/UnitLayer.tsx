@@ -74,7 +74,7 @@ export function UnitLayer({
 
       const el = document.createElement("div");
       el.className = "unit-marker";
-      el.dataset.testid = "unit-marker";
+      el.setAttribute("data-testid", "unit-marker");
       el.dataset.unitId = unit.id;
       el.innerHTML = svg;
       el.style.cursor = "pointer";

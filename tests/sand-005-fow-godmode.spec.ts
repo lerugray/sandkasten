@@ -5,14 +5,15 @@ test.describe("sand-005 — Fog-of-war vs god-mode toggle", () => {
     await page.goto("/play");
     await expect(page.locator("canvas").first()).toBeVisible({ timeout: 10_000 });
 
-    const before = await page.getByTestId("unit-marker").count();
-    expect(before).toBeGreaterThan(0);
+    const markers = page.locator(".maplibregl-marker");
+    await expect(markers.first()).toBeVisible({ timeout: 10_000 });
+    const before = await markers.count();
 
     // Toggle god mode with keyboard.
     await page.keyboard.press("g");
 
     await expect
-      .poll(async () => page.getByTestId("unit-marker").count(), { timeout: 10_000 })
+      .poll(async () => markers.count(), { timeout: 10_000 })
       .toBeGreaterThan(before);
 
     // Uncertainty circles should be removed when fog-of-war is off.
