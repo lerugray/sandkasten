@@ -27,6 +27,8 @@ export function UnitPlacer({ side, onPlace }: UnitPlacerProps) {
       // Get map container and calculate lng/lat from click
       const mapContainer = document.querySelector(".maplibregl-canvas");
       if (!mapContainer) return;
+      const target = e.target as HTMLElement | null;
+      if (!target || !mapContainer.contains(target)) return;
 
       // Use the maplibre map instance to convert pixel to lnglat
       const mapEl = mapContainer.closest(".maplibregl-map");
@@ -69,7 +71,10 @@ export function UnitPlacer({ side, onPlace }: UnitPlacerProps) {
   }, [waitingForClick, handleMapClick]);
 
   return (
-    <div className="absolute top-2 left-2 z-20 w-72 bg-[var(--color-tactical-panel)] border border-[var(--color-tactical-border)] rounded text-xs shadow-lg">
+    <div
+      data-testid="unit-placer"
+      className="absolute top-2 left-2 z-20 w-72 bg-[var(--color-tactical-panel)] border border-[var(--color-tactical-border)] rounded text-xs shadow-lg"
+    >
       <div className="p-2 border-b border-[var(--color-tactical-border)]">
         <div className="text-[var(--color-terminal-green)] font-bold uppercase tracking-wider mb-2">
           Place Unit — {side}
@@ -77,6 +82,7 @@ export function UnitPlacer({ side, onPlace }: UnitPlacerProps) {
         <input
           type="text"
           placeholder="Search platforms..."
+          data-testid="unit-placer-search"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="w-full bg-[var(--color-tactical-dark)] border border-[var(--color-tactical-border)] rounded px-2 py-1 text-[var(--color-tactical-text)] placeholder:text-[var(--color-tactical-text-dim)] outline-none focus:border-[var(--color-terminal-green)]"
@@ -91,6 +97,8 @@ export function UnitPlacer({ side, onPlace }: UnitPlacerProps) {
               setSelectedPlatform(p);
               setWaitingForClick(true);
             }}
+            data-testid="unit-placer-platform"
+            data-platform-id={p.id}
             className={`w-full text-left px-3 py-1.5 hover:bg-[var(--color-tactical-border)] cursor-pointer truncate ${
               selectedPlatform?.id === p.id
                 ? "text-[var(--color-terminal-green)] bg-[var(--color-tactical-border)]"
@@ -106,7 +114,10 @@ export function UnitPlacer({ side, onPlace }: UnitPlacerProps) {
       </div>
 
       {waitingForClick && selectedPlatform && (
-        <div className="p-2 border-t border-[var(--color-tactical-border)] text-[var(--color-terminal-amber)]">
+        <div
+          data-testid="unit-placer-waiting"
+          className="p-2 border-t border-[var(--color-tactical-border)] text-[var(--color-terminal-amber)]"
+        >
           Click the map to place {selectedPlatform.name.split("[")[0].trim()}
         </div>
       )}

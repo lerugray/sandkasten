@@ -38,3 +38,6 @@ npm-debug.log*
 # GS state junction (gs-232 parallel-picker workaround)
 state/
 
+# GS bot worktree (parallel-mode dispatcher; internal WIP not public)
+.bot-worktree/
+

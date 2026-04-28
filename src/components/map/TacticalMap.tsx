@@ -29,7 +29,7 @@ interface TacticalMapProps {
   showSensorCoverage?: boolean;
   measureStart?: MeasurePoint | null;
   measureEnd?: MeasurePoint | null;
-  onMapClick?: (lngLat: { lng: number; lat: number }) => void;
+  onMapClick?: (lngLat: { lng: number; lat: number }) => boolean | void;
   onUnitDrag?: (unitId: string, position: { lat: number; lng: number }) => void;
 }
 
@@ -52,9 +52,24 @@ export function TacticalMap({
 }: TacticalMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
+  const onUnitSelectRef = useRef(onUnitSelect);
+  const onMapReadyRef = useRef(onMapReady);
+  const onMapClickRef = useRef(onMapClick);
   const [mapReady, setMapReady] = useState(false);
   const [cursorPos, setCursorPos] = useState<{ lat: number; lng: number } | null>(null);
   const [zoom, setZoom] = useState(0);
+
+  useEffect(() => {
+    onUnitSelectRef.current = onUnitSelect;
+  }, [onUnitSelect]);
+
+  useEffect(() => {
+    onMapReadyRef.current = onMapReady;
+  }, [onMapReady]);
+
+  useEffect(() => {
+    onMapClickRef.current = onMapClick;
+  }, [onMapClick]);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -84,7 +99,7 @@ export function TacticalMap({
       const mapEl = containerRef.current?.querySelector(".maplibregl-canvas")?.closest(".maplibregl-map");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (mapEl) (mapEl as any).__maplibreMap = map;
-      onMapReady?.();
+      onMapReadyRef.current?.();
     });
 
     map.on("zoom", () => setZoom(map.getZoom()));
@@ -93,8 +108,9 @@ export function TacticalMap({
     map.on("click", (e) => {
       const target = e.originalEvent.target as HTMLElement;
       if (target.closest(".unit-marker") || target.closest(".contact-marker")) return;
-      onMapClick?.({ lng: e.lngLat.lng, lat: e.lngLat.lat });
-      onUnitSelect(null);
+      const handled =
+        onMapClickRef.current?.({ lng: e.lngLat.lng, lat: e.lngLat.lat }) === true;
+      if (!handled) onUnitSelectRef.current(null);
     });
 
     mapRef.current = map;
@@ -152,6 +168,7 @@ export function TacticalMap({
             <ContactLayer
               map={mapRef.current}
               contacts={contacts}
+              fogOfWar={fogOfWar}
             />
           )}
           {orders && (

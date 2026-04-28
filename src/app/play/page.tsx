@@ -150,10 +150,11 @@ export default function PlayPage() {
           // Complete measurement
           setMeasureEnd(lngLat);
         }
-        return;
+        return true;
       }
       if (isPlacingWaypoint && selectedUnitId) {
         addWaypoint(selectedUnitId, lngLat);
+        return true;
       }
     },
     [measureMode, measureStart, measureEnd, isPlacingWaypoint, selectedUnitId, addWaypoint]
@@ -241,7 +242,10 @@ export default function PlayPage() {
             AUTO
           </button>
           {showAutopauseSettings && (
-            <div className="absolute right-0 top-full mt-1 z-50 bg-[var(--color-tactical-panel)] border border-[var(--color-tactical-border)] rounded p-3 w-64">
+            <div
+              data-testid="autopause-settings"
+              className="absolute right-0 top-full mt-1 z-50 bg-[var(--color-tactical-panel)] border border-[var(--color-tactical-border)] rounded p-3 w-64"
+            >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-[var(--color-tactical-text)] font-bold tracking-wider">AUTOPAUSE</span>
                 <button
@@ -249,6 +253,7 @@ export default function PlayPage() {
                     const prefs = { ...autopausePrefsRef.current, enabled: !autopausePrefsRef.current.enabled };
                     setAutopausePrefs(prefs);
                   }}
+                  data-testid="autopause-toggle-enabled"
                   className={`text-xs px-2 py-1 rounded cursor-pointer ${
                     autopausePrefsRef.current.enabled
                       ? "bg-[var(--color-terminal-amber)] text-[var(--color-tactical-dark)] font-bold"
@@ -281,6 +286,7 @@ export default function PlayPage() {
                         };
                         setAutopausePrefs(prefs);
                       }}
+                      data-testid={`autopause-trigger-${key}`}
                       className="accent-[var(--color-terminal-amber)]"
                     />
                     {labels[key]}
@@ -311,9 +317,11 @@ export default function PlayPage() {
         {/* Sidebar */}
         <div className="w-80 bg-[var(--color-tactical-panel)] border-r border-[var(--color-tactical-border)] flex flex-col text-base shrink-0 overflow-hidden">
           {/* Tab switcher */}
-          <div className="flex border-b border-[var(--color-tactical-border)] shrink-0 overflow-visible">
+          <div data-testid="sidebar-tabs" className="flex border-b border-[var(--color-tactical-border)] shrink-0 overflow-visible">
             <button
               onClick={() => setSidebarTab("forces")}
+              data-testid="sidebar-tab-forces"
+              data-active={sidebarTab === "forces" ? "true" : "false"}
               className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer ${
                 sidebarTab === "forces"
                   ? "text-[var(--color-terminal-green)] border-b border-[var(--color-terminal-green)]"
@@ -324,6 +332,8 @@ export default function PlayPage() {
             </button>
             <button
               onClick={() => setSidebarTab("messages")}
+              data-testid="sidebar-tab-messages"
+              data-active={sidebarTab === "messages" ? "true" : "false"}
               className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer ${
                 sidebarTab === "messages"
                   ? "text-[var(--color-terminal-amber)] border-b border-[var(--color-terminal-amber)]"
@@ -339,6 +349,8 @@ export default function PlayPage() {
             </button>
             <button
               onClick={() => setSidebarTab("combat")}
+              data-testid="sidebar-tab-combat"
+              data-active={sidebarTab === "combat" ? "true" : "false"}
               className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer ${
                 sidebarTab === "combat"
                   ? "text-[var(--color-terminal-red)] border-b border-[var(--color-terminal-red)]"
@@ -347,13 +359,18 @@ export default function PlayPage() {
             >
               Combat
               {(combatState?.weaponsInFlight.length ?? 0) > 0 && (
-                <span className="ml-1 inline-flex items-center justify-center bg-[var(--color-terminal-red)] text-[var(--color-tactical-dark)] text-[10px] rounded-full w-5 h-5 font-bold">
+                <span
+                  data-testid="weapons-in-flight-badge"
+                  className="ml-1 inline-flex items-center justify-center bg-[var(--color-terminal-red)] text-[var(--color-tactical-dark)] text-[10px] rounded-full w-5 h-5 font-bold"
+                >
                   {combatState?.weaponsInFlight.length}
                 </span>
               )}
             </button>
             <button
               onClick={() => setSidebarTab("media")}
+              data-testid="sidebar-tab-media"
+              data-active={sidebarTab === "media" ? "true" : "false"}
               className={`flex-1 py-2 text-base uppercase tracking-wider cursor-pointer ${
                 sidebarTab === "media"
                   ? "text-[var(--color-terminal-blue)] border-b border-[var(--color-terminal-blue)]"
@@ -435,7 +452,9 @@ export default function PlayPage() {
                 {(combatState?.weaponsInFlight.length ?? 0) > 0 && (
                   <div className="mb-2 pb-2 border-b border-[var(--color-tactical-border)]">
                     <div className="text-[var(--color-terminal-red)] text-sm uppercase tracking-wider mb-1">
-                      Weapons in Flight ({combatState?.weaponsInFlight.length})
+                      <span data-testid="weapons-in-flight-count">
+                        Weapons in Flight ({combatState?.weaponsInFlight.length})
+                      </span>
                     </div>
                     {combatState?.weaponsInFlight.map((w) => (
                       <div key={w.id} className="text-sm text-[var(--color-tactical-text)] mb-0.5">

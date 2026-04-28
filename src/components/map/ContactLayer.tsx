@@ -13,6 +13,7 @@ const UNCERTAINTY_LINE = "contact-uncertainty-line";
 interface ContactLayerProps {
   map: maplibregl.Map;
   contacts: Contact[];
+  fogOfWar?: boolean;
 }
 
 const CLASSIFICATION_COLORS: Record<Contact["classification"], string> = {
@@ -29,7 +30,7 @@ const CLASSIFICATION_SYMBOLS: Record<Contact["classification"], string> = {
   tracked: "X",
 };
 
-export function ContactLayer({ map, contacts }: ContactLayerProps) {
+export function ContactLayer({ map, contacts, fogOfWar = true }: ContactLayerProps) {
   const markersRef = useRef<Map<string, maplibregl.Marker>>(new Map());
 
   // Contact markers
@@ -87,6 +88,13 @@ export function ContactLayer({ map, contacts }: ContactLayerProps) {
 
   // Uncertainty circles
   useEffect(() => {
+    if (!fogOfWar) {
+      if (map.getLayer(UNCERTAINTY_LINE)) map.removeLayer(UNCERTAINTY_LINE);
+      if (map.getLayer(UNCERTAINTY_FILL)) map.removeLayer(UNCERTAINTY_FILL);
+      if (map.getSource(UNCERTAINTY_SOURCE)) map.removeSource(UNCERTAINTY_SOURCE);
+      return;
+    }
+
     const features: Feature<Polygon>[] = contacts
       .filter((c) => c.positionUncertainty > 0.5)
       .map((c) => {
@@ -142,7 +150,7 @@ export function ContactLayer({ map, contacts }: ContactLayerProps) {
       if (map.getLayer(UNCERTAINTY_FILL)) map.removeLayer(UNCERTAINTY_FILL);
       if (map.getSource(UNCERTAINTY_SOURCE)) map.removeSource(UNCERTAINTY_SOURCE);
     };
-  }, [map, contacts]);
+  }, [map, contacts, fogOfWar]);
 
   return null;
 }

@@ -32,6 +32,7 @@ export function EditorToolbar({
 
         <button
           onClick={() => onSetActivePanel(activePanel === "place" ? "none" : "place")}
+          data-testid="editor-tool-place-unit"
           className={`w-full text-left px-2 py-1.5 rounded mb-1 cursor-pointer ${
             activePanel === "place"
               ? "bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)]"
@@ -43,6 +44,7 @@ export function EditorToolbar({
 
         <button
           onClick={() => onSetActivePanel(activePanel === "settings" ? "none" : "settings")}
+          data-testid="editor-tool-scenario-settings"
           className={`w-full text-left px-2 py-1.5 rounded mb-1 cursor-pointer ${
             activePanel === "settings"
               ? "bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)]"
