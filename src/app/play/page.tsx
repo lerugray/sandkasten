@@ -150,10 +150,11 @@ export default function PlayPage() {
           // Complete measurement
           setMeasureEnd(lngLat);
         }
-        return;
+        return true;
       }
       if (isPlacingWaypoint && selectedUnitId) {
         addWaypoint(selectedUnitId, lngLat);
+        return true;
       }
     },
     [measureMode, measureStart, measureEnd, isPlacingWaypoint, selectedUnitId, addWaypoint]

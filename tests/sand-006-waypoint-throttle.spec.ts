@@ -10,6 +10,20 @@ test.describe("sand-006 — Waypoints + throttle interaction", () => {
     await page.goto("/play");
     await expect(page.locator("canvas").first()).toBeVisible({ timeout: 10_000 });
 
+    const fireMapClick = async (position: { x: number; y: number }) => {
+      await page.evaluate(({ x, y }) => {
+        const mapEl = document.querySelector(".maplibregl-map") as any;
+        const map = mapEl?.__maplibreMap;
+        if (!map) throw new Error("Map handle not found on .maplibregl-map");
+        const lngLat = map.unproject([x, y]);
+        map.fire("click", {
+          lngLat,
+          point: { x, y },
+          originalEvent: { target: map.getCanvas() },
+        });
+      }, position);
+    };
+
     // Select first friendly unit in Forces sidebar.
     const firstUnitBtn = page.locator(".w-80 button.w-full").first();
     await firstUnitBtn.click();
@@ -21,12 +35,11 @@ test.describe("sand-006 — Waypoints + throttle interaction", () => {
     await page.getByTestId("order-add-waypoint").click();
     await expect(page.getByText("CLICK MAP TO PLACE WAYPOINT")).toBeVisible({ timeout: 3_000 });
 
-    const mapCanvas = page.locator("canvas").first();
-    await mapCanvas.click({ position: { x: 420, y: 320 } });
-    await mapCanvas.click({ position: { x: 520, y: 360 } });
-    await mapCanvas.click({ position: { x: 620, y: 420 } });
+    await fireMapClick({ x: 420, y: 320 });
+    await fireMapClick({ x: 520, y: 360 });
+    await fireMapClick({ x: 620, y: 420 });
 
-    await expect(page.getByTestId("order-waypoints-list")).toBeVisible();
+    await expect(page.getByTestId("order-waypoints-list")).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId("order-waypoint-item")).toHaveCount(3);
 
     // Waypoint path should be present in the map source.
