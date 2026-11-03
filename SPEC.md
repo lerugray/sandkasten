@@ -48,6 +48,11 @@ Ray changes his intent, quoting him.
 - "we dont have to literally copy things given our engine is different": no record, value or text is copied from CMO's
   database. No build may bundle or require data extracted from a CMO install; `scripts/extract_cmo_db.py` output stays
   gitignored and local. (This replaces the "copy the CMO database" idea in Ray's first 11-03 message, per his ruling.)
+- First class where CMO's is weak (Ray, 2026-11-03 16:0x): "real pictures of hardware along with their complete specs and
+  some understandable english as to how they are used and what kind of missions they are typically used for". Every
+  platform entry carries photos, full specs, a plain-English "how it is used" and "typical missions". Photos are real and
+  licensed: public domain (e.g. US government) or openly licensed (e.g. CC BY / CC BY-SA), each with its source, author,
+  license and attribution stored beside it and shown in game; no image of unclear license and no image generator output.
 - Treat it like a historical order of battle (Ray, 2026-11-03 15:0x): "wargames borrow those all the time and iterate on
   them to make them their own". The real-world facts are the shared starting point; our sourcing, abstractions and
   values for our engine make the database ours.
