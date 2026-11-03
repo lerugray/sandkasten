@@ -11,8 +11,9 @@ Ray changes his intent, quoting him.
 1. Opens a scenario (bundled or community-made) or builds one in the scenario editor. (GDD.md §7, README "Scenario editor")
 2. Gives orders: waypoints and throttle, targets, rules of engagement, sensor use, aircraft launch and recovery, missions.
    (GDD.md §2.1)
-3. Runs time: continuous with pause and speed control as the primary mode; WeGo simultaneous turns as a second mode.
-   (GDD.md §2.1, §2.2; README hero "Continuous time or WeGo multiplayer")
+3. Runs time: continuous with pause and speed control, or WeGo simultaneous turns (orders phase, then a resolution
+   burst), a headline mode (GDD.md §2.1, §2.2; README hero "Continuous time or WeGo multiplayer"; Ray 2026-11-03
+   "Headline it too").
 4. Sees only what the sensors report: contacts move from unknown to tracked and fade without fresh data. (GDD.md §4)
 5. Fights: missiles, air defense, countermeasures, damage, all in a readable combat log. (GDD.md §5, README "Combat")
 6. Wins or loses on the scenario's victory conditions, and can play it again a different way. (GDD.md §6.5; Ray
@@ -37,7 +38,8 @@ Ray changes his intent, quoting him.
 - "Differentiate on turn structure alone": Ray's 2026-11-03 pitch leads with a more player-friendly experience and look,
   so the 2026-06-12 memo's turn-structure-only thesis is superseded. Fact check 2026-11-03: consumer CMO's v1.10 update
   (2026-10-06) added real-time multiplayer; WeGo exists only in Command Professional Edition and the IKE fan mod, not in
-  consumer CMO. Whether WeGo returns as a headline is Ray's call (asked 2026-11-03).
+  consumer CMO. Ray then ruled WeGo a headline too (2026-11-03 15:2x: "Headline it too"): the pitch is the more
+  player-friendly look and experience AND WeGo simultaneous turns, which consumer CMO does not offer.
 
 ## Platform database (Ray, 2026-11-03 14:5x)
 - "build our own": Sandkasten ships its own platform database, compiled independently for our engine.
