@@ -19,7 +19,7 @@ function hhmmss(t: number) {
 export function Teletype({ lines }: { lines: TtyLine[] }) {
   const shown = lines.slice(-VISIBLE);
   return (
-    <section className="tx-panel tx-tty" data-testid="teletype" aria-live="polite">
+    <section className="tx-panel tx-tty" data-testid="teletype" data-plot-occluder aria-live="polite">
       <div className="tx-tty-head">
         <span>[ TRAFFIC ]</span>
         <span className="tx-dim">{lines.length ? `${lines.length} MSG` : "NO TRAFFIC"}</span>

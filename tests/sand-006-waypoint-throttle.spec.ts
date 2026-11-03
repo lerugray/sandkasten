@@ -37,7 +37,7 @@ test.describe("sand-006 — Waypoints + throttle interaction", () => {
     await expect(page.getByTestId("order-waypoints-list")).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId("order-waypoint-item")).toHaveCount(3);
 
-    // Waypoint path should be present in the plot source.
+    // Waypoint path should be drawn on the plot (the handle reports the drawn frame).
     await expect
       .poll(
         async () =>
@@ -49,7 +49,7 @@ test.describe("sand-006 — Waypoints + throttle interaction", () => {
           }),
         { timeout: 5_000 }
       )
-      .toMatchObject({ hasPlot: true });
+      .toMatchObject({ hasPlot: true, featureCount: 4 }); // drawn path: one line and three waypoint marks
 
     // Set throttle to FLANK.
     await page.getByTestId("order-throttle").filter({ hasText: "FLANK" }).click();

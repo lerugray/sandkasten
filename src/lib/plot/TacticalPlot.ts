@@ -86,6 +86,13 @@ interface Track {
   blockText: string;
   blockW: number;
   blockH: number;
+  // one-line fallback when the full block has nowhere clear to go
+  compactText: string;
+  compactW: number;
+  compactH: number;
+  fullW: number;
+  fullH: number;
+  shownText: string;
   slot: number;
   screen: THREE.Vector2;
   onScreen: boolean;
@@ -95,6 +102,17 @@ interface Track {
   contact?: Contact;
   weapon?: WeaponInFlight;
   seen: boolean;
+}
+
+interface Rect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+function intersects(a: Rect, b: Rect): boolean {
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
 }
 
 interface Effect {
@@ -251,20 +269,48 @@ export class TacticalPlot {
   private sweepGeo = new THREE.PlaneGeometry(2, 2);
   private tracks = new Map<string, Track>();
   private effects: Effect[] = [];
-  private seenEvents = new Set<string>();
+  // last combat event already turned into an effect (the log is append-only)
+  private lastEventId: string | null = null;
   private lastSimTime = 0;
+
+  // what the last frame actually drew; the test handle reports this, not the input
+  private drawn = {
+    weaponLines: 0,
+    weaponHeads: 0,
+    waypointPaths: [] as { unitId: string; points: number }[],
+    uncertaintyDiscs: 0,
+    uncertaintyEdges: 0,
+    coverageDiscs: 0,
+    coverageEdges: 0,
+    unitSprites: 0,
+    contactSprites: 0,
+  };
+
+  // screen rects of chrome that covers the plot (elements marked data-plot-occluder)
+  private occluders: Rect[] = [];
+  private occluderAt = -Infinity;
+  private occluderHash = "";
+  private leaderSvg: SVGSVGElement;
+  private leaderPaths: Record<"friendly" | "hostile" | "unknown", SVGPathElement>;
+  private leaderD = { friendly: "", hostile: "", unknown: "" };
 
   // DOM labels outside the tracks
   private labelPool: HTMLDivElement[] = [];
   private labelsUsed = 0;
-  private labelRects: { x: number; y: number; w: number; h: number }[] = [];
+  private labelRects: Rect[] = [];
   private gridLabels: HTMLDivElement[] = [];
+  private gridRects: Rect[] = [];
 
   private raf = 0;
   private lastFrame = 0;
   private disposed = false;
   private frames = 0;
   private tmpV3 = new THREE.Vector3();
+  private projV = new THREE.Vector3();
+  private screenV = new THREE.Vector3();
+  private ndc = new THREE.Vector2();
+  private groundA = new THREE.Vector3();
+  private groundB = new THREE.Vector3();
 
   constructor(host: HTMLElement, overlay: HTMLElement, origin: GeoPoint, callbacks: PlotCallbacks) {
     this.host = host;
@@ -288,6 +334,19 @@ export class TacticalPlot {
     this.composer.addPass(this.bloom);
     this.composer.addPass(new ShaderPass(FINISH_SHADER));
     this.composer.addPass(new OutputPass());
+
+    // label leaders are drawn in screen space so they stay exact when tilted
+    const NS = "http://www.w3.org/2000/svg";
+    this.leaderSvg = document.createElementNS(NS, "svg") as SVGSVGElement;
+    this.leaderSvg.setAttribute("class", "tx-leaders");
+    const mk = (cls: string) => {
+      const path = document.createElementNS(NS, "path") as SVGPathElement;
+      path.setAttribute("class", cls);
+      this.leaderSvg.appendChild(path);
+      return path;
+    };
+    this.leaderPaths = { friendly: mk("tx-leader"), hostile: mk("tx-leader tx-leader--hostile"), unknown: mk("tx-leader tx-leader--unknown") };
+    overlay.appendChild(this.leaderSvg);
 
     this.dots = this.makePoints(this.dotsPos, this.dotsCol, 3, 22);
     this.marks = this.makePoints(this.marksPos, this.marksCol, 7, 23);
@@ -545,12 +604,15 @@ export class TacticalPlot {
       t.contact = c;
       this.moveTrack(t, P.x(c.position.lng), P.y(c.position.lat), now, false);
       this.sampleHistory(t, input.simTime, HIST_UNIT_MS);
-      const actual = unitById.get(c.actualUnitId);
-      const pl = actual ? getPlatform(actual.platformId) : undefined;
+      // The sim does not report a contact's domain at detection, so an
+      // unknown or detected contact gets the unknown-dimension frame. Only
+      // classification (CLS/TRK) reveals the platform type and its domain.
       const known = c.classification === "classified" || c.classification === "tracked";
+      const actual = known ? unitById.get(c.actualUnitId) : undefined;
+      const pl = actual ? getPlatform(actual.platformId) : undefined;
       this.setSprite(
         t,
-        sidcFor(known ? "hostile" : "unknown", pl?.dimension ?? "sea", known ? pl?.functionId ?? "" : ""),
+        known ? sidcFor("hostile", pl?.dimension ?? "unknown", pl?.functionId ?? "") : sidcFor("unknown", "unknown", ""),
         known ? PALETTE.alarm : PALETTE.phosphorDim,
       );
     }
@@ -566,9 +628,16 @@ export class TacticalPlot {
     // combat events since the last update decide what a vanished weapon did
     const hitTargets = new Set<string>();
     const killed = new Set<string>();
-    for (const e of input.combatLog) {
-      if (this.seenEvents.has(e.id)) continue;
-      this.seenEvents.add(e.id);
+    const log = input.combatLog;
+    let from = 0;
+    if (this.lastEventId) {
+      for (let i = log.length - 1; i >= 0; i--) {
+        if (log[i].id === this.lastEventId) { from = i + 1; break; }
+      }
+    }
+    if (log.length) this.lastEventId = log[log.length - 1].id;
+    for (let i = from; i < log.length; i++) {
+      const e = log[i];
       if ((e.type === "hit" || e.type === "damaged" || e.type === "destroyed") && e.targetId) hitTargets.add(e.targetId);
       if (e.type === "destroyed" && e.targetId) killed.add(e.targetId);
     }
@@ -609,6 +678,7 @@ export class TacticalPlot {
         };
       },
       frames: () => this.frames,
+      drawnTracks: () => ({ units: this.drawn.unitSprites, contacts: this.drawn.contactSprites }),
       tilt: (on: boolean) => this.setTilt(on),
       view: () => ({ dist: this.dist, tilt: this.tiltAmt, target: { x: this.target.x, y: this.target.y } }),
     };
@@ -630,7 +700,9 @@ export class TacticalPlot {
       if (Array.isArray(mat)) mat.forEach((x) => x.dispose());
       else mat?.dispose?.();
     });
+    this.leaderSvg.remove();
     this.composer.dispose();
+    this.renderer.forceContextLoss();
     this.renderer.dispose();
     this.renderer.domElement.remove();
   }
@@ -660,6 +732,7 @@ export class TacticalPlot {
         from: new THREE.Vector2(), to: new THREE.Vector2(NaN, NaN), pos: new THREE.Vector2(),
         z: 0, t0: 0, history: [], lastHistSim: -Infinity,
         spriteW: 0, spriteH: 0, blockText: "", blockW: 0, blockH: 0, slot: 0,
+        compactText: "", compactW: 0, compactH: 0, fullW: 0, fullH: 0, shownText: "",
         screen: new THREE.Vector2(), onScreen: false, alpha: 1, paintT: 0, seen: true,
       };
       if (kind !== "weapon") {
@@ -713,7 +786,7 @@ export class TacticalPlot {
       t.history.length = 0;
       t.lastHistSim = -Infinity;
     }
-    this.seenEvents.clear();
+    this.lastEventId = null;
     this.effects.length = 0;
   }
 
@@ -808,7 +881,7 @@ export class TacticalPlot {
     if (d) {
       if (!d.moved && Math.hypot(x - d.x, y - d.y) > 4) d.moved = true;
       if (d.moved) {
-        const a = this.groundAt(d.lastX, d.lastY), b = this.groundAt(x, y);
+        const a = this.groundAt(d.lastX, d.lastY, this.groundA), b = this.groundAt(x, y, this.groundB);
         const now = performance.now();
         if (a && b) {
           const dx = a.x - b.x, dy = a.y - b.y;
@@ -912,7 +985,7 @@ export class TacticalPlot {
   private updateCursorReadout() {
     const el = this.readouts.cursor;
     if (!el) return;
-    let text = "--°--.-'- ---°--.-'-";
+    let text = "--";
     if (this.cursorPx) {
       const g = this.groundAt(this.cursorPx.x, this.cursorPx.y);
       if (g) {
@@ -974,16 +1047,17 @@ export class TacticalPlot {
     this.spriteK = (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))) / this.H;
   }
 
-  private groundAt(x: number, y: number): THREE.Vector3 | null {
-    const ndc = new THREE.Vector2((x / this.W) * 2 - 1, -(y / this.H) * 2 + 1);
-    this.raycaster.setFromCamera(ndc, this.camera);
-    const out = new THREE.Vector3();
+  /** Ground point under a screen pixel, written into `out` (no allocation). */
+  private groundAt(x: number, y: number, out: THREE.Vector3 = this.groundA): THREE.Vector3 | null {
+    this.ndc.set((x / this.W) * 2 - 1, -(y / this.H) * 2 + 1);
+    this.raycaster.setFromCamera(this.ndc, this.camera);
     return this.raycaster.ray.intersectPlane(this.ground, out);
   }
 
+  /** Screen position of a plot point. Returns a shared vector: copy it to keep it. */
   private toScreen(x: number, y: number, z: number): THREE.Vector3 {
-    const v = this.tmpV3.set(x, y, z).project(this.camera);
-    return new THREE.Vector3(((v.x + 1) / 2) * this.W, ((1 - v.y) / 2) * this.H, v.z);
+    const v = this.projV.set(x, y, z).project(this.camera);
+    return this.screenV.set(((v.x + 1) / 2) * this.W, ((1 - v.y) / 2) * this.H, v.z);
   }
 
   /** World units per CSS pixel near a ground point (perspective-aware). */
@@ -1017,11 +1091,11 @@ export class TacticalPlot {
     if (Math.abs(this.dist - this.distGoal) > 0.01) {
       const anchor = this.zoomAnchor;
       this.updateCamera();
-      const before = anchor ? this.groundAt(anchor.x, anchor.y) : null;
+      const before = anchor ? this.groundAt(anchor.x, anchor.y, this.groundA) : null;
       this.dist += (this.distGoal - this.dist) * (1 - Math.exp(-dt * 11));
       if (Math.abs(this.dist - this.distGoal) < 0.01) this.dist = this.distGoal;
       this.updateCamera();
-      const after = anchor ? this.groundAt(anchor.x, anchor.y) : null;
+      const after = anchor ? this.groundAt(anchor.x, anchor.y, this.groundB) : null;
       if (before && after) {
         this.target.x += before.x - after.x;
         this.target.y += before.y - after.y;
@@ -1109,6 +1183,11 @@ export class TacticalPlot {
     };
     this.labelsUsed = 0;
     this.labelRects.length = 0;
+    const dr = this.drawn;
+    dr.weaponLines = dr.weaponHeads = dr.uncertaintyDiscs = dr.uncertaintyEdges = 0;
+    dr.coverageDiscs = dr.coverageEdges = dr.unitSprites = dr.contactSprites = 0;
+    dr.waypointPaths.length = 0;
+    this.refreshOccluders(now);
 
     const dashPx = 7, gapPx = 5;
     dashed.material.dashSize = dashPx * this.kPx;
@@ -1151,8 +1230,10 @@ export class TacticalPlot {
         for (const t of emitters) {
           const rKm = getPlatform(t.unit!.platformId)!.sensorRangeKm!;
           disc(t.pos.x, t.pos.y, rKm, C.phosphor, 0.03 * coverageShare);
+          dr.coverageDiscs++;
           dashed.circle(t.pos.x, t.pos.y, 0, rKm, C.dim, 0.75 * edgeShare, 120);
-          if (tilt > 0.02) this.dome(thin, t.pos.x, t.pos.y, rKm, tilt * coverageShare * 1.6);
+          dr.coverageEdges++;
+          if (tilt > 0.02) this.dome(thin, t.pos.x, t.pos.y, rKm, tilt * Math.max(0.4, edgeShare));
         }
       }
 
@@ -1183,7 +1264,9 @@ export class TacticalPlot {
           const known = t.contact.classification === "classified" || t.contact.classification === "tracked";
           const col = known ? C.alarm : C.dim;
           disc(t.pos.x, t.pos.y, t.contact.positionUncertainty, col, 0.05 * t.alpha);
+          dr.uncertaintyDiscs++;
           dashed.circle(t.pos.x, t.pos.y, 0, t.contact.positionUncertainty, col, 0.55 * t.alpha, 48);
+          dr.uncertaintyEdges++;
         }
       }
 
@@ -1192,6 +1275,7 @@ export class TacticalPlot {
         const t = unitTrack(path.unitId);
         if (!t) continue;
         dashed.breakRun();
+        dr.waypointPaths.push({ unitId: path.unitId, points: path.points.length });
         let px = t.pos.x, py = t.pos.y;
         path.points.forEach((p, i) => {
           const x = this.proj.x(p.lng), y = this.proj.y(p.lat);
@@ -1222,8 +1306,10 @@ export class TacticalPlot {
         if (w.target) {
           dashed.breakRun();
           dashed.seg(t.pos.x, t.pos.y, 0, w.target.x, w.target.y, 0, col, 0.55);
+          dr.weaponLines++;
         }
         mark(t.pos.x, t.pos.y, 0, C.hi, 1);
+        dr.weaponHeads++;
         const dir = THREE.MathUtils.degToRad(w.weapon.heading);
         const L = 10 * this.pxAt(t.pos.x, t.pos.y);
         solid.seg(t.pos.x, t.pos.y, 0, t.pos.x - Math.sin(dir) * L, t.pos.y - Math.cos(dir) * L, 0, col, 0.9);
@@ -1239,6 +1325,10 @@ export class TacticalPlot {
         const s = this.spriteK * (1 + pulse * 0.25);
         t.sprite.scale.set(t.spriteW * s, t.spriteH * s, 1);
         (t.sprite.material as THREE.SpriteMaterial).opacity = t.alpha;
+        if (t.sprite.visible && t.alpha > 0) {
+          if (t.kind === "unit") dr.unitSprites++;
+          else dr.contactSprites++;
+        }
 
         const friendly = t.unit?.side === input.playerSide;
         const hostileUnit = !!t.unit && !friendly;
@@ -1382,7 +1472,7 @@ export class TacticalPlot {
       const el = (i / (rings + 1)) * (Math.PI / 2);
       const rr = r * Math.cos(el);
       const z = r * Math.sin(el) * hScale;
-      batch.circle(cx, cy, z, rr, C.dim, 0.22 * tilt, 64);
+      batch.circle(cx, cy, z, rr, C.phosphor, 0.3 * tilt, 64);
     }
     for (let m = 0; m < 12; m++) {
       const az = (m / 12) * Math.PI * 2;
@@ -1390,7 +1480,7 @@ export class TacticalPlot {
       for (let s = 1; s <= 10; s++) {
         const el = (s / 10) * (Math.PI / 2);
         const nx = cx + Math.sin(az) * r * Math.cos(el), ny = cy + Math.cos(az) * r * Math.cos(el), nz = r * Math.sin(el) * hScale;
-        batch.seg(px, py, pz, nx, ny, nz, C.dim, 0.18 * tilt);
+        batch.seg(px, py, pz, nx, ny, nz, C.phosphor, 0.24 * tilt);
         px = nx; py = ny; pz = nz;
       }
     }
@@ -1438,10 +1528,40 @@ export class TacticalPlot {
       if (el.style.display !== "none") el.style.display = "none";
       return;
     }
-    if (el.style.display === "none") el.style.display = "";
-    el.style.transform = `translate3d(${Math.round(s.x + dx)}px, ${Math.round(s.y + dy)}px, 0)`;
     // ring and waypoint labels are short; estimate their box from the text
-    this.labelRects.push({ x: s.x + dx, y: s.y + dy, w: text.length * 7.6 + 8, h: 16 });
+    const rect = { x: s.x + dx, y: s.y + dy, w: text.length * 7.6 + 8, h: 16 };
+    if (this.underChrome(rect)) {
+      if (el.style.display !== "none") el.style.display = "none";
+      return;
+    }
+    if (el.style.display === "none") el.style.display = "";
+    el.style.transform = `translate3d(${Math.round(rect.x)}px, ${Math.round(rect.y)}px, 0)`;
+    this.labelRects.push(rect);
+  }
+
+  /** Re-read the chrome rects a few times a second (panels open and close). */
+  private refreshOccluders(now: number) {
+    if (now - this.occluderAt < 200) return;
+    this.occluderAt = now;
+    const host = this.host.getBoundingClientRect();
+    const rects: Rect[] = [];
+    document.querySelectorAll<HTMLElement>("[data-plot-occluder]").forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) rects.push({ x: r.left - host.left, y: r.top - host.top, w: r.width, h: r.height });
+    });
+    this.occluders = rects;
+    const hash = rects.map((r) => `${r.x | 0},${r.y | 0},${r.w | 0},${r.h | 0}`).join(";");
+    if (hash !== this.occluderHash) {
+      this.occluderHash = hash;
+      this.updateGridLabels();
+    }
+  }
+
+  /** True when a screen rect touches any chrome band or leaves the canvas. */
+  private underChrome(r: Rect): boolean {
+    if (r.x < 0 || r.y < 0 || r.x + r.w > this.W || r.y + r.h > this.H) return true;
+    for (const o of this.occluders) if (intersects(r, o)) return true;
+    return false;
   }
 
   // ---------------------------------------------------------- data blocks
@@ -1460,87 +1580,155 @@ export class TacticalPlot {
   }
 
   private placeBlocks(input: PlotInput) {
-    const placed: { x: number; y: number; w: number; h: number }[] = [...this.labelRects];
-    const glyphs: { x: number; y: number }[] = [];
+    const placed: Rect[] = [...this.labelRects, ...this.gridRects];
+    // things a data block must not sit on: every glyph, live missile heads
+    // with their glow, and fresh hit/intercept bursts
+    const obstacles: Rect[] = [];
     const list: Track[] = [];
+    const tilted = this.tiltAmt > 0.05;
+    const now = performance.now();
 
     for (const t of this.tracks.values()) {
-      if (!t.block) continue;
       const s = this.toScreen(t.pos.x, t.pos.y, t.z);
       t.screen.set(s.x, s.y);
       t.onScreen = s.z < 1 && s.x > -40 && s.x < this.W + 40 && s.y > -40 && s.y < this.H + 40;
-      if (t.onScreen) {
-        glyphs.push({ x: s.x, y: s.y });
-        list.push(t);
-      } else if (t.block.style.display !== "none") {
-        t.block.style.display = "none";
+      if (!t.onScreen) {
+        if (t.block && t.block.style.display !== "none") t.block.style.display = "none";
+        continue;
       }
+      if (t.kind === "weapon") {
+        obstacles.push({ x: s.x - 18, y: s.y - 18, w: 36, h: 36 });
+        continue;
+      }
+      const hw = Math.max(11, (t.spriteW || 22) / 2), hh = Math.max(11, (t.spriteH || 22) / 2);
+      obstacles.push({ x: s.x - hw, y: s.y - hh, w: hw * 2, h: hh * 2 });
+      if (t.block) list.push(t);
+    }
+    for (const e of this.effects) {
+      if (now - e.t0 > 700) continue;
+      const sc = this.toScreen(e.x, e.y, 0);
+      obstacles.push({ x: sc.x - 30, y: sc.y - 30, w: 60, h: 60 });
     }
 
     // selected first, then friendlies, then the rest; stable within a group
     const rank = (t: Track) => (t.id === input.selectedUnitId ? 0 : t.unit?.side === input.playerSide ? 1 : 2);
     list.sort((a, b) => rank(a) - rank(b));
 
-    const overlapArea = (r: { x: number; y: number; w: number; h: number }) => {
+    const BLOCKED = 1e9;
+    const overlap = (r: Rect, set: Rect[]) => {
       let a = 0;
-      for (const p of placed) {
+      for (const p of set) {
         const ox = Math.min(r.x + r.w, p.x + p.w) - Math.max(r.x, p.x);
         const oy = Math.min(r.y + r.h, p.y + p.h) - Math.max(r.y, p.y);
         if (ox > 0 && oy > 0) a += ox * oy;
       }
-      for (const g of glyphs) {
-        const ox = Math.min(r.x + r.w, g.x + 11) - Math.max(r.x, g.x - 11);
-        const oy = Math.min(r.y + r.h, g.y + 11) - Math.max(r.y, g.y - 11);
-        if (ox > 0 && oy > 0) a += ox * oy * 0.5;
-      }
       return a;
     };
+    const cost = (r: Rect) => (this.underChrome(r) ? BLOCKED : overlap(r, placed) + overlap(r, obstacles) * 2);
+    // best of the eight slots for the block's current size, sticking with the
+    // current slot while it stays clear
+    const bestSlot = (t: Track) => {
+      const cur = this.slotOffset(t, t.slot);
+      if (cost({ x: t.screen.x + cur.x, y: t.screen.y + cur.y, w: t.blockW, h: t.blockH }) === 0) return { slot: t.slot, c: 0 };
+      let slot = t.slot, c = Infinity;
+      for (let s = 0; s < 8; s++) {
+        const o = this.slotOffset(t, s);
+        // a far slot has to buy a clearly better placement
+        const k = cost({ x: t.screen.x + o.x, y: t.screen.y + o.y, w: t.blockW, h: t.blockH }) + (s >= 4 ? 40 : 0);
+        if (k < c - 1) { c = k; slot = s; }
+      }
+      return { slot, c };
+    };
+
+    const leaders = { friendly: [] as string[], hostile: [] as string[], unknown: [] as string[] };
 
     for (const t of list) {
       const el = t.block!;
+      // a glyph under the chrome takes its label with it
+      if (this.underChrome({ x: t.screen.x - 2, y: t.screen.y - 2, w: 4, h: 4 })) {
+        if (el.style.display !== "none") el.style.display = "none";
+        continue;
+      }
       const { lines, cls } = this.blockLines(t, input);
       const text = lines.join("\n");
       const wantCls = `tx-block tx-block--${t.kind} tx-block--${cls}${t.id === input.selectedUnitId && t.kind === "unit" ? " is-selected" : ""}`;
       if (el.className !== wantCls) el.className = wantCls;
-      if (text !== t.blockText) {
-        t.blockText = text;
-        el.textContent = text;
-        if (el.style.display === "none") el.style.display = "";
-        t.blockW = el.offsetWidth;
-        t.blockH = el.offsetHeight;
-      }
       if (el.style.display === "none") el.style.display = "";
+      if (text !== t.blockText) {
+        // measure both forms once per text change, not per frame
+        t.blockText = text;
+        t.compactText = lines[0] ?? "";
+        el.textContent = t.compactText;
+        t.compactW = el.offsetWidth;
+        t.compactH = el.offsetHeight;
+        el.textContent = text;
+        t.fullW = el.offsetWidth;
+        t.fullH = el.offsetHeight;
+        t.shownText = text;
+      }
 
-      let best = t.slot, bestA = Infinity;
-      const cur = this.slotOffset(t, t.slot);
-      const curA = overlapArea({ x: t.screen.x + cur.x, y: t.screen.y + cur.y, w: t.blockW, h: t.blockH });
-      if (curA === 0) {
-        bestA = 0;
-      } else {
-        for (let s = 0; s < 8; s++) {
-          const o = this.slotOffset(t, s);
-          const a = overlapArea({ x: t.screen.x + o.x, y: t.screen.y + o.y, w: t.blockW, h: t.blockH });
-          // a far slot has to buy a clearly better placement
-          const cost = a + (s >= 4 ? 40 : 0);
-          if (cost < bestA - 1) { bestA = cost; best = s; }
+      // full block first; if nothing clear, one line; if that still lands on
+      // another label, an enemy or unknown track goes without (friendlies and
+      // the selection always keep theirs)
+      t.blockW = t.fullW;
+      t.blockH = t.fullH;
+      let pick = bestSlot(t);
+      let compact = false;
+      const busy = (c: number) => c >= BLOCKED || c > t.blockW * t.blockH * 0.12;
+      if (busy(pick.c)) {
+        t.blockW = t.compactW;
+        t.blockH = t.compactH;
+        const one = bestSlot(t);
+        if (one.c < pick.c) {
+          pick = one;
+          compact = true;
+        } else {
+          t.blockW = t.fullW;
+          t.blockH = t.fullH;
         }
       }
+      const keep = t.id === input.selectedUnitId || (t.unit && t.unit.side === input.playerSide);
+      if (pick.c >= BLOCKED || (!keep && busy(pick.c))) {
+        // no clear place: hide rather than show a sliced or stacked label
+        if (el.style.display !== "none") el.style.display = "none";
+        continue;
+      }
+      const want = compact ? t.compactText : t.blockText;
+      if (t.shownText !== want) {
+        el.textContent = want;
+        t.shownText = want;
+      }
+      const best = pick.slot;
       t.slot = best;
       const o = this.slotOffset(t, best);
       const bx = Math.round(t.screen.x + o.x), by = Math.round(t.screen.y + o.y);
       placed.push({ x: bx, y: by, w: t.blockW, h: t.blockH });
-      if (best >= 4) {
-        // leader from the glyph to the near corner of the pushed-out block
+
+      if (tilted || best >= 4) {
+        // leader from the glyph edge to the block's near corner
         const cx = best % 4 < 2 ? bx : bx + t.blockW;
         const cy = best % 2 === 0 ? by + t.blockH : by;
-        const a = this.groundAt(t.screen.x + Math.sign(cx - t.screen.x) * 9, t.screen.y + Math.sign(cy - t.screen.y) * 9);
-        const b = this.groundAt(cx, cy);
-        const col = t.contact || (t.unit && t.unit.side !== input.playerSide) ? (t.contact && !(t.contact.classification === "classified" || t.contact.classification === "tracked") ? C.dim : C.alarm) : C.phosphor;
-        if (a && b) this.thin.seg(a.x, a.y, 0, b.x, b.y, 0, col, 0.6 * t.alpha);
+        const dx = cx - t.screen.x, dy = cy - t.screen.y;
+        const len = Math.hypot(dx, dy) || 1;
+        const sx = t.screen.x + (dx / len) * 10, sy = t.screen.y + (dy / len) * 10;
+        if (len > 12) {
+          const kind = t.contact
+            ? (t.contact.classification === "classified" || t.contact.classification === "tracked" ? "hostile" : "unknown")
+            : t.unit && t.unit.side !== input.playerSide ? "hostile" : "friendly";
+          leaders[kind].push(`M${sx.toFixed(1)} ${sy.toFixed(1)}L${cx} ${cy}`);
+        }
       }
       el.style.transform = `translate3d(${bx}px, ${by}px, 0)`;
       const op = t.alpha.toFixed(2);
       if (el.style.opacity !== op) el.style.opacity = op;
+    }
+
+    for (const k of ["friendly", "hostile", "unknown"] as const) {
+      const d = leaders[k].join("");
+      if (d !== this.leaderD[k]) {
+        this.leaderD[k] = d;
+        this.leaderPaths[k].setAttribute("d", d);
+      }
     }
   }
 
@@ -1584,6 +1772,7 @@ export class TacticalPlot {
     used.length = 0;
     used.push(...spaced);
 
+    this.gridRects = [];
     for (let i = 0; i < Math.max(used.length, this.gridLabels.length); i++) {
       let el = this.gridLabels[i];
       if (i >= used.length) {
@@ -1597,8 +1786,13 @@ export class TacticalPlot {
         this.gridLabels.push(el);
       }
       const u = used[i];
+      if (this.underChrome({ x: u.x, y: u.y, w: u.text.length * 7.6 + 4, h: 14 })) {
+        if (el.style.display !== "none") el.style.display = "none";
+        continue;
+      }
       if (el.textContent !== u.text) el.textContent = u.text;
       el.style.display = "";
+      this.gridRects.push({ x: u.x, y: u.y, w: u.text.length * 7.6 + 4, h: 14 });
       el.style.transform = `translate3d(${Math.round(u.x)}px, ${Math.round(u.y)}px, 0)`;
     }
   }
@@ -1647,49 +1841,42 @@ export class TacticalPlot {
     return out;
   }
 
+  // The test handle reports what the last frame drew, so a test fails when
+  // the drawing breaks, not only when the input does.
   private debugSource(name: string): { features: DebugFeature[] } | undefined {
-    const input = this.input;
-    if (!input) return undefined;
+    if (!this.input) return undefined;
+    const d = this.drawn;
     const f = (type: DebugFeature["geometry"]["type"], properties: Record<string, unknown> = {}): DebugFeature => ({ geometry: { type }, properties });
+    const many = (n: number, type: DebugFeature["geometry"]["type"]) => Array.from({ length: n }, () => f(type));
     switch (name) {
       case "weapon-tracks": {
-        const features: DebugFeature[] = [];
-        for (const w of this.weaponLines(input)) {
-          if (w.target) features.push(f("LineString", { friendly: w.friendly }));
-          features.push(f("Point", { friendly: w.friendly }));
-        }
+        const features = [...many(d.weaponLines, "LineString"), ...many(d.weaponHeads, "Point")];
         return features.length ? { features } : undefined;
       }
       case "waypoint-lines": {
         const features: DebugFeature[] = [];
-        for (const p of this.waypointPaths(input)) {
+        for (const p of d.waypointPaths) {
           features.push(f("LineString", { unitId: p.unitId }));
-          p.points.forEach((_, i) => features.push(f("Point", { unitId: p.unitId, index: i })));
+          for (let i = 0; i < p.points; i++) features.push(f("Point", { unitId: p.unitId, index: i }));
         }
         return { features };
       }
-      case "contact-uncertainty": {
-        if (!input.fogOfWar) return undefined;
-        return { features: input.contacts.filter((c) => c.positionUncertainty > 0.5).map((c) => f("Polygon", { id: c.id })) };
-      }
-      case "sensor-coverage": {
-        if (!input.showSensorCoverage) return undefined;
-        const features = this.visibleUnits(input)
-          .filter((u) => u.side === input.playerSide && input.orders.get(u.id)?.radarActive && getPlatform(u.platformId)?.sensorRangeKm)
-          .map((u) => f("Polygon", { unitId: u.id }));
-        return { features };
-      }
+      case "contact-uncertainty":
+        return d.uncertaintyDiscs + d.uncertaintyEdges > 0 ? { features: many(d.uncertaintyDiscs, "Polygon") } : undefined;
+      case "sensor-coverage":
+        return d.coverageDiscs + d.coverageEdges > 0 ? { features: many(d.coverageDiscs, "Polygon") } : undefined;
       default:
         return undefined;
     }
   }
 
   private debugLayer(name: string): boolean {
-    const input = this.input;
-    if (!input) return false;
-    if (name === "contact-uncertainty-line" || name === "contact-uncertainty-fill") return input.fogOfWar;
-    if (name === "sensor-coverage-line" || name === "sensor-coverage-fill") return input.showSensorCoverage;
-    if (name === "relief") return this.tiltAmt > 0.002;
+    const d = this.drawn;
+    if (name === "contact-uncertainty-line") return d.uncertaintyEdges > 0;
+    if (name === "contact-uncertainty-fill") return d.uncertaintyDiscs > 0;
+    if (name === "sensor-coverage-line") return d.coverageEdges > 0;
+    if (name === "sensor-coverage-fill") return d.coverageDiscs > 0;
+    if (name === "relief") return !!this.relief?.visible;
     return false;
   }
 }

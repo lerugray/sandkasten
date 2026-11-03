@@ -17,6 +17,8 @@ import { SPEED_OPTIONS } from "@/lib/simulation/gameState";
 import { formatMeasurement } from "@/lib/map/measure";
 import { trackNumber, type PlotInput, type PlotInsets } from "@/lib/plot/TacticalPlot";
 import type { GeoPoint } from "@/lib/plot/projection";
+import type { Contact } from "@/lib/simulation/gameState";
+import type { CombatEvent } from "@/lib/simulation/combat";
 import { Teletype, type TtyLine } from "./Teletype";
 
 const PlotView = dynamic(() => import("@/components/plot/PlotView"), { ssr: false });
@@ -34,6 +36,25 @@ const LEFT_COL = 360;
 const TTY_H = 150;
 
 type Tab = "forces" | "messages" | "combat" | "media";
+
+const CLS_LABEL: Record<Contact["classification"], string> = {
+  unknown: "UNK",
+  detected: "DET",
+  classified: "CLS",
+  tracked: "TRK",
+};
+
+// The scenario's opening message is the mission objective; the briefing card
+// shows it in full before the clock starts.
+const OPENING = (() => {
+  for (const ev of demoScenarioConfig.events?.events ?? []) {
+    if (!ev.triggers.some((t) => t.type === "ScenarioLoaded")) continue;
+    for (const a of ev.actions) {
+      if (a.type === "DisplayMessage") return { title: a.title ?? "BRIEFING", text: a.text };
+    }
+  }
+  return { title: "BRIEFING", text: demoScenarioConfig.scenario.briefing };
+})();
 
 const AUTOPAUSE_LABELS: Record<string, string> = {
   newContact: "New contact detected",
@@ -127,6 +148,9 @@ export function TerminalPlay() {
   const [, forcePrefsRender] = useState(0);
   const [holds, setHolds] = useState<TtyLine[]>([]);
   const [focusRequest, setFocusRequest] = useState<{ n: number; unitId: string } | null>(null);
+  const [showBriefing, setShowBriefing] = useState(true);
+  const [moreBelow, setMoreBelow] = useState(false);
+  const panelBodyRef = useRef<HTMLDivElement>(null);
 
   const cursorRef = useRef<HTMLSpanElement>(null);
   const scaleLabelRef = useRef<HTMLSpanElement>(null);
@@ -218,6 +242,22 @@ export function TerminalPlay() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [togglePause, setSpeed, toggleMeasure, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId]);
 
+  // The briefing card goes away on the first key or click anywhere, and when
+  // the clock starts. It never swallows that input: the key or click still acts.
+  useEffect(() => {
+    if (!showBriefing) return;
+    const dismiss = () => setShowBriefing(false);
+    window.addEventListener("keydown", dismiss, true);
+    window.addEventListener("pointerdown", dismiss, true);
+    return () => {
+      window.removeEventListener("keydown", dismiss, true);
+      window.removeEventListener("pointerdown", dismiss, true);
+    };
+  }, [showBriefing]);
+  useEffect(() => {
+    if (!gameState.isPaused) setShowBriefing(false);
+  }, [gameState.isPaused]);
+
   // Autopause: switch the panel tab and print a HOLD line on the teletype
   useEffect(() => {
     if (!autopauseEvent) return;
@@ -242,18 +282,47 @@ export function TerminalPlay() {
   const weaponsInFlight = combatState?.weaponsInFlight ?? [];
   const combatLog = useMemo(() => combatState?.combatLog ?? [], [combatState?.combatLog]);
 
+  // Fog of war in the traffic: an enemy is named only once its contact carries
+  // a classified platform name. Before that it is its track number and
+  // classification level, or UNKNOWN TRACK if no sensor holds it. God mode
+  // shows true names.
+  const fogNames = useMemo(() => {
+    if (godMode) return null;
+    const byUnit = new Map(gameState.contacts.map((c) => [c.actualUnitId, c]));
+    return allUnits
+      .filter((u) => u.side !== playerSide)
+      .map((u) => {
+        const c = byUnit.get(u.id);
+        const label = c ? (c.platformName ? c.platformName : `TN${trackNumber(c.id)} ${CLS_LABEL[c.classification]}`) : "UNKNOWN TRACK";
+        return [u.name, label] as const;
+      })
+      .sort((a, b) => b[0].length - a[0].length);
+  }, [godMode, gameState.contacts, allUnits, playerSide]);
+  const fog = useCallback(
+    (text: string) => (fogNames ? fogNames.reduce((acc, [name, label]) => acc.split(name).join(label), text) : text),
+    [fogNames]
+  );
+  const describeEvent = useCallback((e: CombatEvent) => fog(e.description), [fog]);
+  const unitName = useCallback(
+    (id: string) => {
+      const u = allUnits.find((x) => x.id === id);
+      return u ? fog(u.name) : "UNKNOWN TRACK";
+    },
+    [allUnits, fog]
+  );
+
   const ttyLines = useMemo<TtyLine[]>(() => {
     const lines: TtyLine[] = [];
     for (const e of combatLog) {
       const hostileAct = e.side !== playerSide && (e.type === "launch" || e.type === "hit" || e.type === "destroyed" || e.type === "damaged");
-      lines.push({ id: e.id, time: e.time, tag: COMBAT_TAG[e.type] ?? e.type.toUpperCase(), text: e.description.toUpperCase(), alarm: hostileAct });
+      lines.push({ id: e.id, time: e.time, tag: COMBAT_TAG[e.type] ?? e.type.toUpperCase(), text: fog(e.description).toUpperCase(), alarm: hostileAct });
     }
     for (const m of messages) {
       lines.push({ id: m.id, time: m.time, tag: "INTL", text: `${m.title ? m.title.toUpperCase() + "  " : ""}${m.text.toUpperCase()}`, alarm: false });
     }
     lines.push(...holds);
     return lines.sort((a, b) => a.time - b.time).slice(-40);
-  }, [combatLog, messages, holds, playerSide]);
+  }, [combatLog, messages, holds, playerSide, fog]);
 
   const handleUnitSelect = useCallback((unitId: string | null, shiftKey?: boolean) => {
     if (unitId && shiftKey) {
@@ -316,6 +385,16 @@ export function TerminalPlay() {
       selectedUnitId, pinnedRingIds, showSensorCoverage, measureStart, measureEnd, measureMode, isPlacingWaypoint]
   );
 
+  // "-- MORE --" pager cue when the left panel has content below the fold
+  const updateMore = useCallback(() => {
+    const el = panelBodyRef.current;
+    if (!el) return;
+    setMoreBelow(el.scrollHeight - el.scrollTop - el.clientHeight > 4);
+  }, []);
+  useEffect(() => {
+    updateMore();
+  });
+
   const clock = new Date(gameState.simTime).toISOString().replace("T", " ").slice(0, 19) + "Z";
   const prefs = autopausePrefsRef.current;
   const theater = demoScenarioConfig.scenario.theater.center;
@@ -337,7 +416,7 @@ export function TerminalPlay() {
       />
 
       {/* Status strip */}
-      <header className="tx-top" data-testid="tx-top">
+      <header className="tx-top" data-testid="tx-top" data-plot-occluder>
         <a href="/" className="tx-brand">SANDKASTEN</a>
         <span className="tx-rule-v" />
         <span className="tx-dim tx-truncate">{gameState.scenario.name.toUpperCase()}</span>
@@ -363,7 +442,7 @@ export function TerminalPlay() {
       </header>
 
       {/* Left column: forces, intel, combat, media */}
-      <aside className="tx-panel tx-left" data-testid="side-panel">
+      <aside className="tx-panel tx-left" data-testid="side-panel" data-plot-occluder>
         <div data-testid="sidebar-tabs" className="tx-tabs">
           {(
             [
@@ -395,7 +474,7 @@ export function TerminalPlay() {
           ))}
         </div>
 
-        <div className="tx-panel-body">
+        <div className="tx-panel-body" ref={panelBodyRef} onScroll={updateMore}>
           {sidebarTab === "forces" && (
             <>
               <section className="tx-section">
@@ -456,12 +535,12 @@ export function TerminalPlay() {
                   </div>
                   {weaponsInFlight.map((w) => (
                     <div key={w.id} className="tx-wif-row">
-                      <span className="tx-alarm">{">>"}</span> {w.name} {"->"} {w.targetId.split("-").slice(0, 2).join("-")}
+                      <span className="tx-alarm">{">>"}</span> {w.name} {"->"} {unitName(w.targetId)}
                     </div>
                   ))}
                 </div>
               )}
-              <CombatLog events={combatLog} simTime={gameState.simTime} playerSide={playerSide} />
+              <CombatLog events={combatLog} simTime={gameState.simTime} playerSide={playerSide} describe={describeEvent} />
             </section>
           )}
 
@@ -474,11 +553,24 @@ export function TerminalPlay() {
             />
           )}
         </div>
+        {moreBelow && <div className="tx-more" aria-hidden="true">-- MORE --</div>}
       </aside>
+
+      {showBriefing && (
+        <section className="tx-panel tx-briefing" data-testid="briefing" data-plot-occluder role="dialog" aria-label="Briefing">
+          <div className="tx-briefing-head">
+            <span>[ BRIEFING ]</span>
+            <span className="tx-dim">{gameState.scenario.name.toUpperCase()}</span>
+          </div>
+          <div className="tx-briefing-title">{OPENING.title.toUpperCase()}</div>
+          <p className="tx-briefing-text">{OPENING.text}</p>
+          <div className="tx-briefing-foot">PRESS ANY KEY OR CLICK TO TAKE COMMAND  //  SPC STARTS THE CLOCK</div>
+        </section>
+      )}
 
       {/* Right column: the selected track */}
       {selectedUnit && (
-        <div className="tx-right">
+        <div className="tx-right" data-plot-occluder>
           <DetailPanel
             unit={selectedUnit}
             onClose={() => setSelectedUnitId(null)}
@@ -488,9 +580,9 @@ export function TerminalPlay() {
       )}
 
       {/* Mode banners */}
-      {isPlacingWaypoint && <div className="tx-banner">CLICK MAP TO PLACE WAYPOINT</div>}
+      {isPlacingWaypoint && <div className="tx-banner" data-plot-occluder>CLICK MAP TO PLACE WAYPOINT</div>}
       {measureMode && (
-        <div className="tx-banner" data-testid="measure-banner">
+        <div className="tx-banner" data-testid="measure-banner" data-plot-occluder>
           {measureStart && measureEnd
             ? formatMeasurement(measureStart, measureEnd).toUpperCase()
             : measureStart
@@ -508,7 +600,7 @@ export function TerminalPlay() {
       <Teletype lines={ttyLines} />
 
       {/* Command bar */}
-      <nav className="tx-cmd" data-testid="command-bar">
+      <nav className="tx-cmd" data-testid="command-bar" data-plot-occluder>
         <Cmd cap="SPC" onClick={togglePause} testId="sim-toggle-pause" active={!gameState.isPaused}>
           {gameState.isPaused ? "PLAY" : "PAUSE"}
         </Cmd>
@@ -537,7 +629,7 @@ export function TerminalPlay() {
             AUTO
           </Cmd>
           {showAutopauseSettings && (
-            <div data-testid="autopause-settings" className="tx-panel tx-popover">
+            <div data-testid="autopause-settings" className="tx-panel tx-popover" data-plot-occluder>
               <div className="tx-popover-head">
                 <span>AUTOPAUSE</span>
                 <button

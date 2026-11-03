@@ -101,6 +101,8 @@ async function full() {
       `UNMASKED_RENDERER_WEBGL: ${info.renderer}\nUNMASKED_VENDOR_WEBGL: ${info.vendor}\nVERSION: ${info.version}\n` +
         `browser: ${browser.version()}\nviewport: 1440x900 DPR 2\n`,
     );
+    // the opening briefing, before the first key or click dismisses it
+    await page.screenshot({ path: path.join(outDir, "briefing.png") });
     await autopauseOff(page);
     await runToSalvo(page);
     await page.waitForTimeout(5000);

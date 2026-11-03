@@ -20,7 +20,7 @@
 
 .tx-root {
   --tx-field: #020604;
-  --tx-panel: rgba(2, 10, 6, 0.9);
+  --tx-panel: #020a06; /* opaque: plot labels never show through the chrome */
   --tx-rule: #1d5c37;
   --tx-rule-hi: #2b9e5c;
   --tx-phosphor: #4cf58e;
@@ -97,7 +97,7 @@
   background: transparent;
 }
 .tx-root ::-webkit-scrollbar-thumb {
-  background: var(--tx-rule);
+  background: var(--tx-rule-hi);
 }
 
 .tx-root button {
@@ -512,7 +512,7 @@
   z-index: 9;
   display: flex;
   flex-direction: column;
-  background: rgba(2, 8, 5, 0.95);
+  background: var(--tx-panel);
 }
 .tx-tty-head {
   display: flex;
@@ -670,4 +670,90 @@
     rgba(0, 0, 0, 0) 2px,
     rgba(0, 0, 0, 0.16) 3px
   );
+}
+
+/* label leaders: screen-space lines from a data block to its glyph */
+.tx-leaders {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.tx-leader {
+  fill: none;
+  stroke: var(--tx-phosphor);
+  stroke-width: 1;
+  opacity: 0.7;
+}
+.tx-leader--hostile {
+  stroke: var(--tx-alarm);
+}
+.tx-leader--unknown {
+  stroke: var(--tx-dim);
+}
+
+/* opening briefing: the mission objective in full, gone on the first key or click */
+.tx-briefing {
+  position: absolute;
+  left: calc(50% + 180px);
+  top: 40%;
+  transform: translate(-50%, -50%);
+  width: min(600px, calc(100vw - 420px));
+  z-index: 25;
+  padding: 0 0 12px;
+}
+.tx-briefing-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 14px;
+  border-bottom: 1px solid var(--tx-rule);
+  color: var(--tx-phosphor);
+  letter-spacing: 0.1em;
+  font-size: 12px;
+}
+.tx-briefing-title {
+  padding: 12px 18px 4px;
+  color: var(--tx-hi);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.tx-briefing-text {
+  margin: 0;
+  padding: 4px 18px 12px;
+  color: var(--tx-text);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.tx-briefing-foot {
+  margin: 0 18px;
+  padding-top: 10px;
+  border-top: 1px solid var(--tx-rule);
+  color: var(--tx-dim);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+/* pager cue when the left panel scrolls */
+.tx-more {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 3px 0;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--tx-field);
+  background: var(--tx-phosphor);
+  text-shadow: none;
+  pointer-events: none;
+}
+
+/* the radar emission note sits on its own line under the button */
+.tx-root [data-testid="order-toggle-radar"] + span {
+  display: block;
+  margin: 4px 0 0 !important;
 }

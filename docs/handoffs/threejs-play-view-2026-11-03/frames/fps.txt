@@ -1,7 +1,7 @@
 window: 10 s of requestAnimationFrame on /play, 1440x900 DPR 2, sim at 10x with weapons in flight
 frames: 599
 median fps: 59.9
-5th percentile fps: 59.9
+5th percentile fps: 59.5
 median frame ms: 16.70
-95th percentile frame ms: 16.70
+95th percentile frame ms: 16.80
 worst frame ms: 16.80

@@ -28,8 +28,10 @@ export interface SymbolTexture {
 
 const cache = new Map<string, SymbolTexture>();
 
-export function sidcFor(affiliation: Affiliation, dimension: BattleDimension, functionId: string): string {
-  return "S" + AFFILIATION_CHAR[affiliation] + DIMENSION_CHAR[dimension] + "P" + (functionId + "------").slice(0, 10);
+/** `"unknown"` is the 2525 unknown battle dimension (Z): a sensor has a track but not its domain. */
+export function sidcFor(affiliation: Affiliation, dimension: BattleDimension | "unknown", functionId: string): string {
+  const dim = dimension === "unknown" ? "Z" : DIMENSION_CHAR[dimension];
+  return "S" + AFFILIATION_CHAR[affiliation] + dim + "P" + (functionId + "------").slice(0, 10);
 }
 
 export function symbolTexture(sidc: string, color: string, resolution: number): SymbolTexture {

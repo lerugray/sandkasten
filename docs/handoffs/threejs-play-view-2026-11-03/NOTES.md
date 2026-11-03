@@ -132,3 +132,33 @@ environment to `capture.mjs` (no host flags in the repo).
   baseline and final suite runs used the cached build 1243 through a lane-local config outside
   the repo. `npm test` with the repo config needs 1217 installed (host rule: lanes don't install).
 - No AGENTS.md exists in this repo; the brief and CLAUDE.md were followed.
+
+## Round 2 (GS seat follow-up, 2026-11-03, on top of WIP 0e5391b)
+
+### LOOK S2
+1. **Labels through the chrome: FIXED.** The chrome bands (top bar, side panel, track panel, traffic strip, command bar, banners, autopause popover, briefing) are now opaque, and each is marked `data-plot-occluder`. The plot re-reads their rects five times a second, and no data block, grid label, ring label or waypoint label is drawn where it would touch one.
+2. **Sliced labels under panels: FIXED.** A block tries its eight slots against the chrome first. If none is clear, the block is hidden, never cut. A glyph under a panel takes its label with it. Grid labels under a panel are hidden.
+3. **Tilt leaders and declutter: FIXED.** Leaders are now a screen-space SVG overlay, exact at any tilt. In tilt every block gets a thin leader to its glyph; in flat view only pushed-out blocks do. The declutter now scores against every glyph at its real sprite size, live missile heads (36 px), hit/intercept bursts still in flight, ring/waypoint labels and grid labels, not only other blocks. When no slot is clear, a block drops to its first line. If even that lands on another label, an enemy or unknown track's block is hidden; friendly units and the selection always keep theirs.
+4. **Missile bloom on a label: FIXED.** Same mechanism: missile heads and effect bursts are obstacles.
+5. **Briefing cut off: FIXED.** A `[ BRIEFING ]` card shows the scenario's opening message (OPERATION SENTINEL PASSAGE, the full objective and ROE) at load, in the register (`briefing.png`). The first key or click anywhere, or starting the clock, dismisses it. It never swallows that input: the key or click still does its job. The text comes from the scenario's ScenarioLoaded event, so other scenarios get their own.
+
+### LOOK S3
+6. **CSR placeholder: FIXED.** Shows a clean `--` off the map.
+7. **True enemy names in messages: FIXED.** Traffic, the combat log and the weapons-in-flight list name an enemy only once its contact carries a classified platform name, the same rule as the contact list and the plot. Before that it is `TN#### CLS` (for example "TN7609 DET LAUNCHED 2x AIM-54A PHOENIX AT HORNET 102"), or UNKNOWN TRACK if no sensor holds it. God mode shows true names. The sim only sets a name when a contact is first detected at classified range; a contact upgraded to TRK later keeps its track number.
+8. **Domes too faint: FIXED.** Domes now draw in phosphor at 0.3/0.24 line strength, scaled by 1/sqrt(emitters) with a floor, so they read without washing the plot (`tilt-3d.png`).
+9. **ESM note wrap and no scroll cue: FIXED.** "(emitting — detectable by ESM)" sits on its own line under the radar button. The side panel shows a `-- MORE --` pager bar while content continues below, and the scrollbar thumb is brighter.
+
+### Review notes
+1. **Test handle reports the drawn scene: FIXED.** `getSource` / `getLayer` / `drawnTracks` now read counters the frame fills as it draws: weapon target lines and heads, waypoint paths and marks, uncertainty discs and edges, coverage discs and edges, and visible unit/contact sprites. Two tests got stronger, not weaker:
+   - **sand-005** now runs the sim until uncertainty circles are actually drawn under fog, then checks God mode raises both the DOM track count and the drawn unit-sprite count and removes the drawn circles. Before, it checked removal at t=0 with no contacts, which could not fail.
+   - **sand-006** now requires the drawn path (one line plus three marks) where it previously only checked that the plot existed.
+   - **Break test, done:** I temporarily broke the engine three ways at once: weapon tracks not drawn, uncertainty drawn even in God mode, waypoints not drawn. Then I ran sand-003/005/006. All three FAILED at their drawn-state assertions: sand-003 line 39 (`hasWeaponSource`), sand-005 line 56 (uncertainty still drawn after G), sand-006 line 41 (`featureCount: 4`). The engine was restored from a backup and verified byte-identical (md5), and the full suite then passed.
+2. **Detected contact used the true domain: FIXED.** The sim does not report a contact's domain at detection: `Contact` has no domain field, and `actualUnitId` is the hidden truth. UNK and DET contacts now get the 2525 unknown-dimension frame (SIDC dimension Z). Only CLS/TRK show the platform's domain and function. Kept as-is: a friendly missile's target line ends at the contact the player fired on. That is player knowledge, not a leak.
+3. **Unbounded `seenEvents`; per-frame allocation: FIXED.** The set became a last-seen-id cursor into the append-only combat log, so the memory is constant. `toScreen` and `groundAt` reuse vectors, and callers that need two points at once pass two distinct buffers.
+4. **WebGL context leak on remount: FIXED.** `dispose()` calls `renderer.forceContextLoss()` before `renderer.dispose()` and removes the leader overlay.
+
+### Round 2 numbers
+- **Tests:** 36 of 36 passed (lane-local GPU config, headless shell 1243, RTX 3050), with no tests added or removed. sand-005 and sand-006 assert more than before.
+- **Build:** `npm run build` passes.
+- **Frames:** all re-captured under the same names, plus `briefing.png`. `fps.txt`: median 59.9, 5th percentile 59.5. `renderer.txt` names the NVIDIA GeForce RTX 3050. `console-errors.txt`: none. `motion.webm`: 8.1 s.
+- **Still open:** in a dense hostile cluster in tilt, two contact blocks can sit edge to edge (touching, not stacked). The traffic strip still ellipsizes long lines; the full text is in the Intel tab and on hover, and the objective is on the briefing card.

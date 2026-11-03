@@ -6,6 +6,8 @@ interface CombatLogProps {
   events: CombatEvent[];
   simTime: number;
   playerSide: string;
+  /** Text to show for an event; the terminal view applies fog of war to enemy names. */
+  describe?: (event: CombatEvent) => string;
 }
 
 const EVENT_COLORS: Record<CombatEvent["type"], string> = {
@@ -28,7 +30,7 @@ const EVENT_ICONS: Record<CombatEvent["type"], string> = {
   defended: "[]",
 };
 
-export function CombatLog({ events, simTime, playerSide }: CombatLogProps) {
+export function CombatLog({ events, simTime, playerSide, describe }: CombatLogProps) {
   if (events.length === 0) {
     return (
       <div
@@ -66,7 +68,7 @@ export function CombatLog({ events, simTime, playerSide }: CombatLogProps) {
               {ageStr}
             </span>
             <span className="font-mono mr-1">{EVENT_ICONS[evt.type]}</span>
-            {evt.description}
+            {describe ? describe(evt) : evt.description}
           </div>
         );
       })}
