@@ -11,8 +11,10 @@ Ray changes his intent, quoting him.
 1. Opens a scenario (bundled or community-made) or builds one in the scenario editor. (GDD.md §7, README "Scenario editor")
 2. Gives orders: waypoints and throttle, targets, rules of engagement, sensor use, aircraft launch and recovery, missions.
    (GDD.md §2.1)
-3. Runs time: continuous with pause and speed control as the primary mode; WeGo simultaneous turns as a second mode.
-   (GDD.md §2.1, §2.2; README hero "Continuous time or WeGo multiplayer")
+3. Runs time: continuous with pause and speed control, or WeGo simultaneous turns (orders phase, then a resolution
+   burst), a headline mode (GDD.md §2.1, §2.2; README hero "Continuous time or WeGo multiplayer"; Ray 2026-11-03
+   "Headline it too"). Both modes ship (Ray 2026-11-03: "it should probably be both singleplayer and wego"); each
+   scenario says which mode suits it.
 4. Sees only what the sensors report: contacts move from unknown to tracked and fade without fresh data. (GDD.md §4)
 5. Fights: missiles, air defense, countermeasures, damage, all in a readable combat log. (GDD.md §5, README "Combat")
 6. Wins or loses on the scenario's victory conditions, and can play it again a different way. (GDD.md §6.5; Ray
@@ -37,7 +39,8 @@ Ray changes his intent, quoting him.
 - "Differentiate on turn structure alone": Ray's 2026-11-03 pitch leads with a more player-friendly experience and look,
   so the 2026-06-12 memo's turn-structure-only thesis is superseded. Fact check 2026-11-03: consumer CMO's v1.10 update
   (2026-10-06) added real-time multiplayer; WeGo exists only in Command Professional Edition and the IKE fan mod, not in
-  consumer CMO. Whether WeGo returns as a headline is Ray's call (asked 2026-11-03).
+  consumer CMO. Ray then ruled WeGo a headline too (2026-11-03 15:2x: "Headline it too"): the pitch is the more
+  player-friendly look and experience AND WeGo simultaneous turns, which consumer CMO does not offer.
 
 ## Platform database (Ray, 2026-11-03 14:5x)
 - "build our own": Sandkasten ships its own platform database, compiled independently for our engine.
@@ -45,6 +48,11 @@ Ray changes his intent, quoting him.
 - "we dont have to literally copy things given our engine is different": no record, value or text is copied from CMO's
   database. No build may bundle or require data extracted from a CMO install; `scripts/extract_cmo_db.py` output stays
   gitignored and local. (This replaces the "copy the CMO database" idea in Ray's first 11-03 message, per his ruling.)
+- First class where CMO's is weak (Ray, 2026-11-03 16:0x): "real pictures of hardware along with their complete specs and
+  some understandable english as to how they are used and what kind of missions they are typically used for". Every
+  platform entry carries photos, full specs, a plain-English "how it is used" and "typical missions". Photos are real and
+  licensed: public domain (e.g. US government) or openly licensed (e.g. CC BY / CC BY-SA), each with its source, author,
+  license and attribution stored beside it and shown in game; no image of unclear license and no image generator output.
 - Treat it like a historical order of battle (Ray, 2026-11-03 15:0x): "wargames borrow those all the time and iterate on
   them to make them their own". The real-world facts are the shared starting point; our sourcing, abstractions and
   values for our engine make the database ours.
