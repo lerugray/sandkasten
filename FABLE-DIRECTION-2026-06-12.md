@@ -1,4 +1,4 @@
-> **STALE as of 2026-11-03: superseded by SPEC.md (Ray 2026-11-03: CMO now offers WeGo, so the pitch is a more player-friendly open-source CMO, not turn structure alone); do not build from this.**
+> **STALE as of 2026-11-03: superseded by SPEC.md (Ray 2026-11-03: the pitch is a more player-friendly open-source CMO with a new look, not turn structure alone); do not build from this.**
 
 # Fable direction memo — sandkasten (2026-06-12, final-night blitz)
 

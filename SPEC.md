@@ -34,8 +34,10 @@ Ray changes his intent, quoting him.
   "built for players").
 - A "flashy web app or saas" look (Ray 2026-11-03): no dashboard cards, marketing gradients or generic web-app chrome.
 - Scenarios scripted so only one solution works (Ray 2026-11-03).
-- "Differentiate on turn structure alone": the 2026-06-12 direction memo's thesis is superseded, because CMO now offers
-  WeGo too (Ray 2026-11-03: "CMO decided to also offer WEGO functionality"). WeGo stays a mode, not the whole pitch.
+- "Differentiate on turn structure alone": Ray's 2026-11-03 pitch leads with a more player-friendly experience and look,
+  so the 2026-06-12 memo's turn-structure-only thesis is superseded. Fact check 2026-11-03: consumer CMO's v1.10 update
+  (2026-10-06) added real-time multiplayer; WeGo exists only in Command Professional Edition and the IKE fan mod, not in
+  consumer CMO. Whether WeGo returns as a headline is Ray's call (asked 2026-11-03).
 
 ## Platform database (Ray, 2026-11-03 14:5x)
 - "build our own": Sandkasten ships its own platform database, compiled independently for our engine.
