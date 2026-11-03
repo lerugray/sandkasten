@@ -1,3 +1,5 @@
+> **STALE as of 2026-11-03: superseded by SPEC.md (Ray 2026-11-03: CMO now offers WeGo, so the pitch is a more player-friendly open-source CMO, not turn structure alone); do not build from this.**
+
 # Fable direction memo — sandkasten (2026-06-12, final-night blitz)
 
 Sandkasten is a working open-source modern-operations sim (Next.js 16 + MapLibre + TypeScript): radar detection with track states, fog of war, missile combat with SAM defense, doctrine-scripted OPFOR AI, an LLM-driven InfoWar media feed, a scenario editor, 60k+ platform records, and a 6-test Playwright suite merged 2026-04-28. Tree is clean and the repo has been dormant since that merge. One open task: sand-007, the WeGo-niche positioning write-up (interactive_only, fully scoped in GS-private `state/sandkasten/tasks.json`). Load-bearing fact verified in code: the engine is a continuous 50ms tick loop (`simulationTick` in `src/lib/simulation/engine.ts`, driven by `useSimulation.ts`), and GDD.md §2.2 / Phase 5 already designs WeGo as a layer on top of that single-player engine, not a replacement for it.
