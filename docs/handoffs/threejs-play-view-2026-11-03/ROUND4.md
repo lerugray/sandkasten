@@ -1,4 +1,4 @@
-> **REFUSED by spec-gate, 2026-11-03 17:3x (ON-SPEC, MOVES=NO), and HELD for Ray's call. Do not build. (The commit that added this card, 1f33cec, says "spec-gate PASS" in error: the gate had refused it.)**
+> **SUPERSEDED by ROUND5.md (Ray 17:4x picked the CRT round, which folds in this card's pairing fix). Earlier: REFUSED by spec-gate, 2026-11-03 17:3x (ON-SPEC, MOVES=NO). Do not build from this file. (The commit that added this card, 1f33cec, says "spec-gate PASS" in error: the gate had refused it.)**
 
 Anchor: "Sandkasten is the open-source equivalent of Command: Modern Operations, with graphics and an experience drastically more player friendly than CMO." Round 4 of the CARD.md build in this folder: every label reads as belonging to its own contact, so a player never mistakes one aircraft for another.
 
