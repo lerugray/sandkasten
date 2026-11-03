@@ -1,0 +1,2 @@
+dense-tilt.png: tilted, zoomed at the densest contact group (8 contacts within 120 px)
+label audit at capture: {"blocks":16,"blockOverlaps":0,"leaderThroughBlock":0,"leaderCrossings":0,"leaderThroughGlyph":0,"weaponThroughBlock":0,"ambiguousPairing":0,"gridOverlaps":0,"keptHidden":0,"glyphs":16,"leaders":13,"weaponLines":0,"closestGlyphs":10,"tilt":1,"hiddenKeep":""}

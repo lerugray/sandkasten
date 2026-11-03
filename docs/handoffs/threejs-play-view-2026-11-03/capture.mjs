@@ -152,6 +152,34 @@ async function full() {
     await page.keyboard.press("t");
     await page.waitForTimeout(2000);
     await page.screenshot({ path: path.join(outDir, "tilt-3d.png") });
+
+    // dense case: still tilted, sensors off, zoomed onto the tightest group of
+    // contacts (the point with the most contact glyphs within 120 px)
+    await page.keyboard.press("s");
+    const tracks = await plot(page, (h) => h.trackScreens());
+    const contacts = tracks.filter((t) => t.kind === "contact");
+    let best = contacts[0], bestN = -1;
+    for (const c of contacts) {
+      const n = contacts.filter((o) => Math.hypot(o.x - c.x, o.y - c.y) < 120).length;
+      if (n > bestN) { bestN = n; best = c; }
+    }
+    if (best) {
+      await page.mouse.move(best.x, best.y);
+      for (let i = 0; i < 3; i++) {
+        await page.mouse.wheel(0, -110);
+        await page.waitForTimeout(90);
+      }
+    }
+    await page.getByTestId("sim-toggle-pause").click(); // let the fight move a little
+    await page.waitForTimeout(2500);
+    await page.getByTestId("sim-toggle-pause").click();
+    await page.waitForTimeout(600);
+    await page.screenshot({ path: path.join(outDir, "dense-tilt.png") });
+    fs.writeFileSync(
+      path.join(outDir, "dense-tilt.txt"),
+      `dense-tilt.png: tilted, zoomed at the densest contact group (${bestN} contacts within 120 px)\n` +
+        `label audit at capture: ${JSON.stringify(await plot(page, (h) => h.labelAudit()))}\n`,
+    );
     await context.close();
   }
 

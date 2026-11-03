@@ -21,6 +21,7 @@ import { PlotProjection, type GeoPoint, FT_TO_KM, KM_PER_NM } from "./projection
 import { LineBatch } from "./lineBatch";
 import { PALETTE } from "./palette";
 import { sidcFor, symbolTexture } from "./symbolTextures";
+import { LabelPlacer, auditLabels, segHitsRect, type LabelItem, type Seg } from "./labelPlacer";
 import geo from "./data/hormuz-geo.json";
 
 export type PlotMode = "select" | "waypoint" | "measure";
@@ -93,6 +94,8 @@ interface Track {
   fullW: number;
   fullH: number;
   shownText: string;
+  blockX: number;
+  blockY: number;
   slot: number;
   screen: THREE.Vector2;
   onScreen: boolean;
@@ -227,6 +230,8 @@ export class TacticalPlot {
   private callbacks: PlotCallbacks;
   private readouts: PlotReadouts = {};
   private insets: PlotInsets = { left: 0, right: 0, top: 0, bottom: 0 };
+  // principal-point shift, eased so a panel opening slides the plot over
+  private shift = new THREE.Vector2(NaN, NaN);
   private input: PlotInput | null = null;
 
   // view
@@ -299,7 +304,23 @@ export class TacticalPlot {
   private labelsUsed = 0;
   private labelRects: Rect[] = [];
   private gridLabels: HTMLDivElement[] = [];
-  private gridRects: Rect[] = [];
+  private gridCands: { el: HTMLDivElement; rect: Rect }[] = [];
+  private gridShown: Rect[] = [];
+  private placer = new LabelPlacer();
+  private items: LabelItem[] = [];
+  private itemTracks: { t: Track; cls: string }[] = [];
+  private glyphs: { key: string; rect: Rect; core: Rect; x: number; y: number }[] = [];
+  private pointRects: Rect[] = [];
+  private rectPool: Rect[] = [];
+  private weaponSegs: Seg[] = [];
+  private segPool: Seg[] = [];
+  private lastLeaders: { key: string; seg: Seg }[] = [];
+  private lastBlocks: Rect[] = [];
+  private keptHidden = 0;
+  private keptHiddenKeys: string[] = [];
+  private leaderParts = { friendly: [] as string[], hostile: [] as string[], unknown: [] as string[] };
+  private metrics = { charW: 7.9, padW: 6, lineH: 15, padH: 2, gridCharW: 7.3, gridPadW: 0, gridH: 12 };
+  private chromeObserver: MutationObserver | null = null;
 
   private raf = 0;
   private lastFrame = 0;
@@ -361,6 +382,14 @@ export class TacticalPlot {
     const ro = new ResizeObserver(() => this.resize());
     ro.observe(host);
     this.resizeObserver = ro;
+
+    // text metrics now and again once the vendored font is in
+    this.measureText();
+    document.fonts?.ready.then(() => !this.disposed && this.measureText());
+    // panels opening or closing invalidate the chrome rects at once
+    const root = host.closest(".tx-root") ?? document.body;
+    this.chromeObserver = new MutationObserver(() => { this.occluderAt = -Infinity; });
+    this.chromeObserver.observe(root, { childList: true, subtree: true });
 
     this.lastFrame = performance.now();
     this.raf = requestAnimationFrame(this.frame);
@@ -679,6 +708,11 @@ export class TacticalPlot {
       },
       frames: () => this.frames,
       drawnTracks: () => ({ units: this.drawn.unitSprites, contacts: this.drawn.contactSprites }),
+      labelAudit: () => this.audit(),
+      trackScreens: () =>
+        [...this.tracks.values()]
+          .filter((t) => t.onScreen && t.kind !== "weapon")
+          .map((t) => ({ key: t.key, kind: t.kind, x: t.screen.x, y: t.screen.y })),
       tilt: (on: boolean) => this.setTilt(on),
       view: () => ({ dist: this.dist, tilt: this.tiltAmt, target: { x: this.target.x, y: this.target.y } }),
     };
@@ -688,6 +722,7 @@ export class TacticalPlot {
     this.disposed = true;
     cancelAnimationFrame(this.raf);
     this.resizeObserver.disconnect();
+    this.chromeObserver?.disconnect();
     this.unbindInput();
     for (const t of this.tracks.values()) this.disposeTrack(t);
     this.tracks.clear();
@@ -732,7 +767,7 @@ export class TacticalPlot {
         from: new THREE.Vector2(), to: new THREE.Vector2(NaN, NaN), pos: new THREE.Vector2(),
         z: 0, t0: 0, history: [], lastHistSim: -Infinity,
         spriteW: 0, spriteH: 0, blockText: "", blockW: 0, blockH: 0, slot: 0,
-        compactText: "", compactW: 0, compactH: 0, fullW: 0, fullH: 0, shownText: "",
+        compactText: "", compactW: 0, compactH: 0, fullW: 0, fullH: 0, shownText: "", blockX: 0, blockY: 0,
         screen: new THREE.Vector2(), onScreen: false, alpha: 1, paintT: 0, seen: true,
       };
       if (kind !== "weapon") {
@@ -959,8 +994,7 @@ export class TacticalPlot {
     // the data block is a click target too
     for (const t of this.tracks.values()) {
       if (t.kind !== "unit" || !t.onScreen || !t.block || t.block.style.display === "none") continue;
-      const off = this.slotOffset(t, t.slot);
-      const bx = t.screen.x + off.x, by = t.screen.y + off.y;
+      const bx = t.blockX, by = t.blockY;
       if (x >= bx && x <= bx + t.blockW && y >= by && y <= by + t.blockH) return t;
     }
     return null;
@@ -1021,14 +1055,16 @@ export class TacticalPlot {
     this.camera.aspect = w / h;
     this.applyViewOffset();
     this.viewHash = "";
+    this.occluderAt = -Infinity;
   }
 
   private applyViewOffset() {
     // centre the theater in the free area between the chrome, without
     // resizing the canvas: shift the principal point instead
-    const shiftX = (this.insets.right - this.insets.left) / 2;
-    const shiftY = (this.insets.bottom - this.insets.top) / 2;
-    this.camera.setViewOffset(this.W, this.H, shiftX, shiftY, this.W, this.H);
+    const goalX = (this.insets.right - this.insets.left) / 2;
+    const goalY = (this.insets.bottom - this.insets.top) / 2;
+    if (Number.isNaN(this.shift.x)) this.shift.set(goalX, goalY);
+    this.camera.setViewOffset(this.W, this.H, this.shift.x, this.shift.y, this.W, this.H);
     this.camera.updateProjectionMatrix();
   }
 
@@ -1102,6 +1138,18 @@ export class TacticalPlot {
       }
     }
 
+    // ease the view centre toward the free area between panels
+    {
+      const goalX = (this.insets.right - this.insets.left) / 2;
+      const goalY = (this.insets.bottom - this.insets.top) / 2;
+      if (Math.abs(this.shift.x - goalX) > 0.25 || Math.abs(this.shift.y - goalY) > 0.25) {
+        const k = 1 - Math.exp(-dt * 6);
+        this.shift.x += (goalX - this.shift.x) * k;
+        this.shift.y += (goalY - this.shift.y) * k;
+        this.camera.setViewOffset(this.W, this.H, this.shift.x, this.shift.y, this.W, this.H);
+      }
+    }
+
     // glide to a focused unit
     if (this.glide) {
       const k = 1 - Math.exp(-dt * 4);
@@ -1165,6 +1213,20 @@ export class TacticalPlot {
       nm++;
     };
     let discUsed = 0;
+    this.weaponSegs.length = 0;
+    let segUsed = 0;
+    const screenSeg = (ax: number, ay: number, bx: number, by: number) => {
+      const a = this.toScreen(ax, ay, 0);
+      if (a.z >= 1) return;
+      const x1 = a.x, y1 = a.y;
+      const b = this.toScreen(bx, by, 0);
+      if (b.z >= 1) return;
+      let sg = this.segPool[segUsed];
+      if (!sg) this.segPool.push((sg = { x1: 0, y1: 0, x2: 0, y2: 0 }));
+      segUsed++;
+      sg.x1 = x1; sg.y1 = y1; sg.x2 = b.x; sg.y2 = b.y;
+      this.weaponSegs.push(sg);
+    };
     const disc = (x: number, y: number, r: number, c: THREE.Color, a: number) => {
       let m = this.discs[discUsed];
       if (!m) {
@@ -1307,12 +1369,14 @@ export class TacticalPlot {
           dashed.breakRun();
           dashed.seg(t.pos.x, t.pos.y, 0, w.target.x, w.target.y, 0, col, 0.55);
           dr.weaponLines++;
+          screenSeg(t.pos.x, t.pos.y, w.target.x, w.target.y);
         }
         mark(t.pos.x, t.pos.y, 0, C.hi, 1);
         dr.weaponHeads++;
         const dir = THREE.MathUtils.degToRad(w.weapon.heading);
         const L = 10 * this.pxAt(t.pos.x, t.pos.y);
         solid.seg(t.pos.x, t.pos.y, 0, t.pos.x - Math.sin(dir) * L, t.pos.y - Math.cos(dir) * L, 0, col, 0.9);
+        screenSeg(t.pos.x, t.pos.y, t.pos.x - Math.sin(dir) * L, t.pos.y - Math.cos(dir) * L);
       }
 
       // unit and contact glyphs, leaders, drop lines, sweeps
@@ -1566,27 +1630,69 @@ export class TacticalPlot {
 
   // ---------------------------------------------------------- data blocks
 
-  /** Slots 0-3 sit beside the glyph; 4-7 are pushed one block further out and get a leader. */
-  private slotOffset(t: Track, slot: number): { x: number; y: number } {
-    const gap = 13;
-    const far = slot >= 4 ? t.blockH + 10 : 0;
-    const farX = slot >= 4 ? 14 : 0;
-    switch (slot % 4) {
-      case 0: return { x: gap + farX, y: -gap - t.blockH + 6 - far };
-      case 1: return { x: gap + farX, y: gap - 4 + far };
-      case 2: return { x: -gap - t.blockW - farX, y: -gap - t.blockH + 6 - far };
-      default: return { x: -gap - t.blockW - farX, y: gap - 4 + far };
+  /** Block text metrics from a hidden probe, so sizes need no per-frame DOM reads. */
+  private measureText() {
+    const probe = (cls: string, text: string) => {
+      const el = document.createElement("div");
+      el.className = cls;
+      el.style.visibility = "hidden";
+      el.textContent = text;
+      this.overlay.appendChild(el);
+      const r = { w: el.offsetWidth, h: el.offsetHeight };
+      el.remove();
+      return r;
+    };
+    const one = probe("tx-block", "M"), ten = probe("tx-block", "MMMMMMMMMM"), two = probe("tx-block", "M\nM");
+    const charW = (ten.w - one.w) / 9;
+    const lineH = two.h - one.h;
+    if (charW > 0 && lineH > 0) {
+      this.metrics.charW = charW;
+      this.metrics.padW = one.w - charW;
+      this.metrics.lineH = lineH;
+      this.metrics.padH = one.h - lineH;
     }
+    const g1 = probe("tx-grid-label", "M"), g10 = probe("tx-grid-label", "MMMMMMMMMM");
+    const gW = (g10.w - g1.w) / 9;
+    if (gW > 0) {
+      this.metrics.gridCharW = gW;
+      this.metrics.gridPadW = g1.w - gW;
+      this.metrics.gridH = g1.h;
+    }
+    this.viewHash = "";
+  }
+
+  private blockSize(lines: string[], count: number): { w: number; h: number } {
+    const m = this.metrics;
+    let longest = 0;
+    for (let i = 0; i < count; i++) longest = Math.max(longest, lines[i]?.length ?? 0);
+    return { w: Math.ceil(longest * m.charW + m.padW), h: Math.ceil(count * m.lineH + m.padH) };
+  }
+
+  private trackPriority(t: Track, input: PlotInput): number {
+    if (t.kind === "unit" && t.id === input.selectedUnitId) return 0;
+    if (t.unit) return t.unit.side === input.playerSide ? 1 : 2;
+    const c = t.contact!;
+    return c.classification === "classified" || c.classification === "tracked" ? 2 : c.classification === "detected" ? 3 : 4;
   }
 
   private placeBlocks(input: PlotInput) {
-    const placed: Rect[] = [...this.labelRects, ...this.gridRects];
-    // things a data block must not sit on: every glyph, live missile heads
-    // with their glow, and fresh hit/intercept bursts
-    const obstacles: Rect[] = [];
-    const list: Track[] = [];
-    const tilted = this.tiltAmt > 0.05;
     const now = performance.now();
+    const items = this.items;
+    items.length = 0;
+    const glyphs = this.glyphs;
+    glyphs.length = 0;
+    const points = this.pointRects;
+    points.length = 0;
+    const byItem = this.itemTracks;
+    byItem.length = 0;
+    let pool = 0;
+    const rect = (x: number, y: number, w: number, h: number): Rect => {
+      let r = this.rectPool[pool];
+      if (!r) this.rectPool.push((r = { x: 0, y: 0, w: 0, h: 0 }));
+      pool++;
+      r.x = x; r.y = y; r.w = w; r.h = h;
+      return r;
+    };
 
     for (const t of this.tracks.values()) {
       const s = this.toScreen(t.pos.x, t.pos.y, t.z);
@@ -1597,130 +1703,90 @@ export class TacticalPlot {
         continue;
       }
       if (t.kind === "weapon") {
-        obstacles.push({ x: s.x - 18, y: s.y - 18, w: 36, h: 36 });
+        points.push(rect(s.x - 18, s.y - 18, 36, 36));
         continue;
       }
       const hw = Math.max(11, (t.spriteW || 22) / 2), hh = Math.max(11, (t.spriteH || 22) / 2);
-      obstacles.push({ x: s.x - hw, y: s.y - hh, w: hw * 2, h: hh * 2 });
-      if (t.block) list.push(t);
-    }
-    for (const e of this.effects) {
-      if (now - e.t0 > 700) continue;
-      const sc = this.toScreen(e.x, e.y, 0);
-      obstacles.push({ x: sc.x - 30, y: sc.y - 30, w: 60, h: 60 });
-    }
-
-    // selected first, then friendlies, then the rest; stable within a group
-    const rank = (t: Track) => (t.id === input.selectedUnitId ? 0 : t.unit?.side === input.playerSide ? 1 : 2);
-    list.sort((a, b) => rank(a) - rank(b));
-
-    const BLOCKED = 1e9;
-    const overlap = (r: Rect, set: Rect[]) => {
-      let a = 0;
-      for (const p of set) {
-        const ox = Math.min(r.x + r.w, p.x + p.w) - Math.max(r.x, p.x);
-        const oy = Math.min(r.y + r.h, p.y + p.h) - Math.max(r.y, p.y);
-        if (ox > 0 && oy > 0) a += ox * oy;
-      }
-      return a;
-    };
-    const cost = (r: Rect) => (this.underChrome(r) ? BLOCKED : overlap(r, placed) + overlap(r, obstacles) * 2);
-    // best of the eight slots for the block's current size, sticking with the
-    // current slot while it stays clear
-    const bestSlot = (t: Track) => {
-      const cur = this.slotOffset(t, t.slot);
-      if (cost({ x: t.screen.x + cur.x, y: t.screen.y + cur.y, w: t.blockW, h: t.blockH }) === 0) return { slot: t.slot, c: 0 };
-      let slot = t.slot, c = Infinity;
-      for (let s = 0; s < 8; s++) {
-        const o = this.slotOffset(t, s);
-        // a far slot has to buy a clearly better placement
-        const k = cost({ x: t.screen.x + o.x, y: t.screen.y + o.y, w: t.blockW, h: t.blockH }) + (s >= 4 ? 40 : 0);
-        if (k < c - 1) { c = k; slot = s; }
-      }
-      return { slot, c };
-    };
-
-    const leaders = { friendly: [] as string[], hostile: [] as string[], unknown: [] as string[] };
-
-    for (const t of list) {
-      const el = t.block!;
-      // a glyph under the chrome takes its label with it
-      if (this.underChrome({ x: t.screen.x - 2, y: t.screen.y - 2, w: 4, h: 4 })) {
-        if (el.style.display !== "none") el.style.display = "none";
+      const g = rect(s.x - hw, s.y - hh, hw * 2, hh * 2);
+      // the drawn symbol: a 2525 frame fills about 16 px of its 22 px texture
+      const core = rect(s.x - 8, s.y - 8, 16, 16);
+      glyphs.push({ key: t.key, rect: g, core, x: s.x, y: s.y });
+      if (!t.block) continue;
+      // a glyph the chrome cuts into takes its label with it
+      if (this.underChrome(core)) {
+        if (t.block.style.display !== "none") t.block.style.display = "none";
         continue;
       }
       const { lines, cls } = this.blockLines(t, input);
       const text = lines.join("\n");
-      const wantCls = `tx-block tx-block--${t.kind} tx-block--${cls}${t.id === input.selectedUnitId && t.kind === "unit" ? " is-selected" : ""}`;
-      if (el.className !== wantCls) el.className = wantCls;
-      if (el.style.display === "none") el.style.display = "";
       if (text !== t.blockText) {
-        // measure both forms once per text change, not per frame
         t.blockText = text;
         t.compactText = lines[0] ?? "";
-        el.textContent = t.compactText;
-        t.compactW = el.offsetWidth;
-        t.compactH = el.offsetHeight;
-        el.textContent = text;
-        t.fullW = el.offsetWidth;
-        t.fullH = el.offsetHeight;
-        t.shownText = text;
       }
+      const full = this.blockSize(lines, lines.length), compact = this.blockSize(lines, 1);
+      const priority = this.trackPriority(t, input);
+      items.push({
+        key: t.key, priority, keep: priority <= 2, gx: s.x, gy: s.y, glyph: g,
+        fullW: full.w, fullH: full.h, compactW: compact.w, compactH: compact.h,
+      });
+      byItem.push({ t, cls });
+    }
+    for (const e of this.effects) {
+      if (now - e.t0 > 700) continue;
+      const sc = this.toScreen(e.x, e.y, 0);
+      points.push(rect(sc.x - 30, sc.y - 30, 60, 60));
+    }
 
-      // full block first; if nothing clear, one line; if that still lands on
-      // another label, an enemy or unknown track goes without (friendlies and
-      // the selection always keep theirs)
-      t.blockW = t.fullW;
-      t.blockH = t.fullH;
-      let pick = bestSlot(t);
-      let compact = false;
-      const busy = (c: number) => c >= BLOCKED || c > t.blockW * t.blockH * 0.12;
-      if (busy(pick.c)) {
-        t.blockW = t.compactW;
-        t.blockH = t.compactH;
-        const one = bestSlot(t);
-        if (one.c < pick.c) {
-          pick = one;
-          compact = true;
-        } else {
-          t.blockW = t.fullW;
-          t.blockH = t.fullH;
+    const placements = this.placer.place(items, {
+      blocked: (r) => this.underChrome(r),
+      fixed: this.labelRects,
+      glyphs,
+      points,
+      lines: this.weaponSegs,
+    });
+
+    const leaders = this.leaderParts;
+    leaders.friendly.length = leaders.hostile.length = leaders.unknown.length = 0;
+    this.lastLeaders.length = 0;
+    this.lastBlocks.length = 0;
+    this.keptHidden = 0;
+    this.keptHiddenKeys.length = 0;
+    for (let i = 0; i < items.length; i++) {
+      const p = placements[i];
+      const { t, cls } = byItem[i];
+      const el = t.block!;
+      if (!p.visible) {
+        if (items[i].keep) {
+          this.keptHidden++;
+          this.keptHiddenKeys.push(`${t.key}@${Math.round(t.screen.x)},${Math.round(t.screen.y)}`);
         }
-      }
-      const keep = t.id === input.selectedUnitId || (t.unit && t.unit.side === input.playerSide);
-      if (pick.c >= BLOCKED || (!keep && busy(pick.c))) {
-        // no clear place: hide rather than show a sliced or stacked label
         if (el.style.display !== "none") el.style.display = "none";
         continue;
       }
-      const want = compact ? t.compactText : t.blockText;
+      const wantCls = `tx-block tx-block--${t.kind} tx-block--${cls}${t.id === input.selectedUnitId && t.kind === "unit" ? " is-selected" : ""}`;
+      if (el.className !== wantCls) el.className = wantCls;
+      const want = p.compact ? t.compactText : t.blockText;
       if (t.shownText !== want) {
         el.textContent = want;
         t.shownText = want;
       }
-      const best = pick.slot;
-      t.slot = best;
-      const o = this.slotOffset(t, best);
-      const bx = Math.round(t.screen.x + o.x), by = Math.round(t.screen.y + o.y);
-      placed.push({ x: bx, y: by, w: t.blockW, h: t.blockH });
-
-      if (tilted || best >= 4) {
-        // leader from the glyph edge to the block's near corner
-        const cx = best % 4 < 2 ? bx : bx + t.blockW;
-        const cy = best % 2 === 0 ? by + t.blockH : by;
-        const dx = cx - t.screen.x, dy = cy - t.screen.y;
-        const len = Math.hypot(dx, dy) || 1;
-        const sx = t.screen.x + (dx / len) * 10, sy = t.screen.y + (dy / len) * 10;
-        if (len > 12) {
-          const kind = t.contact
-            ? (t.contact.classification === "classified" || t.contact.classification === "tracked" ? "hostile" : "unknown")
-            : t.unit && t.unit.side !== input.playerSide ? "hostile" : "friendly";
-          leaders[kind].push(`M${sx.toFixed(1)} ${sy.toFixed(1)}L${cx} ${cy}`);
-        }
-      }
-      el.style.transform = `translate3d(${bx}px, ${by}px, 0)`;
+      if (el.style.display === "none") el.style.display = "";
+      t.blockW = p.rect.w;
+      t.blockH = p.rect.h;
+      t.blockX = p.rect.x;
+      t.blockY = p.rect.y;
+      el.style.transform = `translate3d(${p.rect.x}px, ${p.rect.y}px, 0)`;
       const op = t.alpha.toFixed(2);
       if (el.style.opacity !== op) el.style.opacity = op;
+      this.lastBlocks.push(p.rect);
+      if (p.leader) {
+        const kind = t.contact
+          ? (t.contact.classification === "classified" || t.contact.classification === "tracked" ? "hostile" : "unknown")
+          : t.unit && t.unit.side !== input.playerSide ? "hostile" : "friendly";
+        const l = p.leader;
+        leaders[kind].push(`M${l.x1.toFixed(1)} ${l.y1.toFixed(1)}L${l.x2.toFixed(1)} ${l.y2.toFixed(1)}`);
+        this.lastLeaders.push({ key: t.key, seg: l });
+      }
     }
 
     for (const k of ["friendly", "hostile", "unknown"] as const) {
@@ -1730,6 +1796,60 @@ export class TacticalPlot {
         this.leaderPaths[k].setAttribute("d", d);
       }
     }
+
+    this.resolveGridLabels();
+  }
+
+  /** Grid labels yield to every block, leader, glyph, weapon line and to each other. */
+  private resolveGridLabels() {
+    const shown = this.gridShown;
+    shown.length = 0;
+    for (const g of this.gridCands) {
+      let ok = !this.underChrome(g.rect);
+      if (ok) for (const b of this.lastBlocks) if (intersects(g.rect, b)) { ok = false; break; }
+      if (ok) for (const r of this.labelRects) if (intersects(g.rect, r)) { ok = false; break; }
+      if (ok) for (const l of this.lastLeaders) if (segHitsRect(l.seg, g.rect, 1)) { ok = false; break; }
+      if (ok) for (const gl of this.glyphs) if (intersects(g.rect, gl.rect)) { ok = false; break; }
+      if (ok) for (const s of this.weaponSegs) if (segHitsRect(s, g.rect, 1)) { ok = false; break; }
+      if (ok) for (const o of shown) if (intersects(g.rect, o)) { ok = false; break; }
+      const want = ok ? "" : "none";
+      if (g.el.style.display !== want) g.el.style.display = want;
+      if (ok) shown.push(g.rect);
+    }
+  }
+
+  /** The label audit the declutter test runs: DOM block rects against what was drawn. */
+  private audit() {
+    const host = this.host.getBoundingClientRect();
+    const blocks: { key: string; rect: Rect }[] = [];
+    for (const t of this.tracks.values()) {
+      if (!t.block || t.block.style.display === "none" || !t.onScreen) continue;
+      const r = t.block.getBoundingClientRect();
+      if (r.width <= 0) continue;
+      blocks.push({ key: t.key, rect: { x: r.left - host.left, y: r.top - host.top, w: r.width, h: r.height } });
+    }
+    const grid: Rect[] = [];
+    for (const g of this.gridLabels) {
+      if (g.style.display === "none") continue;
+      const r = g.getBoundingClientRect();
+      if (r.width > 0) grid.push({ x: r.left - host.left, y: r.top - host.top, w: r.width, h: r.height });
+    }
+    const counts = auditLabels({
+      blocks,
+      leaders: this.lastLeaders.map((l) => ({ key: l.key, seg: { ...l.seg } })),
+      glyphs: this.glyphs.map((g) => ({ key: g.key, rect: { ...g.rect }, core: { ...g.core }, x: g.x, y: g.y })),
+      lines: this.weaponSegs.map((s) => ({ ...s })),
+      grid,
+      keptHidden: this.keptHidden,
+    });
+    // how crowded the frame was: closest pair of glyphs, in px
+    let closest = Infinity;
+    for (let i = 0; i < this.glyphs.length; i++) {
+      for (let j = i + 1; j < this.glyphs.length; j++) {
+        closest = Math.min(closest, Math.hypot(this.glyphs[i].x - this.glyphs[j].x, this.glyphs[i].y - this.glyphs[j].y));
+      }
+    }
+    return { ...counts, glyphs: this.glyphs.length, leaders: this.lastLeaders.length, weaponLines: this.weaponSegs.length, closestGlyphs: closest === Infinity ? -1 : Math.round(closest), tilt: this.tiltAmt, hiddenKeep: this.keptHiddenKeys.join(" ") };
   }
 
   // ----------------------------------------------------- grid labels, scale
@@ -1772,7 +1892,8 @@ export class TacticalPlot {
     used.length = 0;
     used.push(...spaced);
 
-    this.gridRects = [];
+    this.gridCands.length = 0;
+    const m = this.metrics;
     for (let i = 0; i < Math.max(used.length, this.gridLabels.length); i++) {
       let el = this.gridLabels[i];
       if (i >= used.length) {
@@ -1786,14 +1907,10 @@ export class TacticalPlot {
         this.gridLabels.push(el);
       }
       const u = used[i];
-      if (this.underChrome({ x: u.x, y: u.y, w: u.text.length * 7.6 + 4, h: 14 })) {
-        if (el.style.display !== "none") el.style.display = "none";
-        continue;
-      }
       if (el.textContent !== u.text) el.textContent = u.text;
-      el.style.display = "";
-      this.gridRects.push({ x: u.x, y: u.y, w: u.text.length * 7.6 + 4, h: 14 });
-      el.style.transform = `translate3d(${Math.round(u.x)}px, ${Math.round(u.y)}px, 0)`;
+      const rx = Math.round(u.x), ry = Math.round(u.y);
+      this.gridCands.push({ el, rect: { x: rx, y: ry, w: Math.ceil(u.text.length * m.gridCharW + m.gridPadW), h: Math.ceil(m.gridH) } });
+      el.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
     }
   }
 

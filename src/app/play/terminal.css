@@ -162,6 +162,9 @@
 .tx-grid-label {
   color: var(--tx-rule-hi);
   text-shadow: none;
+  /* rings and coverage edges pass under grid text, never through it */
+  background: var(--tx-field);
+  padding: 1px 2px;
 }
 .tx-ring-label {
   color: var(--tx-phosphor);
@@ -482,6 +485,8 @@
   white-space: nowrap;
 }
 .tx-scale {
+  background: var(--tx-field);
+  padding: 2px 6px;
   position: absolute;
   left: 368px;
   bottom: 214px;
@@ -756,4 +761,20 @@
 .tx-root [data-testid="order-toggle-radar"] + span {
   display: block;
   margin: 4px 0 0 !important;
+}
+
+/* the objective, pinned at the top of the Intel tab */
+.tx-pinned {
+  border-left: 2px solid var(--tx-phosphor);
+}
+.tx-pinned-title {
+  color: var(--tx-hi);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+.tx-pinned-text {
+  margin: 0 0 6px;
+  color: var(--tx-text);
+  line-height: 1.5;
 }

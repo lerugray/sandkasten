@@ -97,6 +97,7 @@ function ControlsTab({ terminal }: { terminal: boolean }) {
         {terminal && <div><KeyLabel>S</KeyLabel> Sensor coverage <KeyLabel>M</KeyLabel> Measure <KeyLabel>G</KeyLabel> God mode</div>}
         {terminal && <div><KeyLabel>T</KeyLabel> Tilt the plot into the 3D theater and back</div>}
         {terminal && <div><KeyLabel>A</KeyLabel> Autopause settings</div>}
+        {terminal && <div><KeyLabel>B</KeyLabel> Show the mission briefing again (also pinned in the Intel tab)</div>}
         <div><KeyLabel>H</KeyLabel> or <KeyLabel>?</KeyLabel> Open this help panel</div>
         <div><KeyLabel>Esc</KeyLabel> Close panels and deselect units</div>
       </div>

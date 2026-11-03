@@ -34,6 +34,7 @@ const TOP_BAR = 44;
 const CMD_BAR = 56;
 const LEFT_COL = 360;
 const TTY_H = 150;
+const RIGHT_COL = 400;
 
 type Tab = "forces" | "messages" | "combat" | "media";
 
@@ -156,7 +157,11 @@ export function TerminalPlay() {
   const scaleLabelRef = useRef<HTMLSpanElement>(null);
   const scaleBarRef = useRef<HTMLSpanElement>(null);
   const readouts = useMemo(() => ({ cursor: cursorRef, scaleLabel: scaleLabelRef, scaleBar: scaleBarRef }), []);
-  const insets = useMemo<PlotInsets>(() => ({ left: LEFT_COL, right: 0, top: TOP_BAR, bottom: CMD_BAR + TTY_H }), []);
+  // the track panel takes the right column while a unit is selected
+  const insets = useMemo<PlotInsets>(
+    () => ({ left: LEFT_COL, right: selectedUnitId ? RIGHT_COL : 0, top: TOP_BAR, bottom: CMD_BAR + TTY_H }),
+    [selectedUnitId !== null] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const { infoWarState, toggleEnabled, markPostRead, resetInfoWar } = useInfoWar(
     gameState,
@@ -227,6 +232,10 @@ export function TerminalPlay() {
       } else if (k === "a") {
         e.preventDefault();
         setShowAutopauseSettings((p) => !p);
+      } else if (k === "b") {
+        // reopen the briefing; while it is open any key (B too) dismisses it
+        e.preventDefault();
+        if (!showBriefing) setShowBriefing(true);
       } else if (/^[1-6]$/.test(e.key)) {
         e.preventDefault();
         setSpeed(SPEED_OPTIONS[Number(e.key) - 1]);
@@ -240,7 +249,7 @@ export function TerminalPlay() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePause, setSpeed, toggleMeasure, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId]);
+  }, [togglePause, setSpeed, toggleMeasure, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, showBriefing]);
 
   // The briefing card goes away on the first key or click anywhere, and when
   // the clock starts. It never swallows that input: the key or click still acts.
@@ -521,9 +530,22 @@ export function TerminalPlay() {
           )}
 
           {sidebarTab === "messages" && (
-            <section className="tx-section">
-              <MessageLog messages={messages} simTime={gameState.simTime} onMarkRead={markMessageRead} />
-            </section>
+            <>
+              {/* The objective stays readable after the briefing card closes.
+                  The scenario's opening message only fires at slow speeds
+                  (ScenarioLoaded is a 1 s window), so it is pinned here. */}
+              {!messages.some((m) => m.title === OPENING.title) && (
+                <section className="tx-section tx-pinned" data-testid="intel-briefing">
+                  <div className="tx-section-head">Briefing</div>
+                  <div className="tx-pinned-title">{OPENING.title.toUpperCase()}</div>
+                  <p className="tx-pinned-text">{OPENING.text}</p>
+                  <div className="tx-dim">[B] reopens the briefing card</div>
+                </section>
+              )}
+              <section className="tx-section">
+                <MessageLog messages={messages} simTime={gameState.simTime} onMarkRead={markMessageRead} />
+              </section>
+            </>
           )}
 
           {sidebarTab === "combat" && (
@@ -592,7 +614,7 @@ export function TerminalPlay() {
       )}
 
       {/* Scale */}
-      <div className="tx-scale" aria-hidden="true">
+      <div className="tx-scale" aria-hidden="true" data-plot-occluder>
         <span ref={scaleBarRef} className="tx-scale-bar" />
         <span ref={scaleLabelRef} className="tx-scale-label" />
       </div>
@@ -657,6 +679,9 @@ export function TerminalPlay() {
           )}
         </span>
         <span className="tx-rule-v" />
+        <Cmd cap="B" onClick={() => setShowBriefing(true)} active={showBriefing} ariaLabel="Show briefing">
+          BRIEF
+        </Cmd>
         <Cmd cap="H" onClick={() => setShowHelp(true)} ariaLabel="Open help">
           HELP
         </Cmd>

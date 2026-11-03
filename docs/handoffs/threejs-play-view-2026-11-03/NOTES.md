@@ -162,3 +162,65 @@ environment to `capture.mjs` (no host flags in the repo).
 - **Build:** `npm run build` passes.
 - **Frames:** all re-captured under the same names, plus `briefing.png`. `fps.txt`: median 59.9, 5th percentile 59.5. `renderer.txt` names the NVIDIA GeForce RTX 3050. `console-errors.txt`: none. `motion.webm`: 8.1 s.
 - **Still open:** in a dense hostile cluster in tilt, two contact blocks can sit edge to edge (touching, not stacked). The traffic strip still ellipsizes long lines; the full text is in the Intel tab and on hover, and the objective is on the briefing card.
+
+## Round 3 (s387 seat, ROUND3.md: label declutter in dense clusters)
+
+### How the placement works now
+The per-block slot scoring is replaced by `src/lib/plot/labelPlacer.ts`, pure screen-space geometry with hard rules. A candidate spot is legal only when all of these hold:
+- the block is clear of the chrome and the canvas edge;
+- it clears every placed block (2 px), every other glyph, missile heads and live bursts, every weapon track line, and every leader already drawn;
+- if it has a leader, the leader clears every other block, never crosses another leader, and never touches another glyph's drawn symbol (16 px core);
+- if it has no leader, it is nearer its own glyph than any other glyph; otherwise it gets a leader.
+
+Blocks degrade in the card's order, each step stable frame to frame:
+1. Full block beside the glyph.
+2. First line only beside the glyph.
+3. First line on a leader out to clear space, searching 5 rings x 24 directions, preferring the side facing away from the local cluster.
+4. Hidden.
+
+Who keeps a label:
+- Placement order is selection, friendly units, classified hostiles (CLS/TRK), DET, UNK. Each block keeps last frame's spot while it stays legal, and only moves up a tier after the better spot has been free for 24 frames, so there is no jitter as the clock runs.
+- Keep tracks (selection, friendlies, CLS/TRK) search four more rings, out to 410 px.
+- If a keep track still finds nothing, a repair pass re-places the frame with it first, trying three orders for everyone else, and keeps the pass with fewest losses. Memory then holds that layout.
+- Unknowns are hidden first.
+
+### S2
+1. **Leaders crossing other labels: FIXED.** Hard rule; the audit counts 0 leader-through-block and 0 leader-leader crossings.
+2. **Leader through another block while moving: FIXED.** Same rule; held over 120 s of 60x motion.
+3. **Blocks overlapping in tilt: FIXED.** Hard rule; the audit counts 0 overlaps in flat and in tilt (`dense-tilt.png`).
+4. **Weapon track lines through blocks: FIXED.** Weapon target lines and course ticks are recorded in screen space as they are drawn; blocks may not touch them. Missile heads and bursts stay obstacles.
+
+### S3
+5. **Grid labels overprinting: FIXED.** Grid labels are resolved every frame and yield to blocks, leaders, glyphs, weapon lines, ring labels and each other (audit `gridOverlaps` 0).
+6. **Ring lines through grid and scale text: FIXED.** Grid labels and the scale readout now have an opaque backing, so rings pass under the text. The scale readout is also an occluder that labels avoid.
+7. **Sina 102 without a block: FIXED.** It is a classified hostile, so the keep rule and repair pass apply. The audit's `keptHidden` (keep tracks on screen without a block) is 0.
+8. **Objective unreadable after the briefing: FIXED.** The objective is pinned at the top of the Intel tab ("// BRIEFING", OPERATION SENTINEL PASSAGE, full text), and `B` or the new `[B] BRIEF` command reopens the card; the help panel lists the key.
+   - Root cause, a sim issue: the scenario's ScenarioLoaded trigger only fires while sim time is within 1 s of the start (`events.ts`). At 60x the first 50 ms tick already advances 3 s, so the opening message never fires at fast speed; at 1x/10x it does.
+   - I left `events.ts` alone; it belongs to the sim-fix card. The pinned entry shows whenever that message is missing from Intel, so the objective is readable either way.
+9. **Review notes: FIXED.**
+   - Chrome rects are invalidated at once on resize and on any DOM change in the play view (MutationObserver), not after up to 200 ms.
+   - Block sizes come from measured font metrics (probe at start and again once the vendored font loads), so there is no `offsetWidth` read per frame.
+   - The label pass reuses its arrays, rects and segments. It allocates only the committed rects and, on the rare repair frames, a memory snapshot.
+
+Also: when a unit is selected, the view centre now eases left to make room for the track panel (principal-point shift; the canvas never resizes). A selected group no longer sits against the panel edge.
+
+### Proof
+- **Measured check: `tests/plot-labels.spec.ts`, new, in the suite.**
+  - What it does: autopause off, a unit selected (rings and ring labels on), sim at 60x. It runs 60 s flat, then tilts and runs 60 s. Every 200 ms it calls the plot's `labelAudit()`.
+  - How the audit is independent: it takes every visible block's rect from the DOM (`getBoundingClientRect`), and the leaders, glyphs and weapon lines from what the frame drew. It counts block overlaps, leaders through other blocks, leader crossings, leaders through other glyphs, weapon lines through blocks, ambiguous pairings, grid overlaps and hidden keep tracks.
+  - It asserts all are zero, and that the run exercised dense frames, weapon lines and leaders.
+  - Final suite run (under full parallel load), as printed: `{"samples":580,"denseSamples":580,"weaponSamples":75,"leaderSamples":580,"maxBlocks":10,"minClosestGlyphs":6,"blockOverlaps":0,"leaderThroughBlock":0,"leaderCrossings":0,"leaderThroughGlyph":0,"weaponThroughBlock":0,"ambiguousPairing":0,"gridOverlaps":0,"keptHidden":0}`. Every sample had two glyphs closer than 40 px.
+- **Break test, done twice.** Each time I removed the placer's block-block check and its weapon-line check, ran the spec, and restored the file from a backup; md5 verified byte-identical, no markers left.
+  - Earlier placer: the spec failed with `blockOverlaps` 684 and `weaponThroughBlock` 100.
+  - Final placer: the spec failed with `blockOverlaps` 341. The weapon break produced 0 hits in that run, because the missile-head and leader rules happened to keep blocks off the lines.
+- **Frames:** all re-captured under the same names (`first-screen.png`, `unit-selected.png`, `tilt-3d.png`, `briefing.png`, `motion.webm` 8.2 s, renderer/fps/console files) plus `dense-tilt.png`.
+  - `dense-tilt.png` is tilted and zoomed at the densest contact group (8 contacts within 120 px), with the audit at capture in `dense-tilt.txt`: 16 blocks, 13 leaders, 0 violations.
+  - I looked at every frame and at a contact sheet of the motion clip.
+- **Tests:** 37 of 37 passed (36 before plus `plot-labels`) on the lane GPU config. An earlier full run in this round failed 1 sample in 579 (`keptHidden` 1, a CLS contact in the top-left corner pocket). That led to the three-order repair; the final run is clean.
+- **Build:** `npm run build` passes.
+- **fps:** median 59.9, 5th percentile 59.9 (1440x900 DPR 2, RTX 3050).
+- **Console errors:** none.
+
+### Known limits
+- Dense clusters now show first-line labels with leaders more often than full blocks, for example the five-ship carrier group at default zoom. That is the card's degrade order; zoom in and the full blocks come back.
+- The audit's "glyph" test for leaders uses the drawn 16 px symbol core, not the 22 px texture frame. Ships 25 px apart have overlapping frames, so no leader could leave one without touching a neighbour's frame.
