@@ -23,11 +23,16 @@ Ray changes his intent, quoting him.
 - Graphics: "the jumps that have been made in code graphics with our stack and threejs will make that project exceptional".
 - Parity: "a complete inventory/study of CMO, not to copy over for sandkasten but to have a strong basis for all the
   elements of parity we need to hit".
+- Look and feel (Ray, 2026-11-03 15:1x): "we should be fully utilizing all the new UI/graphics improvements we have now,
+  including implementing threejs ... and other tools like claude motion"; "for the UI, it needs to read more like a tom
+  clancy style arcade/harpoon terminal as opposed to a flashy web app or saas but all that energy put towards a truly
+  immersive and engaging setup".
 
 ## Out of spec
 - Copying CMO: its files, art, text or data ("not to copy over", Ray 2026-11-03).
 - A defense-analyst interface at the player's expense (README: CMO is "built for defense analysts", Sandkasten is
   "built for players").
+- A "flashy web app or saas" look (Ray 2026-11-03): no dashboard cards, marketing gradients or generic web-app chrome.
 - Scenarios scripted so only one solution works (Ray 2026-11-03).
 - "Differentiate on turn structure alone": the 2026-06-12 direction memo's thesis is superseded, because CMO now offers
   WeGo too (Ray 2026-11-03: "CMO decided to also offer WEGO functionality"). WeGo stays a mode, not the whole pitch.
