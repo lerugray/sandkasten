@@ -32,6 +32,9 @@ Ray changes his intent, quoting him.
 - "Differentiate on turn structure alone": the 2026-06-12 direction memo's thesis is superseded, because CMO now offers
   WeGo too (Ray 2026-11-03: "CMO decided to also offer WEGO functionality"). WeGo stays a mode, not the whole pitch.
 
-## Open (awaiting Ray's ruling)
-- Where the platform database comes from. Until Ray rules, no build may bundle or require data extracted from a CMO
-  install (today `scripts/extract_cmo_db.py` output is gitignored and nothing ships with it).
+## Platform database (Ray, 2026-11-03 14:5x)
+- "build our own": Sandkasten ships its own platform database, compiled independently for our engine.
+- "we will need the same content": it aims to cover the same platforms, weapons and sensors a CMO player can field.
+- "we dont have to literally copy things given our engine is different": no record, value or text is copied from CMO's
+  database. No build may bundle or require data extracted from a CMO install; `scripts/extract_cmo_db.py` output stays
+  gitignored and local. (This replaces the "copy the CMO database" idea in Ray's first 11-03 message, per his ruling.)
