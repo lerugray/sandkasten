@@ -27,9 +27,14 @@ interface PlatformDetail {
 interface DetailPanelProps {
   unit: Unit;
   onClose: () => void;
+  /** Placement and frame classes; the terminal display on /play docks it in its own column. */
+  className?: string;
 }
 
-export function DetailPanel({ unit, onClose }: DetailPanelProps) {
+const DEFAULT_PANEL_CLASS =
+  "absolute bottom-8 left-2 z-20 w-96 bg-[var(--color-tactical-panel)] border border-[var(--color-tactical-border)] rounded text-xs shadow-lg";
+
+export function DetailPanel({ unit, onClose, className = DEFAULT_PANEL_CLASS }: DetailPanelProps) {
   const platform = getPlatform(unit.platformId);
   const [detail, setDetail] = useState<PlatformDetail | null>(null);
   const [loading, setLoading] = useState(false);
@@ -64,7 +69,7 @@ export function DetailPanel({ unit, onClose }: DetailPanelProps) {
   return (
     <div
       data-testid="detail-panel"
-      className="absolute bottom-8 left-2 z-20 w-96 bg-[var(--color-tactical-panel)] border border-[var(--color-tactical-border)] rounded text-xs shadow-lg"
+      className={className}
     >
       {/* Header */}
       <div className="flex justify-between items-center px-3 py-2 border-b border-[var(--color-tactical-border)]">

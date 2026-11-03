@@ -6,6 +6,8 @@ interface ContactListProps {
   contacts: Contact[];
   simTime: number;
   onContactClick?: (contact: Contact) => void;
+  /** Display name for a contact without a classified platform name. */
+  contactLabel?: (contact: Contact) => string;
 }
 
 const CLASSIFICATION_COLORS: Record<Contact["classification"], string> = {
@@ -22,7 +24,7 @@ const CLASSIFICATION_LABELS: Record<Contact["classification"], string> = {
   tracked: "TRK",
 };
 
-export function ContactList({ contacts, simTime, onContactClick }: ContactListProps) {
+export function ContactList({ contacts, simTime, onContactClick, contactLabel }: ContactListProps) {
   if (contacts.length === 0) {
     return (
       <div
@@ -65,7 +67,7 @@ export function ContactList({ contacts, simTime, onContactClick }: ContactListPr
                 {CLASSIFICATION_LABELS[contact.classification]}
               </span>
               <span className="text-[var(--color-tactical-text)] truncate flex-1">
-                {contact.platformName ?? `Contact ${contact.id.slice(-4)}`}
+                {contact.platformName ?? contactLabel?.(contact) ?? `Contact ${contact.id.slice(-4)}`}
               </span>
               <span className="text-[var(--color-tactical-text-dim)] text-sm">
                 {contact.sensorType.toUpperCase()}

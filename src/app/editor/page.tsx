@@ -7,6 +7,7 @@ import { EditorToolbar } from "@/components/editor/EditorToolbar";
 import { UnitPlacer } from "@/components/editor/UnitPlacer";
 import { ScenarioSettings } from "@/components/editor/ScenarioSettings";
 import type { Scenario, Unit, Side, Position } from "@/types/game";
+import { ClassicFonts } from "@/components/ClassicFonts";
 
 const DEFAULT_SCENARIO: Scenario = {
   name: "New Scenario",
@@ -136,6 +137,7 @@ export default function EditorPage() {
 
   return (
     <div className={`h-screen w-screen flex flex-col bg-[var(--color-tactical-dark)] ${theme === "light" ? "theme-light" : ""}`}>
+      <ClassicFonts />
       {/* Header */}
       <div className="h-8 flex items-center px-3 border-b border-[var(--color-tactical-border)] bg-[var(--color-tactical-panel)] shrink-0">
         <a

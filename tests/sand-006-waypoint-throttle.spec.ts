@@ -12,20 +12,15 @@ test.describe("sand-006 — Waypoints + throttle interaction", () => {
 
     const fireMapClick = async (position: { x: number; y: number }) => {
       await page.evaluate(({ x, y }) => {
-        const mapEl = document.querySelector(".maplibregl-map") as any;
-        const map = mapEl?.__maplibreMap;
-        if (!map) throw new Error("Map handle not found on .maplibregl-map");
-        const lngLat = map.unproject([x, y]);
-        map.fire("click", {
-          lngLat,
-          point: { x, y },
-          originalEvent: { target: map.getCanvas() },
-        });
+        const plotEl = document.querySelector('[data-testid="tactical-plot"]') as any;
+        const plot = plotEl?.__plot;
+        if (!plot) throw new Error("Plot handle not found on [data-testid=tactical-plot]");
+        plot.clickAt(x, y);
       }, position);
     };
 
     // Select first friendly unit in Forces sidebar.
-    const firstUnitBtn = page.locator(".w-80 button.w-full").first();
+    const firstUnitBtn = page.getByTestId("force-row").first();
     await firstUnitBtn.click();
 
     // Order panel should appear.
@@ -42,20 +37,19 @@ test.describe("sand-006 — Waypoints + throttle interaction", () => {
     await expect(page.getByTestId("order-waypoints-list")).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId("order-waypoint-item")).toHaveCount(3);
 
-    // Waypoint path should be present in the map source.
+    // Waypoint path should be present in the plot source.
     await expect
       .poll(
         async () =>
           page.evaluate(() => {
-            const mapEl = document.querySelector(".maplibregl-map") as any;
-            const map = mapEl?.__maplibreMap;
-            const src = map?.getSource("waypoint-lines") as any;
-            const data = src?._data;
-            return { hasMap: !!map, featureCount: (data?.features ?? []).length };
+            const plotEl = document.querySelector('[data-testid="tactical-plot"]') as any;
+            const plot = plotEl?.__plot;
+            const src = plot?.getSource("waypoint-lines") as any;
+            return { hasPlot: !!plot, featureCount: (src?.features ?? []).length };
           }),
         { timeout: 5_000 }
       )
-      .toMatchObject({ hasMap: true });
+      .toMatchObject({ hasPlot: true });
 
     // Set throttle to FLANK.
     await page.getByTestId("order-throttle").filter({ hasText: "FLANK" }).click();
@@ -92,11 +86,10 @@ test.describe("sand-006 — Waypoints + throttle interaction", () => {
       .poll(
         async () =>
           page.evaluate(() => {
-            const mapEl = document.querySelector(".maplibregl-map") as any;
-            const map = mapEl?.__maplibreMap;
-            const src = map?.getSource("waypoint-lines") as any;
-            const data = src?._data;
-            return (data?.features ?? []).length;
+            const plotEl = document.querySelector('[data-testid="tactical-plot"]') as any;
+            const plot = plotEl?.__plot;
+            const src = plot?.getSource("waypoint-lines") as any;
+            return (src?.features ?? []).length;
           }),
         { timeout: 5_000 }
       )

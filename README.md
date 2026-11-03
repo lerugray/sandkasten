@@ -11,6 +11,7 @@
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
 ![MapLibre](https://img.shields.io/badge/MapLibre-GL-blue)
+![Three.js](https://img.shields.io/badge/Three.js-r187-black)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 </div>
@@ -38,14 +39,24 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 
 ## Current State
 
+### Play View (Three.js terminal display)
+- `/play` draws the theater in Three.js as a naval plot: Natural Earth coastline and depth contours, lat/long grid, range scale
+- NATO MIL-STD-2525 glyphs with data blocks (name or track number, course, speed, flight level) that move aside so they don't overlap
+- Track history dots, contacts fade as their data ages, radar sweeps on emitting units
+- Missiles fly with trails and target lines; intercepts and hits flash briefly
+- Drag to pan (it coasts when you let go), wheel to zoom at the cursor, `T` tilts the plot into a low 3D theater with NOAA relief, wireframe sensor domes and aircraft at altitude
+- Terminal chrome: vendored JetBrains Mono, one phosphor green, one alarm red, function-key command bar, teletype traffic strip fed by the combat log, intel and autopause
+- Keys: `Space` pause, `1`-`6` speed, `S` sensors, `M` measure, `G` god mode, `T` tilt, `A` autopause, `H`/`?` help
+- The old MapLibre map stays at `/play?map=legacy` for comparison
+
 ### Foundation
-- Dark tactical map with NATO MIL-STD-2525 symbols
+- Dark tactical map with NATO MIL-STD-2525 symbols (home page, editor, legacy play view)
 - Demo scenario: US carrier strike group vs. Iranian naval forces, Strait of Hormuz
 - Click units for detailed Info/Sensors/Weapons panels
 - Shift+click to pin sensor range rings
 - Sensor coverage overlay — toggle radar coverage circles (`S` key)
 - Measurement tools — click two points for distance/bearing (`M` key)
-- Dark/light theme
+- Dark/light theme (MapLibre pages; the terminal play view is dark only)
 - Scenario editor at `/editor` — place units, drag to reposition, set sides, save/load JSON
 - Platform database API with 60k+ extracted CMO records
 
@@ -87,7 +98,7 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Covers controls, game concepts, sidebar guide, and media feed setup
 
 ### Testing
-- 29 Playwright E2E tests covering page loads, simulation gameplay, combat, autopause, and design system
+- 36 Playwright E2E tests covering page loads, simulation gameplay, combat, autopause, and the terminal design system (vendored font, no remote fonts, chrome never resizes the plot)
 - `npm test` runs all tests headless; `npm run test:ui` opens the visual debugger
 
 ---
@@ -186,6 +197,7 @@ sandkasten/
 | **Combat** | Missiles, SAM defense, damage, salvos, weapon tracks | Complete |
 | **InfoWar Feed** | Media coverage from game events via local LLM | Complete |
 | **Polish** | Autopause, god mode, sensors overlay, measurement, E2E tests | Complete |
+| **Look** | Three.js terminal play view, motion, 3D tilt | Built, awaiting Ray's in-game review |
 | **Remaining gaps** | Fuel consumption, aircraft altitude, game save/load | Next |
 | **WeGo Multiplayer** | WebSocket sync, turn system, lobby, server-side fog of war | Planned |
 | **Community** | Scenario sharing, Auftragstaktik OSINT import, campaign mode | Planned |

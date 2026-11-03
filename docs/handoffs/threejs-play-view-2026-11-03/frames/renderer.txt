@@ -1,0 +1,5 @@
+UNMASKED_RENDERER_WEBGL: ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)
+UNMASKED_VENDOR_WEBGL: Google Inc. (Microsoft Corporation)
+VERSION: WebGL 2.0 (OpenGL ES 3.0 Chromium)
+browser: 153.0.8010.12
+viewport: 1440x900 DPR 2

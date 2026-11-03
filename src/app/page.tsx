@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { MapWrapper } from "@/components/map/MapWrapper";
 import { DetailPanel } from "@/components/map/DetailPanel";
 import { demoScenario } from "@/lib/scenarios/demo";
+import { ClassicFonts } from "@/components/ClassicFonts";
 
 export default function Home() {
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
@@ -39,6 +40,7 @@ export default function Home() {
 
   return (
     <div className={`h-screen w-screen flex flex-col bg-[var(--color-tactical-dark)] ${theme === "light" ? "theme-light" : ""}`}>
+      <ClassicFonts />
       {/* Header */}
       <div className="h-14 flex items-center px-5 border-b border-[var(--color-tactical-border)] bg-[var(--color-tactical-panel)] shrink-0">
         <span

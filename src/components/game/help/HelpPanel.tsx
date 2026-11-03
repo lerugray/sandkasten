@@ -4,11 +4,13 @@ import { useState } from "react";
 
 interface HelpPanelProps {
   onClose: () => void;
+  /** The Three.js terminal display on /play adds plot keys and mouse controls. */
+  terminal?: boolean;
 }
 
 type HelpTab = "controls" | "concepts" | "sidebar" | "infowar";
 
-export function HelpPanel({ onClose }: HelpPanelProps) {
+export function HelpPanel({ onClose, terminal = false }: HelpPanelProps) {
   const [tab, setTab] = useState<HelpTab>("controls");
 
   return (
@@ -52,7 +54,7 @@ export function HelpPanel({ onClose }: HelpPanelProps) {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 text-sm text-[var(--color-tactical-text)] leading-relaxed space-y-4">
-          {tab === "controls" && <ControlsTab />}
+          {tab === "controls" && <ControlsTab terminal={terminal} />}
           {tab === "concepts" && <ConceptsTab />}
           {tab === "sidebar" && <SidebarTab />}
           {tab === "infowar" && <InfoWarTab />}
@@ -85,12 +87,16 @@ function KeyLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ControlsTab() {
+function ControlsTab({ terminal }: { terminal: boolean }) {
   return (
     <>
       <SectionTitle>Keyboard</SectionTitle>
       <div className="space-y-1">
         <div><KeyLabel>Space</KeyLabel> Pause / resume the simulation</div>
+        {terminal && <div><KeyLabel>1</KeyLabel>-<KeyLabel>6</KeyLabel> Time speed 1x, 2x, 5x, 10x, 30x, 60x</div>}
+        {terminal && <div><KeyLabel>S</KeyLabel> Sensor coverage <KeyLabel>M</KeyLabel> Measure <KeyLabel>G</KeyLabel> God mode</div>}
+        {terminal && <div><KeyLabel>T</KeyLabel> Tilt the plot into the 3D theater and back</div>}
+        {terminal && <div><KeyLabel>A</KeyLabel> Autopause settings</div>}
         <div><KeyLabel>H</KeyLabel> or <KeyLabel>?</KeyLabel> Open this help panel</div>
         <div><KeyLabel>Esc</KeyLabel> Close panels and deselect units</div>
       </div>
@@ -100,6 +106,8 @@ function ControlsTab() {
         <div><span className="text-[var(--color-terminal-amber)]">Click unit</span> — Select it. Opens orders and detail panels.</div>
         <div><span className="text-[var(--color-terminal-amber)]">Shift + click unit</span> — Pin its sensor range ring on the map.</div>
         <div><span className="text-[var(--color-terminal-amber)]">Click map</span> — While in waypoint mode, places a waypoint.</div>
+        {terminal && <div><span className="text-[var(--color-terminal-amber)]">Drag</span> — Pan the plot. Let go while moving and it coasts.</div>}
+        {terminal && <div><span className="text-[var(--color-terminal-amber)]">Wheel</span> — Zoom toward the cursor.</div>}
       </div>
 
       <SectionTitle>Placing Waypoints</SectionTitle>

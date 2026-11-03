@@ -74,13 +74,13 @@ test.describe("Simulation gameplay", () => {
 
     await page.locator("button", { hasText: "Combat" }).click();
 
-    const combatEntries = page.locator(".w-80 >> text=/LAUNCH|HIT|MISS|DEFENDED|DESTROYED/i");
+    const combatEntries = page.locator('[data-testid="side-panel"] >> text=/LAUNCH|HIT|MISS|DEFENDED|DESTROYED/i');
     const count = await combatEntries.count();
     expect(count).toBeGreaterThan(0);
   });
 
   test("selecting a unit and opening waypoint mode", async ({ page }) => {
-    const unitButtons = page.locator(".w-80 button.w-full");
+    const unitButtons = page.getByTestId("force-row");
     await unitButtons.first().click();
 
     const waypointBtn = page.locator("button", { hasText: /WAYPOINT|ADD|PLACING/i }).first();

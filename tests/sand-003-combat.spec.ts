@@ -1,13 +1,13 @@
 import { test, expect } from "@playwright/test";
 
-async function getMapHandles(page: import("@playwright/test").Page) {
+async function getPlotHandles(page: import("@playwright/test").Page) {
   return await page.evaluate(() => {
-    const mapEl = document.querySelector(".maplibregl-map") as any;
-    const map = mapEl?.__maplibreMap;
-    if (!map) return { hasMap: false };
-    const weaponSource = map.getSource("weapon-tracks");
+    const plotEl = document.querySelector('[data-testid="tactical-plot"]') as any;
+    const plot = plotEl?.__plot;
+    if (!plot) return { hasPlot: false };
+    const weaponSource = plot.getSource("weapon-tracks");
     return {
-      hasMap: true,
+      hasPlot: true,
       hasWeaponSource: !!weaponSource,
     };
   });
@@ -37,16 +37,16 @@ test.describe("sand-003 — Combat launch + impact", () => {
 
     // Wait for weapon track source to be created and populated.
     await expect
-      .poll(async () => getMapHandles(page), { timeout: 120_000 })
-      .toMatchObject({ hasMap: true, hasWeaponSource: true });
+      .poll(async () => getPlotHandles(page), { timeout: 120_000 })
+      .toMatchObject({ hasPlot: true, hasWeaponSource: true });
 
     await expect
       .poll(
         async () =>
           page.evaluate(() => {
-            const mapEl = document.querySelector(".maplibregl-map") as any;
-            const map = mapEl?.__maplibreMap;
-            const features = map?.querySourceFeatures?.("weapon-tracks") ?? [];
+            const plotEl = document.querySelector('[data-testid="tactical-plot"]') as any;
+            const plot = plotEl?.__plot;
+            const features = plot?.getSource?.("weapon-tracks")?.features ?? [];
             const hasLine = features.some((f: any) => f.geometry?.type === "LineString");
             const hasPoint = features.some((f: any) => f.geometry?.type === "Point");
             return { featureCount: features.length, hasLine, hasPoint };

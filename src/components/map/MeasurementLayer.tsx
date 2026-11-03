@@ -2,17 +2,15 @@
 
 import { useEffect } from "react";
 import maplibregl from "maplibre-gl";
-import { distanceNm, distanceKm, bearingDeg } from "@/lib/simulation/movement";
+import type { MeasurePoint } from "@/lib/map/measure";
 import type { FeatureCollection } from "geojson";
 
 const SOURCE_ID = "measurement";
 const LINE_LAYER = "measurement-line-layer";
 const POINT_LAYER = "measurement-point-layer";
 
-export interface MeasurePoint {
-  lng: number;
-  lat: number;
-}
+export type { MeasurePoint } from "@/lib/map/measure";
+export { formatMeasurement } from "@/lib/map/measure";
 
 interface MeasurementLayerProps {
   map: maplibregl.Map;
@@ -94,14 +92,4 @@ export function MeasurementLayer({ map, start, end }: MeasurementLayerProps) {
   }, [map, start, end]);
 
   return null;
-}
-
-export function formatMeasurement(
-  start: MeasurePoint,
-  end: MeasurePoint
-): string {
-  const nm = distanceNm(start, end);
-  const km = distanceKm(start, end);
-  const brg = bearingDeg(start, end);
-  return `${nm.toFixed(1)} nm / ${km.toFixed(1)} km \u2022 ${brg.toFixed(0)}\u00B0`;
 }

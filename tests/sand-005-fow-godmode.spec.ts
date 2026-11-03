@@ -5,7 +5,7 @@ test.describe("sand-005 — Fog-of-war vs god-mode toggle", () => {
     await page.goto("/play");
     await expect(page.locator("canvas").first()).toBeVisible({ timeout: 10_000 });
 
-    const markers = page.locator(".maplibregl-marker");
+    const markers = page.locator('[data-testid="plot-track"]');
     await expect(markers.first()).toBeVisible({ timeout: 10_000 });
     const before = await markers.count();
 
@@ -21,20 +21,20 @@ test.describe("sand-005 — Fog-of-war vs god-mode toggle", () => {
       .poll(
         async () =>
           page.evaluate(() => {
-            const mapEl = document.querySelector(".maplibregl-map") as any;
-            const map = mapEl?.__maplibreMap;
-            if (!map) return { hasMap: false };
+            const plotEl = document.querySelector('[data-testid="tactical-plot"]') as any;
+            const plot = plotEl?.__plot;
+            if (!plot) return { hasPlot: false };
             return {
-              hasMap: true,
-              hasUncertaintySource: !!map.getSource("contact-uncertainty"),
-              hasUncertaintyLine: !!map.getLayer("contact-uncertainty-line"),
-              hasUncertaintyFill: !!map.getLayer("contact-uncertainty-fill"),
+              hasPlot: true,
+              hasUncertaintySource: !!plot.getSource("contact-uncertainty"),
+              hasUncertaintyLine: !!plot.getLayer("contact-uncertainty-line"),
+              hasUncertaintyFill: !!plot.getLayer("contact-uncertainty-fill"),
             };
           }),
         { timeout: 10_000 }
       )
       .toMatchObject({
-        hasMap: true,
+        hasPlot: true,
         hasUncertaintySource: false,
         hasUncertaintyLine: false,
         hasUncertaintyFill: false,

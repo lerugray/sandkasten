@@ -32,6 +32,10 @@ export async function GET(request: NextRequest) {
   }
 
   if (!isDatabaseAvailable()) {
+    // The extracted database is local-only and gitignored (SPEC: no build may
+    // require it). A single-record lookup without it is "no detail", not an
+    // error, so the detail panel degrades quietly instead of logging 404s.
+    if (params.get("id")) return NextResponse.json(null);
     return NextResponse.json(
       { error: "Platform database not found. Run scripts/extract_cmo_db.py first." },
       { status: 404 }

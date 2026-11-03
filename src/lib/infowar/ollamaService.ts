@@ -49,7 +49,9 @@ class OllamaService {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 5000);
 
-      const res = await fetch(`${this.baseUrl}/api/tags`, {
+      // Same-origin health check: a stopped Ollama answers {models: null}
+      // here instead of a refused connection in the browser console.
+      const res = await fetch(`/api/ollama/tags?base=${encodeURIComponent(this.baseUrl)}`, {
         signal: controller.signal,
       });
       clearTimeout(timeout);
@@ -60,6 +62,11 @@ class OllamaService {
       }
 
       const data = await res.json();
+      if (!data.models) {
+        this._connected = false;
+        this._availableModels = [];
+        return false;
+      }
       const models: string[] = (data.models ?? []).map(
         (m: { name: string }) => m.name.split(":")[0]
       );

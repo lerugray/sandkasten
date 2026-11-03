@@ -75,7 +75,7 @@ test.describe("Play page", () => {
   });
 
   test("clicking a unit in the sidebar shows the order panel", async ({ page }) => {
-    const unitButtons = page.locator(".w-80 button.w-full");
+    const unitButtons = page.getByTestId("force-row");
     const count = await unitButtons.count();
     if (count > 0) {
       await unitButtons.first().click();
