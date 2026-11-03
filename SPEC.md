@@ -13,7 +13,8 @@ Ray changes his intent, quoting him.
    (GDD.md §2.1)
 3. Runs time: continuous with pause and speed control, or WeGo simultaneous turns (orders phase, then a resolution
    burst), a headline mode (GDD.md §2.1, §2.2; README hero "Continuous time or WeGo multiplayer"; Ray 2026-11-03
-   "Headline it too").
+   "Headline it too"). Both modes ship (Ray 2026-11-03: "it should probably be both singleplayer and wego"); each
+   scenario says which mode suits it.
 4. Sees only what the sensors report: contacts move from unknown to tracked and fade without fresh data. (GDD.md §4)
 5. Fights: missiles, air defense, countermeasures, damage, all in a readable combat log. (GDD.md §5, README "Combat")
 6. Wins or loses on the scenario's victory conditions, and can play it again a different way. (GDD.md §6.5; Ray
