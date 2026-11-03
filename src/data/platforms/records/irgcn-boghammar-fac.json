@@ -1,0 +1,189 @@
+{
+  "slug": "irgcn-boghammar-fac",
+  "legacyIds": [],
+  "engineId": 9001,
+  "engineName": "Boghammar-class Fast Attack Craft",
+  "name": "Boghammar-class fast attack craft (IRGCN)",
+  "designation": "Boghammar Marin RL-118 / RL-130-4A high-speed patrol boat",
+  "className": "Boghammar (Taregh) class",
+  "nation": "Iran",
+  "side": "Iran",
+  "service": "Islamic Revolutionary Guard Corps Navy (IRGCN)",
+  "domain": "surface",
+  "dimension": "sea",
+  "functionId": "CL",
+  "role": "Armed fast boat for swarm attacks, raiding and harassment",
+  "serviceWindow": {
+    "enteredService": 1984,
+    "retired": null,
+    "statusNotes": "Iran bought about 50 from the Swedish yard Boghammar Marin AB, ordered in 1983 or 1984 depending on the source, and the Guards were using them by February 1987. The International Institute for Strategic Studies estimated about 40 still operational in 2020. The boats are over 40 years old and the Guards also use newer Iranian-built speedboats, so how many Boghammars were fit on 2026-03-15 is uncertain. (Sources s1, s3, s6.)"
+  },
+  "dimensions": {
+    "lengthM": 12.8,
+    "beamM": 2.66,
+    "draftM": 0.9,
+    "displacementFullTons": 6.4,
+    "crew": "5 to 6",
+    "sourceId": "s2",
+    "provenance": "verified"
+  },
+  "propulsionSummary": "A planing hull driven by high-power marine engines; the engine make and power are not given in the sources used.",
+  "performance": {
+    "maxSpeedKts": 45,
+    "cruiseSpeedKts": 38,
+    "rangeNm": 500,
+    "sourceId": "s2",
+    "provenance": "verified"
+  },
+  "sensorRangeKm": 12,
+  "weaponRangeKm": 8,
+  "damagePoints": 6,
+  "missileDefense": 0,
+  "engineSourceId": "s2",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "12.7mm DShK machine gun",
+      "type": "gun",
+      "rangeKm": 2,
+      "speedKts": 0,
+      "pkAir": 10,
+      "pkSurface": 15,
+      "quantity": 500,
+      "warheadDamage": 5,
+      "mountSummary": "One pintle-mounted heavy machine gun is the typical fit; some boats carry two or three",
+      "sourceId": "s4",
+      "provenance": "estimated"
+    },
+    {
+      "name": "107mm 12-tube rocket launcher",
+      "type": "gun",
+      "rangeKm": 8,
+      "speedKts": 0,
+      "pkAir": 0,
+      "pkSurface": 20,
+      "quantity": 12,
+      "warheadDamage": 10,
+      "mountSummary": "Towed Chinese-type 12-tube rocket launcher mounted on the deck (Type 63 reaches about 8 km); recoilless rifles and RPGs are also carried by crews",
+      "sourceId": "s5",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [],
+  "sensors": [
+    {
+      "name": "Decca Series 25 surface search radar",
+      "type": "radar",
+      "role": "Navigation and short-range surface search",
+      "band": "I-band",
+      "rangeKm": 12,
+      "canTrack": false,
+      "sourceId": "s2",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Crew lookouts",
+      "type": "visual",
+      "role": "Eye spotting; the main sensor for most boats",
+      "rangeKm": 6,
+      "canTrack": false,
+      "sourceId": "s2",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [],
+  "signatures": {
+    "radar": {
+      "grade": "very-low",
+      "note": "A 12.8 m, 6.4-ton boat that is lost in sea clutter on most radars."
+    },
+    "infrared": {
+      "grade": "low",
+      "note": "Hot engines at 40 plus knots, but a small thermal source."
+    },
+    "acoustic": {
+      "grade": "low",
+      "note": "Loud at speed, but a tiny hull gives little for passive sonar to follow."
+    },
+    "visual": {
+      "grade": "very-low",
+      "note": "Low, small, fast boat with a white wake; very hard to see in haze."
+    },
+    "sourceId": "s2",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The Boghammar is a 12.8 m aluminium-hulled speedboat that the Swedish firm Boghammar Marin built as a pilot and patrol boat. Iran bought about 50 in the 1980s and fitted them with machine guns, rocket launchers and recoilless rifles. The Revolutionary Guard Navy used them in the Tanker War of 1987 and 1988 and still uses them today. They are tiny and can go about 45 knots.",
+    "howItIsUsed": "A commander uses Boghammars in swarms of a dozen or more. The idea is to overwhelm a warship's gun and radar by coming from several directions at once, and to hit lightly protected targets like tankers and supply ships with machine guns and rockets. One boat carries a machine gun and a rocket launcher, so it can hurt a small ship but it cannot sink a destroyer. Its weakness is the same as its strength: it is small and open, so a helicopter gun, a 30 mm or 57 mm naval gun, or a single rocket will destroy it. In the 1988 battle with US forces, Boghammars were hit and sunk by attack aircraft. Use them from behind islands and inside shipping lanes, and pull them back once US helicopters arrive.",
+    "typicalMissions": [
+      "Swarm attack on tankers and warships",
+      "Harassment and close shadowing of ships",
+      "Boarding and raiding",
+      "Coastal patrol and picket"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/irgcn-boghammar-fac/main.jpg",
+      "caption": "An IRGC Navy fast boat described as a Swedish-built Boghammar, with a twin-barrel machine gun on the bow, photographed in April 2003.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:IRGC_Boghammar_boat_in_2003.jpg",
+      "author": "David B. Crist",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military",
+      "attributionLine": "Photo: David B. Crist, US Marine Corps Reserve (US Government work, public domain), via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/irgcn-boghammar-fac/second.jpg",
+      "caption": "A Boghammar manned by the IRGC Navy, photographed by US forces in the 1980s; the boat resembles the RL-130-4A model.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Iranian_Boghammer_in_the_1980s.png",
+      "author": "U.S. Department of Defense",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military",
+      "attributionLine": "Photo: US Department of Defense (US Government work, public domain), via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Taregh-class speedboat (Boghammar)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Boghammar"
+    },
+    {
+      "id": "s2",
+      "title": "Boghammar - Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2019,
+      "url": "https://www.globalsecurity.org/military/world/iran/boghammar-specs.htm"
+    },
+    {
+      "id": "s3",
+      "title": "Islamic Revolutionary Guard Corps Navy",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Islamic_Revolutionary_Guard_Corps_Navy"
+    },
+    {
+      "id": "s4",
+      "title": "DShK heavy machine gun",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/DShK"
+    },
+    {
+      "id": "s5",
+      "title": "Type 63 multiple rocket launcher (107 mm)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Type_63_multiple_rocket_launcher"
+    },
+    {
+      "id": "s6",
+      "title": "Boghammar Fast Attack Craft",
+      "publisher": "GlobalSecurity.org",
+      "year": 2019,
+      "url": "https://www.globalsecurity.org/military/world/iran/boghammar.htm"
+    }
+  ]
+}

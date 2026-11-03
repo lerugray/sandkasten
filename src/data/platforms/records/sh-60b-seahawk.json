@@ -1,0 +1,181 @@
+{
+  "slug": "sh-60b-seahawk",
+  "legacyIds": [84],
+  "engineName": "SH-60B Seahawk",
+  "name": "SH-60B Seahawk",
+  "designation": "SH-60B (LAMPS Mk III)",
+  "className": "Sikorsky SH-60 Seahawk, SH-60B variant",
+  "nation": "United States",
+  "side": "US Navy",
+  "service": "US Navy",
+  "domain": "rotary",
+  "dimension": "air",
+  "functionId": "MH",
+  "role": "Ship-based anti-submarine and anti-surface warfare helicopter (LAMPS Mk III)",
+  "serviceWindow": {
+    "enteredService": 1984,
+    "retired": 2015,
+    "statusNotes": "The SH-60B went operational in 1984 and the US Navy retired it on 11 May 2015, replacing it with the MH-60R. The wider SH-60 family continues in US and allied service in other versions. In the 2026 scenario this is a legacy airframe, kept as the helicopter that Perry-class frigates carried; the Navy itself now flies the MH-60R."
+  },
+  "dimensions": {
+    "sourceId": "s2",
+    "provenance": "verified",
+    "lengthM": 19.7,
+    "heightM": 5.23,
+    "weightEmptyKg": 6895,
+    "weightMaxKg": 9927,
+    "crew": "3 (pilot, airborne tactical officer, sensor operator)"
+  },
+  "propulsionSummary": "Two General Electric T700-GE-401C turboshaft engines, rated at roughly 1,700 to 1,900 shaft horsepower each depending on the source, drive a single four-blade main rotor.",
+  "performance": {
+    "sourceId": "s1",
+    "provenance": "verified",
+    "maxSpeedKts": 160,
+    "maxAltitudeFt": 13000,
+    "rangeNm": 450,
+    "enduranceHours": 4
+  },
+  "sensorRangeKm": 120,
+  "weaponRangeKm": 0,
+  "damagePoints": 2,
+  "missileDefense": 0,
+  "engineSourceId": "s1",
+  "engineProvenance": "estimated",
+  "weapons": [],
+  "defenses": [],
+  "sensors": [
+    {
+      "name": "AN/APS-124 search radar",
+      "type": "radar",
+      "role": "Surface search under the nose; finds ships and surfaced submarines and relays the picture to the parent ship. No public detection range found, so this is an open estimate matching the engine value.",
+      "rangeKm": 120,
+      "canTrack": true,
+      "sourceId": "s2",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/ALQ-142 ESM",
+      "type": "esm",
+      "role": "Passive radar warning and emitter bearing. No public range found, so this is an open estimate.",
+      "rangeKm": 100,
+      "canTrack": false,
+      "sourceId": "s2",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Sonobuoys (25-tube launcher) and towed MAD",
+      "type": "sonar",
+      "role": "Air-dropped passive and active sonobuoys listen for submarines and a towed magnetic anomaly detector confirms metal below. Both work only at short range. No public range found, so this is an open estimate.",
+      "rangeKm": 5,
+      "canTrack": true,
+      "sourceId": "s2",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Optional nose-mounted FLIR turret",
+      "type": "ir",
+      "role": "Thermal camera for identifying surface contacts. No public range found, so this is an open estimate.",
+      "rangeKm": 15,
+      "canTrack": true,
+      "sourceId": "s2",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [
+    {
+      "name": "LAMPS Mk III anti-submarine patrol",
+      "role": "Find and attack submarines ahead of the parent ship using sonobuoys and up to two lightweight torpedoes",
+      "combatRadiusNm": 100,
+      "stores": [
+        { "weaponName": "Mk 46/50/54 lightweight torpedo", "count": 2 },
+        { "weaponName": "Sonobuoy (25-tube launcher)", "count": 25 }
+      ],
+      "sourceId": "s1",
+      "provenance": "estimated"
+    },
+    {
+      "name": "LAMPS Mk III surface patrol",
+      "role": "Radar search and attack against small surface ships with the Hellfire missile, with the Penguin missile as another option and a cabin-door gun for close work",
+      "combatRadiusNm": 100,
+      "stores": [
+        { "weaponName": "AGM-114 Hellfire", "count": 2 },
+        { "weaponName": "7.62 mm door gun", "count": 1 }
+      ],
+      "sourceId": "s2",
+      "provenance": "estimated"
+    }
+  ],
+  "signatures": {
+    "radar": {
+      "grade": "low",
+      "note": "A helicopter of this size has a small radar return, but its rotor blades give strong Doppler returns when it hovers."
+    },
+    "infrared": {
+      "grade": "medium",
+      "note": "Two turboshaft engines with exposed exhaust give a clear heat source; an infrared jammer is on some Seahawk versions."
+    },
+    "acoustic": {
+      "grade": "high",
+      "note": "Rotors make a loud, recognisable noise, and it flies low and slow when it hovers to dip or drop sonobuoys."
+    },
+    "visual": {
+      "grade": "medium",
+      "note": "A 20 m dark helicopter is small but visible at low level in daylight."
+    },
+    "sourceId": "s2",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The SH-60B Seahawk is the US Navy helicopter built for the LAMPS Mk III system. It lives in the hangar of a frigate, destroyer or cruiser and flies out to find submarines and small ships beyond the ship's own radar horizon. It carries a search radar, sonobuoys, a towed magnetic detector and lightweight torpedoes.",
+    "howItIsUsed": "A commander launches it to extend the parent ship's eyes by 100 nautical miles or more. In an anti-submarine role it flies a search pattern, drops sonobuoys to listen and then attacks with a torpedo once the target is located. In a surface role it uses radar to see ships, passes the contact to the parent ship and can attack small boats with Hellfire missiles. It is slow, carries little fuel (about 4 hours of mission time) and has no defenses beyond decoys, so keep it away from active fighters and surface-to-air missiles. Its biggest strength is giving a small ship a second set of sensors.",
+    "typicalMissions": [
+      "Anti-submarine search ahead of a ship or convoy",
+      "Over-the-horizon surface search and targeting",
+      "Attack on small surface craft with Hellfire missiles",
+      "Search and rescue and vertical replenishment"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/sh-60b-seahawk/main.jpg",
+      "caption": "An SH-60B Seahawk of HSL-51 (foreground) prepares to land on USS Kitty Hawk, with an SH-60F behind it.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:SH-60B_Seahawk.jpg",
+      "author": "Photographer's Mate Airman Joshua Wayne LeGrand, US Navy",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: PHAN Joshua Wayne LeGrand, US Navy, Public Domain, via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/sh-60b-seahawk/second.jpg",
+      "caption": "The Navy's first operational LAMPS Mk III SH-60B Seahawk hovering over a frigate flight deck, December 1983.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_right_side_view_of_the_Navy%27s_first_operational_Mark_III_LAMPS_(Light_Airborne_Multi-Purpose_System)_SH-60B_Seahawk_helicopter_hovering_over_the_flight_deck_of_the_guided_missile_-_DPLA_-_addbbdbf36762014f926292090212754.jpeg",
+      "author": "PH2 Dave Loveall, US Department of Defense (via National Archives)",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: PH2 Dave Loveall, US Department of Defense (NARA), Public Domain, via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "SH-60 Seahawk",
+      "publisher": "Federation of American Scientists",
+      "year": 2026,
+      "url": "https://man.fas.org/dod-101/sys/ac/sh-60.htm"
+    },
+    {
+      "id": "s2",
+      "title": "Sikorsky SH-60 Seahawk",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Sikorsky_SH-60_Seahawk"
+    },
+    {
+      "id": "s3",
+      "title": "SH-60 Seahawk (US Navy fact file, archived copy)",
+      "publisher": "US Navy via the Internet Archive",
+      "year": 2015,
+      "url": "https://web.archive.org/web/2015/http://www.navy.mil/navydata/fact_display.asp?cid=1200&tid=500&ct=1"
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+{
+  "slug": "bayandor-class-pf-103",
+  "legacyIds": [
+    1652
+  ],
+  "engineName": "Bayandor Class [PF 103]",
+  "name": "Bayandor-class corvette (PF 103)",
+  "designation": "Bayandor class (ex-US PF 103 patrol frigate)",
+  "className": "Bayandor class",
+  "nation": "Iran",
+  "side": "Iran",
+  "service": "Islamic Republic of Iran Navy (IRIN)",
+  "domain": "surface",
+  "dimension": "sea",
+  "functionId": "CL",
+  "role": "Patrol corvette / light escort (gun and light anti-ship missile armed)",
+  "serviceWindow": {
+    "enteredService": 1964,
+    "retired": 2026,
+    "statusNotes": "Four were built in Texas for Iran (1964 and 1969); Milanian and Kahnamoie were lost in the 1980 war with Iraq. Wikipedia reports the last two, Bayandor and Naghdi, were sunk at their moorings at Konarak by US strikes on 28 February 2026, the first day of the 2026 Iran war, which is before the scenario date of 2026-03-15. The Sandkasten demo still fields this class, so treat it as a what-if for the scenario. (Sources s1, s3, s5.)"
+  },
+  "dimensions": {
+    "lengthM": 83.82,
+    "beamM": 10.06,
+    "draftM": 3.05,
+    "displacementFullTons": 1135,
+    "crew": "About 133 to 140",
+    "sourceId": "s2",
+    "provenance": "verified"
+  },
+  "propulsionSummary": "Four Fairbanks-Morse 38D8 1/8 diesel engines (6,000 bhp total) drive two shafts for about 20 knots (NavSource, s4).",
+  "performance": {
+    "maxSpeedKts": 20,
+    "cruiseSpeedKts": 18,
+    "rangeNm": 2400,
+    "sourceId": "s2",
+    "provenance": "verified"
+  },
+  "sensorRangeKm": 65,
+  "weaponRangeKm": 10,
+  "damagePoints": 340,
+  "missileDefense": 4,
+  "engineSourceId": "s2",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "76mm/50 OTO Melara",
+      "type": "gun",
+      "rangeKm": 10,
+      "speedKts": 0,
+      "pkAir": 10,
+      "pkSurface": 60,
+      "quantity": 80,
+      "warheadDamage": 15,
+      "mountSummary": "One 76 mm dual-purpose gun forward (originally a twin US 3-inch/50 mount; the 2013 refit added an Iranian Fajr-27 copy of the Italian OTO Melara 76 mm)",
+      "sourceId": "s1",
+      "provenance": "estimated"
+    },
+    {
+      "name": "40mm/70 Bofors",
+      "type": "gun",
+      "rangeKm": 4,
+      "speedKts": 0,
+      "pkAir": 20,
+      "pkSurface": 40,
+      "quantity": 120,
+      "warheadDamage": 8,
+      "mountSummary": "Twin 40 mm anti-aircraft mount aft of the bridge",
+      "sourceId": "s2",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [],
+  "sensors": [
+    {
+      "name": "Air and surface search radar",
+      "type": "radar",
+      "role": "General search; refitted in 2013 but described by analysts as largely mid-1960s in standard",
+      "rangeKm": 65,
+      "canTrack": true,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Gun fire-control radar (new in 2013 refit)",
+      "type": "radar",
+      "role": "Aims the 76 mm and 40 mm guns",
+      "rangeKm": 20,
+      "canTrack": true,
+      "sourceId": "s1",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Hull-mounted sonar",
+      "type": "sonar",
+      "role": "Short-range submarine and mine warning; analysts say it has not been fully modernised since the 1960s",
+      "rangeKm": 4,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Bridge lookouts",
+      "type": "visual",
+      "role": "Eye spotting by day",
+      "rangeKm": 18,
+      "canTrack": false,
+      "sourceId": "s2",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [],
+  "signatures": {
+    "radar": {
+      "grade": "high",
+      "note": "An 84 m, 1,135-ton steel hull with a tall central funnel and mast shows up well on any radar."
+    },
+    "infrared": {
+      "grade": "medium",
+      "note": "Diesel engines with a large funnel, but no high-power turbines."
+    },
+    "acoustic": {
+      "grade": "medium",
+      "note": "Four medium-speed diesels on two shafts; a conventional 1960s hull."
+    },
+    "visual": {
+      "grade": "high",
+      "note": "Large grey ship with a tall funnel, easy to spot in clear weather."
+    },
+    "sourceId": "s2",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The Bayandor class is a 1960s patrol frigate design, built in Texas as the US 'PF 103' type and handed straight to Iran. At 84 m and about 1,135 tons it is one of the larger Iranian ships still active before the 2026 war. It carries a 76 mm gun, a twin 40 mm gun and light cannon. A 2013 refit is reported to have added two twin Noor anti-ship missile launchers; the Sandkasten engine entry keeps the original gun-only fit.",
+    "howItIsUsed": "A commander uses this ship as a gun-armed escort and presence vessel, not a front-line fighter. It can run anti-piracy patrols, shadow merchant traffic and add a gun and a lookout to a group of faster boats. Its 76 mm gun is useful against small craft out to a few kilometres, but its radar and electronics are dated, and it has no real anti-air missiles. Against a modern warship or aircraft it is easy to find and slow at 20 knots. Keep it behind other defences and use it to extend the picture of the sea around Iranian waters, not to take on warships.",
+    "typicalMissions": [
+      "Anti-piracy and shipping patrol",
+      "Escort of a replenishment ship or convoy",
+      "Surface gunfire against small craft",
+      "Flag-showing and training cruises"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/bayandor-class-pf-103/main.jpg",
+      "caption": "IRIS Bayandor (hull 81), the lead ship of the class, at sea in December 2019.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bayandor_warship_2019.jpg",
+      "author": "Ali Khara (Mehr News Agency)",
+      "license": "CC BY",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attributionLine": "Photo: Ali Khara / Mehr News Agency, CC BY 4.0, via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/bayandor-class-pf-103/second.jpg",
+      "caption": "Bow, 76 mm gun and bridge of IRIS Bayandor (81) during the 2019 Maritime Security Belt exercise.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Marine_Security_Belt_2019_(75).jpg",
+      "author": "Ali Khara (Mehr News Agency)",
+      "license": "CC BY",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attributionLine": "Photo: Ali Khara / Mehr News Agency, CC BY 4.0, via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Bayandor-class corvette (Wikipedia)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Bayandor-class_corvette"
+    },
+    {
+      "id": "s2",
+      "title": "Bayandor Class Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2014,
+      "url": "https://www.globalsecurity.org/military/world/iran/bayandor-specs.htm"
+    },
+    {
+      "id": "s3",
+      "title": "IRIS Bayandor (Wikipedia)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/IRIS_Bayandor"
+    },
+    {
+      "id": "s4",
+      "title": "PF-104 Naghdi (F 26), Patrol Frigate Photo Archive",
+      "publisher": "NavSource Online",
+      "year": 2012,
+      "url": "https://www.navsource.net/archives/12/08104.htm"
+    },
+    {
+      "id": "s5",
+      "title": "IRIS Naghdi (Wikipedia)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/IRIS_Naghdi"
+    }
+  ]
+}

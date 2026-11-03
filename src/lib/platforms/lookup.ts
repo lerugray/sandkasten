@@ -1,4 +1,6 @@
 import type { BattleDimension } from "../symbols/milsymbolFactory";
+import { PLATFORM_RECORDS } from "@/data/platforms";
+import type { PlatformRecord } from "@/types/platformDb";
 
 // Lightweight platform info for rendering — full data stays in JSON files
 export interface PlatformInfo {
@@ -34,156 +36,61 @@ export interface PlatformDefense {
   quantity?: number; // expendable count, undefined = unlimited
 }
 
-// Starter platforms for the Persian Gulf MVP scenario
-// These reference DB3K IDs from the extraction
-const MVP_PLATFORMS: PlatformInfo[] = [
-  // US Navy
-  {
-    id: 111, name: "DDG 72 Mahan [Arleigh Burke Flight II]", dimension: "sea", functionId: "CL",
-    sensorRangeKm: 324, weaponRangeKm: 167, damagePoints: 1190, missileDefense: 16,
-    weapons: [
-      { name: "RIM-66M SM-2MR", type: "sam", rangeKm: 93, speedKts: 2300, pkAir: 85, pkSurface: 90, quantity: 50, warheadDamage: 80, seekerType: "semi-active" },
-      { name: "RGM-84 Harpoon", type: "asm", rangeKm: 139, speedKts: 530, pkAir: 0, pkSurface: 95, quantity: 8, warheadDamage: 167, seekerType: "active-radar" },
-      { name: "Mk 15 Phalanx CIWS", type: "gun", rangeKm: 1.8, speedKts: 0, pkAir: 50, pkSurface: 30, quantity: 1200, warheadDamage: 10 },
-    ],
-    defenses: [
-      { name: "Mk 36 SRBOC Chaff", type: "chaff", effectiveness: 0.3, quantity: 24 },
-      { name: "AN/SLQ-32(V)3 ECM", type: "ecm", effectiveness: 0.25 },
-      { name: "Mk 15 Phalanx", type: "ciws", effectiveness: 0.5 },
-      { name: "AN/SLQ-25 Nixie", type: "decoy", effectiveness: 0.2 },
-    ],
-  },
-  {
-    id: 598, name: "CG 52 Bunker Hill [Ticonderoga Baseline 3]", dimension: "sea", functionId: "CL",
-    sensorRangeKm: 370, weaponRangeKm: 167, damagePoints: 1360, missileDefense: 20,
-    weapons: [
-      { name: "RIM-66M SM-2MR", type: "sam", rangeKm: 93, speedKts: 2300, pkAir: 85, pkSurface: 90, quantity: 80, warheadDamage: 80, seekerType: "semi-active" },
-      { name: "RGM-84 Harpoon", type: "asm", rangeKm: 139, speedKts: 530, pkAir: 0, pkSurface: 95, quantity: 8, warheadDamage: 167, seekerType: "active-radar" },
-      { name: "Mk 15 Phalanx CIWS", type: "gun", rangeKm: 1.8, speedKts: 0, pkAir: 50, pkSurface: 30, quantity: 1200, warheadDamage: 10 },
-    ],
-    defenses: [
-      { name: "Mk 36 SRBOC Chaff", type: "chaff", effectiveness: 0.3, quantity: 24 },
-      { name: "AN/SLQ-32(V)3 ECM", type: "ecm", effectiveness: 0.25 },
-      { name: "Mk 15 Phalanx", type: "ciws", effectiveness: 0.5 },
-      { name: "AN/SLQ-25 Nixie", type: "decoy", effectiveness: 0.2 },
-    ],
-  },
-  {
-    id: 2740, name: "CVN 68 Nimitz [1998]", dimension: "sea", functionId: "CV",
-    sensorRangeKm: 324, weaponRangeKm: 20, damagePoints: 3600, missileDefense: 24,
-    weapons: [
-      { name: "RIM-7 Sea Sparrow", type: "sam", rangeKm: 19, speedKts: 2300, pkAir: 70, pkSurface: 0, quantity: 16, warheadDamage: 60, seekerType: "semi-active" },
-      { name: "Mk 15 Phalanx CIWS", type: "gun", rangeKm: 1.8, speedKts: 0, pkAir: 50, pkSurface: 30, quantity: 1200, warheadDamage: 10 },
-    ],
-    defenses: [
-      { name: "Mk 36 SRBOC Chaff", type: "chaff", effectiveness: 0.3, quantity: 48 },
-      { name: "AN/SLQ-32(V)4 ECM", type: "ecm", effectiveness: 0.3 },
-      { name: "Mk 15 Phalanx x3", type: "ciws", effectiveness: 0.65 },
-      { name: "AN/SLQ-25 Nixie", type: "decoy", effectiveness: 0.2 },
-    ],
-  },
-  {
-    id: 1283, name: "FFG 7 Oliver Hazard Perry [Long Hull]", dimension: "sea", functionId: "CL",
-    sensorRangeKm: 150, weaponRangeKm: 74, damagePoints: 720, missileDefense: 8,
-    weapons: [
-      { name: "RIM-66 SM-1MR", type: "sam", rangeKm: 40, speedKts: 2300, pkAir: 65, pkSurface: 70, quantity: 36, warheadDamage: 70, seekerType: "semi-active" },
-      { name: "Mk 15 Phalanx CIWS", type: "gun", rangeKm: 1.8, speedKts: 0, pkAir: 50, pkSurface: 30, quantity: 1200, warheadDamage: 10 },
-    ],
-    defenses: [
-      { name: "Mk 36 SRBOC Chaff", type: "chaff", effectiveness: 0.3, quantity: 12 },
-      { name: "AN/SLQ-32(V)2 ECM", type: "ecm", effectiveness: 0.2 },
-      { name: "Mk 15 Phalanx", type: "ciws", effectiveness: 0.5 },
-    ],
-  },
-  // Aircraft
-  {
-    id: 342, name: "F/A-18E Super Hornet", dimension: "air", functionId: "MF",
-    sensorRangeKm: 180, weaponRangeKm: 100, damagePoints: 4,
-    weapons: [
-      { name: "AIM-120C AMRAAM", type: "aam", rangeKm: 100, speedKts: 2700, pkAir: 85, pkSurface: 0, quantity: 6, warheadDamage: 30, seekerType: "active-radar" },
-      { name: "AGM-84 Harpoon", type: "asm", rangeKm: 139, speedKts: 530, pkAir: 0, pkSurface: 95, quantity: 2, warheadDamage: 167, seekerType: "active-radar" },
-      { name: "M61A1 Vulcan 20mm", type: "gun", rangeKm: 1.8, speedKts: 0, pkAir: 30, pkSurface: 20, quantity: 578, warheadDamage: 5 },
-    ],
-    defenses: [
-      { name: "Chaff/Flare", type: "chaff", effectiveness: 0.35, quantity: 60 },
-      { name: "AN/ALQ-214 IDECM", type: "ecm", effectiveness: 0.3 },
-    ],
-  },
-  { id: 896, name: "F-14D Tomcat", dimension: "air", functionId: "MF", sensorRangeKm: 250, weaponRangeKm: 190, damagePoints: 5,
-    weapons: [
-      { name: "AIM-54C Phoenix", type: "aam", rangeKm: 190, speedKts: 3000, pkAir: 75, pkSurface: 0, quantity: 4, warheadDamage: 40, seekerType: "active-radar" },
-      { name: "AIM-120C AMRAAM", type: "aam", rangeKm: 100, speedKts: 2700, pkAir: 85, pkSurface: 0, quantity: 2, warheadDamage: 30, seekerType: "active-radar" },
-    ],
-    defenses: [
-      { name: "Chaff/Flare", type: "chaff", effectiveness: 0.3, quantity: 60 },
-    ],
-  },
-  { id: 2471, name: "E-2C Hawkeye 2000", dimension: "air", functionId: "MF", sensorRangeKm: 556, damagePoints: 3 },
-  { id: 466, name: "P-3C Orion Update III", dimension: "air", functionId: "MF", sensorRangeKm: 280, damagePoints: 5 },
-  { id: 84, name: "SH-60B Seahawk", dimension: "air", functionId: "MH", sensorRangeKm: 120, damagePoints: 2 },
-  // Iran Navy
-  {
-    id: 2106, name: "Sina Class [Houdong]", dimension: "sea", functionId: "CL",
-    sensorRangeKm: 46, weaponRangeKm: 120, damagePoints: 120, missileDefense: 2,
-    weapons: [
-      { name: "C-802 Noor", type: "asm", rangeKm: 120, speedKts: 530, pkAir: 0, pkSurface: 90, quantity: 4, warheadDamage: 167, seekerType: "active-radar" },
-      { name: "23mm ZU-23-2", type: "gun", rangeKm: 2.5, speedKts: 0, pkAir: 15, pkSurface: 20, quantity: 200, warheadDamage: 3 },
-    ],
-    defenses: [],
-  },
-  {
-    id: 1652, name: "Bayandor Class [PF 103]", dimension: "sea", functionId: "CL",
-    sensorRangeKm: 65, weaponRangeKm: 10, damagePoints: 340, missileDefense: 4,
-    weapons: [
-      { name: "76mm/50 OTO Melara", type: "gun", rangeKm: 10, speedKts: 0, pkAir: 10, pkSurface: 60, quantity: 80, warheadDamage: 15 },
-      { name: "40mm/70 Bofors", type: "gun", rangeKm: 4, speedKts: 0, pkAir: 20, pkSurface: 40, quantity: 120, warheadDamage: 8 },
-    ],
-    defenses: [],
-  },
-  {
-    id: 1088, name: "Kaman Class [Combattante II]", dimension: "sea", functionId: "CL",
-    sensorRangeKm: 65, weaponRangeKm: 35, damagePoints: 180, missileDefense: 3,
-    weapons: [
-      { name: "C-802 Noor", type: "asm", rangeKm: 120, speedKts: 530, pkAir: 0, pkSurface: 90, quantity: 4, warheadDamage: 167, seekerType: "active-radar" },
-      { name: "76mm/50 OTO Melara", type: "gun", rangeKm: 10, speedKts: 0, pkAir: 10, pkSurface: 60, quantity: 80, warheadDamage: 15 },
-    ],
-    defenses: [
-      { name: "Chaff Launchers", type: "chaff", effectiveness: 0.2, quantity: 8 },
-    ],
-  },
-  // Iran Air
-  {
-    id: 265, name: "F-4E Phantom II", dimension: "air", functionId: "MF",
-    sensorRangeKm: 130, weaponRangeKm: 45, damagePoints: 5,
-    weapons: [
-      { name: "AIM-7E Sparrow", type: "aam", rangeKm: 45, speedKts: 2500, pkAir: 50, pkSurface: 0, quantity: 4, warheadDamage: 30, seekerType: "semi-active" },
-      { name: "AIM-9P Sidewinder", type: "aam", rangeKm: 18, speedKts: 1800, pkAir: 60, pkSurface: 0, quantity: 4, warheadDamage: 20, seekerType: "ir" },
-    ],
-    defenses: [
-      { name: "Chaff/Flare", type: "chaff", effectiveness: 0.25, quantity: 30 },
-    ],
-  },
-  {
-    id: 264, name: "F-14A Tomcat", dimension: "air", functionId: "MF",
-    sensorRangeKm: 220, weaponRangeKm: 150, damagePoints: 5,
-    weapons: [
-      { name: "AIM-54A Phoenix", type: "aam", rangeKm: 150, speedKts: 3000, pkAir: 60, pkSurface: 0, quantity: 4, warheadDamage: 40, seekerType: "active-radar" },
-      { name: "AIM-7E Sparrow", type: "aam", rangeKm: 45, speedKts: 2500, pkAir: 50, pkSurface: 0, quantity: 2, warheadDamage: 30, seekerType: "semi-active" },
-      { name: "AIM-9P Sidewinder", type: "aam", rangeKm: 18, speedKts: 1800, pkAir: 60, pkSurface: 0, quantity: 2, warheadDamage: 20, seekerType: "ir" },
-    ],
-    defenses: [
-      { name: "Chaff/Flare", type: "chaff", effectiveness: 0.25, quantity: 30 },
-    ],
-  },
-];
+// PlatformInfo is derived from the first-party records in src/data/platforms/.
+// Aircraft keep the engine's historical shape: no missileDefense, and weapons or
+// defenses stay undefined when the record carries none.
+export function toPlatformInfo(record: PlatformRecord): PlatformInfo {
+  const isAir = record.dimension === "air";
+  const id = record.legacyIds[0] ?? record.engineId;
+  if (id === undefined) throw new Error(`Platform record ${record.slug} has no engine id`);
+  return {
+    id,
+    name: record.engineName,
+    dimension: record.dimension,
+    functionId: record.functionId,
+    sensorRangeKm: record.sensorRangeKm,
+    weaponRangeKm: record.weaponRangeKm > 0 ? record.weaponRangeKm : undefined,
+    damagePoints: record.damagePoints,
+    missileDefense: isAir ? undefined : record.missileDefense,
+    weapons: record.weapons.length > 0 ? record.weapons.map(toEngineWeapon) : undefined,
+    defenses:
+      record.defenses.length > 0 || !isAir ? record.defenses.map(toEngineDefense) : undefined,
+  };
+}
+
+function toEngineWeapon(w: PlatformRecord["weapons"][number]): PlatformWeapon {
+  return {
+    name: w.name,
+    type: w.type,
+    rangeKm: w.rangeKm,
+    speedKts: w.speedKts,
+    pkAir: w.pkAir,
+    pkSurface: w.pkSurface,
+    quantity: w.quantity,
+    warheadDamage: w.warheadDamage,
+    ...(w.seekerType ? { seekerType: w.seekerType } : {}),
+  };
+}
+
+function toEngineDefense(d: PlatformRecord["defenses"][number]): PlatformDefense {
+  return {
+    name: d.name,
+    type: d.type,
+    effectiveness: d.effectiveness,
+    ...(d.quantity !== undefined ? { quantity: d.quantity } : {}),
+  };
+}
+
+const PLATFORMS: PlatformInfo[] = PLATFORM_RECORDS.map(toPlatformInfo);
 
 const platformMap = new Map<number, PlatformInfo>();
-MVP_PLATFORMS.forEach((p) => platformMap.set(p.id, p));
+PLATFORMS.forEach((p) => platformMap.set(p.id, p));
+PLATFORM_RECORDS.forEach((r, i) => r.legacyIds.forEach((id) => platformMap.set(id, PLATFORMS[i])));
 
 export function getPlatform(id: number): PlatformInfo | undefined {
   return platformMap.get(id);
 }
 
 export function getAllPlatforms(): PlatformInfo[] {
-  return MVP_PLATFORMS;
+  return PLATFORMS;
 }

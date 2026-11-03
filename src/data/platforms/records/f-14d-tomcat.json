@@ -1,0 +1,252 @@
+{
+  "slug": "f-14d-tomcat",
+  "legacyIds": [896],
+  "engineName": "F-14D Tomcat",
+  "name": "F-14D Tomcat",
+  "designation": "F-14D",
+  "className": "F-14 Tomcat",
+  "nation": "United States",
+  "side": "US Navy",
+  "service": "US Navy",
+  "domain": "fixed-wing",
+  "dimension": "air",
+  "functionId": "MF",
+  "role": "Two-seat carrier-based long-range fleet air defence fighter",
+  "serviceWindow": {
+    "enteredService": 1991,
+    "retired": 2006,
+    "statusNotes": "The US Navy retired the F-14 in 2006 (retirement ceremony 22 September 2006, last flight 4 October 2006). No US Navy F-14D exists on the 2026-03-15 scenario date, so any scenario that fields one is a what-if. The record shows the aircraft as it flew in its last years of service."
+  },
+  "dimensions": {
+    "lengthM": 19.13,
+    "wingspanM": 19.5,
+    "heightM": 4.9,
+    "weightEmptyKg": 19838,
+    "weightMaxKg": 33725,
+    "crew": "2 (pilot and radar intercept officer)",
+    "sourceId": "s3",
+    "provenance": "verified"
+  },
+  "propulsionSummary": "Two General Electric F110-GE-400 afterburning turbofans, each rated at 26,950 lbf (about 120 kN) with afterburner.",
+  "performance": {
+    "maxSpeedKts": 1342,
+    "cruiseSpeedKts": 420,
+    "maxAltitudeFt": 53000,
+    "combatRadiusNm": 503,
+    "rangeNm": 1600,
+    "enduranceHours": 1.9,
+    "sourceId": "s3",
+    "provenance": "verified"
+  },
+  "sensorRangeKm": 250,
+  "weaponRangeKm": 190,
+  "damagePoints": 5,
+  "missileDefense": 0,
+  "engineSourceId": "s4",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "AIM-54C Phoenix",
+      "type": "aam",
+      "rangeKm": 190,
+      "speedKts": 3000,
+      "pkAir": 75,
+      "pkSurface": 0,
+      "quantity": 4,
+      "warheadDamage": 40,
+      "seekerType": "active-radar",
+      "mountSummary": "Carried on the fuselage tunnel stations and under the glove pylons. The F-14 can carry up to 6 Phoenix; the engine loadout counts 4.",
+      "sourceId": "s5",
+      "provenance": "verified"
+    },
+    {
+      "name": "AIM-120C AMRAAM",
+      "type": "aam",
+      "rangeKm": 100,
+      "speedKts": 2700,
+      "pkAir": 85,
+      "pkSurface": 0,
+      "quantity": 2,
+      "warheadDamage": 30,
+      "seekerType": "active-radar",
+      "mountSummary": "Underwing or glove stations. AMRAAM integration on the F-14D was limited, so treat the pairing with Phoenix as our scenario assumption.",
+      "sourceId": "s6",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [
+    {
+      "name": "Chaff/Flare",
+      "type": "chaff",
+      "effectiveness": 0.3,
+      "quantity": 60,
+      "sourceId": "s7",
+      "provenance": "estimated"
+    }
+  ],
+  "sensors": [
+    {
+      "name": "AN/APG-71 radar",
+      "type": "radar",
+      "role": "Long-range air search and multi-target track, able to guide several Phoenix missiles at once",
+      "band": "X",
+      "rangeKm": 250,
+      "canTrack": true,
+      "sourceId": "s4",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AAX-1 Television Camera Set (TCS)",
+      "type": "ir",
+      "role": "Long-range optical identification of aircraft without using the radar",
+      "band": "Visible light",
+      "rangeKm": 97,
+      "canTrack": true,
+      "sourceId": "s3",
+      "provenance": "verified"
+    },
+    {
+      "name": "AN/ALR-67 radar warning receiver",
+      "type": "esm",
+      "role": "Passive detection of hostile radar emissions",
+      "band": "Multiple radar bands",
+      "rangeKm": 150,
+      "canTrack": false,
+      "sourceId": "s7",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Crew visual lookout",
+      "type": "visual",
+      "role": "Visual identification of aircraft and ships in clear weather",
+      "rangeKm": 10,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [
+    {
+      "name": "Fleet air defence, long-range Phoenix fit",
+      "role": "Carrier group air defence against bombers and cruise missile launch platforms",
+      "combatRadiusNm": 503,
+      "stores": [
+        { "weaponName": "AIM-54C Phoenix", "count": 4 },
+        { "weaponName": "AIM-120C AMRAAM", "count": 2 }
+      ],
+      "sourceId": "s3",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Typical Cold War fleet air defence fit",
+      "role": "Barrier combat air patrol with mixed long-, medium- and short-range missiles",
+      "combatRadiusNm": 150,
+      "stores": [
+        { "weaponName": "AIM-54 Phoenix", "count": 2 },
+        { "weaponName": "AIM-7 Sparrow", "count": 3 },
+        { "weaponName": "AIM-9 Sidewinder", "count": 2 },
+        { "weaponName": "Drop tank", "count": 2 }
+      ],
+      "sourceId": "s3",
+      "provenance": "verified"
+    }
+  ],
+  "signatures": {
+    "radar": {
+      "grade": "high",
+      "note": "A large twin-engine swing-wing fighter with no radar-reducing shaping, so it gives a strong return from most angles."
+    },
+    "infrared": {
+      "grade": "high",
+      "note": "Two big afterburning turbofans make a strong heat source, especially from behind."
+    },
+    "visual": {
+      "grade": "high",
+      "note": "A large airframe about 19 m long with a wide wing span when unswept, easy to see against the sky."
+    },
+    "sourceId": "s3",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The F-14D Tomcat was the last and best version of the US Navy's big swing-wing fleet defence fighter. It had a pilot and a radar officer, stronger F110 engines than earlier models, and a newer radar. It was built to protect a carrier group by shooting down enemy bombers from far away. The Navy retired the whole F-14 fleet in 2006, so in this scenario it is a what-if aircraft.",
+    "howItIsUsed": "A commander used the Tomcat as the outer layer of carrier defence. Pairs flew combat air patrols out along the likely approach path of enemy aircraft, with the radar officer tracking many targets at once and the pilot firing the long-range AIM-54 Phoenix missile when targets were still beyond 100 nautical miles. The wings sweep back for speed and forward for slow carrier landings and long loiter time. Its strengths are radar reach, missile range and the number of targets it can engage together. Its weaknesses are a large radar and infrared signature, high fuel burn and heavy maintenance demands. Enemy fighters with their own long-range missiles, or a lack of tanker support, can cut its effective reach sharply.",
+    "typicalMissions": [
+      "Fleet air defence and barrier combat air patrol",
+      "Fighter escort for strike packages",
+      "Long-range interception of bombers and maritime patrol aircraft",
+      "Reconnaissance with the TARPS pod",
+      "Precision strike with laser-guided bombs in its late years"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/f-14d-tomcat/main.jpg",
+      "caption": "An F-14D Tomcat of VF-31 flies a mission over the Persian Gulf region, 5 November 2005.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_051105-F-5480T-005_An_F-14D_Tomcat_conducts_a_mission_over_the_Persian_Gulf-region.jpg",
+      "author": "Tech. Sgt. Rob Tabor, U.S. Air Force (published as a U.S. Navy image)",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: Tech. Sgt. Rob Tabor, U.S. Air Force (US-Gov, public domain), via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/f-14d-tomcat/second.jpg",
+      "caption": "An F-14D Tomcat of VF-31 performs a flyby past USS Dwight D. Eisenhower (CVN 69), 19 June 2006.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_060619-N-7359L-003_An_F-14D_Tomcat_performs_a_fly_by_past_the_Nimitz-class_aircraft_carrier_USS_Dwight_D._Eisenhower_(CVN_69).jpg",
+      "author": "Photographer's Mate 3rd Class Christopher B. Long, U.S. Navy",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: PH3 Christopher B. Long, U.S. Navy (US-Gov, public domain), via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Fact File: F-14 Tomcat (archived copy of the navy.mil page)",
+      "publisher": "US Navy (navy.mil), archived by the Internet Archive",
+      "year": 2006,
+      "url": "https://web.archive.org/web/20060402215910/https://www.navy.mil/navydata/fact_display.asp?cid=1100&tid=1100&ct=1"
+    },
+    {
+      "id": "s2",
+      "title": "F-14 Tomcat",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://www.fas.org/man/dod-101/sys/ac/f-14.htm"
+    },
+    {
+      "id": "s3",
+      "title": "Grumman F-14 Tomcat (F-14D specification table from US Navy data; also AAX-1 TCS, retirement dates; cross-checked against s1 and s7)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Grumman_F-14_Tomcat"
+    },
+    {
+      "id": "s4",
+      "title": "AN/AWG-9 (page also covers the AN/APG-71 radar)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/AN/AWG-9"
+    },
+    {
+      "id": "s5",
+      "title": "AIM-54 Phoenix Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2017,
+      "url": "https://www.globalsecurity.org/military/systems/munitions/aim-54-specs.htm"
+    },
+    {
+      "id": "s6",
+      "title": "AIM-120 AMRAAM Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2017,
+      "url": "https://www.globalsecurity.org/military/systems/munitions/aim-120-specs.htm"
+    },
+    {
+      "id": "s7",
+      "title": "F-14 Tomcat Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2011,
+      "url": "https://www.globalsecurity.org/military/systems/aircraft/f-14-specs.htm"
+    }
+  ]
+}
