@@ -1840,6 +1840,17 @@ export class TacticalPlot {
     }
   }
 
+  /** Distance from a screen point to the nearest chrome band or canvas edge. */
+  private chromeGap(x: number, y: number): number {
+    let d = Math.min(x, y, this.W - x, this.H - y);
+    for (const o of this.occluders) {
+      const dx = Math.max(0, o.x - x, x - (o.x + o.w));
+      const dy = Math.max(0, o.y - y, y - (o.y + o.h));
+      d = Math.min(d, Math.hypot(dx, dy));
+    }
+    return d;
+  }
+
   /** True when a screen rect touches any chrome band or leaves the canvas. */
   private underChrome(r: Rect): boolean {
     if (r.x < 0 || r.y < 0 || r.x + r.w > this.W || r.y + r.h > this.H) return true;
@@ -1946,7 +1957,7 @@ export class TacticalPlot {
       const full = this.blockSize(lines, lines.length), compact = this.blockSize(lines, 1);
       const priority = this.trackPriority(t, input);
       items.push({
-        key: t.key, priority, keep: priority <= 2, gx: s.x, gy: s.y, glyph: g, core,
+        key: t.key, priority, keep: priority <= 2, gx: s.x, gy: s.y, glyph: g, core, edge: this.chromeGap(s.x, s.y),
         fullW: full.w, fullH: full.h, compactW: compact.w, compactH: compact.h,
       });
       byItem.push({ t, cls });

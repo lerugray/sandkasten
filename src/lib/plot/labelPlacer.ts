@@ -88,6 +88,8 @@ export interface LabelItem {
   fullH: number;
   compactW: number;
   compactH: number;
+  /** px from the glyph to the nearest chrome edge; hemmed-in tracks place first */
+  edge?: number;
 }
 
 export interface Placement {
@@ -136,8 +138,8 @@ const REPAIR_COOLDOWN = 10; // frames to rest after all three repair orders fail
 // DOM must never tip it over); a spot already held is kept while it stays
 // within slightly looser margins, still inside the limits, so blocks do not
 // jump for a pixel of drift.
-const PICK = { pad: 2, glyphPad: 1, ratio: 0.55, beyond: 22, leader: 9 };
-const HOLD = { pad: 0.5, glyphPad: 0.5, ratio: 0.58, beyond: 23.5, leader: 8.5 };
+const PICK = { pad: 2, glyphPad: 1, ratio: 0.5, beyond: 22, leader: 9 };
+const HOLD = { pad: 0.5, glyphPad: 0.5, ratio: 0.55, beyond: 23.5, leader: 8.5 };
 const GAP = 13;
 const PAD = 2;
 
@@ -167,7 +169,11 @@ export class LabelPlacer {
     for (const k of this.memory.keys()) if (!this.seen.has(k)) this.memory.delete(k);
 
     // stable order: priority, then key, so the same block wins each frame
-    const order = items.map((_, i) => i).sort((a, b) => items[a].priority - items[b].priority || (items[a].key < items[b].key ? -1 : 1));
+    // within a priority, tracks with least room (nearest the chrome) go first,
+    // in 40 px bands so small drift does not reorder them
+    const band = (i: number) => Math.floor((items[i].edge ?? 999) / 40);
+    const order = items.map((_, i) => i).sort((a, b) =>
+      items[a].priority - items[b].priority || band(a) - band(b) || (items[a].key < items[b].key ? -1 : 1));
     let results = this.pass(items, env, order, null);
     let failed = this.failedKeep(items, results);
     let bestMemory: Map<string, Memory> | null = null;

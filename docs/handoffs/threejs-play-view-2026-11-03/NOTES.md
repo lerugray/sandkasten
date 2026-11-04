@@ -224,3 +224,37 @@ Also: when a unit is selected, the view centre now eases left to make room for t
 ### Known limits
 - Dense clusters now show first-line labels with leaders more often than full blocks, for example the five-ship carrier group at default zoom. That is the card's degrade order; zoom in and the full blocks come back.
 - The audit's "glyph" test for leaders uses the drawn 16 px symbol core, not the 22 px texture frame. Ships 25 px apart have overlapping frames, so no leader could leave one without touching a neighbour's frame.
+
+## Round 5 (ROUND5.md, s386-r4 + r4-r2): CRT display mode, label pairing, smoothness
+
+### Built
+- Three display modes, `V` cycles (`DISPLAY` on the command bar), saved per viewer in localStorage
+  (`sandkasten.display`, try/catch), mode name flashes in the top bar.
+  - CRT (default): Px437 IBM VGA 9x16 (VileR, CC BY-SA 4.0, `public/fonts/px437-ibm-vga/LICENSE.TXT`, credited in
+    Help > Credits), 16 px minimum, double-rule frames, inverse-video selection, static block cursor, grid at 8% (`L` toggles),
+    one phosphor with brightness for hierarchy (hostile = bright, unknown = dim, by shape), alarm only for incoming
+    fire and hits, one CRT shader pass (glow + vignette), CSS scanlines at 10%, bezel.
+    Font pick: Px437 over VT323. Px437's strokes are heavier and its 9x16 cells read cleanly at 16 px; VT323 needs
+    20 px and its thin strokes blur under the glow. A comparison frame is scripted (`capture.mjs`, `font-compare.png`) but
+    not yet captured.
+  - CURRENT: round 3 unchanged (bloom chain, JetBrains Mono).
+  - ADMIRALTY DUSK (OFF-SIGNATURE, Argon's spec): slate field, matte inks, IBM Plex Mono (OFL), knocked-out hollow
+    symbols, haloed labels on #4A5564 leaders, no effects. Sizes raised to the project floor (14 px body, 12 px labels).
+- Labels: pairing ratio 0.6 (the next symbol is at least 1.67x farther, which reads at a glance), a leader beyond 24 px,
+  8 px minimum leader, distances from the drawn symbol. One naming rule for map, list and traffic. The BRIEF button now
+  toggles; the MutationObserver ignores the plot's own writes; Memory is deep-cloned before a repair; repair is bounded
+  to one extra pass per frame.
+- Smoothness: DPR cap 2 with an adaptive render scale (0.5-1, drops after 1 s over 20 ms, recovers after 3 s under
+  14 ms), chrome rect reads moved out of the frame loop.
+
+### Checks (honest state)
+- `tsc` clean (pre-existing sand-001 errors only); `npm run build` passes.
+- plot-labels audit, 3 modes x 2 x 60 s at 60x (last complete GPU run, 19:11): 0 block overlaps, 0 leader crossings,
+  0 leaders through blocks or symbols, 0 weapon lines through text, 0 blocks over symbols or missile heads,
+  0 far blocks without a visible leader, 0 grid overlaps. Still failing: keptHidden 8 (CRT), 2 (CURRENT), 9 (OFFSIG),
+  from one classified contact in the top-left corner pocket at 1280x720; ambiguousPairing 11 (CURRENT tilt).
+  Margins were tightened and edge-first ordering added after that run, but not re-verified.
+- Later runs hung: browsers idle at load 0.7 (the GPU path, not a JS loop). A software-GL run timed out. The full suite
+  was not re-run this round. Break tests for the new audit checks were not run.
+- Not captured: per-mode frames, `mode-switch.webm`, `hornet-pair.png`, `font-compare.png`, per-mode fps at DPR 2 and
+  0.6 on a production build. All are scripted in `capture.mjs full`.
