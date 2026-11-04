@@ -3,11 +3,14 @@
 import { useEffect, useRef } from "react";
 import { TacticalPlot, type PlotInput, type PlotInsets, type PlotReadouts } from "@/lib/plot/TacticalPlot";
 import type { GeoPoint } from "@/lib/plot/projection";
+import type { DisplayMode } from "@/lib/plot/themes";
 
 export interface PlotViewProps {
   input: PlotInput;
   origin: GeoPoint;
   tilt: boolean;
+  displayMode: DisplayMode;
+  grid: boolean;
   insets: PlotInsets;
   readouts: { cursor: React.RefObject<HTMLElement | null>; scaleLabel: React.RefObject<HTMLElement | null>; scaleBar: React.RefObject<HTMLElement | null> };
   zoomRequest?: { n: number; factor: number };
@@ -19,7 +22,7 @@ export interface PlotViewProps {
 // Hosts the Three.js plot. The plot owns its canvas and animation loop; this
 // component only forwards React state into it, so React renders never tear
 // the scene down.
-export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, focusRequest, onUnitSelect, onMapClick }: PlotViewProps) {
+export function PlotView({ input, origin, tilt, displayMode, grid, insets, readouts, zoomRequest, focusRequest, onUnitSelect, onMapClick }: PlotViewProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<TacticalPlot | null>(null);
@@ -52,6 +55,14 @@ export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, f
   useEffect(() => {
     plotRef.current?.setTilt(tilt);
   }, [tilt]);
+
+  useEffect(() => {
+    plotRef.current?.setMode(displayMode);
+  }, [displayMode]);
+
+  useEffect(() => {
+    plotRef.current?.setGrid(grid);
+  }, [grid]);
 
   useEffect(() => {
     plotRef.current?.setInsets(insets);

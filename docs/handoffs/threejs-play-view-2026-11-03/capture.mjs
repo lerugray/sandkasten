@@ -87,56 +87,76 @@ async function quick() {
   await browser.close();
 }
 
+const fpsOver = (page, ms) =>
+  page.evaluate(
+    (ms) =>
+      new Promise((resolve) => {
+        const dts = [];
+        let last = 0;
+        let end = 0;
+        const step = (t) => {
+          if (last) dts.push(t - last);
+          else end = t + ms;
+          last = t;
+          if (t < end || !end) requestAnimationFrame(step);
+          else resolve(dts);
+        };
+        requestAnimationFrame(step);
+      }),
+    ms,
+  );
+
+function fpsLine(label, dts) {
+  const sorted = [...dts].sort((a, b) => a - b);
+  const q = (p) => sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))];
+  return `${label}: frames ${dts.length}, median ${(1000 / q(0.5)).toFixed(1)} fps, 5th percentile ${(1000 / q(0.95)).toFixed(1)} fps, worst frame ${sorted[sorted.length - 1].toFixed(1)} ms`;
+}
+
+async function modeContext(browser, m, opts = {}) {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2, ...opts });
+  await context.addInitScript((mm) => window.localStorage.setItem("sandkasten.display", mm), m);
+  return context;
+}
+
+async function densest(page) {
+  const tracks = await plot(page, (h) => h.trackScreens());
+  const contacts = tracks.filter((t) => t.kind === "contact");
+  let best = contacts[0], bestN = -1;
+  for (const c of contacts) {
+    const n = contacts.filter((o) => Math.hypot(o.x - c.x, o.y - c.y) < 120).length;
+    if (n > bestN) { bestN = n; best = c; }
+  }
+  return { best, bestN };
+}
+
 async function full() {
   const errors = [];
   const browser = await launch();
+  const fpsLines = [];
+  const audits = [];
 
-  // stills: 1440x900 at DPR 2
-  {
-    const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
+  for (const m of ["crt", "current", "offsig"]) {
+    const context = await modeContext(browser, m);
     const page = await open(context, errors);
-    const info = await plot(page, (h) => h.rendererInfo());
-    fs.writeFileSync(
-      path.join(outDir, "renderer.txt"),
-      `UNMASKED_RENDERER_WEBGL: ${info.renderer}\nUNMASKED_VENDOR_WEBGL: ${info.vendor}\nVERSION: ${info.version}\n` +
-        `browser: ${browser.version()}\nviewport: 1440x900 DPR 2\n`,
-    );
-    // the opening briefing, before the first key or click dismisses it
-    await page.screenshot({ path: path.join(outDir, "briefing.png") });
+    if (m === "crt") {
+      const info = await plot(page, (h) => h.rendererInfo());
+      fs.writeFileSync(
+        path.join(outDir, "renderer.txt"),
+        `UNMASKED_RENDERER_WEBGL: ${info.renderer}\nUNMASKED_VENDOR_WEBGL: ${info.vendor}\nVERSION: ${info.version}\n` +
+          `browser: ${browser.version()}\nviewport: 1440x900 DPR 2\nserver: ${BASE}\n`,
+      );
+      await page.screenshot({ path: path.join(outDir, "briefing.png") });
+    }
     await autopauseOff(page);
     await runToSalvo(page);
     await page.waitForTimeout(5000);
-    await page.screenshot({ path: path.join(outDir, "first-screen.png") });
+    await page.screenshot({ path: path.join(outDir, `${m}-first-screen.png`) });
 
-    // fps over 10 s while the salvo plays out at 10x
-    const fps = await page.evaluate(
-      () =>
-        new Promise((resolve) => {
-          const dts = [];
-          let last = performance.now();
-          const end = last + 10_000;
-          const step = (t) => {
-            dts.push(t - last);
-            last = t;
-            if (t < end) requestAnimationFrame(step);
-            else resolve(dts.slice(1));
-          };
-          requestAnimationFrame((t) => {
-            last = t;
-            requestAnimationFrame(step);
-          });
-        }),
-    );
-    const sorted = [...fps].sort((a, b) => a - b);
-    const q = (p) => sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))];
-    const median = 1000 / q(0.5);
-    const p5 = 1000 / q(0.95); // 5th-percentile fps = 95th-percentile frame time
-    fs.writeFileSync(
-      path.join(outDir, "fps.txt"),
-      `window: 10 s of requestAnimationFrame on /play, 1440x900 DPR 2, sim at 10x with weapons in flight\n` +
-        `frames: ${fps.length}\nmedian fps: ${median.toFixed(1)}\n5th percentile fps: ${p5.toFixed(1)}\n` +
-        `median frame ms: ${q(0.5).toFixed(2)}\n95th percentile frame ms: ${q(0.95).toFixed(2)}\nworst frame ms: ${sorted[sorted.length - 1].toFixed(2)}\n`,
-    );
+    // fps: adaptive scale at DPR 2, then forced render scale 0.6
+    fpsLines.push(fpsLine(`${m} DPR 2 (scale ${await plot(page, (h) => h.renderScale())})`, await fpsOver(page, 10_000)));
+    await plot(page, (h) => h.setRenderScale(0.6));
+    fpsLines.push(fpsLine(`${m} DPR 2 x render scale 0.6`, await fpsOver(page, 10_000)));
+    await plot(page, (h) => h.setRenderScale(null));
 
     await page.getByTestId("sim-toggle-pause").click(); // hold for the stills
     await page.getByTestId("force-row").nth(1).click();
@@ -144,25 +164,18 @@ async function full() {
     await page.getByTestId("force-row").nth(0).click();
     await page.keyboard.up("Shift");
     await page.getByTestId("force-row").nth(1).click();
-    await page.waitForTimeout(800);
-    await page.screenshot({ path: path.join(outDir, "unit-selected.png") });
+    await page.waitForTimeout(900);
+    await page.screenshot({ path: path.join(outDir, `${m}-unit-selected.png`) });
 
     await page.keyboard.press("Escape");
     await page.keyboard.press("s");
     await page.keyboard.press("t");
     await page.waitForTimeout(2000);
-    await page.screenshot({ path: path.join(outDir, "tilt-3d.png") });
+    await page.screenshot({ path: path.join(outDir, `${m}-tilt-3d.png`) });
 
-    // dense case: still tilted, sensors off, zoomed onto the tightest group of
-    // contacts (the point with the most contact glyphs within 120 px)
+    // dense case: still tilted, sensors off, zoomed onto the tightest contact group
     await page.keyboard.press("s");
-    const tracks = await plot(page, (h) => h.trackScreens());
-    const contacts = tracks.filter((t) => t.kind === "contact");
-    let best = contacts[0], bestN = -1;
-    for (const c of contacts) {
-      const n = contacts.filter((o) => Math.hypot(o.x - c.x, o.y - c.y) < 120).length;
-      if (n > bestN) { bestN = n; best = c; }
-    }
+    const { best, bestN } = await densest(page);
     if (best) {
       await page.mouse.move(best.x, best.y);
       for (let i = 0; i < 3; i++) {
@@ -170,25 +183,86 @@ async function full() {
         await page.waitForTimeout(90);
       }
     }
-    await page.getByTestId("sim-toggle-pause").click(); // let the fight move a little
+    await page.getByTestId("sim-toggle-pause").click();
     await page.waitForTimeout(2500);
     await page.getByTestId("sim-toggle-pause").click();
-    await page.waitForTimeout(600);
-    await page.screenshot({ path: path.join(outDir, "dense-tilt.png") });
-    fs.writeFileSync(
-      path.join(outDir, "dense-tilt.txt"),
-      `dense-tilt.png: tilted, zoomed at the densest contact group (${bestN} contacts within 120 px)\n` +
-        `label audit at capture: ${JSON.stringify(await plot(page, (h) => h.labelAudit()))}\n`,
-    );
+    await page.waitForTimeout(700);
+    await page.screenshot({ path: path.join(outDir, `${m}-dense-tilt.png`) });
+    audits.push(`${m} dense-tilt (${bestN} contacts within 120 px): ${JSON.stringify({ ...(await plot(page, (h) => h.labelAudit())), layout: undefined })}`);
     await context.close();
   }
 
-  // motion: CDP screencast frames, encoded with the system ffmpeg
+  // hornet pair close-up, CRT: run until the two Hornets are closest on screen
   {
-    const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
+    const context = await modeContext(browser, "crt");
+    const page = await open(context, errors);
+    await autopauseOff(page);
+    await page.getByTestId("sim-speed").filter({ hasText: "10x" }).click();
+    await page.getByTestId("sim-toggle-pause").click();
+    let bestD = Infinity, t0 = Date.now();
+    while (Date.now() - t0 < 40_000) {
+      await page.waitForTimeout(120);
+      const tr = await plot(page, (h) => h.trackScreens());
+      const a = tr.find((t) => t.key === "unit:us-fa18-1"), b = tr.find((t) => t.key === "unit:us-fa18-2");
+      if (!a || !b) break;
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < bestD) bestD = d;
+      else if (d > bestD + 6 && Date.now() - t0 > 3000) break; // they have started to open again
+    }
+    await page.getByTestId("sim-toggle-pause").click();
+    const tr = await plot(page, (h) => h.trackScreens());
+    const a = tr.find((t) => t.key === "unit:us-fa18-1"), b = tr.find((t) => t.key === "unit:us-fa18-2");
+    if (a && b) {
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      await page.mouse.move(mx, my);
+      for (let i = 0; i < 4; i++) {
+        await page.mouse.wheel(0, -110);
+        await page.waitForTimeout(90);
+      }
+      await page.waitForTimeout(1500);
+      const tr2 = await plot(page, (h) => h.trackScreens());
+      const a2 = tr2.find((t) => t.key === "unit:us-fa18-1"), b2 = tr2.find((t) => t.key === "unit:us-fa18-2");
+      const cx = (a2.x + b2.x) / 2, cy = (a2.y + b2.y) / 2;
+      const clip = { x: Math.max(0, Math.min(1440 - 640, cx - 320)), y: Math.max(0, Math.min(900 - 400, cy - 200)), width: 640, height: 400 };
+      await page.screenshot({ path: path.join(outDir, "hornet-pair.png"), clip });
+      audits.push(`hornet-pair (closest ${bestD.toFixed(0)} px before zoom): ${JSON.stringify({ ...(await plot(page, (h) => h.labelAudit())), layout: undefined })}`);
+    }
+    await context.close();
+  }
+
+  // font comparison: the same CRT screen in Px437 IBM VGA and in VT323
+  for (const f of ["px437", "vt323"]) {
+    const context = await modeContext(browser, "crt", { deviceScaleFactor: 1 });
+    const page = await context.newPage();
+    await page.goto(`${BASE}/play${f === "vt323" ? "?crtfont=vt323" : ""}`);
+    await page.getByTestId("plot-canvas").waitFor({ timeout: 30_000 });
+    await page.evaluate(() => document.fonts.ready);
+    await page.waitForTimeout(1000);
+    await autopauseOff(page);
+    await page.getByTestId("sim-speed").filter({ hasText: "60x" }).click();
+    await page.getByTestId("sim-toggle-pause").click();
+    await page.waitForTimeout(9000);
+    await page.getByTestId("sim-toggle-pause").click();
+    await page.getByTestId("force-row").nth(1).click();
+    await page.waitForTimeout(800);
+    await page.screenshot({ path: path.join(outDir, `.font-${f}.png`) });
+    await context.close();
+  }
+  execFileSync(process.env.FFMPEG ?? "ffmpeg", [
+    "-y", "-v", "error", "-i", path.join(outDir, ".font-px437.png"), "-i", path.join(outDir, ".font-vt323.png"),
+    "-filter_complex", "hstack=inputs=2", path.join(outDir, "font-compare.png"),
+  ]);
+  fs.rmSync(path.join(outDir, ".font-px437.png"));
+  fs.rmSync(path.join(outDir, ".font-vt323.png"));
+
+  // mode switch: one moment of the fight, cycled through the three modes
+  {
+    const context = await modeContext(browser, "crt", { deviceScaleFactor: 1 });
     const page = await open(context, errors);
     await autopauseOff(page);
     await runToSalvo(page);
+    await page.waitForTimeout(2500);
+    await page.getByTestId("sim-toggle-pause").click(); // the same moment in every mode
     const fdir = fs.mkdtempSync(path.join(outDir, ".frames-"));
     const frames = [];
     const cdp = await context.newCDPSession(page);
@@ -199,47 +273,33 @@ async function full() {
       await cdp.send("Page.screencastFrameAck", { sessionId: f.sessionId }).catch(() => {});
     });
     await cdp.send("Page.startScreencast", { format: "jpeg", quality: 92, maxWidth: 1440, maxHeight: 900, everyNthFrame: 1 });
-    await page.waitForTimeout(1200);
-    // short drag-pan with a throw so the plot coasts, then wheel zoom toward
-    // the engagement over the strait
-    await page.mouse.move(900, 460);
-    await page.mouse.down();
-    for (let i = 1; i <= 8; i++) await page.mouse.move(900 + i * 9, 460 - i * 4, { steps: 1 });
-    await page.mouse.up();
-    await page.waitForTimeout(1200);
-    const aim = await plot(page, (h) => h.project(56.4, 26.7));
-    await page.mouse.move(aim.x, aim.y);
-    for (let i = 0; i < 5; i++) {
-      await page.mouse.wheel(0, -110);
-      await page.waitForTimeout(90);
-    }
-    await page.waitForTimeout(1300);
-    await page.keyboard.press("t");
     await page.waitForTimeout(2200);
-    await page.keyboard.press("t");
-    await page.waitForTimeout(1300);
+    for (let i = 0; i < 3; i++) {
+      await page.keyboard.press("v");
+      await page.waitForTimeout(2600);
+    }
     await cdp.send("Page.stopScreencast");
     await context.close();
-
-    // concat list with each frame held until the next one arrived
     const lines = [];
     for (let i = 0; i < frames.length; i++) {
       const dur = i + 1 < frames.length ? frames[i + 1].t - frames[i].t : 1 / 30;
       lines.push(`file '${frames[i].file}'`, `duration ${Math.max(0.001, dur).toFixed(4)}`);
     }
-    lines.push(`file '${frames[frames.length - 1].file}'`);
+    if (frames.length) lines.push(`file '${frames[frames.length - 1].file}'`);
     const list = path.join(fdir, "list.txt");
     fs.writeFileSync(list, lines.join("\n") + "\n");
     execFileSync(process.env.FFMPEG ?? "ffmpeg", [
       "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", list,
-      "-vf", "fps=30,format=yuv420p", "-c:v", "libvpx-vp9", "-b:v", "5M", "-an", path.join(outDir, "motion.webm"),
+      "-vf", "fps=30,format=yuv420p", "-c:v", "libvpx-vp9", "-b:v", "5M", "-an", path.join(outDir, "mode-switch.webm"),
     ]);
-    const span = frames.length ? frames[frames.length - 1].t - frames[0].t : 0;
     fs.rmSync(fdir, { recursive: true, force: true });
-    console.log(`motion.webm: ${frames.length} screencast frames over ${span.toFixed(1)} s`);
+    console.log(`mode-switch.webm: ${frames.length} frames`);
   }
 
+  fs.writeFileSync(path.join(outDir, "fps.txt"), `server ${BASE}; 1440x900, DPR 2, 10 s of requestAnimationFrame each, sim at 10x with weapons in flight\n` + fpsLines.join("\n") + "\n");
+  fs.writeFileSync(path.join(outDir, "label-audit-at-capture.txt"), audits.join("\n") + "\n");
   fs.writeFileSync(path.join(outDir, "console-errors.txt"), errors.length ? errors.join("\n") + "\n" : "none\n");
+  console.log(fpsLines.join("\n"));
   console.log(JSON.stringify({ errors }, null, 2));
   await browser.close();
 }

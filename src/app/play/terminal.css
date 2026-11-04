@@ -341,7 +341,7 @@
   position: absolute;
   left: 8px;
   top: 52px;
-  bottom: 64px;
+  bottom: calc(var(--tx-cmd-h, 56px) + 8px);
   width: 344px;
   z-index: 10;
   display: flex;
@@ -456,7 +456,7 @@
   right: 8px;
   top: 52px;
   width: 392px;
-  max-height: calc(100% - 52px - 214px);
+  max-height: calc(100% - 52px - 158px - var(--tx-cmd-h, 56px));
   z-index: 10;
   display: flex;
   flex-direction: column;
@@ -489,7 +489,7 @@
   padding: 2px 6px;
   position: absolute;
   left: 368px;
-  bottom: 214px;
+  bottom: calc(var(--tx-cmd-h, 56px) + 158px);
   z-index: 5;
   display: flex;
   align-items: center;
@@ -512,7 +512,7 @@
   position: absolute;
   left: 360px;
   right: 8px;
-  bottom: 64px;
+  bottom: calc(var(--tx-cmd-h, 56px) + 8px);
   height: 142px;
   z-index: 9;
   display: flex;
@@ -571,12 +571,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 56px;
+  min-height: 56px;
   z-index: 11;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  padding: 0 12px;
+  align-content: center;
+  gap: 6px 8px;
+  padding: 6px 12px;
   background: var(--tx-panel);
   border-top: 1px solid var(--tx-rule);
   white-space: nowrap;
@@ -777,4 +779,318 @@
   margin: 0 0 6px;
   color: var(--tx-text);
   line-height: 1.5;
+}
+
+/* ================================================================
+   Display modes (V). CURRENT is everything above, unchanged.
+   ================================================================ */
+
+@font-face {
+  font-family: "Px437 IBM VGA";
+  src: url("/fonts/px437-ibm-vga/Web437_IBM_VGA_9x16.woff") format("woff");
+  font-display: swap;
+}
+@font-face {
+  font-family: "VT323";
+  src: url("/fonts/vt323/vt323-latin-400-normal.woff2") format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/ibm-plex-mono/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/ibm-plex-mono/ibm-plex-mono-latin-700-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+.tx-leader-halo {
+  display: none;
+  fill: none;
+}
+.tx-mode-flash {
+  color: var(--tx-field);
+  background: var(--tx-hi);
+  padding: 0 6px;
+  font-weight: 700;
+  text-shadow: none;
+}
+.tx-key-wrap {
+  display: inline-flex;
+}
+.tx-tty-cursor {
+  display: none;
+}
+
+/* ---------------- CRT: a classic monochrome monitor ---------------- */
+.tx-root.tx-mode-crt {
+  --tx-field: #030603;
+  --tx-panel: #040a05;
+  --tx-rule: #2e8f55;
+  --tx-rule-hi: #5cff8f;
+  --tx-phosphor: #5cff8f;
+  --tx-hi: #eaffef;
+  --tx-text: #a8f5c0;
+  --tx-dim: #45c476;
+  --tx-alarm: #ff6a3d;
+  --tx-font: "Px437 IBM VGA", "VT323", monospace;
+  font-size: 16px;
+  line-height: 1.25;
+  text-shadow: 0 0 2px rgba(92, 255, 143, 0.55), 0 0 8px rgba(92, 255, 143, 0.2);
+  -webkit-font-smoothing: none;
+}
+/* the font comparison frame swaps in VT323 (data-crt-font="vt323") */
+.tx-root.tx-mode-crt[data-crt-font="vt323"] {
+  --tx-font: "VT323", monospace;
+  font-size: 20px;
+}
+/* chunky type everywhere: nothing under 16 px */
+.tx-mode-crt .text-xs,
+.tx-mode-crt .text-sm,
+.tx-mode-crt .text-base,
+.tx-mode-crt .text-\[10px\],
+.tx-mode-crt .text-\[11px\],
+.tx-mode-crt .tx-cap,
+.tx-mode-crt .tx-group-label,
+.tx-mode-crt .tx-tty-head,
+.tx-mode-crt .tx-briefing-head,
+.tx-mode-crt .tx-briefing-foot,
+.tx-mode-crt .tx-scale-label,
+.tx-mode-crt .tx-grid-label,
+.tx-mode-crt .tx-ring-label,
+.tx-mode-crt .tx-wp-label,
+.tx-mode-crt .tx-measure-label,
+.tx-mode-crt .tx-badge,
+.tx-mode-crt .tx-more {
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+}
+.tx-root.tx-mode-crt[data-crt-font="vt323"] :is(.text-xs, .text-sm, .text-base, .tx-cap, .tx-group-label, .tx-tty-head, .tx-grid-label, .tx-ring-label, .tx-block, .tx-tty-line, .tx-more) {
+  font-size: 20px !important;
+}
+.tx-mode-crt .tx-brand {
+  font-size: 18px;
+  letter-spacing: 0.2em;
+}
+/* heavy boxy frames, square, no corner ticks */
+.tx-mode-crt .tx-panel {
+  border: 3px double var(--tx-rule-hi);
+}
+.tx-mode-crt .tx-panel::before,
+.tx-mode-crt .tx-panel::after {
+  display: none;
+}
+.tx-mode-crt .tx-top,
+.tx-mode-crt .tx-cmd {
+  border-color: var(--tx-rule-hi);
+  border-width: 3px;
+  border-style: double;
+  border-left: 0;
+  border-right: 0;
+}
+.tx-mode-crt .tx-top {
+  padding-left: 22px;
+}
+.tx-mode-crt .tx-btn {
+  height: 30px;
+  border-width: 2px;
+  padding: 0 7px;
+  letter-spacing: 0.04em;
+}
+.tx-mode-crt .tx-cmd {
+  gap: 6px;
+  padding: 0 18px;
+}
+/* speed keys 1-6 are listed in help; their caps are dropped to fit the bar */
+.tx-mode-crt .tx-speed-cap {
+  display: none;
+}
+.tx-mode-crt .tx-rule-v {
+  width: 2px;
+  background: var(--tx-rule);
+}
+/* inverse video for the active tab, the selected row and the selected block */
+.tx-mode-crt .tx-tab.is-on {
+  background: var(--tx-phosphor);
+  color: var(--tx-field);
+  text-shadow: none;
+}
+.tx-mode-crt .tx-tab.is-on::before,
+.tx-mode-crt .tx-tab.is-on::after {
+  color: var(--tx-field);
+}
+/* data blocks: chunky, opaque so trails and coastline pass under the text */
+.tx-mode-crt .tx-block {
+  font-size: 16px;
+  line-height: 1;
+  padding: 1px 4px;
+  letter-spacing: 0;
+  background: var(--tx-field);
+}
+.tx-mode-crt .tx-block--hostile {
+  color: var(--tx-hi);
+  text-shadow: 0 0 3px rgba(234, 255, 239, 0.5);
+}
+.tx-mode-crt .tx-block--unknown,
+.tx-mode-crt .tx-block--neutral {
+  color: var(--tx-dim);
+}
+.tx-mode-crt .tx-block.is-selected {
+  background: var(--tx-phosphor);
+  color: var(--tx-field);
+  outline: none;
+  text-shadow: none;
+}
+.tx-mode-crt .tx-grid-label {
+  color: #2e8f55;
+}
+.tx-mode-crt .tx-ring-label,
+.tx-mode-crt .tx-scale {
+  background: var(--tx-field);
+}
+.tx-mode-crt .tx-leader {
+  stroke-width: 2;
+  opacity: 0.9;
+}
+.tx-mode-crt .tx-leader--hostile {
+  stroke: var(--tx-hi);
+}
+/* less text per panel: contact rows drop their coordinate line */
+.tx-mode-crt [data-testid="contact-row"] > div + div {
+  display: none;
+}
+.tx-mode-crt .tx-tty-line {
+  font-size: 16px;
+  line-height: 20px;
+}
+.tx-mode-crt .tx-tty-line.is-alarm {
+  color: var(--tx-alarm);
+}
+.tx-mode-crt .tx-tty-cursor {
+  display: inline-block;
+  width: 9px;
+  height: 15px;
+  margin-left: 4px;
+  vertical-align: -2px;
+  background: var(--tx-phosphor);
+}
+/* light scanlines, at most ~10% darker */
+.tx-mode-crt .tx-scan {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 3px
+  );
+}
+/* a dark bezel with rounded tube corners */
+.tx-bezel {
+  display: none;
+}
+.tx-mode-crt .tx-bezel {
+  display: block;
+  position: absolute;
+  inset: 6px;
+  z-index: 56;
+  pointer-events: none;
+  border-radius: 22px;
+  box-shadow: 0 0 0 40px #080a08, inset 0 0 40px rgba(0, 0, 0, 0.65), inset 0 0 3px rgba(0, 0, 0, 0.9);
+}
+
+/* ---------------- ADMIRALTY DUSK (OFF-SIGNATURE, by Argon) ----------------
+   matte ECDIS chart on slate, desaturated inks, no effects. Type sizes are
+   the spec's raised to the project's floor (14 px body, 12 px labels). */
+.tx-root.tx-mode-offsig {
+  --tx-field: #14181d;
+  --tx-panel: #181d23;
+  --tx-rule: #2e3742;
+  --tx-rule-hi: #4a5564;
+  --tx-phosphor: #4ea8de;
+  --tx-hi: #f4f1ea;
+  --tx-text: #c5ccd3;
+  --tx-dim: #8c97a3;
+  --tx-alarm: #d64f45;
+  --tx-font: "IBM Plex Mono", ui-monospace, monospace;
+  --color-terminal-amber: #d9b24c;
+  font-size: 14px;
+  line-height: 1.43;
+  text-shadow: none;
+}
+.tx-mode-offsig .tx-panel::before,
+.tx-mode-offsig .tx-panel::after {
+  display: none;
+}
+.tx-mode-offsig .tx-scan {
+  display: none;
+}
+.tx-mode-offsig .tx-section-head,
+.tx-mode-offsig .tx-popover-head,
+.tx-mode-offsig .tx-briefing-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--tx-text);
+}
+.tx-mode-offsig .tx-row {
+  min-height: 20px;
+  border-bottom: 1px solid #222932;
+}
+.tx-mode-offsig .tx-btn.is-on {
+  background: var(--tx-panel);
+  color: var(--tx-hi);
+  border-color: var(--tx-hi);
+}
+.tx-mode-offsig .tx-tab.is-on {
+  color: var(--tx-hi);
+}
+.tx-mode-offsig .tx-block {
+  font-size: 12px;
+  line-height: 1.2;
+  background: none;
+  color: #4ea8de;
+  /* 2 px slate halo instead of a box */
+  text-shadow: 0 0 2px #14181d, 0 0 2px #14181d, 1px 1px 0 #14181d, -1px -1px 0 #14181d, 1px -1px 0 #14181d, -1px 1px 0 #14181d;
+}
+.tx-mode-offsig .tx-block--hostile {
+  color: #d64f45;
+}
+.tx-mode-offsig .tx-block--unknown,
+.tx-mode-offsig .tx-block--neutral {
+  color: #d9b24c;
+}
+.tx-mode-offsig .tx-block.is-selected {
+  color: #f4f1ea;
+  outline: 1px solid #f4f1ea;
+}
+.tx-mode-offsig .tx-grid-label {
+  font-size: 12px;
+  color: #5b6774;
+  background: #14181d;
+}
+.tx-mode-offsig .tx-ring-label {
+  color: #8c97a3;
+  background: #14181d;
+}
+.tx-mode-offsig .tx-leader,
+.tx-mode-offsig .tx-leader--hostile,
+.tx-mode-offsig .tx-leader--unknown {
+  stroke: #4a5564;
+  stroke-width: 1;
+  opacity: 1;
+}
+.tx-mode-offsig .tx-leader-halo {
+  display: inline;
+  stroke: #14181d;
+  stroke-width: 5;
+}
+.tx-mode-offsig .tx-tty-line.is-alarm {
+  color: #d64f45;
+}
+.tx-mode-offsig .tx-badge {
+  background: var(--tx-rule-hi);
+  color: var(--tx-hi);
 }

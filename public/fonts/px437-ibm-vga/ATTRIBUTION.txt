@@ -1,0 +1,4 @@
+Px437 IBM VGA 9x16 (file: Web437_IBM_VGA_9x16.woff, the pack's web variant)
+from The Ultimate Oldschool PC Font Pack v2.2 by VileR, https://int10h.org/oldschool-pc-fonts/
+Licensed under Creative Commons Attribution-ShareAlike 4.0 International (LICENSE.TXT in this folder).
+Used unmodified as the /play CRT display font. Credited in game in the help panel (Controls > Credits).

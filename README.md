@@ -46,7 +46,10 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Missiles fly with trails and target lines; intercepts and hits flash briefly
 - Drag to pan (it coasts when you let go), wheel to zoom at the cursor, `T` tilts the plot into a low 3D theater with NOAA relief, wireframe sensor domes and aircraft at altitude
 - Terminal chrome: vendored JetBrains Mono, one phosphor green, one alarm red, function-key command bar, teletype traffic strip fed by the combat log, intel and autopause
-- Keys: `Space` pause, `1`-`6` speed, `S` sensors, `M` measure, `G` god mode, `T` tilt, `A` autopause, `H`/`?` help
+- Three display modes, cycled with `V` and remembered per viewer: **CRT** (default: a chunky Px437 IBM VGA bitmap font, one phosphor, dim grid, glow, light scanlines and a bezel), **CURRENT** (the round-3 terminal look) and **ADMIRALTY DUSK**, an off-signature matte chart look on slate
+- Labels pair with their own contact: a block sits clearly nearest its symbol or carries a visible leader, never covers a symbol, missile or weapon line, and holds its place while the camera is still
+- Adaptive render scale keeps the plot smooth on smaller GPUs
+- Keys: `Space` pause, `1`-`6` speed, `S` sensors, `M` measure, `G` god mode, `T` tilt, `A` autopause, `V` display mode, `L` grid, `B` briefing, `H`/`?` help
 - The old MapLibre map stays at `/play?map=legacy` for comparison
 
 ### Foundation

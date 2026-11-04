@@ -98,6 +98,8 @@ function ControlsTab({ terminal }: { terminal: boolean }) {
         {terminal && <div><KeyLabel>T</KeyLabel> Tilt the plot into the 3D theater and back</div>}
         {terminal && <div><KeyLabel>A</KeyLabel> Autopause settings</div>}
         {terminal && <div><KeyLabel>B</KeyLabel> Show the mission briefing again (also pinned in the Intel tab)</div>}
+        {terminal && <div><KeyLabel>V</KeyLabel> Cycle the display: CRT, CURRENT, ADMIRALTY DUSK</div>}
+        {terminal && <div><KeyLabel>L</KeyLabel> Lat/long grid on or off</div>}
         <div><KeyLabel>H</KeyLabel> or <KeyLabel>?</KeyLabel> Open this help panel</div>
         <div><KeyLabel>Esc</KeyLabel> Close panels and deselect units</div>
       </div>
@@ -110,6 +112,18 @@ function ControlsTab({ terminal }: { terminal: boolean }) {
         {terminal && <div><span className="text-[var(--color-terminal-amber)]">Drag</span> — Pan the plot. Let go while moving and it coasts.</div>}
         {terminal && <div><span className="text-[var(--color-terminal-amber)]">Wheel</span> — Zoom toward the cursor.</div>}
       </div>
+
+      {terminal && (
+        <>
+          <SectionTitle>Credits</SectionTitle>
+          <div className="space-y-1" data-testid="font-credits">
+            <div>Px437 IBM VGA 9x16 font: VileR, The Ultimate Oldschool PC Font Pack (int10h.org), CC BY-SA 4.0</div>
+            <div>VT323 font: Peter Hull, SIL Open Font License 1.1</div>
+            <div>IBM Plex Mono and JetBrains Mono fonts: SIL Open Font License 1.1</div>
+            <div>Coastline and depth data: Natural Earth (public domain); relief: NOAA ETOPO1 (public domain)</div>
+          </div>
+        </>
+      )}
 
       <SectionTitle>Placing Waypoints</SectionTitle>
       <div className="space-y-1">

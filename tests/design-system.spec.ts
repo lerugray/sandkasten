@@ -55,31 +55,53 @@ test.describe("Terminal register design system", () => {
     await page.screenshot({ path: "test-results/editor-page.png", fullPage: true });
   });
 
-  test("SANDKASTEN title uses the phosphor primary colour", async ({ page }) => {
+  test("SANDKASTEN title uses the mode's phosphor primary colour", async ({ page }) => {
     await page.goto("/play");
     await expect(page.locator("canvas").first()).toBeVisible({ timeout: 10_000 });
+    // CRT is the default display; its primary is phosphor #5cff8f = rgb(92, 255, 143)
+    await expect(page.getByTestId("terminal-root")).toHaveAttribute("data-display-mode", "crt");
     const title = page.getByRole("link", { name: "SANDKASTEN" });
     const color = await title.evaluate((el) => getComputedStyle(el).color);
-    // phosphor #4cf58e = rgb(76, 245, 142)
-    expect(color).toMatch(/rgb\(76,\s*245,\s*142\)/);
+    expect(color).toMatch(/rgb\(92,\s*255,\s*143\)/);
   });
 
-  test("vendored terminal font is loaded and used", async ({ page }) => {
+  test("each display mode loads and uses its vendored font", async ({ page }) => {
     const fontResponses: { url: string; status: number }[] = [];
     page.on("response", (r) => {
-      if (r.url().includes("/fonts/jetbrains-mono/")) fontResponses.push({ url: r.url(), status: r.status() });
+      if (r.url().includes("/fonts/")) fontResponses.push({ url: r.url(), status: r.status() });
     });
     await page.goto("/play");
     await expect(page.locator("canvas").first()).toBeVisible({ timeout: 10_000 });
-    await page.evaluate(() => document.fonts.ready);
+    const expected: Record<string, string> = { crt: "Px437 IBM VGA", current: "JetBrains Mono", offsig: "IBM Plex Mono" };
     const title = page.getByRole("link", { name: "SANDKASTEN" });
-    const fontFamily = await title.evaluate((el) => getComputedStyle(el).fontFamily);
-    expect(fontFamily.toLowerCase()).toContain("jetbrains mono");
-    await expect
-      .poll(() => page.evaluate(() => document.fonts.check('14px "JetBrains Mono"') && document.fonts.check('bold 14px "JetBrains Mono"')))
-      .toBe(true);
-    expect(fontResponses.length).toBeGreaterThan(0);
+    for (const mode of ["crt", "current", "offsig"]) {
+      await expect(page.getByTestId("terminal-root")).toHaveAttribute("data-display-mode", mode);
+      const family = expected[mode];
+      expect((await title.evaluate((el) => getComputedStyle(el).fontFamily)).toLowerCase()).toContain(family.toLowerCase());
+      await expect.poll(() => page.evaluate((f) => document.fonts.check(`16px "${f}"`), family), { timeout: 10_000 }).toBe(true);
+      await page.keyboard.press("v");
+    }
+    expect(fontResponses.length).toBeGreaterThanOrEqual(3);
     for (const r of fontResponses) expect(r.status).toBeLessThan(400);
+  });
+
+  test("V cycles the three display modes and the choice persists", async ({ page }) => {
+    await page.goto("/play");
+    await expect(page.locator("canvas").first()).toBeVisible({ timeout: 10_000 });
+    const root = page.getByTestId("terminal-root");
+    await expect(root).toHaveAttribute("data-display-mode", "crt");
+    await page.keyboard.press("v");
+    await expect(root).toHaveAttribute("data-display-mode", "current");
+    await expect(page.getByTestId("display-mode-readout")).toContainText("CURRENT");
+    await page.keyboard.press("v");
+    await expect(root).toHaveAttribute("data-display-mode", "offsig");
+    await expect(page.getByTestId("display-mode-readout")).toContainText("OFF-SIGNATURE");
+    await expect.poll(() => page.evaluate(() => (document.querySelector('[data-testid="tactical-plot"]') as any).__plot.mode())).toBe("offsig");
+    await page.reload();
+    await expect(page.locator("canvas").first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("terminal-root")).toHaveAttribute("data-display-mode", "offsig");
+    await page.keyboard.press("v");
+    await expect(page.getByTestId("terminal-root")).toHaveAttribute("data-display-mode", "crt");
   });
 
   test("no remote font requests on /play", async ({ page }) => {

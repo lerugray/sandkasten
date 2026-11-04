@@ -25,7 +25,7 @@ export function Teletype({ lines }: { lines: TtyLine[] }) {
         <span className="tx-dim">{lines.length ? `${lines.length} MSG` : "NO TRAFFIC"}</span>
       </div>
       <div className="tx-tty-body">
-        {shown.map((l) => {
+        {shown.map((l, i) => {
           const body = `${hhmmss(l.time)}Z ${l.tag.padEnd(4, " ")} ${l.text}`;
           const n = Math.min(body.length, 120);
           return (
@@ -37,6 +37,8 @@ export function Teletype({ lines }: { lines: TtyLine[] }) {
               style={{ "--n": n, "--d": `${Math.min(1100, n * 14)}ms` } as React.CSSProperties}
             >
               <span className="tx-tty-text">{body}</span>
+              {/* a steady block cursor after the newest line (CRT); never blinks */}
+              {i === shown.length - 1 && <span className="tx-tty-cursor" aria-hidden="true" />}
             </div>
           );
         })}

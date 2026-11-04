@@ -58,6 +58,16 @@ export function segsCross(a: Seg, b: Seg): boolean {
   return ((d1 > eps && d2 < -eps) || (d1 < -eps && d2 > eps)) && ((d3 > eps && d4 < -eps) || (d3 < -eps && d4 > eps));
 }
 
+/** gap between two rects (0 when they touch or overlap) */
+export function rectGap(a: Rect, b: Rect): number {
+  const dx = Math.max(0, a.x - (b.x + b.w), b.x - (a.x + a.w));
+  const dy = Math.max(0, a.y - (b.y + b.h), b.y - (a.y + a.h));
+  return Math.hypot(dx, dy);
+}
+
+/** shortest leader a player reliably sees */
+export const MIN_LEADER = 8;
+
 export function distToRect(x: number, y: number, r: Rect): number {
   const cx = Math.max(r.x, Math.min(x, r.x + r.w));
   const cy = Math.max(r.y, Math.min(y, r.y + r.h));
@@ -72,6 +82,8 @@ export interface LabelItem {
   gx: number;
   gy: number;
   glyph: Rect;
+  /** the drawn symbol; distances are measured from its edge */
+  core: Rect;
   fullW: number;
   fullH: number;
   compactW: number;
@@ -97,13 +109,35 @@ export interface PlaceEnv {
   points: Rect[];
   /** weapon track lines in screen space */
   lines: Seg[];
+  /** skip the full block when another glyph is this close (px); 0 = never */
+  compactWithin?: number;
 }
 
+/**
+ * A block with no leader must read as its own glyph's: its gap to its own
+ * glyph centre is at most this share of its gap to the next nearest glyph.
+ * At 0.6 the wrong glyph is at least 1.67x farther, a difference the eye
+ * reads at a glance; above about 0.75 two glyphs look equally near.
+ */
+export const PAIR_RATIO = 0.6;
+/** a block farther than this from its glyph always carries a leader */
+export const LEADER_BEYOND = 24;
+
 const NEAR = 4;
+// far candidates for kept tracks come in anchor variants (block extends right,
+// left, down or up from the leader's end); the variant rides above this stride
+const VAR = 100000;
 const RINGS = [46, 74, 106, 142, 184];
-const KEEP_RINGS = [232, 286, 344, 410];
+const KEEP_RINGS = [232, 286, 344, 410, 480, 560];
 const ANGLES = 24;
-const UPGRADE_FRAMES = 24; // a better spot must stay free this long before a block moves to it
+const UPGRADE_FRAMES = 240; // a better spot must stay free 4 s before a block moves to it
+const REPAIR_COOLDOWN = 10; // frames to rest after all three repair orders failed
+// A new spot is chosen with margins inside the audit's limits (rounding in the
+// DOM must never tip it over); a spot already held is kept while it stays
+// within slightly looser margins, still inside the limits, so blocks do not
+// jump for a pixel of drift.
+const PICK = { pad: 2, glyphPad: 1, ratio: 0.55, beyond: 22, leader: 9 };
+const HOLD = { pad: 0.5, glyphPad: 0.5, ratio: 0.58, beyond: 23.5, leader: 8.5 };
 const GAP = 13;
 const PAD = 2;
 
@@ -115,6 +149,9 @@ interface Memory {
 
 export class LabelPlacer {
   private memory = new Map<string, Memory>();
+  private repairCooldown = 0;
+  private repairAttempt = 0;
+  private repairMisses = 0;
   private placedRects: Rect[] = [];
   private placedLeaders: { key: string; seg: Seg }[] = [];
   private out: Placement[] = [];
@@ -140,8 +177,13 @@ export class LabelPlacer {
     // farthest-from-the-failure first, reversed), and keep the pass with
     // fewest losses. Memory then holds the repaired layout, so this only runs
     // on the frames a cluster tightens.
-    for (let attempt = 0; attempt < 3 && failed.length; attempt++) {
-      const saved = new Map(this.memory);
+    if (this.repairCooldown > 0) this.repairCooldown--;
+    const clone = (m: Map<string, Memory>) => new Map([...m].map(([k, v]) => [k, { ...v }]));
+    // bounded: at most one extra pass per frame, cycling through the orders
+    if (failed.length && this.repairCooldown === 0) {
+      const attempt = this.repairAttempt;
+      this.repairAttempt = (attempt + 1) % 3;
+      const saved = clone(this.memory);
       const first = new Set(failed.map((i) => items[i].key));
       const fx = items[failed[0]].gx, fy = items[failed[0]].gy;
       const free = new Set<string>();
@@ -161,9 +203,15 @@ export class LabelPlacer {
       if (retryFailed.length < failed.length) {
         results = retry;
         failed = retryFailed;
-        bestMemory = new Map(this.memory);
+        bestMemory = clone(this.memory);
+        this.repairMisses = 0;
       } else {
         this.memory = saved;
+        // all three orders tried in a row without a gain: rest a little
+        if (++this.repairMisses >= 3) {
+          this.repairMisses = 0;
+          this.repairCooldown = REPAIR_COOLDOWN;
+        }
       }
     }
     if (bestMemory) this.memory = bestMemory;
@@ -198,7 +246,7 @@ export class LabelPlacer {
 
     // keep last frame's spot while it is still legal; move up a tier only
     // when the better spot has been free for a while (no jitter)
-    if (mem && this.tryCand(it, env, mem.cand, mem.compact, awayX)) {
+    if (mem && this.tryCand(it, env, mem.cand, mem.compact, awayX, HOLD)) {
       const tier = this.tier(mem.cand, mem.compact);
       if (tier > 0) {
         const best = this.firstFree(it, env, awayX, tier - 1);
@@ -213,12 +261,13 @@ export class LabelPlacer {
           mem.better = 0;
         }
         // the upgrade probe used the scratch rect: rebuild the chosen spot
-        this.tryCand(it, env, mem.cand, mem.compact, awayX);
+        this.tryCand(it, env, mem.cand, mem.compact, awayX, mem.better === 0 ? PICK : HOLD) ||
+          this.tryCand(it, env, mem.cand, mem.compact, awayX, HOLD);
       }
       return this.commit(it, mem.compact);
     }
 
-    const found = this.firstFree(it, env, awayX, it.keep ? 3 : 2);
+    const found = this.firstFree(it, env, awayX, it.keep ? 3 : 2, mem ? this.sideOf(it, mem.cand) : -1, mem ? mem.cand : -1);
     if (!found) {
       this.memory.delete(it.key);
       return { key: it.key, visible: false, rect: { x: 0, y: 0, w: 0, h: 0 }, compact: false, leader: null };
@@ -228,22 +277,50 @@ export class LabelPlacer {
     return this.commit(it, found.compact);
   }
 
+  /** quadrant 0-3 (matching the near slots) a candidate sits in, seen from its glyph */
+  private sideOf(it: LabelItem, cand: number): number {
+    cand %= VAR;
+    if (cand < NEAR) return cand;
+    const k = (cand - NEAR) % ANGLES;
+    const a = (k / ANGLES) * Math.PI * 2;
+    const right = Math.cos(a) >= 0, down = Math.sin(a) >= 0;
+    return right ? (down ? 1 : 0) : down ? 3 : 2;
+  }
+
   /** 0 full near, 1 compact near, 2 compact on a leader, 3 compact far (keep only) */
   private tier(cand: number, compact: boolean): number {
+    if (cand >= VAR) return 3;
     if (cand < NEAR) return compact ? 1 : 0;
     return cand < NEAR + RINGS.length * ANGLES ? 2 : 3;
   }
 
-  private firstFree(it: LabelItem, env: PlaceEnv, away: { x: number; y: number }, maxTier: number) {
-    for (let c = 0; c < NEAR; c++) if (this.tryCand(it, env, c, false, away)) return { cand: c, compact: false };
+  private firstFree(it: LabelItem, env: PlaceEnv, away: { x: number; y: number }, maxTier: number, side = -1, prev = -1) {
+    const crowded = !!env.compactWithin && env.glyphs.some((g) => g.key !== it.key && Math.hypot(g.x - it.gx, g.y - it.gy) < env.compactWithin!);
+    // prefer the side the block was on, so a forced move does not flip it
+    const near = side >= 0 ? [side, ...[0, 1, 2, 3].filter((c) => c !== side)] : [0, 1, 2, 3];
+    if (!crowded) for (const c of near) if (this.tryCand(it, env, c, false, away)) return { cand: c, compact: false };
     if (maxTier < 1) return null;
-    for (let c = 0; c < NEAR; c++) if (this.tryCand(it, env, c, true, away)) return { cand: c, compact: true };
+    for (const c of near) if (this.tryCand(it, env, c, true, away)) return { cand: c, compact: true };
     if (maxTier < 2) return null;
     const rings = maxTier >= 3 ? RINGS.length + KEEP_RINGS.length : RINGS.length;
+    // a block that lost a far spot looks along the same bearing first
+    const prevK = prev % VAR >= NEAR ? ((prev % VAR) - NEAR) % ANGLES : side >= 0 ? [21, 3, 15, 9][side] : -1;
+    const angles = prevK >= 0 ? this.angleNear(prevK) : this.angleOrder(away);
     for (let ring = 0; ring < rings; ring++) {
-      for (const k of this.angleOrder(away)) {
+      for (const k of angles) {
         const c = NEAR + ring * ANGLES + k;
         if (this.tryCand(it, env, c, true, away)) return { cand: c, compact: true };
+      }
+    }
+    // kept tracks hemmed in by the chrome: same bearings, block slid to either side
+    if (maxTier >= 3) {
+      for (let v = 1; v <= 4; v++) {
+        for (let ring = 0; ring < rings; ring++) {
+          for (const k of angles) {
+            const c = v * VAR + NEAR + ring * ANGLES + k;
+            if (this.tryCand(it, env, c, true, away)) return { cand: c, compact: true };
+          }
+        }
       }
     }
     return null;
@@ -267,6 +344,19 @@ export class LabelPlacer {
     return { x: -sx / l, y: -sy / l };
   }
 
+  private angleNearCache: number[] = [];
+  /** bearings ordered by how close they are to bearing k */
+  private angleNear(k: number): number[] {
+    const o = this.angleNearCache;
+    o.length = 0;
+    o.push(k);
+    for (let d = 1; d <= ANGLES / 2; d++) {
+      o.push((k + d) % ANGLES);
+      if (d !== ANGLES / 2) o.push((k - d + ANGLES) % ANGLES);
+    }
+    return o;
+  }
+
   private angleOrderCache: number[] = [];
   private angleOrder(away: { x: number; y: number }): number[] {
     const o = this.angleOrderCache;
@@ -281,7 +371,7 @@ export class LabelPlacer {
   }
 
   /** Builds candidate c into cRect/cLeader and reports whether it is legal. */
-  private tryCand(it: LabelItem, env: PlaceEnv, c: number, compact: boolean, away: { x: number; y: number }): boolean {
+  private tryCand(it: LabelItem, env: PlaceEnv, c: number, compact: boolean, away: { x: number; y: number }, m = PICK): boolean {
     void away;
     const w = compact ? it.compactW : it.fullW;
     const h = compact ? it.compactH : it.fullH;
@@ -290,14 +380,17 @@ export class LabelPlacer {
     r.h = h;
     let leader = false;
     if (c < NEAR) {
+      // beside the glyph's frame, however big the glyph is drawn
+      const gx = Math.max(GAP, it.glyph.w / 2 + 2), gy = Math.max(GAP, it.glyph.h / 2 + 2);
       switch (c) {
-        case 0: r.x = it.gx + GAP; r.y = it.gy - GAP - h + 6; break;
-        case 1: r.x = it.gx + GAP; r.y = it.gy + GAP - 4; break;
-        case 2: r.x = it.gx - GAP - w; r.y = it.gy - GAP - h + 6; break;
-        default: r.x = it.gx - GAP - w; r.y = it.gy + GAP - 4; break;
+        case 0: r.x = it.gx + gx; r.y = it.gy - gy - h + 6; break;
+        case 1: r.x = it.gx + gx; r.y = it.gy + gy - 4; break;
+        case 2: r.x = it.gx - gx - w; r.y = it.gy - gy - h + 6; break;
+        default: r.x = it.gx - gx - w; r.y = it.gy + gy - 4; break;
       }
     } else {
-      const idx = c - NEAR;
+      const variant = Math.floor(c / VAR);
+      const idx = (c % VAR) - NEAR;
       const ring = Math.floor(idx / ANGLES);
       const k = idx % ANGLES;
       const radius = ring < RINGS.length ? RINGS[ring] : KEEP_RINGS[ring - RINGS.length];
@@ -306,28 +399,38 @@ export class LabelPlacer {
       const px = it.gx + dx * radius, py = it.gy + dy * radius;
       r.x = Math.abs(dx) < 0.38 ? px - w / 2 : dx > 0 ? px : px - w;
       r.y = Math.abs(dy) < 0.38 ? py - h / 2 : dy > 0 ? py : py - h;
+      if (variant === 1) r.x = px;
+      else if (variant === 2) r.x = px - w;
+      else if (variant === 3) r.y = py;
+      else if (variant === 4) r.y = py - h;
       leader = true;
     }
     r.x = Math.round(r.x);
     r.y = Math.round(r.y);
 
     if (env.blocked(r)) return false;
-    for (const p of this.placedRects) if (rectsOverlap(r, p, PAD)) return false;
-    for (const g of env.glyphs) if (rectsOverlap(r, g.rect, g.key === it.key ? 0 : 1)) return false;
+    for (const p of this.placedRects) if (rectsOverlap(r, p, m.pad)) return false;
+    for (const g of env.glyphs) if (rectsOverlap(r, g.rect, g.key === it.key ? 0 : m.glyphPad)) return false;
     for (const p of env.points) if (rectsOverlap(r, p, 1)) return false;
     for (const s of env.lines) if (segHitsRect(s, r, 1)) return false;
     for (const l of this.placedLeaders) if (segHitsRect(l.seg, r, 1)) return false;
 
-    // a block with no leader has to read as its own glyph's
+    // a block with no leader has to read as its own glyph's: close to its
+    // drawn symbol, and clearly closer to it than to any other symbol
+    let needsLeader = false;
     if (!leader) {
-      const own = distToRect(it.gx, it.gy, r);
-      for (const g of env.glyphs) {
-        if (g.key === it.key) continue;
-        if (distToRect(g.x, g.y, r) <= own + 2) {
-          leader = true;
-          break;
+      const own = rectGap(it.core, r);
+      if (own > m.beyond) needsLeader = true;
+      else {
+        for (const g of env.glyphs) {
+          if (g.key === it.key) continue;
+          if (own > m.ratio * rectGap(g.core, r)) {
+            needsLeader = true;
+            break;
+          }
         }
       }
+      leader = needsLeader;
     }
 
     const L = this.cLeader;
@@ -342,6 +445,9 @@ export class LabelPlacer {
       L.y1 = it.gy + (dy / len) * start;
       L.x2 = nx;
       L.y2 = ny;
+      // a beside-the-glyph spot that only a stub of a leader would pair is
+      // not good enough: move to a spot with a leader you can see
+      if (needsLeader && Math.hypot(L.x2 - L.x1, L.y2 - L.y1) < m.leader) return false;
       for (const p of this.placedRects) if (segHitsRect(L, p, 1)) return false;
       // a leader may pass a neighbour's frame but never its drawn symbol
       for (const g of env.glyphs) if (g.key !== it.key && segHitsRect(L, g.core, 1)) return false;
@@ -374,6 +480,10 @@ export interface AuditInput {
   lines: Seg[];
   grid: Rect[];
   keptHidden: number;
+  /** drawn missile heads (screen rects of the visible head mark) */
+  heads: Rect[];
+  /** the leader stroke as rendered: width in px and effective opacity */
+  leaderStroke: { width: number; opacity: number };
 }
 
 export interface AuditCounts {
@@ -384,6 +494,9 @@ export interface AuditCounts {
   leaderThroughGlyph: number;
   weaponThroughBlock: number;
   ambiguousPairing: number;
+  farBlockNoVisibleLeader: number;
+  blockOverGlyph: number;
+  blockOverMissileHead: number;
   gridOverlaps: number;
   keptHidden: number;
 }
@@ -401,6 +514,9 @@ export function auditLabels(a: AuditInput): AuditCounts {
     leaderThroughGlyph: 0,
     weaponThroughBlock: 0,
     ambiguousPairing: 0,
+    farBlockNoVisibleLeader: 0,
+    blockOverGlyph: 0,
+    blockOverMissileHead: 0,
     gridOverlaps: 0,
     keptHidden: a.keptHidden,
   };
@@ -420,13 +536,23 @@ export function auditLabels(a: AuditInput): AuditCounts {
     }
   }
   for (const s of a.lines) for (const b of a.blocks) if (segHitsRect(s, shrink(b.rect, 0.5))) c.weaponThroughBlock++;
-  const led = new Set(a.leaders.map((l) => l.key));
+  // a leader a player can see: long enough, wide enough, opaque enough
+  const strokeVisible = a.leaderStroke.width >= 1 && a.leaderStroke.opacity >= 0.4;
+  const leaderOf = new Map(a.leaders.map((l) => [l.key, l.seg]));
   for (const b of a.blocks) {
-    if (led.has(b.key)) continue;
     const own = a.glyphs.find((g) => g.key === b.key);
     if (!own) continue;
-    const dOwn = distToRect(own.x, own.y, b.rect);
-    for (const g of a.glyphs) if (g.key !== b.key && distToRect(g.x, g.y, b.rect) < dOwn) { c.ambiguousPairing++; break; }
+    const dOwn = rectGap(own.core, b.rect);
+    const L = leaderOf.get(b.key);
+    const visibleLeader = !!L && strokeVisible && Math.hypot(L.x2 - L.x1, L.y2 - L.y1) >= MIN_LEADER;
+    if (!visibleLeader) {
+      for (const g of a.glyphs) {
+        if (g.key !== b.key && dOwn > PAIR_RATIO * rectGap(g.core, b.rect)) { c.ambiguousPairing++; break; }
+      }
+    }
+    if (dOwn > LEADER_BEYOND && !visibleLeader) c.farBlockNoVisibleLeader++;
+    for (const g of a.glyphs) if (rectsOverlap(shrink(b.rect, 0.5), g.core)) c.blockOverGlyph++;
+    for (const h of a.heads) if (rectsOverlap(shrink(b.rect, 0.5), h)) c.blockOverMissileHead++;
   }
   for (let i = 0; i < a.grid.length; i++) {
     for (const b of a.blocks) if (rectsOverlap(shrink(a.grid[i], 0.5), b.rect)) c.gridOverlaps++;

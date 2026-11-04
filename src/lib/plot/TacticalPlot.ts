@@ -23,6 +23,8 @@ import { PALETTE } from "./palette";
 import { sidcFor, symbolTexture } from "./symbolTextures";
 import { LabelPlacer, auditLabels, segHitsRect, type LabelItem, type Seg } from "./labelPlacer";
 import geo from "./data/hormuz-geo.json";
+import { THEMES, type DisplayMode, type PlotTheme } from "./themes";
+import { contactName, isClassified, trackNumber } from "./contactName";
 
 export type PlotMode = "select" | "waypoint" | "measure";
 
@@ -81,6 +83,8 @@ interface Track {
   lastHistSim: number;
   sprite?: THREE.Sprite;
   spriteKey?: string;
+  spriteSidc: string;
+  spriteRole?: "friendly" | "hostile" | "unknown";
   spriteW: number;
   spriteH: number;
   block?: HTMLDivElement;
@@ -134,15 +138,49 @@ const HIST_WEAPON_MS = 2_500;
 const HIST_MAX = 12;
 const SWEEP_PERIOD_S = 4;
 
+// Colour slots the plot draws with. setMode() rewrites them from the theme.
 const C = {
-  phosphor: new THREE.Color(PALETTE.phosphor),
-  hi: new THREE.Color(PALETTE.phosphorHi),
-  dim: new THREE.Color(PALETTE.phosphorDim),
-  faint: new THREE.Color(PALETTE.phosphorFaint),
-  alarm: new THREE.Color(PALETTE.alarm),
-  alarmDim: new THREE.Color(PALETTE.alarmDim),
+  phosphor: new THREE.Color(PALETTE.phosphor), // friendly tracks and own orders
+  hi: new THREE.Color(PALETTE.phosphorHi), // selection, missile heads, measurement
+  dim: new THREE.Color(PALETTE.phosphorDim), // coverage edges, unknown tracks
+  hostile: new THREE.Color(PALETTE.alarm), // classified hostile tracks
+  unknown: new THREE.Color(PALETTE.phosphorDim),
+  alarm: new THREE.Color(PALETTE.alarm), // hits and incoming fire only
+  weaponF: new THREE.Color(PALETTE.phosphor),
+  weaponH: new THREE.Color(PALETTE.alarm),
+  ringF: new THREE.Color(PALETTE.phosphor),
+  ringH: new THREE.Color(PALETTE.alarm),
+  coast: new THREE.Color(PALETTE.phosphor),
+  contour: new THREE.Color(PALETTE.phosphorDim),
+  border: new THREE.Color(PALETTE.phosphorDim),
+  grid: new THREE.Color(PALETTE.phosphorFaint),
+  relief: new THREE.Color(PALETTE.phosphorFaint),
   land: new THREE.Color(PALETTE.land),
+  field: new THREE.Color(PALETTE.field),
 };
+
+function applyThemeColours(t: PlotTheme) {
+  C.phosphor.set(t.friendly);
+  C.hi.set(t.hi);
+  C.dim.set(t.matte ? t.ringFriendly : t.unknown);
+  C.hostile.set(t.hostile);
+  C.unknown.set(t.unknown);
+  C.alarm.set(t.alarm);
+  C.weaponF.set(t.weaponFriendly);
+  C.weaponH.set(t.weaponHostile);
+  C.ringF.set(t.ringFriendly);
+  C.ringH.set(t.ringHostile);
+  C.coast.set(t.coast);
+  C.contour.set(t.contour);
+  C.border.set(t.border);
+  C.grid.set(t.grid);
+  C.relief.set(t.relief);
+  C.land.set(t.land);
+  C.field.set(t.field);
+}
+
+const DPR_CAP = 2;
+const SCALE_MIN = 0.5;
 
 const CLS_LABEL: Record<Contact["classification"], string> = {
   unknown: "UNK",
@@ -151,11 +189,7 @@ const CLS_LABEL: Record<Contact["classification"], string> = {
   tracked: "TRK",
 };
 
-export function trackNumber(id: string): string {
-  let h = 2166136261;
-  for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 16777619);
-  return String(1000 + (Math.abs(h) % 9000));
-}
+export { trackNumber };
 
 function pad3(n: number): string {
   const v = ((Math.round(n) % 360) + 360) % 360;
@@ -215,6 +249,34 @@ const FINISH_SHADER = {
     }`,
 };
 
+// CRT: phosphor glow from 12 taps, vignette and a dark rounded bezel falloff,
+// all in one pass. Scanlines are CSS over the whole screen (text included).
+const CRT_SHADER = {
+  uniforms: { tDiffuse: { value: null as THREE.Texture | null }, uTexel: { value: new THREE.Vector2(1, 1) } },
+  vertexShader: /* glsl */ `
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: /* glsl */ `
+    uniform sampler2D tDiffuse;
+    uniform vec2 uTexel;
+    varying vec2 vUv;
+    vec3 tap(vec2 o) { return texture2D(tDiffuse, vUv + o * uTexel).rgb; }
+    void main() {
+      vec3 c = texture2D(tDiffuse, vUv).rgb;
+      vec3 g = tap(vec2(2.0, 0.0)) + tap(vec2(-2.0, 0.0)) + tap(vec2(0.0, 2.0)) + tap(vec2(0.0, -2.0))
+             + tap(vec2(1.5, 1.5)) + tap(vec2(-1.5, 1.5)) + tap(vec2(1.5, -1.5)) + tap(vec2(-1.5, -1.5));
+      vec3 w = tap(vec2(5.0, 0.0)) + tap(vec2(-5.0, 0.0)) + tap(vec2(0.0, 5.0)) + tap(vec2(0.0, -5.0));
+      vec3 glow = max(g / 8.0 - 0.03, 0.0) * 0.75 + max(w / 4.0 - 0.05, 0.0) * 0.35;
+      vec3 col = c + glow;
+      vec2 q = vUv - 0.5;
+      float vig = 1.0 - dot(q, q) * 0.85;
+      // corners fall off like a curved tube behind a bezel
+      vec2 e = smoothstep(vec2(0.0), vec2(0.035, 0.05), vUv) * smoothstep(vec2(0.0), vec2(0.035, 0.05), 1.0 - vUv);
+      col *= vig * mix(0.55, 1.0, e.x * e.y);
+      gl_FragColor = vec4(col, 1.0);
+    }`,
+};
+
 export class TacticalPlot {
   readonly proj: PlotProjection;
   private host: HTMLElement;
@@ -224,6 +286,20 @@ export class TacticalPlot {
   private camera = new THREE.PerspectiveCamera(FOV, 1, 1, 10000);
   private composer: EffectComposer;
   private bloom: UnrealBloomPass;
+  private finishPass: ShaderPass;
+  private crtPass: ShaderPass;
+  private mode: DisplayMode = "current";
+  private theme: PlotTheme = THEMES.current;
+  private gridOn = true;
+  private staticObjects: THREE.Object3D[] = [];
+  // adaptive render scale: drop resolution when frames run long, recover when calm
+  private renderScale = 1;
+  private forcedScale: number | null = null;
+  private frameMs = 16.7;
+  private scaleCheckAt = 0;
+  private calmChecks = 0;
+  private occluderTimer: ReturnType<typeof setTimeout> | null = null;
+  private occluderInterval: ReturnType<typeof setInterval> | null = null;
   private raycaster = new THREE.Raycaster();
   private ground = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
@@ -298,6 +374,8 @@ export class TacticalPlot {
   private leaderSvg: SVGSVGElement;
   private leaderPaths: Record<"friendly" | "hostile" | "unknown", SVGPathElement>;
   private leaderD = { friendly: "", hostile: "", unknown: "" };
+  private leaderHalo!: SVGPathElement;
+  private leaderHaloD = "";
 
   // DOM labels outside the tracks
   private labelPool: HTMLDivElement[] = [];
@@ -353,7 +431,11 @@ export class TacticalPlot {
     this.composer.addPass(new RenderPass(this.scene, this.camera));
     this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.32, 0.3, 0.34);
     this.composer.addPass(this.bloom);
-    this.composer.addPass(new ShaderPass(FINISH_SHADER));
+    this.finishPass = new ShaderPass(FINISH_SHADER);
+    this.composer.addPass(this.finishPass);
+    this.crtPass = new ShaderPass(CRT_SHADER);
+    this.crtPass.enabled = false;
+    this.composer.addPass(this.crtPass);
     this.composer.addPass(new OutputPass());
 
     // label leaders are drawn in screen space so they stay exact when tilted
@@ -366,6 +448,7 @@ export class TacticalPlot {
       this.leaderSvg.appendChild(path);
       return path;
     };
+    this.leaderHalo = mk("tx-leader-halo");
     this.leaderPaths = { friendly: mk("tx-leader"), hostile: mk("tx-leader tx-leader--hostile"), unknown: mk("tx-leader tx-leader--unknown") };
     overlay.appendChild(this.leaderSvg);
 
@@ -387,9 +470,20 @@ export class TacticalPlot {
     this.measureText();
     document.fonts?.ready.then(() => !this.disposed && this.measureText());
     // panels opening or closing invalidate the chrome rects at once
+    // (the plot's own label writes are ignored; only chrome changes count)
     const root = host.closest(".tx-root") ?? document.body;
-    this.chromeObserver = new MutationObserver(() => { this.occluderAt = -Infinity; });
+    this.chromeObserver = new MutationObserver((records) => {
+      for (const m of records) {
+        const el = m.target instanceof Element ? m.target : m.target.parentElement;
+        if (el && !this.overlay.contains(el)) {
+          this.scheduleOccluders();
+          return;
+        }
+      }
+    });
     this.chromeObserver.observe(root, { childList: true, subtree: true });
+    this.occluderInterval = setInterval(() => this.scheduleOccluders(), 1000);
+    this.scheduleOccluders();
 
     this.lastFrame = performance.now();
     this.raf = requestAnimationFrame(this.frame);
@@ -440,9 +534,12 @@ export class TacticalPlot {
     );
     land.renderOrder = 1;
     this.scene.add(land);
+    this.staticObjects.push(land);
+    const matte = this.theme.matte ? C.field : null;
 
     // depth contours (Natural Earth bathymetry polygons, outline only)
     const contour = new LineBatch({ width: 1, dashed: true, renderOrder: 3 });
+    contour.setMatte(matte);
     contour.material.dashSize = 6;
     contour.material.gapSize = 5;
     const depthAlpha: Record<string, number> = { "200": 0.55, "1000": 0.4, "2000": 0.32, "3000": 0.26 };
@@ -453,7 +550,7 @@ export class TacticalPlot {
           for (let i = 0; i < ring.length; i++) {
             const a = ring[i], b = ring[(i + 1) % ring.length];
             if (onEdge(a, b)) { contour.breakRun(); continue; }
-            contour.seg(P.x(a[0]), P.y(a[1]), 0, P.x(b[0]), P.y(b[1]), 0, C.dim, depthAlpha[depth] ?? 0.3);
+            contour.seg(P.x(a[0]), P.y(a[1]), 0, P.x(b[0]), P.y(b[1]), 0, C.contour, (depthAlpha[depth] ?? 0.3) * this.theme.contourAlpha);
           }
         }
       }
@@ -462,36 +559,44 @@ export class TacticalPlot {
 
     // coastline and land borders
     const coast = new LineBatch({ width: 1.4, renderOrder: 5 });
+    coast.setMatte(matte);
     for (const line of geo.coast as number[][][]) {
       const pts: number[] = [];
       for (const p of line) pts.push(P.x(p[0]), P.y(p[1]));
-      coast.polyline(pts, 0, C.phosphor, 0.5);
+      coast.polyline(pts, 0, C.coast, this.theme.coastAlpha);
     }
     coast.flush();
     const borders = new LineBatch({ width: 1, dashed: true, renderOrder: 4 });
+    borders.setMatte(matte);
     borders.material.dashSize = 3;
     borders.material.gapSize = 4;
     for (const line of geo.borders as number[][][]) {
       const pts: number[] = [];
       for (const p of line) pts.push(P.x(p[0]), P.y(p[1]));
-      borders.polyline(pts, 0, C.dim, 0.5);
+      borders.polyline(pts, 0, C.border, this.theme.matte ? 1 : 0.5);
     }
     borders.flush();
 
     // lat/long grid every 0.5 degree, whole degrees brighter
     const grid = new LineBatch({ width: 1, renderOrder: 2 });
+    grid.setMatte(matte);
+    const gMaj = this.theme.gridMajor, gMin = this.theme.gridMinor;
     for (let lng = Math.ceil(bbox[0] * 2) / 2; lng <= bbox[2]; lng += 0.5) {
       const major = Math.abs(lng - Math.round(lng)) < 1e-6;
-      grid.seg(P.x(lng), P.y(bbox[1]), 0, P.x(lng), P.y(bbox[3]), 0, C.faint, major ? 0.9 : 0.5);
+      grid.seg(P.x(lng), P.y(bbox[1]), 0, P.x(lng), P.y(bbox[3]), 0, C.grid, major ? gMaj : gMin);
     }
     for (let lat = Math.ceil(bbox[1] * 2) / 2; lat <= bbox[3]; lat += 0.5) {
       const major = Math.abs(lat - Math.round(lat)) < 1e-6;
-      grid.seg(P.x(bbox[0]), P.y(lat), 0, P.x(bbox[2]), P.y(lat), 0, C.faint, major ? 0.9 : 0.5);
+      grid.seg(P.x(bbox[0]), P.y(lat), 0, P.x(bbox[2]), P.y(lat), 0, C.grid, major ? gMaj : gMin);
     }
     grid.flush();
+    grid.object.visible = this.gridOn && grid.count > 0;
 
     this.staticBatches = [contour, coast, borders, grid];
-    for (const b of this.staticBatches) this.scene.add(b.object);
+    for (const b of this.staticBatches) {
+      this.scene.add(b.object);
+      this.staticObjects.push(b.object);
+    }
 
     this.buildRelief();
   }
@@ -507,7 +612,7 @@ export class TacticalPlot {
     const wire: number[] = [];
     const wireCol: number[] = [];
     const light = new THREE.Vector3(-0.5, 0.6, 0.62).normalize();
-    const base = new THREE.Color(PALETTE.phosphorFaint);
+    const base = C.relief.clone();
     const e1 = new THREE.Vector3(), e2 = new THREE.Vector3(), n = new THREE.Vector3();
     const tri = (a: THREE.Vector3, b: THREE.Vector3, c: THREE.Vector3) => {
       if (a.z <= 0 && b.z <= 0 && c.z <= 0) return;
@@ -527,8 +632,8 @@ export class TacticalPlot {
         const a = vx(i, j), b = vx(i, j + 1), c = vx(i + 1, j), d = vx(i + 1, j + 1);
         tri(a, b, d);
         tri(a, d, c);
-        if (a.z > 0 || b.z > 0) { wire.push(a.x, a.y, a.z, b.x, b.y, b.z); wireCol.push(...C.dim.toArray(), ...C.dim.toArray()); }
-        if (a.z > 0 || c.z > 0) { wire.push(a.x, a.y, a.z, c.x, c.y, c.z); wireCol.push(...C.dim.toArray(), ...C.dim.toArray()); }
+        if (a.z > 0 || b.z > 0) { wire.push(a.x, a.y, a.z, b.x, b.y, b.z); wireCol.push(...C.contour.toArray(), ...C.contour.toArray()); }
+        if (a.z > 0 || c.z > 0) { wire.push(a.x, a.y, a.z, c.x, c.y, c.z); wireCol.push(...C.contour.toArray(), ...C.contour.toArray()); }
       }
     }
     const g = new THREE.BufferGeometry();
@@ -539,6 +644,7 @@ export class TacticalPlot {
     relief.visible = false;
     this.relief = relief;
     this.scene.add(relief);
+    this.staticObjects.push(relief);
 
     const wg = new LineSegmentsGeometry();
     wg.setPositions(wire);
@@ -548,7 +654,7 @@ export class TacticalPlot {
       vertexColors: true,
       transparent: true,
       opacity: 0,
-      blending: THREE.AdditiveBlending,
+      blending: this.theme.matte ? THREE.NormalBlending : THREE.AdditiveBlending,
       depthWrite: false,
     });
     const rw = new LineSegments2(wg, wm);
@@ -556,6 +662,7 @@ export class TacticalPlot {
     rw.visible = false;
     this.reliefWire = rw;
     this.scene.add(rw);
+    this.staticObjects.push(rw);
   }
 
   fitTheater() {
@@ -574,6 +681,61 @@ export class TacticalPlot {
     this.insets = i;
     this.viewHash = "";
     this.applyViewOffset();
+  }
+
+  /** Switch display mode: palette, linework, glyphs and the post chain. */
+  setMode(mode: DisplayMode) {
+    if (mode === this.mode && this.staticObjects.length) return;
+    this.mode = mode;
+    this.theme = THEMES[mode];
+    applyThemeColours(this.theme);
+    this.renderer.setClearColor(C.field, 1);
+    // rebuild the static map in the new inks
+    for (const o of this.staticObjects) {
+      this.scene.remove(o);
+      const m = o as THREE.Mesh;
+      m.geometry?.dispose?.();
+      (m.material as THREE.Material | undefined)?.dispose?.();
+    }
+    this.staticObjects.length = 0;
+    this.staticBatches = [];
+    this.buildStatic();
+    const matte = this.theme.matte ? C.field : null;
+    for (const b of [this.solid, this.thin, this.dashed]) b.setMatte(matte);
+    for (const p of [this.dots, this.marks]) {
+      (p.material as THREE.PointsMaterial).blending = matte ? THREE.NormalBlending : THREE.AdditiveBlending;
+      (p.material as THREE.PointsMaterial).needsUpdate = true;
+    }
+    for (const d of this.discs) {
+      (d.material as THREE.MeshBasicMaterial).blending = matte ? THREE.NormalBlending : THREE.AdditiveBlending;
+      (d.material as THREE.MeshBasicMaterial).needsUpdate = true;
+    }
+    // post chain: bloom (current), one CRT pass, or nothing
+    this.bloom.enabled = this.theme.post === "bloom";
+    this.finishPass.enabled = this.theme.post === "bloom";
+    this.crtPass.enabled = this.theme.post === "crt";
+    // glyphs in the new inks and sizes
+    for (const t of this.tracks.values()) if (t.spriteRole) this.setSprite(t, t.spriteSidc, t.spriteRole, true);
+    this.resize();
+    this.measureText();
+    // the mode's font may load only now: measure again once it is in
+    const family = getComputedStyle(this.overlay).fontFamily;
+    const again = () => !this.disposed && this.measureText();
+    if (document.fonts?.load) document.fonts.load(`16px ${family}`).then(again, again);
+    for (const t of this.tracks.values()) t.blockText = "";
+  }
+
+  setGrid(on: boolean) {
+    this.gridOn = on;
+    const g = this.staticBatches[3];
+    if (g) g.object.visible = on;
+    this.viewHash = "";
+  }
+
+  /** Pin the render scale (testing and measurement); null returns to adaptive. */
+  setRenderScale(scale: number | null) {
+    this.forcedScale = scale;
+    this.resize();
   }
 
   setCallbacks(c: PlotCallbacks) {
@@ -621,8 +783,7 @@ export class TacticalPlot {
       this.sampleHistory(t, input.simTime, HIST_UNIT_MS);
       const aff = getAffiliation(u, input.playerSide);
       const pl = getPlatform(u.platformId);
-      const color = aff === "friendly" ? PALETTE.phosphor : aff === "hostile" ? PALETTE.alarm : PALETTE.phosphorDim;
-      this.setSprite(t, sidcFor(aff, pl?.dimension ?? "sea", pl?.functionId ?? "CL"), color);
+      this.setSprite(t, sidcFor(aff, pl?.dimension ?? "sea", pl?.functionId ?? "CL"), aff === "friendly" ? "friendly" : aff === "hostile" ? "hostile" : "unknown");
     }
 
     // contacts exactly as the sensors report them
@@ -642,7 +803,7 @@ export class TacticalPlot {
       this.setSprite(
         t,
         known ? sidcFor("hostile", pl?.dimension ?? "unknown", pl?.functionId ?? "") : sidcFor("unknown", "unknown", ""),
-        known ? PALETTE.alarm : PALETTE.phosphorDim,
+        known ? "hostile" : "unknown",
       );
     }
 
@@ -709,6 +870,9 @@ export class TacticalPlot {
       frames: () => this.frames,
       drawnTracks: () => ({ units: this.drawn.unitSprites, contacts: this.drawn.contactSprites }),
       labelAudit: () => this.audit(),
+      mode: () => this.mode,
+      renderScale: () => this.forcedScale ?? this.renderScale,
+      setRenderScale: (v: number | null) => this.setRenderScale(v),
       trackScreens: () =>
         [...this.tracks.values()]
           .filter((t) => t.onScreen && t.kind !== "weapon")
@@ -723,6 +887,8 @@ export class TacticalPlot {
     cancelAnimationFrame(this.raf);
     this.resizeObserver.disconnect();
     this.chromeObserver?.disconnect();
+    if (this.occluderTimer) clearTimeout(this.occluderTimer);
+    if (this.occluderInterval) clearInterval(this.occluderInterval);
     this.unbindInput();
     for (const t of this.tracks.values()) this.disposeTrack(t);
     this.tracks.clear();
@@ -766,7 +932,7 @@ export class TacticalPlot {
         key, kind, id,
         from: new THREE.Vector2(), to: new THREE.Vector2(NaN, NaN), pos: new THREE.Vector2(),
         z: 0, t0: 0, history: [], lastHistSim: -Infinity,
-        spriteW: 0, spriteH: 0, blockText: "", blockW: 0, blockH: 0, slot: 0,
+        spriteW: 0, spriteH: 0, spriteSidc: "", blockText: "", blockW: 0, blockH: 0, slot: 0,
         compactText: "", compactW: 0, compactH: 0, fullW: 0, fullH: 0, shownText: "", blockX: 0, blockY: 0,
         screen: new THREE.Vector2(), onScreen: false, alpha: 1, paintT: 0, seen: true,
       };
@@ -825,10 +991,18 @@ export class TacticalPlot {
     this.effects.length = 0;
   }
 
-  private setSprite(t: Track, sidc: string, color: string) {
-    const key = `${sidc}|${color}`;
-    if (t.spriteKey === key) return;
-    const tex = symbolTexture(sidc, color, Math.max(2, Math.ceil(this.dpr * 1.5)));
+  private setSprite(t: Track, sidc: string, role: "friendly" | "hostile" | "unknown", force = false) {
+    const th = this.theme;
+    const color = role === "friendly" ? th.friendly : role === "hostile" ? th.hostile : th.unknown;
+    const key = `${sidc}|${color}|${th.symbolSize}|${th.symbolStroke}|${th.symbolKnockout ?? ""}`;
+    t.spriteSidc = sidc;
+    t.spriteRole = role;
+    if (t.spriteKey === key && !force) return;
+    const tex = symbolTexture(sidc, color, Math.max(2, Math.ceil(this.dpr * 1.5)), {
+      size: th.symbolSize,
+      stroke: th.symbolStroke,
+      knockout: th.symbolKnockout,
+    });
     if (!t.sprite) {
       const m = new THREE.SpriteMaterial({
         map: tex.texture,
@@ -878,13 +1052,15 @@ export class TacticalPlot {
     if (t.kind === "contact" && t.contact) {
       const c = t.contact;
       const age = Math.max(0, Math.floor((input.simTime - c.lastUpdateTime) / 1000));
-      const l1 = `TN${trackNumber(c.id)} ${CLS_LABEL[c.classification]}`;
-      const l2 = c.platformName ? shortName(c.platformName.split("[")[0]) : c.sensorType.toUpperCase();
+      // same name as the contact list: track number until classified, then the platform
+      const known = isClassified(c);
+      const name = contactName(c, (id) => input.units.find((u) => u.id === id));
+      const l1 = `${shortName(name)} ${CLS_LABEL[c.classification]}`;
+      const l2 = known ? `TN${trackNumber(c.id)} ${c.sensorType.toUpperCase()}` : c.sensorType.toUpperCase();
       const parts: string[] = [];
       if (c.estimatedHeading !== undefined) parts.push(`C${pad3(c.estimatedHeading)}`);
       if (c.estimatedSpeed !== undefined) parts.push(`S${Math.round(c.estimatedSpeed)}`);
       if (age > 30) parts.push(`+${age}S`);
-      const known = c.classification === "classified" || c.classification === "tracked";
       return { lines: parts.length ? [l1, l2, parts.join(" ")] : [l1, l2], cls: known ? "hostile" : "unknown" };
     }
     return { lines: [], cls: "" };
@@ -1037,7 +1213,8 @@ export class TacticalPlot {
     const h = Math.max(1, this.host.clientHeight);
     this.W = w;
     this.H = h;
-    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // device pixels capped, then scaled down when frames run long
+    this.dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP) * (this.forcedScale ?? this.renderScale);
     this.renderer.setPixelRatio(this.dpr);
     this.renderer.setSize(w, h, false);
     this.composer.setPixelRatio(this.dpr);
@@ -1048,14 +1225,16 @@ export class TacticalPlot {
     if (this.reliefWire) (this.reliefWire.material as LineMaterial).resolution.set(rw, rh);
     (this.dots.material as THREE.PointsMaterial).size = 3 * this.dpr;
     (this.marks.material as THREE.PointsMaterial).size = 7 * this.dpr;
+    const ls = this.theme.lineScale;
     for (const b of [this.solid, this.thin, this.dashed, ...this.staticBatches]) {
-      b.material.linewidth = (b === this.solid ? 1.4 : b === this.dashed ? 1.3 : b === this.staticBatches[1] ? 1.4 : 1) * this.dpr;
+      b.material.linewidth = (b === this.solid ? 1.4 : b === this.dashed ? 1.3 : b === this.staticBatches[1] ? 1.4 : 1) * this.dpr * ls;
     }
+    (this.crtPass.uniforms.uTexel.value as THREE.Vector2).set(1 / (w * this.dpr), 1 / (h * this.dpr));
     if (this.reliefWire) (this.reliefWire.material as LineMaterial).linewidth = this.dpr;
     this.camera.aspect = w / h;
     this.applyViewOffset();
     this.viewHash = "";
-    this.occluderAt = -Infinity;
+    this.scheduleOccluders();
   }
 
   private applyViewOffset() {
@@ -1111,11 +1290,32 @@ export class TacticalPlot {
     const dt = Math.min(0.1, (now - this.lastFrame) / 1000);
     this.lastFrame = now;
     this.frames++;
+    this.adaptScale(now, dt * 1000);
 
     this.stepCamera(dt);
     this.drawDynamic(now);
     this.composer.render(dt);
   };
+
+  /** Long frames for a second drop the render scale; three calm seconds bring it back. */
+  private adaptScale(now: number, ms: number) {
+    this.frameMs += (Math.min(ms, 100) - this.frameMs) * 0.08;
+    if (this.forcedScale !== null || now < this.scaleCheckAt) return;
+    this.scaleCheckAt = now + 1000;
+    if (this.frameMs > 20 && this.renderScale > SCALE_MIN) {
+      this.renderScale = Math.max(SCALE_MIN, this.renderScale * 0.85);
+      this.calmChecks = 0;
+      this.resize();
+    } else if (this.frameMs < 14 && this.renderScale < 1) {
+      if (++this.calmChecks >= 3) {
+        this.renderScale = Math.min(1, this.renderScale / 0.85);
+        this.calmChecks = 0;
+        this.resize();
+      }
+    } else {
+      this.calmChecks = 0;
+    }
+  }
 
   private stepCamera(dt: number) {
     // tilt
@@ -1200,16 +1400,22 @@ export class TacticalPlot {
     dashed.clear();
     let nd = 0, nm = 0;
     const dotsPos = this.dotsPos, dotsCol = this.dotsCol, marksPos = this.marksPos, marksCol = this.marksCol;
+    const F = this.theme.matte ? C.field : null;
+    const ink = (arr: Float32Array, i: number, c: THREE.Color, a: number) => {
+      arr[i] = F ? F.r + (c.r - F.r) * a : c.r * a;
+      arr[i + 1] = F ? F.g + (c.g - F.g) * a : c.g * a;
+      arr[i + 2] = F ? F.b + (c.b - F.b) * a : c.b * a;
+    };
     const dot = (x: number, y: number, z: number, c: THREE.Color, a: number) => {
       if (nd >= 4096) return;
       dotsPos[nd * 3] = x; dotsPos[nd * 3 + 1] = y; dotsPos[nd * 3 + 2] = z;
-      dotsCol[nd * 3] = c.r * a; dotsCol[nd * 3 + 1] = c.g * a; dotsCol[nd * 3 + 2] = c.b * a;
+      ink(dotsCol, nd * 3, c, a);
       nd++;
     };
     const mark = (x: number, y: number, z: number, c: THREE.Color, a: number) => {
       if (nm >= 1024) return;
       marksPos[nm * 3] = x; marksPos[nm * 3 + 1] = y; marksPos[nm * 3 + 2] = z;
-      marksCol[nm * 3] = c.r * a; marksCol[nm * 3 + 1] = c.g * a; marksCol[nm * 3 + 2] = c.b * a;
+      ink(marksCol, nm * 3, c, a);
       nm++;
     };
     let discUsed = 0;
@@ -1231,13 +1437,21 @@ export class TacticalPlot {
       let m = this.discs[discUsed];
       if (!m) {
         m = new THREE.Mesh(this.discGeo, new THREE.MeshBasicMaterial({
-          transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending,
+          transparent: true, depthTest: false, depthWrite: false,
+          blending: this.theme.matte ? THREE.NormalBlending : THREE.AdditiveBlending,
         }));
         m.renderOrder = 6;
         this.discs.push(m);
         this.scene.add(m);
       }
-      (m.material as THREE.MeshBasicMaterial).color.copy(c).multiplyScalar(a);
+      const dm = m.material as THREE.MeshBasicMaterial;
+      if (this.theme.matte) {
+        dm.color.copy(c);
+        dm.opacity = Math.min(1, a * 4);
+      } else {
+        dm.color.copy(c).multiplyScalar(a);
+        dm.opacity = 1;
+      }
       m.position.set(x, y, 0);
       m.scale.set(r, r, 1);
       m.visible = true;
@@ -1249,7 +1463,6 @@ export class TacticalPlot {
     dr.weaponLines = dr.weaponHeads = dr.uncertaintyDiscs = dr.uncertaintyEdges = 0;
     dr.coverageDiscs = dr.coverageEdges = dr.unitSprites = dr.contactSprites = 0;
     dr.waypointPaths.length = 0;
-    this.refreshOccluders(now);
 
     const dashPx = 7, gapPx = 5;
     dashed.material.dashSize = dashPx * this.kPx;
@@ -1307,7 +1520,7 @@ export class TacticalPlot {
         if (!t || !t.unit) continue;
         const pl = getPlatform(t.unit.platformId);
         const friendly = t.unit.side === input.playerSide;
-        const col = friendly ? C.phosphor : C.alarm;
+        const col = friendly ? C.ringF : C.ringH;
         if (pl?.sensorRangeKm) {
           dashed.circle(t.pos.x, t.pos.y, 0, pl.sensorRangeKm, col, 0.75, 120);
           this.ringLabel(t.pos.x, t.pos.y + pl.sensorRangeKm, `SNS ${Math.round(pl.sensorRangeKm / KM_PER_NM)}NM`, friendly);
@@ -1324,7 +1537,7 @@ export class TacticalPlot {
         for (const t of this.tracks.values()) {
           if (!t.contact || t.contact.positionUncertainty <= 0.5) continue;
           const known = t.contact.classification === "classified" || t.contact.classification === "tracked";
-          const col = known ? C.alarm : C.dim;
+          const col = known ? C.hostile : C.unknown;
           disc(t.pos.x, t.pos.y, t.contact.positionUncertainty, col, 0.05 * t.alpha);
           dr.uncertaintyDiscs++;
           dashed.circle(t.pos.x, t.pos.y, 0, t.contact.positionUncertainty, col, 0.55 * t.alpha, 48);
@@ -1353,7 +1566,7 @@ export class TacticalPlot {
         const h = t.history;
         const n = h.length / 2;
         if (!n) continue;
-        const col = t.kind === "weapon" ? (t.weapon?.launchedBySide === input.playerSide ? C.phosphor : C.alarm) : t.contact ? (t.contact.classification === "classified" || t.contact.classification === "tracked" ? C.alarm : C.dim) : t.unit && t.unit.side !== input.playerSide ? C.alarm : C.phosphor;
+        const col = t.kind === "weapon" ? (t.weapon?.launchedBySide === input.playerSide ? C.weaponF : C.weaponH) : t.contact ? (t.contact.classification === "classified" || t.contact.classification === "tracked" ? C.hostile : C.unknown) : t.unit && t.unit.side !== input.playerSide ? C.hostile : C.phosphor;
         for (let i = 0; i < n; i++) {
           const a = (0.2 + 0.6 * ((i + 1) / n)) * t.alpha * (t.kind === "weapon" ? 0.75 : 1);
           dot(h[i * 2], h[i * 2 + 1], 0, col, a);
@@ -1364,7 +1577,7 @@ export class TacticalPlot {
       for (const w of this.weaponLines(input)) {
         const t = this.tracks.get(`weapon:${w.weapon.id}`);
         if (!t) continue;
-        const col = w.friendly ? C.phosphor : C.alarm;
+        const col = w.friendly ? C.weaponF : C.weaponH;
         if (w.target) {
           dashed.breakRun();
           dashed.seg(t.pos.x, t.pos.y, 0, w.target.x, w.target.y, 0, col, 0.55);
@@ -1397,8 +1610,8 @@ export class TacticalPlot {
         const friendly = t.unit?.side === input.playerSide;
         const hostileUnit = !!t.unit && !friendly;
         const col = t.contact
-          ? (t.contact.classification === "classified" || t.contact.classification === "tracked" ? C.alarm : C.dim)
-          : hostileUnit ? C.alarm : C.phosphor;
+          ? (t.contact.classification === "classified" || t.contact.classification === "tracked" ? C.hostile : C.unknown)
+          : hostileUnit ? C.hostile : C.phosphor;
 
         // course leader
         const hdg = t.unit ? t.unit.heading : t.contact?.estimatedHeading;
@@ -1411,12 +1624,12 @@ export class TacticalPlot {
         if (t.z > 0.01) thin.seg(t.pos.x, t.pos.y, 0, t.pos.x, t.pos.y, t.z, col, 0.45);
 
         // radar sweep on emitters
-        if (t.unit && input.orders.get(t.unit.id)?.radarActive) {
+        if (this.theme.sweeps && t.unit && input.orders.get(t.unit.id)?.radarActive) {
           // with S on, friendly ships sweep their full radar range, faintly
           const pl = getPlatform(t.unit.platformId);
           const big = input.showSensorCoverage && friendly && pl?.dimension === "sea" ? pl.sensorRangeKm : undefined;
           const radius = big ?? 26 * px;
-          this.sweep(t, radius, sweepAngle + (parseInt(trackNumber(t.id), 10) % 360) * 0.0174533, friendly ? C.phosphor : C.alarm, big ? 0.2 * coverageShare : 0.75);
+          this.sweep(t, radius, sweepAngle + (parseInt(trackNumber(t.id), 10) % 360) * 0.0174533, friendly ? C.phosphor : C.hostile, big ? 0.2 * coverageShare : this.theme.sweepAlpha);
           usedSweeps.add(t.key);
         }
       }
@@ -1603,10 +1816,16 @@ export class TacticalPlot {
     this.labelRects.push(rect);
   }
 
-  /** Re-read the chrome rects a few times a second (panels open and close). */
-  private refreshOccluders(now: number) {
-    if (now - this.occluderAt < 200) return;
-    this.occluderAt = now;
+  /** Chrome rects are read outside the animation frame, when the chrome changes. */
+  private scheduleOccluders() {
+    if (this.occluderTimer || this.disposed) return;
+    this.occluderTimer = setTimeout(() => {
+      this.occluderTimer = null;
+      if (!this.disposed) this.refreshOccluders();
+    }, 0);
+  }
+
+  private refreshOccluders() {
     const host = this.host.getBoundingClientRect();
     const rects: Rect[] = [];
     document.querySelectorAll<HTMLElement>("[data-plot-occluder]").forEach((el) => {
@@ -1708,8 +1927,9 @@ export class TacticalPlot {
       }
       const hw = Math.max(11, (t.spriteW || 22) / 2), hh = Math.max(11, (t.spriteH || 22) / 2);
       const g = rect(s.x - hw, s.y - hh, hw * 2, hh * 2);
-      // the drawn symbol: a 2525 frame fills about 16 px of its 22 px texture
-      const core = rect(s.x - 8, s.y - 8, 16, 16);
+      // the drawn symbol: a 2525 frame fills about 70% of its texture
+      const ch = Math.max(8, Math.min(t.spriteW || 22, t.spriteH || 22) * 0.36);
+      const core = rect(s.x - ch, s.y - ch, ch * 2, ch * 2);
       glyphs.push({ key: t.key, rect: g, core, x: s.x, y: s.y });
       if (!t.block) continue;
       // a glyph the chrome cuts into takes its label with it
@@ -1726,7 +1946,7 @@ export class TacticalPlot {
       const full = this.blockSize(lines, lines.length), compact = this.blockSize(lines, 1);
       const priority = this.trackPriority(t, input);
       items.push({
-        key: t.key, priority, keep: priority <= 2, gx: s.x, gy: s.y, glyph: g,
+        key: t.key, priority, keep: priority <= 2, gx: s.x, gy: s.y, glyph: g, core,
         fullW: full.w, fullH: full.h, compactW: compact.w, compactH: compact.h,
       });
       byItem.push({ t, cls });
@@ -1738,6 +1958,7 @@ export class TacticalPlot {
     }
 
     const placements = this.placer.place(items, {
+      compactWithin: this.mode === "crt" ? 64 : 0,
       blocked: (r) => this.underChrome(r),
       fixed: this.labelRects,
       glyphs,
@@ -1789,12 +2010,18 @@ export class TacticalPlot {
       }
     }
 
+    let halo = "";
     for (const k of ["friendly", "hostile", "unknown"] as const) {
       const d = leaders[k].join("");
+      halo += d;
       if (d !== this.leaderD[k]) {
         this.leaderD[k] = d;
         this.leaderPaths[k].setAttribute("d", d);
       }
+    }
+    if (halo !== this.leaderHaloD) {
+      this.leaderHaloD = halo;
+      this.leaderHalo.setAttribute("d", halo);
     }
 
     this.resolveGridLabels();
@@ -1805,7 +2032,7 @@ export class TacticalPlot {
     const shown = this.gridShown;
     shown.length = 0;
     for (const g of this.gridCands) {
-      let ok = !this.underChrome(g.rect);
+      let ok = this.gridOn && !this.underChrome(g.rect);
       if (ok) for (const b of this.lastBlocks) if (intersects(g.rect, b)) { ok = false; break; }
       if (ok) for (const r of this.labelRects) if (intersects(g.rect, r)) { ok = false; break; }
       if (ok) for (const l of this.lastLeaders) if (segHitsRect(l.seg, g.rect, 1)) { ok = false; break; }
@@ -1834,7 +2061,27 @@ export class TacticalPlot {
       const r = g.getBoundingClientRect();
       if (r.width > 0) grid.push({ x: r.left - host.left, y: r.top - host.top, w: r.width, h: r.height });
     }
+    // the friendly leader path as the browser renders it
+    const ls = getComputedStyle(this.leaderPaths.friendly);
+    const opacity = parseFloat(ls.opacity || "1") * parseFloat(ls.strokeOpacity || "1") * parseFloat(getComputedStyle(this.leaderSvg).opacity || "1");
+    const heads: Rect[] = [];
+    for (const t of this.tracks.values()) {
+      if (t.kind === "weapon" && t.onScreen) heads.push({ x: t.screen.x - 6, y: t.screen.y - 6, w: 12, h: 12 });
+    }
+    const layout: { key: string; form: string; side: number }[] = [];
+    for (const b of blocks) {
+      const t = this.tracks.get(b.key);
+      if (!t) continue;
+      const cx = b.rect.x + b.rect.w / 2, cy = b.rect.y + b.rect.h / 2;
+      layout.push({
+        key: b.key,
+        form: t.shownText === t.blockText ? "full" : "compact",
+        side: (cx >= t.screen.x ? 0 : 2) + (cy >= t.screen.y ? 1 : 0),
+      });
+    }
     const counts = auditLabels({
+      heads,
+      leaderStroke: { width: parseFloat(ls.strokeWidth || "1"), opacity },
       blocks,
       leaders: this.lastLeaders.map((l) => ({ key: l.key, seg: { ...l.seg } })),
       glyphs: this.glyphs.map((g) => ({ key: g.key, rect: { ...g.rect }, core: { ...g.core }, x: g.x, y: g.y })),
@@ -1849,7 +2096,7 @@ export class TacticalPlot {
         closest = Math.min(closest, Math.hypot(this.glyphs[i].x - this.glyphs[j].x, this.glyphs[i].y - this.glyphs[j].y));
       }
     }
-    return { ...counts, glyphs: this.glyphs.length, leaders: this.lastLeaders.length, weaponLines: this.weaponSegs.length, closestGlyphs: closest === Infinity ? -1 : Math.round(closest), tilt: this.tiltAmt, hiddenKeep: this.keptHiddenKeys.join(" ") };
+    return { ...counts, glyphs: this.glyphs.length, leaders: this.lastLeaders.length, weaponLines: this.weaponSegs.length, closestGlyphs: closest === Infinity ? -1 : Math.round(closest), tilt: this.tiltAmt, hiddenKeep: this.keptHiddenKeys.join(" "), layout, mode: this.mode };
   }
 
   // ----------------------------------------------------- grid labels, scale

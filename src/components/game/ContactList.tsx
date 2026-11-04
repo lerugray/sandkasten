@@ -6,7 +6,7 @@ interface ContactListProps {
   contacts: Contact[];
   simTime: number;
   onContactClick?: (contact: Contact) => void;
-  /** Display name for a contact without a classified platform name. */
+  /** Display name for a contact; when given it decides every row's name. */
   contactLabel?: (contact: Contact) => string;
 }
 
@@ -67,7 +67,7 @@ export function ContactList({ contacts, simTime, onContactClick, contactLabel }:
                 {CLASSIFICATION_LABELS[contact.classification]}
               </span>
               <span className="text-[var(--color-tactical-text)] truncate flex-1">
-                {contact.platformName ?? contactLabel?.(contact) ?? `Contact ${contact.id.slice(-4)}`}
+                {contactLabel ? contactLabel(contact) : contact.platformName ?? `Contact ${contact.id.slice(-4)}`}
               </span>
               <span className="text-[var(--color-tactical-text-dim)] text-sm">
                 {contact.sensorType.toUpperCase()}

@@ -18,6 +18,8 @@ export class LineBatch {
   private distBuf: THREE.InstancedInterleavedBuffer | null = null;
   private n = 0;
   private run = 0; // running dash distance along the current polyline
+  /** when set, colours mix toward this field colour (matte ink) instead of adding light */
+  private matte: THREE.Color | null = null;
 
   constructor(opts: { width: number; dashed?: boolean; opacity?: number; renderOrder?: number }) {
     this.geometry = new LineSegmentsGeometry();
@@ -88,7 +90,10 @@ export class LineBatch {
     const p = this.pos, q = this.col;
     p[i] = x1; p[i + 1] = y1; p[i + 2] = z1;
     p[i + 3] = x2; p[i + 4] = y2; p[i + 5] = z2;
-    const r = c.r * alpha, g = c.g * alpha, b = c.b * alpha;
+    const m = this.matte;
+    const r = m ? m.r + (c.r - m.r) * alpha : c.r * alpha;
+    const g = m ? m.g + (c.g - m.g) * alpha : c.g * alpha;
+    const b = m ? m.b + (c.b - m.b) * alpha : c.b * alpha;
     q[i] = r; q[i + 1] = g; q[i + 2] = b;
     q[i + 3] = r; q[i + 4] = g; q[i + 5] = b;
     const len = Math.hypot(x2 - x1, y2 - y1, z2 - z1);
@@ -138,6 +143,12 @@ export class LineBatch {
       this.distBuf.addUpdateRange(0, this.n * 2);
     }
     this.object.visible = this.n > 0;
+  }
+
+  setMatte(field: THREE.Color | null) {
+    this.matte = field ? field.clone() : null;
+    this.material.blending = field ? THREE.NormalBlending : THREE.AdditiveBlending;
+    this.material.needsUpdate = true;
   }
 
   setResolution(w: number, h: number) {

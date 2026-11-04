@@ -15,7 +15,9 @@ import { useSimulation } from "@/lib/simulation/useSimulation";
 import { useInfoWar } from "@/lib/infowar/useInfoWar";
 import { SPEED_OPTIONS } from "@/lib/simulation/gameState";
 import { formatMeasurement } from "@/lib/map/measure";
-import { trackNumber, type PlotInput, type PlotInsets } from "@/lib/plot/TacticalPlot";
+import { type PlotInput, type PlotInsets } from "@/lib/plot/TacticalPlot";
+import { contactName, CLS_LABEL as NAME_CLS } from "@/lib/plot/contactName";
+import { DISPLAY_MODES, DISPLAY_MODE_NAMES, isDisplayMode, type DisplayMode } from "@/lib/plot/themes";
 import type { GeoPoint } from "@/lib/plot/projection";
 import type { Contact } from "@/lib/simulation/gameState";
 import type { CombatEvent } from "@/lib/simulation/combat";
@@ -24,6 +26,7 @@ import { Teletype, type TtyLine } from "./Teletype";
 const PlotView = dynamic(() => import("@/components/plot/PlotView"), { ssr: false });
 
 const FONT_URLS = [
+  "/fonts/px437-ibm-vga/Web437_IBM_VGA_9x16.woff",
   "/fonts/jetbrains-mono/jetbrains-mono-latin-400-normal.woff2",
   "/fonts/jetbrains-mono/jetbrains-mono-latin-700-normal.woff2",
 ];
@@ -85,7 +88,9 @@ function Cmd({
   testId,
   ariaLabel,
   dataSpeed,
+  capClass,
 }: {
+  capClass?: string;
   cap?: string;
   children: React.ReactNode;
   active?: boolean;
@@ -97,7 +102,7 @@ function Cmd({
 }) {
   return (
     <span className="tx-key">
-      {cap && <kbd className="tx-cap" aria-hidden="true">{cap}</kbd>}
+      {cap && <kbd className={`tx-cap${capClass ? " " + capClass : ""}`} aria-hidden="true">{cap}</kbd>}
       <button
         type="button"
         onClick={onClick}
@@ -146,12 +151,28 @@ export function TerminalPlay() {
   const [measureEnd, setMeasureEnd] = useState<GeoPoint | null>(null);
   const [showAutopauseSettings, setShowAutopauseSettings] = useState(false);
   const [tilt, setTilt] = useState(false);
+  // display mode (V) and grid (L); the choice persists per viewer
+  const [displayMode, setDisplayMode] = useState<DisplayMode>("crt");
+  const [gridOn, setGridOn] = useState(true);
+  const [modeFlash, setModeFlash] = useState(0);
+  // ?crtfont=vt323 swaps the CRT font, only for the font comparison frame
+  const [crtFont, setCrtFont] = useState<string | undefined>(undefined);
   const [, forcePrefsRender] = useState(0);
   const [holds, setHolds] = useState<TtyLine[]>([]);
   const [focusRequest, setFocusRequest] = useState<{ n: number; unitId: string } | null>(null);
   const [showBriefing, setShowBriefing] = useState(true);
   const [moreBelow, setMoreBelow] = useState(false);
   const panelBodyRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const cmdRef = useRef<HTMLElement>(null);
+  // the command bar wraps on narrow screens; the panels above it follow its height
+  useEffect(() => {
+    const cmd = cmdRef.current, root = rootRef.current;
+    if (!cmd || !root) return;
+    const ro = new ResizeObserver(() => root.style.setProperty("--tx-cmd-h", `${cmd.offsetHeight}px`));
+    ro.observe(cmd);
+    return () => ro.disconnect();
+  }, []);
 
   const cursorRef = useRef<HTMLSpanElement>(null);
   const scaleLabelRef = useRef<HTMLSpanElement>(null);
@@ -196,6 +217,46 @@ export function TerminalPlay() {
     [setAutopausePrefs]
   );
 
+  useEffect(() => {
+    const f = new URLSearchParams(window.location.search).get("crtfont");
+    if (f === "vt323") setCrtFont(f);
+    try {
+      const v = window.localStorage.getItem("sandkasten.display");
+      if (isDisplayMode(v)) setDisplayMode(v);
+      const g = window.localStorage.getItem("sandkasten.grid");
+      if (g === "off") setGridOn(false);
+    } catch {
+      /* storage blocked: keep the default */
+    }
+  }, []);
+  const cycleDisplay = useCallback(() => {
+    setDisplayMode((m) => {
+      const next = DISPLAY_MODES[(DISPLAY_MODES.indexOf(m) + 1) % DISPLAY_MODES.length];
+      try {
+        window.localStorage.setItem("sandkasten.display", next);
+      } catch {
+        /* storage blocked: the switch still works for this visit */
+      }
+      return next;
+    });
+    setModeFlash(Date.now());
+  }, []);
+  const toggleGrid = useCallback(() => {
+    setGridOn((g) => {
+      try {
+        window.localStorage.setItem("sandkasten.grid", g ? "off" : "on");
+      } catch {
+        /* storage blocked */
+      }
+      return !g;
+    });
+  }, []);
+  useEffect(() => {
+    if (!modeFlash) return;
+    const id = setTimeout(() => setModeFlash(0), 2600);
+    return () => clearTimeout(id);
+  }, [modeFlash]);
+
   // Keyboard commands
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -226,6 +287,12 @@ export function TerminalPlay() {
       } else if (k === "m") {
         e.preventDefault();
         toggleMeasure();
+      } else if (k === "v") {
+        e.preventDefault();
+        cycleDisplay();
+      } else if (k === "l") {
+        e.preventDefault();
+        toggleGrid();
       } else if (k === "t") {
         e.preventDefault();
         setTilt((p) => !p);
@@ -249,18 +316,23 @@ export function TerminalPlay() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePause, setSpeed, toggleMeasure, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, showBriefing]);
+  }, [togglePause, setSpeed, toggleMeasure, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, showBriefing, cycleDisplay, toggleGrid]);
 
   // The briefing card goes away on the first key or click anywhere, and when
   // the clock starts. It never swallows that input: the key or click still acts.
   useEffect(() => {
     if (!showBriefing) return;
     const dismiss = () => setShowBriefing(false);
+    // the BRIEF command toggles the card itself, so its own click is not a dismiss
+    const dismissPointer = (e: PointerEvent) => {
+      if (e.target instanceof Element && e.target.closest("[data-brief-toggle]")) return;
+      setShowBriefing(false);
+    };
     window.addEventListener("keydown", dismiss, true);
-    window.addEventListener("pointerdown", dismiss, true);
+    window.addEventListener("pointerdown", dismissPointer, true);
     return () => {
       window.removeEventListener("keydown", dismiss, true);
-      window.removeEventListener("pointerdown", dismiss, true);
+      window.removeEventListener("pointerdown", dismissPointer, true);
     };
   }, [showBriefing]);
   useEffect(() => {
@@ -298,11 +370,12 @@ export function TerminalPlay() {
   const fogNames = useMemo(() => {
     if (godMode) return null;
     const byUnit = new Map(gameState.contacts.map((c) => [c.actualUnitId, c]));
+    const unitOf = (id: string) => allUnits.find((u) => u.id === id);
     return allUnits
       .filter((u) => u.side !== playerSide)
       .map((u) => {
         const c = byUnit.get(u.id);
-        const label = c ? (c.platformName ? c.platformName : `TN${trackNumber(c.id)} ${CLS_LABEL[c.classification]}`) : "UNKNOWN TRACK";
+        const label = c ? `${contactName(c, unitOf)} ${NAME_CLS[c.classification]}` : "UNKNOWN TRACK";
         return [u.name, label] as const;
       })
       .sort((a, b) => b[0].length - a[0].length);
@@ -409,14 +482,16 @@ export function TerminalPlay() {
   const theater = demoScenarioConfig.scenario.theater.center;
 
   return (
-    <div className="tx-root" data-testid="terminal-root">
+    <div ref={rootRef} className={`tx-root tx-mode-${displayMode}`} data-testid="terminal-root" data-display-mode={displayMode} data-crt-font={crtFont}>
       {FONT_URLS.map((href) => (
-        <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link key={href} rel="preload" href={href} as="font" type={href.endsWith(".woff") ? "font/woff" : "font/woff2"} crossOrigin="anonymous" />
       ))}
       <PlotView
         input={plotInput}
         origin={theater}
         tilt={tilt}
+        displayMode={displayMode}
+        grid={gridOn}
         insets={insets}
         readouts={readouts}
         focusRequest={focusRequest}
@@ -434,6 +509,11 @@ export function TerminalPlay() {
         <span className={`tx-state${gameState.isPaused ? " is-hold" : ""}`} data-testid="sim-state">
           {gameState.isPaused ? "[HOLD]" : `[RUN ${gameState.speed}X]`}
         </span>
+        {modeFlash > 0 && (
+          <span className="tx-mode-flash" data-testid="display-mode-readout">
+            [DISPLAY {DISPLAY_MODE_NAMES[displayMode]}]
+          </span>
+        )}
         {autopauseEvent?.reason && gameState.isPaused && (
           <span data-testid="autopause-reason" className="tx-alarm tx-bold">
             {autopauseEvent.reason.toUpperCase()}
@@ -524,7 +604,11 @@ export function TerminalPlay() {
 
               <section className="tx-section">
                 <div className="tx-section-head">Contacts ({gameState.contacts.length})</div>
-                <ContactList contacts={gameState.contacts} simTime={gameState.simTime} contactLabel={(c) => `TN${trackNumber(c.id)}`} />
+                <ContactList
+                  contacts={gameState.contacts}
+                  simTime={gameState.simTime}
+                  contactLabel={(c) => contactName(c, (id) => allUnits.find((u) => u.id === id))}
+                />
               </section>
             </>
           )}
@@ -622,14 +706,14 @@ export function TerminalPlay() {
       <Teletype lines={ttyLines} />
 
       {/* Command bar */}
-      <nav className="tx-cmd" data-testid="command-bar" data-plot-occluder>
+      <nav ref={cmdRef} className="tx-cmd" data-testid="command-bar" data-plot-occluder>
         <Cmd cap="SPC" onClick={togglePause} testId="sim-toggle-pause" active={!gameState.isPaused}>
           {gameState.isPaused ? "PLAY" : "PAUSE"}
         </Cmd>
         <span className="tx-rule-v" />
         <span className="tx-group-label">TIME</span>
         {SPEED_OPTIONS.map((s, i) => (
-          <Cmd key={s} cap={String(i + 1)} onClick={() => setSpeed(s)} testId="sim-speed" dataSpeed={s} active={gameState.speed === s}>
+          <Cmd key={s} cap={String(i + 1)} capClass="tx-speed-cap" onClick={() => setSpeed(s)} testId="sim-speed" dataSpeed={s} active={gameState.speed === s}>
             {s}x
           </Cmd>
         ))}
@@ -679,9 +763,17 @@ export function TerminalPlay() {
           )}
         </span>
         <span className="tx-rule-v" />
-        <Cmd cap="B" onClick={() => setShowBriefing(true)} active={showBriefing} ariaLabel="Show briefing">
-          BRIEF
+        <Cmd cap="V" onClick={cycleDisplay} ariaLabel="Cycle display mode">
+          DISPLAY
         </Cmd>
+        <Cmd cap="L" onClick={toggleGrid} active={gridOn} ariaLabel="Toggle grid">
+          GRID
+        </Cmd>
+        <span data-brief-toggle className="tx-key-wrap">
+          <Cmd cap="B" onClick={() => setShowBriefing((v) => !v)} active={showBriefing} ariaLabel="Show briefing">
+            BRIEF
+          </Cmd>
+        </span>
         <Cmd cap="H" onClick={() => setShowHelp(true)} ariaLabel="Open help">
           HELP
         </Cmd>
@@ -708,6 +800,7 @@ export function TerminalPlay() {
       )}
 
       <div className="tx-scan" aria-hidden="true" />
+      <div className="tx-bezel" aria-hidden="true" />
     </div>
   );
 }
