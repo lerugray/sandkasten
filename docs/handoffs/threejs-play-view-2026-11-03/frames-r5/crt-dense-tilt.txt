@@ -1,0 +1,3 @@
+crt-dense-tilt.png: paused when 6 contacts were within 120 px (6 after tilt)
+{"blocks":16,"blockOverlaps":0,"leaderThroughBlock":0,"leaderCrossings":0,"leaderThroughGlyph":0,"weaponThroughBlock":0,"ambiguousPairing":0,"farBlockNoVisibleLeader":0,"blockOverGlyph":0,"blockOverMissileHead":0,"gridOverlaps":0,"keptHidden":0,"glyphs":16,"leaders":8,"weaponLines":0,"closestGlyphs":3,"tilt":1,"hiddenKeep":"","mode":"crt"}
+console errors: none

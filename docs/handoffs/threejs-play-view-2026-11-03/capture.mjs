@@ -315,4 +315,43 @@ async function full() {
   await browser.close();
 }
 
-await (mode === "full" ? full() : quick());
+// dense: CRT, tilted, paused at a moment when at least six contacts crowd together
+async function dense() {
+  const errors = [];
+  const browser = await launch();
+  const context = await modeContext(browser, "crt");
+  const page = await open(context, errors);
+  await autopauseOff(page);
+  await page.getByTestId("sim-speed").filter({ hasText: "60x" }).click();
+  await page.getByTestId("sim-toggle-pause").click();
+  let found = { best: null, bestN: -1 };
+  const t0 = Date.now();
+  while (Date.now() - t0 < 180_000) {
+    await page.waitForTimeout(1000);
+    found = await densest(page);
+    if (found.bestN >= 6) break;
+  }
+  await page.getByTestId("sim-toggle-pause").click();
+  await page.keyboard.press("t");
+  await page.waitForTimeout(2500);
+  const { best, bestN } = await densest(page);
+  if (best) {
+    await page.mouse.move(best.x, best.y);
+    for (let i = 0; i < 3; i++) {
+      await page.mouse.wheel(0, -110);
+      await page.waitForTimeout(150);
+    }
+  }
+  await page.waitForTimeout(2500);
+  await page.screenshot({ path: path.join(outDir, "crt-dense-tilt.png") });
+  const audit = await plot(page, (h) => h.labelAudit());
+  fs.writeFileSync(
+    path.join(outDir, "crt-dense-tilt.txt"),
+    `crt-dense-tilt.png: paused when ${found.bestN} contacts were within 120 px (${bestN} after tilt)\n` +
+      `${JSON.stringify({ ...audit, layout: undefined })}\nconsole errors: ${errors.length ? errors.join(" | ") : "none"}\n`,
+  );
+  console.log(found.bestN, bestN, JSON.stringify({ ...audit, layout: undefined }));
+  await browser.close();
+}
+
+await (mode === "full" ? full() : mode === "dense" ? dense() : quick());

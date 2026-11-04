@@ -132,6 +132,14 @@ const VAR = 100000;
 const RINGS = [46, 74, 106, 142, 184];
 const KEEP_RINGS = [232, 286, 344, 410, 480, 560];
 const ANGLES = 24;
+// last resort for kept tracks: every spot on a 12 px grid within 320x220 px of
+// the glyph, nearest first (variant 6). Same rules; it only finds the room the
+// rings miss in pockets against the chrome.
+const SCAN: { dx: number; dy: number }[] = (() => {
+  const out: { dx: number; dy: number }[] = [];
+  for (let dy = -220; dy <= 220; dy += 12) for (let dx = -320; dx <= 320; dx += 12) if (Math.hypot(dx, dy) >= 30) out.push({ dx, dy });
+  return out.sort((a, b) => Math.hypot(a.dx, a.dy) - Math.hypot(b.dx, b.dy));
+})();
 const UPGRADE_FRAMES = 240; // a better spot must stay free 4 s before a block moves to it
 const REPAIR_COOLDOWN = 10; // frames to rest after all three repair orders failed
 // A new spot is chosen with margins inside the audit's limits (rounding in the
@@ -285,6 +293,10 @@ export class LabelPlacer {
 
   /** quadrant 0-3 (matching the near slots) a candidate sits in, seen from its glyph */
   private sideOf(it: LabelItem, cand: number): number {
+    if (cand >= 6 * VAR) {
+      const o = SCAN[cand - 6 * VAR];
+      return (o.dx >= 0 ? 0 : 2) + (o.dy >= 0 ? 1 : 0);
+    }
     cand %= VAR;
     if (cand < NEAR) return cand;
     const k = (cand - NEAR) % ANGLES;
@@ -310,7 +322,7 @@ export class LabelPlacer {
     if (maxTier < 2) return null;
     const rings = maxTier >= 3 ? RINGS.length + KEEP_RINGS.length : RINGS.length;
     // a block that lost a far spot looks along the same bearing first
-    const prevK = prev % VAR >= NEAR ? ((prev % VAR) - NEAR) % ANGLES : side >= 0 ? [21, 3, 15, 9][side] : -1;
+    const prevK = prev < 6 * VAR && prev % VAR >= NEAR ? ((prev % VAR) - NEAR) % ANGLES : side >= 0 ? [21, 3, 15, 9][side] : -1;
     const angles = prevK >= 0 ? this.angleNear(prevK) : this.angleOrder(away);
     for (let ring = 0; ring < rings; ring++) {
       for (const k of angles) {
@@ -319,7 +331,8 @@ export class LabelPlacer {
       }
     }
     // kept tracks hemmed in by the chrome: same bearings, block slid to either
-    // side; variant 5 tries the half-step bearings between the 24
+    // side; variant 5 tries the half-step bearings between the 24; variant 6
+    // scans for the nearest free spot
     if (maxTier >= 3) {
       for (let v = 1; v <= 5; v++) {
         for (let ring = 0; ring < rings; ring++) {
@@ -328,6 +341,10 @@ export class LabelPlacer {
             if (this.tryCand(it, env, c, true, away)) return { cand: c, compact: true };
           }
         }
+      }
+      for (let i = 0; i < SCAN.length; i++) {
+        const c = 6 * VAR + i;
+        if (this.tryCand(it, env, c, true, away)) return { cand: c, compact: true };
       }
     }
     return null;
@@ -386,7 +403,13 @@ export class LabelPlacer {
     r.w = w;
     r.h = h;
     let leader = false;
-    if (c < NEAR) {
+    if (c >= 6 * VAR) {
+      // nearest-free-spot scan: block centred on a grid point, on a leader
+      const o = SCAN[c - 6 * VAR];
+      r.x = it.gx + o.dx - w / 2;
+      r.y = it.gy + o.dy - h / 2;
+      leader = true;
+    } else if (c < NEAR) {
       // beside the glyph's frame, however big the glyph is drawn
       const gx = Math.max(GAP, it.glyph.w / 2 + 2), gy = Math.max(GAP, it.glyph.h / 2 + 2);
       switch (c) {

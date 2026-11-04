@@ -90,12 +90,22 @@ test.describe("Terminal register design system", () => {
     await expect(page.locator("canvas").first()).toBeVisible({ timeout: 10_000 });
     const root = page.getByTestId("terminal-root");
     await expect(root).toHaveAttribute("data-display-mode", "crt");
+    // the readout shows for 4 s; record every text it shows so a slow host
+    // (software GL) cannot miss it between polls
+    await page.evaluate(() => {
+      const seen: string[] = ((window as any).__readouts = []);
+      new MutationObserver(() => {
+        const el = document.querySelector('[data-testid="display-mode-readout"]');
+        if (el?.textContent && seen[seen.length - 1] !== el.textContent) seen.push(el.textContent);
+      }).observe(document.body, { childList: true, subtree: true, characterData: true });
+    });
+    const readouts = () => page.evaluate(() => (window as any).__readouts.join(" | "));
     await page.keyboard.press("v");
     await expect(root).toHaveAttribute("data-display-mode", "current");
-    await expect(page.getByTestId("display-mode-readout")).toContainText("CURRENT");
+    await expect.poll(readouts).toContain("CURRENT");
     await page.keyboard.press("v");
     await expect(root).toHaveAttribute("data-display-mode", "offsig");
-    await expect(page.getByTestId("display-mode-readout")).toContainText("OFF-SIGNATURE");
+    await expect.poll(readouts).toContain("OFF-SIGNATURE");
     await expect.poll(() => page.evaluate(() => (document.querySelector('[data-testid="tactical-plot"]') as any).__plot.mode())).toBe("offsig");
     await page.reload();
     await expect(page.locator("canvas").first()).toBeVisible({ timeout: 10_000 });

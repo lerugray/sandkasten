@@ -283,3 +283,31 @@ because home-PC Chromium was being paused for a commission run.
   The crt-dense-tilt frame was taken late in the fight (2 contacts), so it is not a dense case.
 - fps in `fps.txt` (0.4-2 fps) is software GL on a GPU-less box. It is NOT the smoothness verdict; the Mac production
   build is.
+
+### Round 5, follow-up 4 (Vultr box, software GL, 2026-11-03 20:35-21:05)
+Every browser step ran on the Vultr box again. Nothing under `src/lib/simulation/*` was touched.
+- (a) Corner-pocket keptHidden: `labelPlacer.ts` gets a last-resort fallback (variant 6). It scans for the nearest free
+  spot on a 12 px grid out to 320 x 220 px, with a leader. A kept track now gets a home anywhere there is room, not just on
+  the ring bearings. The off-signature run that failed before passed with 0 on every rule. CRT still showed keptHidden 1
+  in 64 samples on the final run (contact at 474,87, the same pocket), so the fix is not complete under load.
+- (b) Load-driven audit checks: the fixed sample floor of 100 is gone. Each phase is now cut into 10 s windows, and every
+  window must hold at least one sample, so the run must cover both phases from start to finish at whatever rate the host
+  manages. The flip bound is 4 per block-minute at the GPU rate (4.5 samples/s), scaled up by 4.5 / measured rate on a
+  slower host. Every layout rule still has to be 0.
+- (c) "V cycles": test-side cause. The product readout is correct. On software GL the page sampled less than once per
+  4 s, so the poll missed the readout. The test now records every readout text through a MutationObserver.
+- Break tests, run on the Vultr copy only (clean tree rsynced back, 0 plant markers left):
+  - Plant 1 (pairing ratio 5, CRT leader opacity 0.2, glyph and point checks removed) gave ambiguousPairing 699,
+    farBlockNoVisibleLeader 585, blockOverGlyph 51.
+  - Plant 2 (point and weapon-line checks removed) gave weaponThroughBlock 72, blockOverMissileHead 12.
+  - Every new check failed on its planted defect.
+- Full suite on Vultr, clean tree, 11.4 min: 37 passed, 3 failed.
+  - CRT plot-labels: keptHidden 1, as above. Every other rule was 0.
+  - `sand-005`: `toBeVisible` hit its 10 s timeout under load.
+  - simulation "combat log gets entries": 0 entries, because the sim runs too slowly under software GL.
+  - The last two are load-driven sim tests outside this lane's fence.
+  - CURRENT and off-signature audits passed with 0 on every rule. Their flip rates were 1.03 (bound 29.1) and 6.70
+    (bound 14.56). Sample rates were 0.53-1.24/s.
+- Dense recapture: `capture.mjs dense` runs CRT at 60x and pauses once 6 or more contacts sit within 120 px, then tilts.
+  `frames-r5/crt-dense-tilt.png` shows 6 contacts within 120 px, 16 blocks and 8 leaders, with 0 violations and no
+  console errors (`crt-dense-tilt.txt`).
