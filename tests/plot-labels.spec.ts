@@ -62,15 +62,18 @@ for (const mode of ["crt", "current", "offsig"] as const) {
       const totals: Record<string, number> = Object.fromEntries(VIOLATIONS.map((k) => [k, 0]));
       const stats = {
         samples: 0, denseSamples: 0, weaponSamples: 0, leaderSamples: 0, maxBlocks: 0, minClosestGlyphs: Infinity,
-        blockSamples: 0, formFlips: 0, sideFlips: 0,
+        blockSamples: 0, formFlips: 0, sideFlips: 0, blockSeconds: 0,
       };
       const firstBad: Record<string, string> = {};
 
       const run = async (phase: string, ms: number) => {
         // camera is still for the whole phase: count how often a block changes form or side
         const last = new Map<string, { form: string; side: number }>();
-        const end = Date.now() + ms;
+        const start = Date.now();
+        const end = start + ms;
+        let phaseSamples = 0, phaseBlocks = 0;
         while (Date.now() < end) {
+          phaseSamples++;
           await page.waitForTimeout(200);
           const a = (await page.evaluate(() =>
             (document.querySelector('[data-testid="tactical-plot"]') as any).__plot.labelAudit(),
@@ -85,6 +88,7 @@ for (const mode of ["crt", "current", "offsig"] as const) {
             totals[k] += a[k];
             if (a[k] > 0 && !firstBad[k]) firstBad[k] = `${phase}: ${JSON.stringify({ ...a, layout: undefined })}`;
           }
+          phaseBlocks += a.layout.length;
           for (const b of a.layout) {
             stats.blockSamples++;
             const prev = last.get(b.key);
@@ -93,6 +97,8 @@ for (const mode of ["crt", "current", "offsig"] as const) {
             last.set(b.key, { form: b.form, side: b.side });
           }
         }
+        // real time each sample stood for, so slow hosts are not over-counted
+        stats.blockSeconds += phaseBlocks * ((Date.now() - start) / 1000 / Math.max(1, phaseSamples));
       };
 
       await run("flat", 60_000);
@@ -107,7 +113,8 @@ for (const mode of ["crt", "current", "offsig"] as const) {
       for (const k of Object.keys(firstBad)) console.log(`first ${k} [${mode}]: ${firstBad[k]}`);
 
       // the run has to have exercised the hard cases
-      expect(stats.samples).toBeGreaterThan(300);
+      // (about 5 samples a second on a GPU; software GL hosts manage ~1.5)
+      expect(stats.samples).toBeGreaterThan(100);
       expect(stats.denseSamples).toBeGreaterThan(0);
       expect(stats.weaponSamples).toBeGreaterThan(0);
       expect(stats.leaderSamples).toBeGreaterThan(0);
@@ -116,7 +123,7 @@ for (const mode of ["crt", "current", "offsig"] as const) {
       // with the camera still, blocks hold their form and side. At 60x a fighter
       // crosses ~18 px of screen a second, so some moves are forced; bound them
       // to under four per block per minute (measured rates are in NOTES)
-      const blockMinutes = stats.blockSamples / (5 * 60);
+      const blockMinutes = stats.blockSeconds / 60;
       const flipRate = (stats.formFlips + stats.sideFlips) / Math.max(1, blockMinutes);
       console.log(`plot-labels flips per block-minute [${mode}]: ${flipRate.toFixed(2)}`);
       expect(flipRate).toBeLessThan(4);

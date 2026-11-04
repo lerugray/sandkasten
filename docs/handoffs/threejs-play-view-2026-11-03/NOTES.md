@@ -258,3 +258,28 @@ Also: when a unit is selected, the view centre now eases left to make room for t
   was not re-run this round. Break tests for the new audit checks were not run.
 - Not captured: per-mode frames, `mode-switch.webm`, `hornet-pair.png`, `font-compare.png`, per-mode fps at DPR 2 and
   0.6 on a production build. All are scripted in `capture.mjs full`.
+
+### Round 5, follow-up 3 (Vultr box, software GL, 2026-11-03 19:48-20:40)
+Every browser step ran on the Vultr box (`ray@149.28.56.56:/home/ray/runs/main-crt-r5`, xvfb, no GPU, `--mute-audio`),
+because home-PC Chromium was being paused for a commission run.
+- Fixes this pass:
+  - The scroll-cue effect re-ran after every render; it now runs only when the panel content changes.
+  - Text is re-measured once the active mode's font has loaded (this cleared CURRENT's ambiguous pairs).
+  - Kept tracks get half-step fallback bearings, and the mode readout stays up 4 s.
+  - The audit's sample floor is 100 (software GL gives about 1.5 samples/s), and flip rates use real elapsed time.
+  - `capture.mjs` keeps raw frames if the host has no ffmpeg; they were stitched and encoded on home-PC.
+- plot-labels audit (2 x 60 s at 60x per mode):
+  - Clean run (19:57): CRT and off-signature PASS with every count 0. CURRENT had ambiguousPairing 4, since fixed.
+  - Loaded run (alongside the capture): CRT and CURRENT 0 on every rule; off-signature keptHidden 4, the top-left
+    corner pocket at 1280x720. The CRT and CURRENT tests still failed that run on the load-driven checks (samples
+    under the floor, or the flip bound).
+- Full suite on Vultr: 36 passed, 4 failed (the 3 label audits as above, plus design-system "V cycles": the readout
+  check). A "Maximum update depth" warning traces to `useSimulation.ts` line 142, the sim's interval `setState`. That
+  file is fenced (`src/lib/simulation/*`), so it is not changed here.
+- Break tests for the new audit checks: NOT RUN (time).
+- Captures (`frames-r5/`): `{crt,current,offsig}-{first-screen,unit-selected,tilt-3d,dense-tilt}.png`, `hornet-pair.png`,
+  `font-compare.png` (Px437 left, VT323 right), `mode-switch.webm` (13 s), `briefing.png`, `fps.txt`,
+  `label-audit-at-capture.txt` (0 violations in every dense frame and the hornet pair), `console-errors.txt` (none).
+  The crt-dense-tilt frame was taken late in the fight (2 contacts), so it is not a dense case.
+- fps in `fps.txt` (0.4-2 fps) is software GL on a GPU-less box. It is NOT the smoothness verdict; the Mac production
+  build is.

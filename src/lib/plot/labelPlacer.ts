@@ -318,9 +318,10 @@ export class LabelPlacer {
         if (this.tryCand(it, env, c, true, away)) return { cand: c, compact: true };
       }
     }
-    // kept tracks hemmed in by the chrome: same bearings, block slid to either side
+    // kept tracks hemmed in by the chrome: same bearings, block slid to either
+    // side; variant 5 tries the half-step bearings between the 24
     if (maxTier >= 3) {
-      for (let v = 1; v <= 4; v++) {
+      for (let v = 1; v <= 5; v++) {
         for (let ring = 0; ring < rings; ring++) {
           for (const k of angles) {
             const c = v * VAR + NEAR + ring * ANGLES + k;
@@ -400,7 +401,7 @@ export class LabelPlacer {
       const ring = Math.floor(idx / ANGLES);
       const k = idx % ANGLES;
       const radius = ring < RINGS.length ? RINGS[ring] : KEEP_RINGS[ring - RINGS.length];
-      const a = (k / ANGLES) * Math.PI * 2;
+      const a = ((k + (variant === 5 ? 0.5 : 0)) / ANGLES) * Math.PI * 2;
       const dx = Math.cos(a), dy = Math.sin(a);
       const px = it.gx + dx * radius, py = it.gy + dy * radius;
       r.x = Math.abs(dx) < 0.38 ? px - w / 2 : dx > 0 ? px : px - w;

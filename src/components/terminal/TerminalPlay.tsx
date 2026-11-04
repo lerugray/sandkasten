@@ -253,7 +253,7 @@ export function TerminalPlay() {
   }, []);
   useEffect(() => {
     if (!modeFlash) return;
-    const id = setTimeout(() => setModeFlash(0), 2600);
+    const id = setTimeout(() => setModeFlash(0), 4000);
     return () => clearTimeout(id);
   }, [modeFlash]);
 
@@ -473,9 +473,12 @@ export function TerminalPlay() {
     if (!el) return;
     setMoreBelow(el.scrollHeight - el.scrollTop - el.clientHeight > 4);
   }, []);
+  // re-check only when the panel's content changes (not after every render,
+  // which let the cue feed its own state update)
   useEffect(() => {
-    updateMore();
-  });
+    const id = requestAnimationFrame(updateMore);
+    return () => cancelAnimationFrame(id);
+  }, [updateMore, sidebarTab, gameState.contacts.length, selectedUnitId, messages.length, combatLog.length]);
 
   const clock = new Date(gameState.simTime).toISOString().replace("T", " ").slice(0, 19) + "Z";
   const prefs = autopausePrefsRef.current;

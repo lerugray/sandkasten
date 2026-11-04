@@ -468,7 +468,7 @@ export class TacticalPlot {
 
     // text metrics now and again once the vendored font is in
     this.measureText();
-    document.fonts?.ready.then(() => !this.disposed && this.measureText());
+    this.measureWhenFontLoads();
     // panels opening or closing invalidate the chrome rects at once
     // (the plot's own label writes are ignored; only chrome changes count)
     const root = host.closest(".tx-root") ?? document.body;
@@ -684,8 +684,23 @@ export class TacticalPlot {
   }
 
   /** Switch display mode: palette, linework, glyphs and the post chain. */
+  /** Re-measure block text once the font the overlay actually uses has loaded. */
+  private measureWhenFontLoads() {
+    const again = () => {
+      if (this.disposed) return;
+      this.measureText();
+      for (const t of this.tracks.values()) t.blockText = "";
+    };
+    document.fonts?.ready.then(again);
+    const family = getComputedStyle(this.overlay).fontFamily;
+    if (document.fonts?.load) document.fonts.load(`13px ${family}`).then(again, again);
+  }
+
   setMode(mode: DisplayMode) {
-    if (mode === this.mode && this.staticObjects.length) return;
+    if (mode === this.mode && this.staticObjects.length) {
+      this.measureWhenFontLoads();
+      return;
+    }
     this.mode = mode;
     this.theme = THEMES[mode];
     applyThemeColours(this.theme);

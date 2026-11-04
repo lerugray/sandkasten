@@ -248,12 +248,17 @@ async function full() {
     await page.screenshot({ path: path.join(outDir, `.font-${f}.png`) });
     await context.close();
   }
-  execFileSync(process.env.FFMPEG ?? "ffmpeg", [
-    "-y", "-v", "error", "-i", path.join(outDir, ".font-px437.png"), "-i", path.join(outDir, ".font-vt323.png"),
-    "-filter_complex", "hstack=inputs=2", path.join(outDir, "font-compare.png"),
-  ]);
-  fs.rmSync(path.join(outDir, ".font-px437.png"));
-  fs.rmSync(path.join(outDir, ".font-vt323.png"));
+  // without ffmpeg on the host, the two halves stay as .font-*.png to stitch elsewhere
+  try {
+    execFileSync(process.env.FFMPEG ?? "ffmpeg", [
+      "-y", "-v", "error", "-i", path.join(outDir, ".font-px437.png"), "-i", path.join(outDir, ".font-vt323.png"),
+      "-filter_complex", "hstack=inputs=2", path.join(outDir, "font-compare.png"),
+    ]);
+    fs.rmSync(path.join(outDir, ".font-px437.png"));
+    fs.rmSync(path.join(outDir, ".font-vt323.png"));
+  } catch (e) {
+    console.log(`font-compare not stitched (${String(e).split("\n")[0]}); halves kept`);
+  }
 
   // mode switch: one moment of the fight, cycled through the three modes
   {
@@ -288,11 +293,17 @@ async function full() {
     if (frames.length) lines.push(`file '${frames[frames.length - 1].file}'`);
     const list = path.join(fdir, "list.txt");
     fs.writeFileSync(list, lines.join("\n") + "\n");
-    execFileSync(process.env.FFMPEG ?? "ffmpeg", [
-      "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", list,
-      "-vf", "fps=30,format=yuv420p", "-c:v", "libvpx-vp9", "-b:v", "5M", "-an", path.join(outDir, "mode-switch.webm"),
-    ]);
-    fs.rmSync(fdir, { recursive: true, force: true });
+    try {
+      execFileSync(process.env.FFMPEG ?? "ffmpeg", [
+        "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", list,
+        "-vf", "fps=30,format=yuv420p", "-c:v", "libvpx-vp9", "-b:v", "5M", "-an", path.join(outDir, "mode-switch.webm"),
+      ]);
+      fs.rmSync(fdir, { recursive: true, force: true });
+    } catch (e) {
+      // keep the frames and their concat list (with paths) to encode elsewhere
+      fs.renameSync(fdir, path.join(outDir, ".mode-switch-frames"));
+      console.log(`mode-switch not encoded (${String(e).split("\n")[0]}); frames kept`);
+    }
     console.log(`mode-switch.webm: ${frames.length} frames`);
   }
 

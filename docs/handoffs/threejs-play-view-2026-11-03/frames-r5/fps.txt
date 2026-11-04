@@ -1,0 +1,7 @@
+server http://localhost:3001; 1440x900, DPR 2, 10 s of requestAnimationFrame each, sim at 10x with weapons in flight
+crt DPR 2 (scale 0.5): frames 6, median 0.6 fps, 5th percentile 0.5 fps, worst frame 2016.7 ms
+crt DPR 2 x render scale 0.6: frames 5, median 0.5 fps, 5th percentile 0.5 fps, worst frame 2166.5 ms
+current DPR 2 (scale 0.5): frames 6, median 0.5 fps, 5th percentile 0.5 fps, worst frame 2066.6 ms
+current DPR 2 x render scale 0.6: frames 5, median 0.4 fps, 5th percentile 0.4 fps, worst frame 2783.2 ms
+offsig DPR 2 (scale 0.5): frames 21, median 2.1 fps, 5th percentile 1.6 fps, worst frame 633.3 ms
+offsig DPR 2 x render scale 0.6: frames 15, median 1.4 fps, 5th percentile 1.2 fps, worst frame 833.4 ms
