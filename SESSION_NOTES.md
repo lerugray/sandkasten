@@ -320,3 +320,18 @@ Open-source WeGo wargame simulation where two players command opposing forces on
 - Research CMO's detection and combat models for reference
 - Design platform database schema
 - Decide on minimum viable scenario: probably a naval engagement (fewer unit types, simpler terrain)
+
+---
+
+## Session s387 — Sim fix card (lane sand-simfix-s387, branch sand/sim-fix-s387)
+
+Worked from `docs/handoffs/sim-fix-2026-11-03/CARD.md`. Full per-finding record: `docs/handoffs/sim-fix-2026-11-03/NOTES.md`.
+
+- Player ENGAGE order and per-unit ROE (hold / tight / free, default tight) in the order panel and as keys E, N, R, F, X.
+- Persisted cumulative damage per unit. Aircraft keep a separate one-hit rule.
+- One authoritative simulation state (`SimulationSession`), so pause, speed and orders no longer rewind the game.
+- Victory comes from taking the carrier through the transit gate, not from elapsed time.
+- Demo ships replaced with vessels in service on 2026-03-15; unverified loadouts listed in NOTES.
+- Vitest added (`npm run test:unit`); `npm test` runs it before Playwright.
+
+Next: the seat reviews, merges with the s386 round-3 lane (touched-lines list in NOTES), then commits.

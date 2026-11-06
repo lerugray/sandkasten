@@ -1,19 +1,21 @@
 /**
  * AI Controller — the brain that makes OPFOR units act.
  *
- * Runs once per detection cycle (every 5 sim-seconds).
+ * The engine calls this once per AI cycle (every 5 sim-seconds).
  * For each AI side: resolve doctrine, execute missions, update orders.
+ * Each side reasons from its own contacts, not from the true positions of the other side.
  */
 
 import type { Unit, Position } from "@/types/game";
-import type { GameState, UnitOrders } from "@/lib/simulation/gameState";
+import { isHostileSide } from "@/types/game";
+import { contactsFor, type Contact, type GameState, type UnitOrders } from "@/lib/simulation/gameState";
 import type { Mission } from "./missions";
 import {
-  resolveDoctrine,
   shouldRadarBeActive,
   shouldWithdraw,
   type Doctrine,
 } from "./doctrine";
+import { missionOf, resolveUnitDoctrine } from "./effectiveDoctrine";
 import {
   generatePatrolWaypoints,
   generateCAPWaypoints,
@@ -22,39 +24,79 @@ import {
   generateStrikeWaypoints,
 } from "./missions";
 import { distanceKm } from "@/lib/simulation/movement";
-
-const AI_UPDATE_INTERVAL_MS = 5000; // same cadence as detection
-let lastAIUpdateTime = 0;
-
-// Track which patrol waypoint index each unit is on
-const patrolWaypointIndex = new Map<string, number>();
+import { getPlatform } from "@/lib/platforms/lookup";
 
 export interface AIState {
   missions: Mission[];
   sideDoctrine: Record<string, Partial<Doctrine>>;
+  /** Runtime bookkeeping, created on first use and owned by this AIState (one per game). */
+  patrolIndex?: Map<string, number>;
+  transitStarted?: Set<string>;
+  transitDone?: Set<string>;
+}
+
+interface AIRuntime {
+  patrolIndex: Map<string, number>;
+  transitStarted: Set<string>;
+  transitDone: Set<string>;
+}
+
+function runtimeOf(ai: AIState): AIRuntime {
+  ai.patrolIndex ??= new Map();
+  ai.transitStarted ??= new Set();
+  ai.transitDone ??= new Set();
+  return { patrolIndex: ai.patrolIndex, transitStarted: ai.transitStarted, transitDone: ai.transitDone };
+}
+
+/** New route and throttle; a commanded throttle replaces any speed held from the scenario. */
+function route(orders: UnitOrders, waypoints: Position[], throttle: number): UnitOrders {
+  return { ...orders, waypoints: waypoints.map((p) => ({ position: p })), throttle, speedKts: undefined };
+}
+
+function stop(orders: UnitOrders): UnitOrders {
+  return { ...orders, waypoints: [], throttle: 0, speedKts: 0 };
+}
+
+function withThrottle(orders: UnitOrders, throttle: number): UnitOrders {
+  return { ...orders, throttle, speedKts: undefined };
+}
+
+/** What an AI side knows about the units it could attack: its own hostile contacts, at their reported positions. */
+interface Threat {
+  contact: Contact;
+  position: Position;
+  isAir: boolean;
+}
+
+function threatsFor(state: GameState, side: string): Threat[] {
+  const units = new Map(state.sides.flatMap((s) => s.units).map((u) => [u.id, u]));
+  const out: Threat[] = [];
+  for (const contact of contactsFor(state, side)) {
+    if (contact.classification === "unknown") continue;
+    const actual = units.get(contact.actualUnitId);
+    if (!actual || actual.damageState === "destroyed" || !isHostileSide(side, actual.side)) continue;
+    const platform = getPlatform(actual.platformId);
+    const isAir = platform ? platform.dimension === "air" : (actual.altitude ?? 0) > 500;
+    out.push({ contact, position: contact.position, isAir });
+  }
+  return out;
 }
 
 /**
  * Run AI decision-making for all AI-controlled sides.
- * Call this from the simulation tick.
+ * The caller decides when an AI cycle is due.
  */
 export function runAIUpdate(
   state: GameState,
   aiState: AIState
 ): Map<string, UnitOrders> {
-  if (state.simTime - lastAIUpdateTime < AI_UPDATE_INTERVAL_MS) {
-    return state.orders;
-  }
-  lastAIUpdateTime = state.simTime;
-
+  const rt = runtimeOf(aiState);
   const newOrders = new Map(state.orders);
   const allUnits = state.sides.flatMap((s) => s.units);
 
-  // Process each AI side
   for (const side of state.sides) {
     if (!side.isAI) continue;
-
-    const sideDoctrine = aiState.sideDoctrine[side.name] ?? {};
+    const threats = threatsFor(state, side.name);
 
     for (const unit of side.units) {
       if (unit.damageState === "destroyed") continue;
@@ -62,56 +104,26 @@ export function runAIUpdate(
       const currentOrders = newOrders.get(unit.id);
       if (!currentOrders) continue;
 
-      // Find this unit's mission
-      const mission = aiState.missions.find(
-        (m) => m.side === side.name && m.assignedUnitIds.includes(unit.id)
-      );
+      const mission = missionOf(unit, aiState.missions);
+      const doctrine = resolveUnitDoctrine(unit, state, aiState);
 
-      const doctrine = resolveDoctrine(
-        sideDoctrine,
-        mission?.doctrineOverrides
-      );
-
-      // Update radar based on doctrine
-      const hasNearbyContacts = checkNearbyThreats(unit, allUnits, state.scenario.playerSide, 100);
+      const hasNearbyContacts = threats.some((t) => distanceKm(unit.position, t.position) <= 100);
       const shouldRadar = shouldRadarBeActive(doctrine, hasNearbyContacts);
 
-      let updatedOrders: UnitOrders = {
-        ...currentOrders,
-        radarActive: shouldRadar,
-      };
+      let updatedOrders: UnitOrders = { ...currentOrders, radarActive: shouldRadar };
 
       // Check withdrawal
       if (shouldWithdraw(doctrine, unit.damageState) && mission) {
-        // Withdraw to first reference point or away from threats
         if (mission.referencePoints.length > 0) {
-          updatedOrders = {
-            ...updatedOrders,
-            waypoints: [{ position: mission.referencePoints[0] }],
-            throttle: 4, // flank speed
-          };
-          newOrders.set(unit.id, updatedOrders);
+          newOrders.set(unit.id, route(updatedOrders, [mission.referencePoints[0]], 4));
           continue;
         }
       }
 
-      // Execute mission behavior
       if (mission) {
-        updatedOrders = executeMission(
-          unit,
-          updatedOrders,
-          mission,
-          doctrine,
-          allUnits,
-          state.scenario.playerSide
-        );
-      } else {
-        // No mission — hold position with default behavior
-        updatedOrders = {
-          ...updatedOrders,
-          throttle: 2,
-        };
+        updatedOrders = executeMission(unit, updatedOrders, mission, doctrine, allUnits, threats, rt);
       }
+      // A unit with no mission keeps doing what it was doing
 
       newOrders.set(unit.id, updatedOrders);
     }
@@ -126,19 +138,20 @@ function executeMission(
   mission: Mission,
   doctrine: Doctrine,
   allUnits: Unit[],
-  playerSide: string
+  threats: Threat[],
+  rt: AIRuntime
 ): UnitOrders {
   switch (mission.type) {
     case "patrol":
-      return executePatrol(unit, orders, mission, doctrine, allUnits, playerSide);
+      return executePatrol(unit, orders, mission, doctrine, threats, rt);
     case "cap":
-      return executeCAP(unit, orders, mission, doctrine, allUnits, playerSide);
+      return executeCAP(unit, orders, mission, doctrine, threats);
     case "strike":
-      return executeStrike(unit, orders, mission, allUnits);
+      return executeStrike(unit, orders, mission, threats);
     case "escort":
       return executeEscort(unit, orders, mission, allUnits);
     case "transit":
-      return executeTransit(unit, orders, mission);
+      return executeTransit(unit, orders, mission, rt);
     case "support":
       return executeSupport(unit, orders, mission);
     default:
@@ -151,35 +164,22 @@ function executePatrol(
   orders: UnitOrders,
   mission: Mission,
   doctrine: Doctrine,
-  allUnits: Unit[],
-  playerSide: string
+  threats: Threat[],
+  rt: AIRuntime
 ): UnitOrders {
   // If we have no waypoints, generate the next patrol leg
   if (orders.waypoints.length === 0 && mission.referencePoints.length > 0) {
-    const idx = patrolWaypointIndex.get(unit.id) ?? 0;
+    const idx = rt.patrolIndex.get(unit.id) ?? 0;
     const waypoints = generatePatrolWaypoints(mission, unit, idx);
-    patrolWaypointIndex.set(unit.id, (idx + 1) % mission.referencePoints.length);
-
-    return {
-      ...orders,
-      waypoints: waypoints.map((p) => ({ position: p })),
-      throttle: 2, // cruise
-    };
+    rt.patrolIndex.set(unit.id, (idx + 1) % mission.referencePoints.length);
+    return route(orders, waypoints, 2);
   }
 
-  // Check for prosecution — chase nearby threats
+  // Prosecution — chase the nearest known contact
   if (doctrine.roe === "weapons-free") {
-    const nearestThreat = findNearestEnemy(unit, allUnits, playerSide);
-    if (nearestThreat) {
-      const dist = distanceKm(unit.position, nearestThreat.position);
-      if (dist <= mission.prosecutionRange) {
-        // Prosecute — head toward contact
-        return {
-          ...orders,
-          waypoints: [{ position: nearestThreat.position }],
-          throttle: 3, // full speed
-        };
-      }
+    const nearest = nearestThreat(unit, threats);
+    if (nearest && distanceKm(unit.position, nearest.position) <= mission.prosecutionRange) {
+      return route(orders, [nearest.position], 3);
     }
   }
 
@@ -191,34 +191,19 @@ function executeCAP(
   orders: UnitOrders,
   mission: Mission,
   doctrine: Doctrine,
-  allUnits: Unit[],
-  playerSide: string
+  threats: Threat[]
 ): UnitOrders {
-  // Check for intercept opportunity
+  // Intercept an air contact, whatever else is closer
   if (doctrine.roe !== "weapons-hold") {
-    const nearestThreat = findNearestEnemy(unit, allUnits, playerSide);
-    if (nearestThreat && nearestThreat.altitude !== undefined) {
-      // Air target detected
-      const dist = distanceKm(unit.position, nearestThreat.position);
-      if (dist <= mission.prosecutionRange) {
-        // Intercept
-        return {
-          ...orders,
-          waypoints: [{ position: nearestThreat.position }],
-          throttle: 4, // afterburner
-        };
-      }
+    const nearestAir = nearestThreat(unit, threats.filter((t) => t.isAir));
+    if (nearestAir && distanceKm(unit.position, nearestAir.position) <= mission.prosecutionRange) {
+      return route(orders, [nearestAir.position], 4);
     }
   }
 
   // No threats — orbit the CAP station
   if (orders.waypoints.length === 0) {
-    const waypoints = generateCAPWaypoints(mission, unit);
-    return {
-      ...orders,
-      waypoints: waypoints.map((p) => ({ position: p })),
-      throttle: 2,
-    };
+    return route(orders, generateCAPWaypoints(mission, unit), 2);
   }
 
   return orders;
@@ -228,18 +213,15 @@ function executeStrike(
   unit: Unit,
   orders: UnitOrders,
   mission: Mission,
-  allUnits: Unit[]
+  threats: Threat[]
 ): UnitOrders {
   if (orders.waypoints.length > 0) return orders;
 
-  // Find target
+  // Aim at where this side last placed the target, never at the unit's true position
   let targetPos: Position | null = null;
 
   if (mission.targetUnitId) {
-    const target = allUnits.find((u) => u.id === mission.targetUnitId);
-    if (target && target.damageState !== "destroyed") {
-      targetPos = target.position;
-    }
+    targetPos = threats.find((t) => t.contact.actualUnitId === mission.targetUnitId)?.position ?? null;
   }
 
   if (!targetPos && mission.referencePoints.length > 0) {
@@ -248,12 +230,7 @@ function executeStrike(
   }
 
   if (targetPos) {
-    const waypoints = generateStrikeWaypoints(mission, targetPos);
-    return {
-      ...orders,
-      waypoints: waypoints.map((p) => ({ position: p })),
-      throttle: 3,
-    };
+    return route(orders, generateStrikeWaypoints(mission, targetPos), 3);
   }
 
   return orders;
@@ -275,32 +252,36 @@ function executeEscort(
   const dist = distanceKm(unit.position, stationPos);
 
   // Only update waypoint if we've drifted more than 3km from station
-  if (dist > 3) {
-    return {
-      ...orders,
-      waypoints: [{ position: stationPos }],
-      throttle: 2,
-    };
-  }
+  if (dist > 3) return route(orders, [stationPos], 2);
 
-  return { ...orders, throttle: 2 };
+  return withThrottle(orders, 2);
 }
 
 function executeTransit(
   unit: Unit,
   orders: UnitOrders,
-  mission: Mission
+  mission: Mission,
+  rt: AIRuntime
 ): UnitOrders {
-  if (orders.waypoints.length > 0) return orders;
+  if (orders.waypoints.length > 0) {
+    rt.transitStarted.add(unit.id);
+    return orders;
+  }
+
+  if (!mission.repeating) {
+    // A one-way transit ends where it ends
+    if (rt.transitDone.has(unit.id)) return orders;
+    if (rt.transitStarted.has(unit.id)) {
+      rt.transitDone.add(unit.id);
+      return stop(orders);
+    }
+  }
 
   const waypoints = generateTransitWaypoints(mission);
   if (waypoints.length === 0) return orders;
 
-  return {
-    ...orders,
-    waypoints: waypoints.map((p) => ({ position: p })),
-    throttle: 2,
-  };
+  rt.transitStarted.add(unit.id);
+  return route(orders, waypoints, 2);
 }
 
 function executeSupport(
@@ -312,55 +293,29 @@ function executeSupport(
   if (orders.waypoints.length === 0 && mission.referencePoints.length > 0) {
     const center = mission.referencePoints[0];
     const offset = 0.1;
-    return {
-      ...orders,
-      waypoints: [
-        { position: { lng: center.lng - offset, lat: center.lat } },
-        { position: { lng: center.lng + offset, lat: center.lat } },
+    return route(
+      orders,
+      [
+        { lng: center.lng - offset, lat: center.lat },
+        { lng: center.lng + offset, lat: center.lat },
       ],
-      throttle: 2,
-    };
+      2
+    );
   }
   return orders;
 }
 
 // --- Helpers ---
 
-function checkNearbyThreats(
-  unit: Unit,
-  allUnits: Unit[],
-  playerSide: string,
-  rangeKm: number
-): boolean {
-  return allUnits.some(
-    (u) =>
-      u.side === playerSide &&
-      u.damageState !== "destroyed" &&
-      distanceKm(unit.position, u.position) <= rangeKm
-  );
-}
-
-function findNearestEnemy(
-  unit: Unit,
-  allUnits: Unit[],
-  playerSide: string
-): Unit | null {
-  let nearest: Unit | null = null;
+function nearestThreat(unit: Unit, threats: Threat[]): Threat | null {
+  let nearest: Threat | null = null;
   let nearestDist = Infinity;
-
-  for (const u of allUnits) {
-    if (u.side !== playerSide || u.damageState === "destroyed") continue;
-    const dist = distanceKm(unit.position, u.position);
+  for (const t of threats) {
+    const dist = distanceKm(unit.position, t.position);
     if (dist < nearestDist) {
       nearestDist = dist;
-      nearest = u;
+      nearest = t;
     }
   }
-
   return nearest;
-}
-
-export function resetAITimer(): void {
-  lastAIUpdateTime = 0;
-  patrolWaypointIndex.clear();
 }

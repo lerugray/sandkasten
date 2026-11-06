@@ -66,7 +66,8 @@ export function checkAutopauseTriggers(
   prevDamageStates: Map<string, string>,
   nextDamageStates: Map<string, string>,
   playerSide: string,
-  seenTriggers: Set<string>
+  seenTriggers: Set<string>,
+  friendlyUnitIds: Set<string>
 ): AutopauseResult | null {
   if (!prefs.enabled) return null;
 
@@ -127,9 +128,10 @@ export function checkAutopauseTriggers(
     );
     for (const wif of nextCombat.weaponsInFlight) {
       if (prevWifIds.has(wif.id)) continue;
-      // Incoming = launched by enemy, targeting friendly
+      // Incoming = launched by someone else, aimed at one of the player's units
       if (
         wif.launchedBySide !== playerSide &&
+        friendlyUnitIds.has(wif.targetId) &&
         !seenTriggers.has(`incoming-${wif.id}`)
       ) {
         seenTriggers.add(`incoming-${wif.id}`);

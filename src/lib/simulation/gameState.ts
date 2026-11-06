@@ -12,7 +12,11 @@ export interface Contact {
   estimatedHeading?: number;
   estimatedSpeed?: number;
   platformName?: string; // only if classified
-  lastUpdateTime: number; // sim time of last sensor update
+  lastUpdateTime: number; // sim time of the last report of any kind (keeps the contact alive)
+  /** Sim time of the last report that fixed the position; precise tracking ages from here. */
+  lastFixTime?: number;
+  /** Position uncertainty at the last fix, before aging. */
+  baseUncertainty?: number;
   sensorType: string; // what detected it (radar, esm, visual, ir)
 }
 
@@ -25,9 +29,20 @@ export interface Waypoint {
 export interface UnitOrders {
   unitId: string;
   waypoints: Waypoint[];
-  throttle: number; // 1-4: loiter, cruise, full, flank
+  throttle: number; // 0 stop, 1-4: loiter, cruise, full, flank
+  /** Held speed in knots (the scenario's authored speed). Any throttle or route order clears it. */
+  speedKts?: number;
   desiredAltitude?: number;
   radarActive: boolean;
+  /** Unit-level doctrine set by the commander (ROE etc.); beats mission and side doctrine. */
+  doctrine?: Partial<Doctrine>;
+}
+
+/** Next due times (sim ms) for the throttled phases; kept in state so each game has its own cadence. */
+export interface PhaseSchedule {
+  detectionAt: number;
+  aiAt: number;
+  engageAt: number;
 }
 
 export interface GameState {
@@ -41,13 +56,16 @@ export interface GameState {
   speed: number; // time multiplier (1, 2, 5, 10, 30, 60)
   sides: Side[];
   contacts: Contact[]; // what the player can see
+  /** Contacts held by every other side, keyed by side name. */
+  sideContacts: Record<string, Contact[]>;
   orders: Map<string, UnitOrders>;
   referencePoints: ReferencePoint[];
   score: Record<string, number>;
   turnNumber: number;
+  schedule: PhaseSchedule;
   // Doctrine overrides applied by TCA events at runtime
   sideDoctrineOverrides?: Record<string, Partial<Doctrine>>;
-  missionDoctrineOverrides?: Record<string, Partial<Doctrine>>;
+  missionDoctrineOverrides?: Record<string, Partial<Doctrine>>; // keyed by `${side}:${mission.id}` or `${side}:${mission.name}`
 }
 
 export function createInitialGameState(
@@ -68,6 +86,7 @@ export function createInitialGameState(
         unitId: unit.id,
         waypoints: [],
         throttle: 2, // cruise by default
+        speedKts: unit.speed,
         radarActive: true,
       });
     }
@@ -87,11 +106,18 @@ export function createInitialGameState(
       units: s.units.map((u) => ({ ...u })),
     })),
     contacts: [],
+    sideContacts: {},
     orders,
     referencePoints: [...scenario.referencePoints],
     score: Object.fromEntries(scenario.sides.map((s) => [s.name, 0])),
     turnNumber: 0,
+    schedule: { detectionAt: startTime, aiAt: startTime, engageAt: startTime },
   };
+}
+
+/** The contact store a side owns. */
+export function contactsFor(state: GameState, side: string): Contact[] {
+  return side === state.scenario.playerSide ? state.contacts : state.sideContacts[side] ?? [];
 }
 
 export const SPEED_OPTIONS = [1, 2, 5, 10, 30, 60] as const;

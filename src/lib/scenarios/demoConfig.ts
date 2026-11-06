@@ -102,7 +102,7 @@ const scenarioEvents: ScenarioEvent[] = [
         type: "DisplayMessage",
         side: "US Navy",
         title: "OPERATION SENTINEL PASSAGE",
-        text: "Your carrier strike group must transit the Strait of Hormuz and reach the Persian Gulf. Iranian naval forces are patrolling the strait. Rules of engagement: weapons tight — engage only if fired upon. Intelligence indicates Iranian fast attack craft armed with C-802 anti-ship missiles in the area.",
+        text: "Your carrier strike group must transit the Strait of Hormuz: bring USS Nimitz into the marked transit gate. Iranian naval forces are patrolling the strait. Rules of engagement: weapons tight — engage only if fired upon. Intelligence indicates Iranian fast attack craft armed with C-802 anti-ship missiles in the area.",
       },
     ],
   },
@@ -165,7 +165,7 @@ const scenarioEvents: ScenarioEvent[] = [
           {
             id: "ir-bog-1",
             name: "Boghammar 501",
-            platformId: 2106,
+            platformId: 9004,
             position: { lng: 56.27, lat: 27.18 },
             heading: 200,
             speed: 30,
@@ -174,7 +174,7 @@ const scenarioEvents: ScenarioEvent[] = [
           {
             id: "ir-bog-2",
             name: "Boghammar 502",
-            platformId: 2106,
+            platformId: 9004,
             position: { lng: 56.30, lat: 27.15 },
             heading: 210,
             speed: 30,
@@ -188,7 +188,7 @@ const scenarioEvents: ScenarioEvent[] = [
     name: "Transit Complete",
     repeatable: false,
     triggers: [
-      { type: "Time", time: scenarioStartTime + 120 * 60 * 1000 }, // T+2 hours
+      { type: "UnitEntersArea", side: "US Navy", areaId: "transit-gate", unitId: "us-cvn-1" },
     ],
     conditions: [],
     actions: [

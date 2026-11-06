@@ -217,8 +217,9 @@ export function runDetectionChecks(
 
 /**
  * Merge a new detection result with an existing contact.
- * Classification only improves, never degrades.
- * Position updates to latest sensor data.
+ * Identity only improves. A report refreshes the contact's life, but it only moves the
+ * position and resets the fix clock when it is at least as precise as what the track
+ * currently holds, so a weak ESM bearing cannot keep a stale precise track alive.
  */
 export function mergeContact(
   existing: Contact,
@@ -226,17 +227,11 @@ export function mergeContact(
   actualPosition: Position,
   simTime: number
 ): Contact {
-  const classificationOrder: Contact["classification"][] = [
-    "unknown",
-    "detected",
-    "classified",
-    "tracked",
-  ];
+  const classificationOrder: Contact["classification"][] = ["unknown", "detected", "classified", "tracked"];
 
   const currentIdx = classificationOrder.indexOf(existing.classification);
   const newIdx = classificationOrder.indexOf(newDetection.classification);
 
-  // If detected by radar and tracked continuously, upgrade to tracked
   let newClassification = existing.classification;
   if (newIdx > currentIdx) {
     newClassification = newDetection.classification;
@@ -246,7 +241,18 @@ export function mergeContact(
     newClassification = "tracked";
   }
 
-  // Apply position uncertainty
+  const heldUncertainty = existing.positionUncertainty;
+  const improvesFix = newDetection.uncertainty <= heldUncertainty;
+
+  if (!improvesFix) {
+    // Keeps the contact alive and may sharpen identity, but not the position or its age.
+    return {
+      ...existing,
+      classification: newClassification === "tracked" && existing.classification !== "tracked" ? "classified" : newClassification,
+      lastUpdateTime: simTime,
+    };
+  }
+
   const jitterLat = (Math.random() - 0.5) * newDetection.uncertainty * 0.009;
   const jitterLng = (Math.random() - 0.5) * newDetection.uncertainty * 0.009;
 
@@ -257,8 +263,10 @@ export function mergeContact(
       lat: actualPosition.lat + jitterLat,
       lng: actualPosition.lng + jitterLng,
     },
-    positionUncertainty: Math.min(existing.positionUncertainty, newDetection.uncertainty),
+    positionUncertainty: newDetection.uncertainty,
+    baseUncertainty: newDetection.uncertainty,
     lastUpdateTime: simTime,
+    lastFixTime: simTime,
     sensorType: newDetection.sensorType,
   };
 }

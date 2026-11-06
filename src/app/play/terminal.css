@@ -584,6 +584,19 @@
 .tx-cmd-right {
   margin-left: auto;
 }
+/* The fire commands need room: tighten the bar on narrower windows so it still fits in 1280px */
+@media (max-width: 1500px) {
+  .tx-cmd {
+    gap: 4px;
+    padding: 0 8px;
+  }
+  .tx-cmd .tx-btn {
+    padding: 0 6px;
+  }
+  .tx-cmd .tx-group-label {
+    display: none;
+  }
+}
 .tx-anchor {
   position: relative;
   display: inline-flex;

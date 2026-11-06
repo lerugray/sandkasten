@@ -1,0 +1,302 @@
+{
+  "slug": "nimitz-cvn-68",
+  "legacyIds": [
+    2740
+  ],
+  "engineName": "CVN 68 Nimitz [1998]",
+  "name": "Nimitz-class aircraft carrier",
+  "designation": "CVN 68 USS Nimitz",
+  "className": "Nimitz class (CVN 68)",
+  "nation": "United States",
+  "side": "US Navy",
+  "service": "US Navy",
+  "domain": "surface",
+  "dimension": "sea",
+  "functionId": "CV",
+  "role": "Nuclear-powered aircraft carrier: the base for a carrier air wing of strike fighters, airborne early warning, electronic attack and helicopters",
+  "serviceWindow": {
+    "enteredService": 1975,
+    "retired": null,
+    "statusNotes": "USS Nimitz was commissioned on 3 May 1975 and was scheduled to leave service in 2026: she left Bremerton on 7 March 2026 for a homeport shift to Norfolk ahead of inactivation. On 14 March 2026 the Navy extended her service to March 2027 to hold the carrier fleet at 11 until USS John F. Kennedy (CVN 79) is delivered (s3). She was in service on 2026-03-15. The original plan to leave service in 2026 is from s4."
+  },
+  "dimensions": {
+    "lengthM": 332.85,
+    "beamM": 40.84,
+    "draftM": 11.3,
+    "displacementFullTons": 97000,
+    "crew": "about 3,200 ship's company plus about 2,480 air wing",
+    "sourceId": "s1",
+    "provenance": "verified",
+    "fieldCitations": {
+      "draftM": { "sourceId": "s13", "provenance": "estimated" }
+    }
+  },
+  "propulsionSummary": "Two A4W nuclear reactors drive four shafts through steam turbines, which gives the ship unlimited range and about 20 to 25 years between refuelings.",
+  "performance": {
+    "maxSpeedKts": 30,
+    "cruiseSpeedKts": null,
+    "sourceId": "s1",
+    "provenance": "verified"
+  },
+  "sensorRangeKm": 324,
+  "weaponRangeKm": 20,
+  "damagePoints": 3600,
+  "missileDefense": 24,
+  "engineSourceId": "s1",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "RIM-7 Sea Sparrow",
+      "type": "sam",
+      "rangeKm": 19,
+      "speedKts": 2300,
+      "pkAir": 70,
+      "pkSurface": 0,
+      "quantity": 16,
+      "warheadDamage": 60,
+      "seekerType": "semi-active",
+      "mountSummary": "Two launchers of eight missiles each (s1). The Navy fact file lists the Sea Sparrow range as classified, so the 19 km engine range is estimated.",
+      "sourceId": "s12",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Mk 15 Phalanx CIWS",
+      "type": "gun",
+      "rangeKm": 1.8,
+      "speedKts": 0,
+      "pkAir": 50,
+      "pkSurface": 30,
+      "quantity": 1200,
+      "warheadDamage": 10,
+      "mountSummary": "20 mm six-barrel gun. FAS lists Phalanx range as classified, so range and round count are estimated.",
+      "sourceId": "s11",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [
+    {
+      "name": "Mk 36 SRBOC Chaff",
+      "type": "chaff",
+      "effectiveness": 0.3,
+      "quantity": 48,
+      "sourceId": "s9",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-32(V)4 ECM",
+      "type": "ecm",
+      "effectiveness": 0.3,
+      "sourceId": "s8",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Mk 15 Phalanx x3",
+      "type": "ciws",
+      "effectiveness": 0.65,
+      "sourceId": "s11",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-25 Nixie",
+      "type": "decoy",
+      "effectiveness": 0.2,
+      "sourceId": "s10",
+      "provenance": "estimated"
+    }
+  ],
+  "sensors": [
+    {
+      "name": "AN/SPS-48E 3D air search radar",
+      "type": "radar",
+      "role": "Gives range, bearing and height on air targets",
+      "band": "S-band",
+      "rangeKm": 324,
+      "canTrack": true,
+      "sourceId": "s6",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SPS-49(V)5 air search radar",
+      "type": "radar",
+      "role": "Long-range 2D air search, FAS gives its range as 250 nautical miles",
+      "band": "L-band",
+      "rangeKm": 463,
+      "canTrack": true,
+      "sourceId": "s5",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SPQ-9B surface and low-air radar",
+      "type": "radar",
+      "role": "Fast scan for sea-skimming missiles and boats near the ship",
+      "band": "X-band",
+      "rangeKm": 40,
+      "canTrack": true,
+      "sourceId": "s7",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-32A(V)4 electronic support",
+      "type": "esm",
+      "role": "Detects, identifies and bears on hostile radars",
+      "rangeKm": 150,
+      "canTrack": false,
+      "sourceId": "s8",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Bridge and flight deck lookouts",
+      "type": "visual",
+      "role": "Eyes and binoculars from the island and flight deck",
+      "rangeKm": 25,
+      "canTrack": false,
+      "sourceId": "s1",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [],
+  "signatures": {
+    "radar": {
+      "grade": "very-high",
+      "note": "A 333 m hull with a large island, a crowded flight deck and parked aircraft is among the biggest radar targets in any fleet."
+    },
+    "infrared": {
+      "grade": "medium",
+      "note": "Steam turbines driven by reactors do not put out a gas-turbine exhaust plume, but the hull and flight deck are large and warm."
+    },
+    "acoustic": {
+      "grade": "high",
+      "note": "Four shafts and 97,000 tons of displacement make a loud contact, and aircraft operations add noise."
+    },
+    "visual": {
+      "grade": "very-high",
+      "note": "A 4.5 acre flight deck and a seven-story island can be seen from far off on a clear day."
+    },
+    "sourceId": "s1",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The Nimitz class is the US Navy's workhorse aircraft carrier. USS Nimitz, the lead ship, is 333 m long, displaces about 97,000 tons and carries an air wing of about 85 aircraft: strike fighters, early-warning aircraft, electronic attack jets and helicopters. Two nuclear reactors give it effectively unlimited range.",
+    "howItIsUsed": "A commander uses the carrier as a mobile airbase and the centre of a strike group. The air wing does the fighting: fighters shoot down aircraft, strike aircraft hit ships and shore targets, and the E-2 early-warning aircraft sees farther than any ship radar. The carrier itself carries only close-in defences (Sea Sparrow, Phalanx, chaff and an electronic warfare suite), so cruisers and destroyers must ring it and carry the long-range air and missile defence. It can launch about four aircraft a minute from its four catapults. Its weakness is that a hit on the flight deck or hangar can stop air operations, and if the carrier is damaged the whole group loses its main weapon. Keep it away from submarines and out of reach of saturating missile salvos.",
+    "typicalMissions": [
+      "Air superiority and strike from the sea",
+      "Anti-surface and anti-submarine warfare through the air wing",
+      "Strike group command and control",
+      "Sea control and escort",
+      "Presence and crisis response"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/nimitz-cvn-68/main.jpg",
+      "caption": "USS Nimitz (CVN 68) underway in the Red Sea, 14 October 2013.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:USS_Nimitz_(CVN-68)_underway_in_the_Red_Sea_2013.JPG",
+      "author": "U.S. Navy photo by Mass Communication Specialist Seaman Derek A. Harkins",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy",
+      "attributionLine": "Photo: U.S. Navy photo by Mass Communication Specialist Seaman Derek A. Harkins, US-Gov (public domain), via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/nimitz-cvn-68/second.jpg",
+      "caption": "USS Nimitz (CVN 68) underway off the California coast, 16 November 2004.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_041116-N-4776G-083_USS_Nimitz_(CVN_68)_underway_in_the_early_morning_hours_off_the_California_coast.jpg",
+      "author": "U.S. Navy photo",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy",
+      "attributionLine": "Photo: U.S. Navy photo, US-Gov (public domain), via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "CVN-68 Nimitz-class",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/cvn-68.htm"
+    },
+    {
+      "id": "s2",
+      "title": "Fact File: Aircraft Carriers - CVN (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2024,
+      "url": "https://web.archive.org/web/2024/https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2169795/aircraft-carriers-cvn/"
+    },
+    {
+      "id": "s3",
+      "title": "Aircraft carrier Nimitz gets service life extension, won't be decommissioned until 2027",
+      "publisher": "Breaking Defense",
+      "year": 2026,
+      "url": "https://breakingdefense.com/2026/03/aircraft-carrier-nimitz-gets-service-life-extension-wont-be-decommissioned-until-2027/"
+    },
+    {
+      "id": "s4",
+      "title": "USS Nimitz",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/USS_Nimitz"
+    },
+    {
+      "id": "s5",
+      "title": "AN/SPS-49 Very Long-Range Air Surveillance Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sps-49.htm"
+    },
+    {
+      "id": "s6",
+      "title": "AN/SPS-48 3D Air Search Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sps-48.htm"
+    },
+    {
+      "id": "s7",
+      "title": "AN/SPQ-9 Gun Fire Control Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-spq-9.htm"
+    },
+    {
+      "id": "s8",
+      "title": "AN/SLQ-32 Electronic Warfare System",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-slq-32.htm"
+    },
+    {
+      "id": "s9",
+      "title": "Mk 36 Super Rapid Blooming Offboard Chaff",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/mk-36.htm"
+    },
+    {
+      "id": "s10",
+      "title": "AN/SLQ-25 Nixie Torpedo Countermeasure",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-slq-25.htm"
+    },
+    {
+      "id": "s11",
+      "title": "Mk 15 Phalanx Close-In Weapons System",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/mk-15.htm"
+    },
+    {
+      "id": "s12",
+      "title": "Fact File: Sea Sparrow Missile (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2015,
+      "url": "https://web.archive.org/web/2015/http://www.navy.mil/navydata/fact_display.asp?cid=2200&tid=900&ct=2"
+    },
+    {
+      "id": "s13",
+      "title": "Nimitz-class aircraft carrier",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Nimitz-class_aircraft_carrier"
+    }
+  ]
+}

@@ -29,7 +29,7 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 | | CMO | Sandkasten |
 |---|---|---|
 | **Cost** | $80+ | Free, open source |
-| **Platform database** | Proprietary (CWDB) | Community-maintained, or import from CMO if you own it |
+| **Platform database** | Proprietary (CWDB), no photos | Our own, sourced and open: real licensed photos, full specs, plain-English briefings |
 | **Scenario scripting** | Lua + complex editor | Visual trigger-condition-action system |
 | **UI** | Built for defense analysts | Built for players |
 | **Multiplayer** | TCP/IP real-time | WeGo simultaneous turns (planned) |
@@ -46,29 +46,30 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Missiles fly with trails and target lines; intercepts and hits flash briefly
 - Drag to pan (it coasts when you let go), wheel to zoom at the cursor, `T` tilts the plot into a low 3D theater with NOAA relief, wireframe sensor domes and aircraft at altitude
 - Terminal chrome: vendored JetBrains Mono, one phosphor green, one alarm red, function-key command bar, teletype traffic strip fed by the combat log, intel and autopause
-- Keys: `Space` pause, `1`-`6` speed, `S` sensors, `M` measure, `G` god mode, `T` tilt, `A` autopause, `H`/`?` help
+- Keys: `Space` pause, `1`-`6` speed, `S` sensors, `M` measure, `G` god mode, `T` tilt, `A` autopause, `H`/`?` help, `E` engage the chosen contact, `N` next contact, `R` cycle rules of engagement, `F` weapons free, `X` weapons hold
 - The old MapLibre map stays at `/play?map=legacy` for comparison
 
 ### Foundation
 - Dark tactical map with NATO MIL-STD-2525 symbols (home page, editor, legacy play view)
-- Demo scenario: US carrier strike group vs. Iranian naval forces, Strait of Hormuz
+- Demo scenario: US carrier strike group vs. Iranian naval forces, Strait of Hormuz. You win by taking the carrier into the transit gate; losing the carrier is a defeat. Ship classes were fact-checked against a 2026-03-15 date (see `docs/handoffs/sim-fix-2026-11-03/NOTES.md`)
 - Click units for detailed Info/Sensors/Weapons panels
 - Shift+click to pin sensor range rings
 - Sensor coverage overlay — toggle radar coverage circles (`S` key)
 - Measurement tools — click two points for distance/bearing (`M` key)
 - Dark/light theme (MapLibre pages; the terminal play view is dark only)
 - Scenario editor at `/editor` — place units, drag to reposition, set sides, save/load JSON
-- Platform database API with 60k+ extracted CMO records
+- Platform manual at `/database`: 16 Hormuz platforms (ships and aircraft) with real open-license photos and credits, sourced specs, plain-English "what it is / how it is used / typical missions", sensors, weapons, defenses and a numbered bibliography. Records live in `src/data/platforms/records/`; the simulation reads them through `src/lib/platforms/lookup.ts`. Estimation methods are in `src/data/platforms/METHODS.md`. Nothing is copied from CMO.
 
 ### Simulation
 - Real-time simulation at `/play`
-- Waypoint-based movement with four throttle settings
+- Waypoint-based movement with a STOP and four throttle settings; a unit that finishes its route holds position
 - Radar detection (range-based probability, radar horizon)
 - ESM passive detection of active emitters
 - Contact classification: Unknown → Detected → Classified → Tracked
-- Fog of war — you see only what your sensors report
+- Fog of war — you see only what your sensors report; every side (not just yours) reasons from its own contacts
 - God mode toggle to see all units (`G` key)
-- Contacts degrade and fade without fresh sensor data
+- Contacts degrade and fade without fresh sensor data; a weak ESM bearing cannot keep a stale track alive
+- One authoritative game state: pausing, speed changes and orders no longer rewind the clock
 - Time controls: pause/play, 1x through 60x speed
 - Autopause on new contacts, damage, incoming weapons, intel messages (configurable)
 
@@ -79,6 +80,10 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Cascading doctrine: side → mission → unit overrides
 
 ### Combat
+- **Player ENGAGE order** — pick a unit, a contact (DETECTED or better) and a weapon (or AUTO) in the order panel, then ENGAGE (`E`). Range, ammo, weapon domain and shooter state are checked the same way the AI is; a refusal says why. Only sensor knowledge is used, never true positions
+- **Rules of engagement per unit** — WEAPONS HOLD / TIGHT / FREE (`X` / `R` / `F`). Default is TIGHT: a unit fires only in self-defence (a weapon in flight at it), at contacts classified hostile. FREE fires at any contact DETECTED or better
+- **Cumulative damage** — each unit keeps a running damage total; damaged / mission-kill / destroyed come from the total (15% / 50% / 80% of the platform's damage points). Aircraft keep a separate one-hit rule (`AIRCRAFT_ONE_HIT_RATIO`)
+- Defences are spent: chaff runs out, each try counts
 - Anti-ship missile launch, flight, intercept
 - WRA-based salvo sizing — ships fire 2-8 missiles based on target's missile defense
 - Weapon tracks on map — dashed lines showing missiles in flight
@@ -98,8 +103,9 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Covers controls, game concepts, sidebar guide, and media feed setup
 
 ### Testing
-- 36 Playwright E2E tests covering page loads, simulation gameplay, combat, autopause, and the terminal design system (vendored font, no remote fonts, chrome never resizes the plot)
-- `npm test` runs all tests headless; `npm run test:ui` opens the visual debugger
+- Vitest unit tests (`npm run test:unit`) cover movement, sensors and contacts, combat and damage, engage and ROE, AI missions, event scripting, the simulation session and the demo's ship facts
+- Playwright E2E tests (`npm run test:e2e`) covering page loads, simulation gameplay, combat, autopause, and the terminal design system (vendored font, no remote fonts, chrome never resizes the plot)
+- `npm test` runs the unit tests, then all E2E tests headless; `npm run test:ui` opens the visual debugger
 
 ---
 
@@ -122,15 +128,15 @@ To run E2E tests (auto-starts the dev server):
 npm test
 ```
 
-### Platform Database (Optional)
+### Platform Database
 
-The demo scenario includes a built-in platform set. For the full database (4,700 ships, 7,100 aircraft, 4,200 weapons, 7,200 sensors), install [Command: Modern Operations](https://store.steampowered.com/app/1076160/Command_Modern_Operations/) and run:
+Sandkasten ships its own platform database (`src/data/platforms/`); no CMO install is needed. Optional and local only: for CMO-derived reference data on your own machine (4,700 ships, 7,100 aircraft, 4,200 weapons, 7,200 sensors), install [Command: Modern Operations](https://store.steampowered.com/app/1076160/Command_Modern_Operations/) and run:
 
 ```bash
 python scripts/extract_cmo_db.py
 ```
 
-Reads CMO's SQLite database files, outputs JSON to `data/extraction/`. Gitignored — derived from proprietary game files.
+Reads CMO's SQLite database files, outputs JSON to `data/extraction/`. Gitignored, derived from proprietary game files. The game never reads or bundles it.
 
 ### InfoWar Feed (Optional)
 
@@ -198,6 +204,7 @@ sandkasten/
 | **InfoWar Feed** | Media coverage from game events via local LLM | Complete |
 | **Polish** | Autopause, god mode, sensors overlay, measurement, E2E tests | Complete |
 | **Look** | Three.js terminal play view, motion, 3D tilt | Built, awaiting Ray's in-game review |
+| **Platform database** | Own sourced records, photos and `/database` viewer for the Hormuz roster | Built, awaiting Ray's review; full roster is a later job |
 | **Remaining gaps** | Fuel consumption, aircraft altitude, game save/load | Next |
 | **WeGo Multiplayer** | WebSocket sync, turn system, lobby, server-side fog of war | Planned |
 | **Community** | Scenario sharing, Auftragstaktik OSINT import, campaign mode | Planned |

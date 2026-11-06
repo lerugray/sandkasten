@@ -1,273 +1,99 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import type { Scenario } from "@/types/game";
-import { createInitialGameState, SPEED_OPTIONS, type GameState } from "./gameState";
-import { simulationTick, resetDetectionTimer } from "./engine";
-import { type AIState, resetAITimer } from "@/lib/ai/aiController";
-import type { EventState, EventMessage } from "@/lib/ai/events";
-import type { Mission } from "@/lib/ai/missions";
 import type { Doctrine } from "@/lib/ai/doctrine";
-import { createCombatState, resetCombatTimer, type CombatState } from "./combat";
-import type { InfoWarConfig } from "@/lib/infowar/types";
-import {
-  type AutopausePreferences,
-  type AutopauseResult,
-  DEFAULT_AUTOPAUSE,
-  loadAutopausePrefs,
-  saveAutopausePrefs,
-  checkAutopauseTriggers,
-  buildFriendlyDamageMap,
-} from "./autopause";
+import { SimulationSession, type ScenarioConfig, type SessionSnapshot } from "./session";
+import { type AutopausePreferences, loadAutopausePrefs, saveAutopausePrefs } from "./autopause";
+
+export type { ScenarioConfig } from "./session";
 
 const TICK_INTERVAL_MS = 50; // 20 fps simulation
+const PUBLISH_INTERVAL_MS = 250; // React renders at ~4 fps to avoid UI jitter
 
-export interface ScenarioConfig {
-  scenario: Scenario;
-  missions?: Mission[];
-  sideDoctrine?: Record<string, Partial<Doctrine>>;
-  events?: EventState;
-  infowar?: InfoWarConfig;
-}
-
+/**
+ * React binding for a SimulationSession. The session owns the game; this hook ticks it,
+ * forwards commands to it, and publishes snapshots for rendering.
+ */
 export function useSimulation(config: ScenarioConfig) {
-  const { scenario, missions = [], sideDoctrine = {}, events } = config;
+  const sessionRef = useRef<SimulationSession | null>(null);
+  if (!sessionRef.current) sessionRef.current = new SimulationSession(config);
+  const session = sessionRef.current;
 
-  const [gameState, setGameState] = useState<GameState>(() =>
-    createInitialGameState(scenario)
-  );
+  const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => session.snapshot());
+  const publish = useCallback(() => setSnapshot(session.snapshot()), [session]);
 
-  const [eventState, setEventState] = useState<EventState | undefined>(events);
-  const [combatState, setCombatState] = useState<CombatState>(() => createCombatState());
+  const autopausePrefsRef = useRef<AutopausePreferences>(session.autopausePrefs);
 
-  const [autopauseEvent, setAutopauseEvent] = useState<AutopauseResult | null>(null);
-  const autopausePrefsRef = useRef<AutopausePreferences>(DEFAULT_AUTOPAUSE);
-  const seenTriggersRef = useRef<Set<string>>(new Set());
-
-  // Load autopause prefs from localStorage on mount
   useEffect(() => {
-    autopausePrefsRef.current = loadAutopausePrefs();
-  }, []);
+    session.autopausePrefs = loadAutopausePrefs();
+    autopausePrefsRef.current = session.autopausePrefs;
+  }, [session]);
 
-  const aiStateRef = useRef<AIState>({
-    missions,
-    sideDoctrine,
-  });
-
-  // Keep AI state in sync with config changes
   useEffect(() => {
-    aiStateRef.current = { missions, sideDoctrine };
-  }, [missions, sideDoctrine]);
+    session.updateConfig(config);
+  }, [session, config]);
 
-  const gameStateRef = useRef(gameState);
-  gameStateRef.current = gameState;
-
-  const eventStateRef = useRef(eventState);
-  eventStateRef.current = eventState;
-
-  const combatStateRef = useRef(combatState);
-  combatStateRef.current = combatState;
-
-  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const lastTickRef = useRef<number>(Date.now());
-  const lastRenderRef = useRef<number>(Date.now());
-
-  // Main simulation loop
-  // Sim ticks at 50ms but React only re-renders at ~4fps (250ms) to avoid jitter
   useEffect(() => {
-    tickRef.current = setInterval(() => {
+    let last = Date.now();
+    let lastPublish = last;
+    const timer = setInterval(() => {
       const now = Date.now();
-      const dtMs = now - lastTickRef.current;
-      lastTickRef.current = now;
-
-      if (!gameStateRef.current.isPaused) {
-        const prevContacts = gameStateRef.current.contacts;
-        const prevMsgCount = eventStateRef.current?.messages?.length ?? 0;
-        const prevDamage = buildFriendlyDamageMap(
-          gameStateRef.current,
-          gameStateRef.current.scenario.playerSide
-        );
-        const prevCombat = combatStateRef.current;
-
-        const result = simulationTick(
-          gameStateRef.current,
-          dtMs,
-          aiStateRef.current,
-          eventStateRef.current,
-          combatStateRef.current
-        );
-
-        // Always update refs (sim state is authoritative)
-        gameStateRef.current = result.gameState;
-        if (result.eventState) {
-          eventStateRef.current = result.eventState;
-        }
-        if (result.combatState) {
-          combatStateRef.current = result.combatState;
-        }
-
-        // Check autopause triggers
-        const nextMsgCount = result.eventState?.messages?.length ?? prevMsgCount;
-        const nextDamage = buildFriendlyDamageMap(
-          result.gameState,
-          result.gameState.scenario.playerSide
-        );
-        const trigger = checkAutopauseTriggers(
-          autopausePrefsRef.current,
-          prevContacts,
-          result.gameState.contacts,
-          prevCombat,
-          result.combatState,
-          prevMsgCount,
-          nextMsgCount,
-          prevDamage,
-          nextDamage,
-          result.gameState.scenario.playerSide,
-          seenTriggersRef.current
-        );
-
-        if (trigger) {
-          // Force pause and immediate render
-          gameStateRef.current = { ...result.gameState, isPaused: true };
-          lastRenderRef.current = now;
-          setGameState(gameStateRef.current);
-          if (result.eventState) setEventState(result.eventState);
-          if (result.combatState) setCombatState(result.combatState);
-          setAutopauseEvent(trigger);
-          return; // skip normal throttled render
-        }
-
-        // Throttle React re-renders to avoid UI jitter
-        const timeSinceRender = now - lastRenderRef.current;
-        if (timeSinceRender >= 250) {
-          lastRenderRef.current = now;
-          setGameState(result.gameState);
-          if (result.eventState) {
-            setEventState(result.eventState);
-          }
-          if (result.combatState) {
-            setCombatState(result.combatState);
-          }
-        }
+      const dtMs = now - last;
+      last = now;
+      const publishNow = session.tick(dtMs);
+      if (publishNow || now - lastPublish >= PUBLISH_INTERVAL_MS) {
+        lastPublish = now;
+        publish();
       }
     }, TICK_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [session, publish]);
 
-    return () => {
-      if (tickRef.current) clearInterval(tickRef.current);
-    };
-  }, []);
-
-  const togglePause = useCallback(() => {
-    setGameState((prev) => {
-      lastTickRef.current = Date.now();
-      if (prev.isPaused) {
-        // Resuming — clear seen triggers so autopause can fire again
-        seenTriggersRef.current.clear();
-        setAutopauseEvent(null);
-      }
-      return { ...prev, isPaused: !prev.isPaused };
-    });
-  }, []);
-
-  const setSpeed = useCallback((speed: number) => {
-    setGameState((prev) => ({ ...prev, speed }));
-  }, []);
-
-  const cycleSpeed = useCallback(() => {
-    setGameState((prev) => {
-      const currentIdx = SPEED_OPTIONS.indexOf(prev.speed as typeof SPEED_OPTIONS[number]);
-      const nextIdx = (currentIdx + 1) % SPEED_OPTIONS.length;
-      return { ...prev, speed: SPEED_OPTIONS[nextIdx] };
-    });
-  }, []);
-
-  const addWaypoint = useCallback(
-    (unitId: string, position: { lng: number; lat: number }, speed?: number) => {
-      setGameState((prev) => {
-        const orders = prev.orders.get(unitId);
-        if (!orders) return prev;
-
-        const newOrders = new Map(prev.orders);
-        newOrders.set(unitId, {
-          ...orders,
-          waypoints: [
-            ...orders.waypoints,
-            { position, speed },
-          ],
-        });
-
-        return { ...prev, orders: newOrders };
-      });
-    },
-    []
+  // Every command acts on the session at once, then shows the result
+  const command = useCallback(
+    <A extends unknown[], R = void>(fn: (...args: A) => R) =>
+      (...args: A): R => {
+        const out = fn(...args);
+        publish();
+        return out;
+      },
+    [publish]
   );
 
-  const clearWaypoints = useCallback((unitId: string) => {
-    setGameState((prev) => {
-      const orders = prev.orders.get(unitId);
-      if (!orders) return prev;
+  const togglePause = useCallback(() => command(() => session.togglePause())(), [command, session]);
+  const setSpeed = useCallback((speed: number) => command(() => session.setSpeed(speed))(), [command, session]);
+  const cycleSpeed = useCallback(() => command(() => session.cycleSpeed())(), [command, session]);
+  const addWaypoint = useCallback(
+    (unitId: string, position: { lng: number; lat: number }, speed?: number) =>
+      command(() => session.addWaypoint(unitId, position, speed))(),
+    [command, session]
+  );
+  const clearWaypoints = useCallback((unitId: string) => command(() => session.clearWaypoints(unitId))(), [command, session]);
+  const setThrottle = useCallback((unitId: string, throttle: number) => command(() => session.setThrottle(unitId, throttle))(), [command, session]);
+  const toggleRadar = useCallback((unitId: string) => command(() => session.toggleRadar(unitId))(), [command, session]);
+  const setRoe = useCallback((unitId: string, roe: Doctrine["roe"]) => command(() => session.setRoe(unitId, roe))(), [command, session]);
+  const engage = useCallback(
+    (shooterId: string, contactId: string, weaponName?: string) => command(() => session.engage(shooterId, contactId, weaponName))(),
+    [command, session]
+  );
+  const markMessageRead = useCallback((messageId: string) => command(() => session.markMessageRead(messageId))(), [command, session]);
+  const resetSimulation = useCallback(() => command(() => session.reset())(), [command, session]);
 
-      const newOrders = new Map(prev.orders);
-      newOrders.set(unitId, { ...orders, waypoints: [] });
-      return { ...prev, orders: newOrders };
-    });
-  }, []);
-
-  const setThrottle = useCallback((unitId: string, throttle: number) => {
-    setGameState((prev) => {
-      const orders = prev.orders.get(unitId);
-      if (!orders) return prev;
-
-      const newOrders = new Map(prev.orders);
-      newOrders.set(unitId, { ...orders, throttle });
-      return { ...prev, orders: newOrders };
-    });
-  }, []);
-
-  const toggleRadar = useCallback((unitId: string) => {
-    setGameState((prev) => {
-      const orders = prev.orders.get(unitId);
-      if (!orders) return prev;
-
-      const newOrders = new Map(prev.orders);
-      newOrders.set(unitId, { ...orders, radarActive: !orders.radarActive });
-      return { ...prev, orders: newOrders };
-    });
-  }, []);
-
-  const markMessageRead = useCallback((messageId: string) => {
-    setEventState((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        messages: prev.messages.map((m) =>
-          m.id === messageId ? { ...m, read: true } : m
-        ),
-      };
-    });
-  }, []);
-
-  const setAutopausePrefs = useCallback((prefs: AutopausePreferences) => {
-    autopausePrefsRef.current = prefs;
-    saveAutopausePrefs(prefs);
-  }, []);
-
-  const resetSimulation = useCallback(() => {
-    resetDetectionTimer();
-    resetAITimer();
-    resetCombatTimer();
-    seenTriggersRef.current.clear();
-    setAutopauseEvent(null);
-    setGameState(createInitialGameState(scenario));
-    setEventState(events);
-    setCombatState(createCombatState());
-  }, [scenario, events]);
+  const setAutopausePrefs = useCallback(
+    (prefs: AutopausePreferences) => {
+      autopausePrefsRef.current = prefs;
+      session.autopausePrefs = prefs;
+      saveAutopausePrefs(prefs);
+    },
+    [session]
+  );
 
   return {
-    gameState,
-    eventState,
-    combatState,
-    autopauseEvent,
+    gameState: snapshot.gameState,
+    eventState: snapshot.eventState,
+    combatState: snapshot.combatState,
+    autopauseEvent: snapshot.autopauseEvent,
+    orderFeedback: snapshot.orderFeedback,
     autopausePrefsRef,
     togglePause,
     setSpeed,
@@ -276,6 +102,8 @@ export function useSimulation(config: ScenarioConfig) {
     clearWaypoints,
     setThrottle,
     toggleRadar,
+    setRoe,
+    engage,
     markMessageRead,
     resetSimulation,
     setAutopausePrefs,
