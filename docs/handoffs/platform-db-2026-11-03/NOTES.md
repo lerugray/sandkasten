@@ -1,0 +1,63 @@
+# NOTES: Sandkasten platform database + /database viewer (sand-012)
+
+Lane sand-db012-s387, 2026-11-03. Working tree only, nothing committed.
+
+## What changed
+- `src/types/platformDb.ts`: first-party `PlatformRecord` schema. Records in `src/data/platforms/records/<slug>.json`, indexed by `src/data/platforms/index.ts`. Methods for engine abstractions in `src/data/platforms/METHODS.md`.
+- `src/lib/platforms/lookup.ts` now derives `PlatformInfo` from the records (`toPlatformInfo`). `src/lib/simulation/*` is untouched. The 14 legacy numeric ids resolve through `legacyIds` (aliases only). Two new records have our own engine ids (9001 Boghammar, 9002 Flight IIA) for the sim-fix lane to use.
+- `src/lib/platforms/database.ts` and `src/app/api/platforms/route.ts` serve the records (`isDatabaseAvailable()` is true from committed records). They never read `data/extraction/` or `data/raw/` (still gitignored, not bundled). The old CMO-shaped query `?type=ship&id=..` (used by `DetailPanel.tsx`, which I may not edit) returns `null`, which the panel treats as "no extra detail"; so the Info tab no longer shows CMO-extracted crew/speed rows. `/api/platforms?slug=` and `?id=` return first-party records.
+- `/database` (`?id=` or `?slug=`): roster rail with `/` filter, Up/Down or J/K, photo bay with credit bar, service status, plain-English brief, specs, sensors, weapons/loadouts, defenses, numbered sources with VERIFIED/ESTIMATED/REFERENCE tags. Components in `src/components/database/`, styles in `src/app/database/database.css`. `src/components/database/index.ts` exports `PlatformDatabaseModal` and `getPlatformDatabaseHref` for the `/play` lane to wire later.
+- Engine equivalence: a one-off script compared `toPlatformInfo` output for the 14 original ids against the old `lookup.ts` table (git HEAD): 0 differences. Engine-read numbers are carried over unchanged (tagged `estimated`); the descriptive spec blocks show published figures.
+
+## Tests
+- Before: 36 tests (35 existing + 1 from the base commit run), 36 passed on this host.
+- After: 40 tests, 40 passed (`tests/platform-database.spec.ts` adds 4: data/engine-field/license check, API check, full viewer sweep over all 16 platforms, id/slug/keyboard/filter check). Also: `next build` passes; `npx tsc --noEmit` shows only the three pre-existing `sand-001-unit-placement.spec.ts` errors; `next lint` is not configured in this repo.
+- Run on port 3301 with a lane-local config outside the repo (real-GPU flags `--use-gl=angle --use-angle=gl-egl --ignore-gpu-blocklist` with GALLIUM_DRIVER=d3d12, `--mute-audio --no-sandbox`); no GPU fallback was needed. `docs/handoffs/platform-db-2026-11-03/capture.mjs` takes host flags from env vars.
+
+## Coverage and photos (all 16 have real open-license photos; no placeholders)
+| slug | photo | author | license | source URL | sources |
+|---|---|---|---|---|---|
+| arleigh-burke-flt-ii | PHOTO 1/2 | Mass Communication Specialist 2nd Class Jason R. Zalasky, U. | US-Gov | https://commons.wikimedia.org/wiki/File:USS_Mahan_DDG-72_-_081026-N-1082Z-106.jpg | 15 (see record `sources[]`) |
+| arleigh-burke-flt-ii | PHOTO 2/2 | Petty Officer 2nd Class Kaleb Sarten, U.S. Navy | US-Gov | https://commons.wikimedia.org/wiki/File:USS_Mahan_(DDG_72)_(210115-N-QD512-1369).jpg | 15 (see record `sources[]`) |
+| arleigh-burke-flt-iia | PHOTO 1/2 | U.S. Navy photo by Photographer's Mate 1st Class Robert McRi | US-Gov | https://commons.wikimedia.org/wiki/File:US_Navy_050413-N-5526M-016_The_Arleigh_Burke-class_guided_missile_destroyer_USS_Mustin_(DDG_89)_underway_in_the_Northern_Persian_Gulf_while_conducting_Maritime_Security_Operations.jpg | 15 (see record `sources[]`) |
+| arleigh-burke-flt-iia | PHOTO 2/2 | U.S. Navy photo by Mass Communication Specialist Seaman Just | US-Gov | https://commons.wikimedia.org/wiki/File:US_Navy_111003-N-JO245-103_The_Arleigh_Burke-class_guided-missile_destroyer_USS_Mustin_(DDG_89)_and_the_Republic_of_Korea_navy_destroyer_ROKS_Wang.jpg | 15 (see record `sources[]`) |
+| bayandor-class-pf-103 | PHOTO 1/2 | Ali Khara (Mehr News Agency) | CC BY | https://commons.wikimedia.org/wiki/File:Bayandor_warship_2019.jpg | 5 (see record `sources[]`) |
+| bayandor-class-pf-103 | PHOTO 2/2 | Ali Khara (Mehr News Agency) | CC BY | https://commons.wikimedia.org/wiki/File:Marine_Security_Belt_2019_(75).jpg | 5 (see record `sources[]`) |
+| e-2c-hawkeye-2000 | PHOTO 1/2 | Airman Angel G. Hilbrands, US Navy | US-Gov | https://commons.wikimedia.org/wiki/File:US_Navy_031017-N-9319H-001_An_E-2C_Hawkeye_assigned_to_the_Wallbangers_of_Carrier_Airborne_Early_Warning_Squadron_One_One_Seven_(VAW-117).jpg | 4 (see record `sources[]`) |
+| e-2c-hawkeye-2000 | PHOTO 2/2 | Photographer's Mate 3rd Class Christian Weibull, US Navy | US-Gov | https://commons.wikimedia.org/wiki/File:US_Navy_031121-N-4190W-001_An_E-2C_Hawkeye_equipped_with_two_NP2000_eight-bladed,_digitally_controlled_propellers_makes_its_first_carrier_arrested_landing.jpg | 4 (see record `sources[]`) |
+| f-14d-tomcat | PHOTO 1/2 | Tech. Sgt. Rob Tabor, U.S. Air Force (published as a U.S. Na | US-Gov | https://commons.wikimedia.org/wiki/File:US_Navy_051105-F-5480T-005_An_F-14D_Tomcat_conducts_a_mission_over_the_Persian_Gulf-region.jpg | 7 (see record `sources[]`) |
+| f-14d-tomcat | PHOTO 2/2 | Photographer's Mate 3rd Class Christopher B. Long, U.S. Navy | US-Gov | https://commons.wikimedia.org/wiki/File:US_Navy_060619-N-7359L-003_An_F-14D_Tomcat_performs_a_fly_by_past_the_Nimitz-class_aircraft_carrier_USS_Dwight_D._Eisenhower_(CVN_69).jpg | 7 (see record `sources[]`) |
+| fa-18e-super-hornet | PHOTO 1/2 | Mass Communication Specialist 3rd Class Javier Reyes, U.S. N | US-Gov | https://commons.wikimedia.org/wiki/File:FA-18E_Super_Hornet_took_off_from_USS_Abraham_Lincoln_in_2022_7191862.jpg | 8 (see record `sources[]`) |
+| fa-18e-super-hornet | PHOTO 2/2 | Mass Communication Specialist 3rd Class Torrey W. Lee, U.S.  | US-Gov | https://commons.wikimedia.org/wiki/File:US_Navy_080928-N-3610L-208_An_F-A-18E_Super_Hornet_assigned_to_the.jpg | 8 (see record `sources[]`) |
+| irgcn-boghammar-fac | PHOTO 1/2 | David B. Crist | US-Gov | https://commons.wikimedia.org/wiki/File:IRGC_Boghammar_boat_in_2003.jpg | 6 (see record `sources[]`) |
+| irgcn-boghammar-fac | PHOTO 2/2 | U.S. Department of Defense | US-Gov | https://commons.wikimedia.org/wiki/File:Iranian_Boghammer_in_the_1980s.png | 6 (see record `sources[]`) |
+| iriaf-f-14a-tomcat | PHOTO 1/2 | Shahram Sharifi | CC BY-SA | https://commons.wikimedia.org/wiki/File:Iranian_Air_Force_Grumman_F-14A_Tomcat_(remix).jpg | 8 (see record `sources[]`) |
+| iriaf-f-14a-tomcat | PHOTO 2/2 | Shahram Sharifi | CC BY-SA | https://commons.wikimedia.org/wiki/File:A_formation_of_Iranian_Tomcats_in_flight.jpg | 8 (see record `sources[]`) |
+| iriaf-f-4e-phantom-ii | PHOTO 1/2 | Shahram Sharifi | CC BY-SA | https://commons.wikimedia.org/wiki/File:An_IRIAF_F-4E_in_Bushehr_Airbase.jpg | 8 (see record `sources[]`) |
+| iriaf-f-4e-phantom-ii | PHOTO 2/2 | Shahram Sharifi | CC BY-SA | https://commons.wikimedia.org/wiki/File:An_IRIAF_F-4E_takeoffs.jpg | 8 (see record `sources[]`) |
+| kaman-class-combattante-ii | PHOTO 1/2 | PH2 Andrew Meyers, US Navy | US-Gov | https://commons.wikimedia.org/wiki/File:IRIS_Gardouneh_pictured_by_American_military_in_2001.jpg | 5 (see record `sources[]`) |
+| kaman-class-combattante-ii | PHOTO 2/2 | Azin Haghighi (Fars News Agency) | CC BY | https://commons.wikimedia.org/wiki/File:File_photo_of_IRIS_P232.jpg | 5 (see record `sources[]`) |
+| nimitz-cvn-68 | PHOTO 1/2 | U.S. Navy photo by Mass Communication Specialist Seaman Dere | US-Gov | https://commons.wikimedia.org/wiki/File:USS_Nimitz_(CVN-68)_underway_in_the_Red_Sea_2013.JPG | 13 (see record `sources[]`) |
+| nimitz-cvn-68 | PHOTO 2/2 | U.S. Navy photo | US-Gov | https://commons.wikimedia.org/wiki/File:US_Navy_041116-N-4776G-083_USS_Nimitz_(CVN_68)_underway_in_the_early_morning_hours_off_the_California_coast.jpg | 13 (see record `sources[]`) |
+| oliver-hazard-perry-long-hull | PHOTO 1/2 | Department of Defense, American Forces Information Service,  | US-Gov | https://commons.wikimedia.org/wiki/File:A_port_view_of_the_guided_missile_frigate_USS_TAYLOR_(FFG-50)_as_it_passes_a_tanker_after_going_through_the_Strait_of_Hormuz_during_Operation_Desert_Shield_-_DPLA_-_1fb70620034c5304df096b4526972ace.jpeg | 8 (see record `sources[]`) |
+| oliver-hazard-perry-long-hull | PHOTO 2/2 | Mass Communication Specialist 2nd Class Marcus L. Stanley, U | US-Gov | https://commons.wikimedia.org/wiki/File:USS_Taylor_(FFG-50)_leaving_Mayport_in_January_2014.JPG | 8 (see record `sources[]`) |
+| p-3c-orion-update-iii | PHOTO 1/2 | US Navy (U.S. DefenseImagery photo DN-ST-89-11009) | US-Gov | https://commons.wikimedia.org/wiki/File:P-3C_Orion_of_VP-46_in_flight_in_1989.JPEG | 4 (see record `sources[]`) |
+| p-3c-orion-update-iii | PHOTO 2/2 | US Navy (U.S. DefenseImagery photo DN-ST-89-01965) | US-Gov | https://commons.wikimedia.org/wiki/File:P-3C_Orion_of_VP-5_in_flight_c1988.JPEG | 4 (see record `sources[]`) |
+| sh-60b-seahawk | PHOTO 1/2 | Photographer's Mate Airman Joshua Wayne LeGrand, US Navy | US-Gov | https://commons.wikimedia.org/wiki/File:SH-60B_Seahawk.jpg | 3 (see record `sources[]`) |
+| sh-60b-seahawk | PHOTO 2/2 | PH2 Dave Loveall, US Department of Defense (via National Arc | US-Gov | https://commons.wikimedia.org/wiki/File:A_right_side_view_of_the_Navy%27s_first_operational_Mark_III_LAMPS_(Light_Airborne_Multi-Purpose_System)_SH-60B_Seahawk_helicopter_hovering_over_the_flight_deck_of_the_guided_missile_-_DPLA_-_addbbdbf36762014f926292090212754.jpeg | 3 (see record `sources[]`) |
+| sina-class-houdong | PHOTO 1/1 | Mohammad Ranjbar (Tasnim News Agency) | CC BY | https://commons.wikimedia.org/wiki/File:Iranian_Caspian_naval_exercise_2017_(42).jpg | 6 (see record `sources[]`) |
+| ticonderoga-baseline-3 | PHOTO 1/2 | Mass Communication Specialist Seaman Clarence McCloud, U.S.  | US-Gov | https://commons.wikimedia.org/wiki/File:USS_Bunker_Hill.jpg | 17 (see record `sources[]`) |
+| ticonderoga-baseline-3 | PHOTO 2/2 | Tech. Sgt. Marvin Lynchard, U.S. Air Force | US-Gov | https://commons.wikimedia.org/wiki/File:USS_Bunker_Hill_(CG-52).jpg | 17 (see record `sources[]`) |
+
+The viewer's placeholder frame (technical silhouette plus the search reason) exists and renders for any record with `photos: []`; no current record needs it.
+
+## Things to know / for Ray's review
+- Photo licenses were judged by the research agents from each Commons file page (US Navy/DoD works as `US-Gov`; Iranian agency photos as CC BY 4.0 / CC BY-SA 4.0). Spot-check the Boghammar photos (David B. Crist, US DoD) before merge.
+- "Sina class [Houdong]": the record's own research found "Houdong" is the wrong label (the Houdong is the Chinese Tondar class; the Sina is an Iranian-built Combattante II derivative). Engine name kept as is; the record says so.
+- Several `statusNotes` quote Wikipedia reporting on 2026 events (Bayandor sunk 2026-02-28, Sina boats destroyed 2026-03-18, Nimitz departing for decommissioning). I could not independently verify those; they are cited in the records. Check them if the scenario's premise matters.
+- Platform status: the demo's retired ships (Bunker Hill, Taylor, Tomcat F-14D) are documented honestly in each record; the Flight IIA and Boghammar records are ready for the sim-fix swap. If sim-fix introduces a new `platformId`, add one record (or a `legacyIds` alias) and run `npx playwright test tests/platform-database.spec.ts`.
+- Estimated values: many sensor ranges, combat radii, and all `damagePoints`, `missileDefense`, `pk*`, `effectiveness` and signature grades are estimates; each row says so.
+- `AGENTS.md` named in the brief does not exist in this repo; I followed CARD.md, CLAUDE.md and STEER.md.
+
+## Frames (1440x900, DPR 2)
+`frames/db-uss-mahan.png`, `db-fa18e.png`, `db-iran-sina.png`, `db-sources-scroll.png`; `console-errors.txt` records none.

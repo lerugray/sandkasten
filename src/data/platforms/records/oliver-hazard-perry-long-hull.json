@@ -1,0 +1,246 @@
+{
+  "slug": "oliver-hazard-perry-long-hull",
+  "legacyIds": [1283],
+  "engineName": "FFG 7 Oliver Hazard Perry [Long Hull]",
+  "name": "Oliver Hazard Perry-class frigate (long hull)",
+  "designation": "FFG 50 USS Taylor",
+  "className": "Oliver Hazard Perry class (FFG 7), long-hull variant",
+  "nation": "United States",
+  "side": "US Navy",
+  "service": "US Navy",
+  "domain": "surface",
+  "dimension": "sea",
+  "functionId": "CL",
+  "role": "Guided-missile frigate for convoy escort, anti-submarine warfare and local air defense, with two SH-60B helicopters",
+  "serviceWindow": {
+    "enteredService": 1984,
+    "retired": 2015,
+    "statusNotes": "USS Taylor was commissioned on 1 December 1984 and decommissioned on 8 May 2015. The US Navy retired its Perry-class frigates by 2015. The class did not end there: other navies still operate Perry-class ships, including Turkey, Egypt, Poland, Pakistan, Spain, Taiwan, Bahrain and Chile, and Taylor herself went to Taiwan (now ROCS Ming Chuan, PFG-1112). Taylor served in the Gulf region in 1988 and 1990. In the 2026 scenario this is a legacy US hull kept as a historical stand-in, not a ship the US Navy fields today."
+  },
+  "dimensions": {
+    "sourceId": "s4",
+    "provenance": "verified",
+    "lengthM": 138,
+    "beamM": 13.7,
+    "draftM": 6.7,
+    "displacementFullTons": 4100,
+    "crew": "About 176 (Wikipedia); FAS gives about 15 officers and 179 enlisted. Plus the aviation detachment for two SH-60B helicopters. Displacement is in long tons."
+  },
+  "propulsionSummary": "Two General Electric LM2500 gas turbines, about 41,000 shaft horsepower together, drive a single propeller shaft.",
+  "performance": {
+    "sourceId": "s1",
+    "provenance": "verified",
+    "maxSpeedKts": 29,
+    "cruiseSpeedKts": 20,
+    "rangeNm": 4200
+  },
+  "sensorRangeKm": 150,
+  "weaponRangeKm": 74,
+  "damagePoints": 720,
+  "missileDefense": 8,
+  "engineSourceId": "s1",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "RIM-66 SM-1MR",
+      "type": "sam",
+      "rangeKm": 40,
+      "speedKts": 2300,
+      "pkAir": 65,
+      "pkSurface": 70,
+      "quantity": 36,
+      "warheadDamage": 70,
+      "seekerType": "semi-active",
+      "mountSummary": "Mk 13 Mod 4 single-arm launcher with a 40-round magazine shared with Harpoon (36 Standard Missile and 4 Harpoon)",
+      "sourceId": "s1",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Mk 15 Phalanx CIWS",
+      "type": "gun",
+      "rangeKm": 1.8,
+      "speedKts": 0,
+      "pkAir": 50,
+      "pkSurface": 30,
+      "quantity": 1200,
+      "warheadDamage": 10,
+      "mountSummary": "One Mk 15 close-in weapon system mount; the quantity is rounds of 20 mm ammunition",
+      "sourceId": "s1",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [
+    {
+      "name": "Mk 36 SRBOC Chaff",
+      "type": "chaff",
+      "effectiveness": 0.3,
+      "quantity": 12,
+      "sourceId": "s1",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-32(V)2 ECM",
+      "type": "ecm",
+      "effectiveness": 0.2,
+      "sourceId": "s1",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Mk 15 Phalanx",
+      "type": "ciws",
+      "effectiveness": 0.5,
+      "sourceId": "s1",
+      "provenance": "estimated"
+    }
+  ],
+  "sensors": [
+    {
+      "name": "AN/SPS-49(V) air search radar",
+      "type": "radar",
+      "role": "Long-range two-dimensional air search; the main early-warning sensor. The published maximum instrumented range of the A(V)1 version is 474 km, but the engine uses a shorter practical figure.",
+      "band": "L (851-942 MHz)",
+      "rangeKm": 150,
+      "canTrack": true,
+      "sourceId": "s6",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SPS-55 surface search radar",
+      "type": "radar",
+      "role": "Surface search and navigation: finds ships, small boats and low aircraft",
+      "band": "X (9.05-10 GHz)",
+      "rangeKm": 80,
+      "canTrack": true,
+      "sourceId": "s7",
+      "provenance": "verified"
+    },
+    {
+      "name": "AN/SLQ-32(V)2 electronic support system",
+      "type": "esm",
+      "role": "Passive warning receiver that picks up hostile radar emissions and gives bearings. Its antennas sit low on the ship, which limits intercept range to about 23 nautical miles.",
+      "rangeKm": 43,
+      "canTrack": false,
+      "sourceId": "s1",
+      "provenance": "verified"
+    },
+    {
+      "name": "AN/SQS-56 hull-mounted sonar",
+      "type": "sonar",
+      "role": "Active and passive search for submarines near the ship; the AN/SQR-19 towed array adds longer-range passive listening. No public detection range found, so this is an open estimate.",
+      "rangeKm": 8,
+      "canTrack": true,
+      "sourceId": "s4",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [],
+  "signatures": {
+    "radar": {
+      "grade": "medium",
+      "note": "A 4,100-ton steel hull with an unshaped superstructure; it shows up clearly to search radar but is smaller than a destroyer or cruiser."
+    },
+    "infrared": {
+      "grade": "medium",
+      "note": "Two gas turbines put out a hot exhaust plume, and no special infrared suppression is described in the sources."
+    },
+    "acoustic": {
+      "grade": "medium",
+      "note": "Gas turbines on a single shaft; it is not a quiet platform for a submarine to listen to, and it tows its own array to hear them first."
+    },
+    "visual": {
+      "grade": "high",
+      "note": "A 138 m ship is easy to see at sea in daylight."
+    },
+    "sourceId": "s4",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The Oliver Hazard Perry class was the US Navy's mass-produced guided-missile frigate from the late 1970s. The long-hull version, such as USS Taylor, is 138 m long and carries two SH-60B helicopters in a hangar. It was built to escort convoys and carrier groups against submarines and aircraft at a low cost per ship.",
+    "howItIsUsed": "A commander uses a Perry as a picket and escort. The SPS-49 radar watches the air picture, the sonar and towed array listen for submarines, and the two SH-60B helicopters extend the ship's reach out past the horizon in both anti-submarine and surface search. The single Mk 13 launcher holds 36 SM-1 Standard missiles and 4 Harpoon missiles in one shared magazine, so it can fire only one missile at a time and the load runs out fast against a big raid. The Phalanx gun is the last-ditch defense against sea-skimming missiles. Keep it inside a larger group's air cover when facing heavy air threats. Its low-mounted ESM and limited missile magazine are the weak points.",
+    "typicalMissions": [
+      "Escort a convoy or a high-value ship through a choke point",
+      "Anti-submarine screen with towed array and helicopters",
+      "Surface picket and maritime interception",
+      "Local air defense with SM-1MR and Phalanx",
+      "Counter-drug and presence patrols"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/oliver-hazard-perry-long-hull/main.jpg",
+      "caption": "USS Taylor (FFG-50) passing a tanker after transiting the Strait of Hormuz during Operation Desert Shield.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_port_view_of_the_guided_missile_frigate_USS_TAYLOR_(FFG-50)_as_it_passes_a_tanker_after_going_through_the_Strait_of_Hormuz_during_Operation_Desert_Shield_-_DPLA_-_1fb70620034c5304df096b4526972ace.jpeg",
+      "author": "Department of Defense, American Forces Information Service, Defense Visual Information Center",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: US Department of Defense, American Forces Information Service, Defense Visual Information Center (NARA), Public Domain, via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/oliver-hazard-perry-long-hull/second.jpg",
+      "caption": "USS Taylor (FFG-50) leaving Naval Station Mayport, Florida, in January 2014 for her last deployment.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:USS_Taylor_(FFG-50)_leaving_Mayport_in_January_2014.JPG",
+      "author": "Mass Communication Specialist 2nd Class Marcus L. Stanley, US Navy",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: MC2 Marcus L. Stanley, US Navy, Public Domain, via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "FFG-7 Oliver Hazard Perry-class (Navy Ships)",
+      "publisher": "Federation of American Scientists",
+      "year": 2026,
+      "url": "https://man.fas.org/dod-101/sys/ship/ffg-7.htm"
+    },
+    {
+      "id": "s2",
+      "title": "FFG-7 Oliver Hazard Perry class",
+      "publisher": "GlobalSecurity.org",
+      "year": 2026,
+      "url": "https://www.globalsecurity.org/military/systems/ship/ffg-7.htm"
+    },
+    {
+      "id": "s3",
+      "title": "FFG-7 Oliver Hazard Perry-class specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2026,
+      "url": "https://www.globalsecurity.org/military/systems/ship/ffg-7-specs.htm"
+    },
+    {
+      "id": "s4",
+      "title": "Oliver Hazard Perry-class frigate",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Oliver_Hazard_Perry-class_frigate"
+    },
+    {
+      "id": "s5",
+      "title": "USS Taylor (FFG-50)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/USS_Taylor_(FFG-50)"
+    },
+    {
+      "id": "s6",
+      "title": "AN/SPS-49",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/AN/SPS-49"
+    },
+    {
+      "id": "s7",
+      "title": "AN/SPS-55",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/AN/SPS-55"
+    },
+    {
+      "id": "s8",
+      "title": "AN/SPS-49 Very Long-Range Air Surveillance Radar",
+      "publisher": "GlobalSecurity.org",
+      "year": 2026,
+      "url": "https://www.globalsecurity.org/military/systems/ship/systems/an-sps-49.htm"
+    }
+  ]
+}

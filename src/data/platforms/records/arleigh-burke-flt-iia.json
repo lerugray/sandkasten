@@ -1,0 +1,345 @@
+{
+  "slug": "arleigh-burke-flt-iia",
+  "legacyIds": [],
+  "engineName": "DDG 89 Mustin [Arleigh Burke Flight IIA]",
+  "name": "Arleigh Burke Flight IIA destroyer",
+  "designation": "DDG 89 USS Mustin",
+  "className": "Arleigh Burke class (DDG 51), Flight IIA",
+  "nation": "United States",
+  "side": "US Navy",
+  "service": "US Navy",
+  "domain": "surface",
+  "dimension": "sea",
+  "functionId": "CL",
+  "role": "Aegis guided-missile destroyer with twin helicopter hangars for air defence, surface warfare, anti-submarine warfare and land strike",
+  "serviceWindow": {
+    "enteredService": 2003,
+    "retired": null,
+    "statusNotes": "The date is that of the example ship, USS Mustin (DDG 89), commissioned on 26 July 2003. Flight IIA ships are in active service as of 2026-03-15 and make up the largest group of Arleigh Burke hulls."
+  },
+  "dimensions": {
+    "lengthM": 155.3,
+    "beamM": 18,
+    "draftM": 9.4,
+    "displacementFullTons": 9200,
+    "crew": "about 380 officers and enlisted (USS Mustin figure)",
+    "sourceId": "s3",
+    "provenance": "verified"
+  },
+  "propulsionSummary": "Four General Electric LM2500-30 gas turbines drive two shafts for about 100,000 shaft horsepower.",
+  "performance": {
+    "maxSpeedKts": 30,
+    "cruiseSpeedKts": 20,
+    "rangeNm": 4400,
+    "sourceId": "s1",
+    "provenance": "verified"
+  },
+  "sensorRangeKm": 324,
+  "weaponRangeKm": 167,
+  "damagePoints": 1200,
+  "missileDefense": 16,
+  "engineSourceId": "s1",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "RIM-66M SM-2MR",
+      "type": "sam",
+      "rangeKm": 93,
+      "speedKts": 2300,
+      "pkAir": 85,
+      "pkSurface": 90,
+      "quantity": 56,
+      "warheadDamage": 80,
+      "seekerType": "semi-active",
+      "mountSummary": "Fired from the 96-cell Mk 41 vertical launch system, shared with ESSM, Tomahawk and ASROC. Quantity is a typical mix, not a published load. The Navy fact file gives SM-2 Medium Range as up to 90 nautical miles (about 167 km), so the 93 km engine range is estimated. ESSM, which a real Flight IIA also carries, is not modelled in this row set.",
+      "sourceId": "s13",
+      "provenance": "estimated"
+    },
+    {
+      "name": "RGM-84 Harpoon",
+      "type": "asm",
+      "rangeKm": 139,
+      "speedKts": 530,
+      "pkAir": 0,
+      "pkSurface": 95,
+      "quantity": 8,
+      "warheadDamage": 167,
+      "seekerType": "active-radar",
+      "mountSummary": "Two quad launchers on early Flight IIA ships. Many newer hulls do not carry them. The Navy fact file gives Harpoon range as over 67 nautical miles (about 124 km), so the 139 km engine range is estimated.",
+      "sourceId": "s12",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Mk 15 Phalanx CIWS",
+      "type": "gun",
+      "rangeKm": 1.8,
+      "speedKts": 0,
+      "pkAir": 50,
+      "pkSurface": 30,
+      "quantity": 1200,
+      "warheadDamage": 10,
+      "mountSummary": "20 mm six-barrel gun. Fitted to some Flight IIA ships, not all. FAS lists Phalanx range as classified, so range and round count are estimated.",
+      "sourceId": "s11",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [
+    {
+      "name": "Mk 36 SRBOC Chaff",
+      "type": "chaff",
+      "effectiveness": 0.3,
+      "quantity": 24,
+      "sourceId": "s9",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-32(V)3 ECM",
+      "type": "ecm",
+      "effectiveness": 0.25,
+      "sourceId": "s8",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Mk 15 Phalanx",
+      "type": "ciws",
+      "effectiveness": 0.5,
+      "sourceId": "s11",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-25 Nixie",
+      "type": "decoy",
+      "effectiveness": 0.2,
+      "sourceId": "s10",
+      "provenance": "estimated"
+    }
+  ],
+  "sensors": [
+    {
+      "name": "AN/SPY-1D(V) phased-array radar",
+      "type": "radar",
+      "role": "Aegis air search and track with the (V) littoral upgrade for clutter near land, four fixed arrays on the deckhouse",
+      "band": "S-band",
+      "rangeKm": 324,
+      "canTrack": true,
+      "sourceId": "s4",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SPS-67(V)3 surface search radar",
+      "type": "radar",
+      "role": "Surface search and navigation, picks out ships and low flyers",
+      "band": "C-band",
+      "rangeKm": 40,
+      "canTrack": true,
+      "sourceId": "s15",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SPG-62 fire control radars (3)",
+      "type": "radar",
+      "role": "Illuminates the target for semi-active SM-2 missiles in the last seconds of flight",
+      "band": "I/J-band",
+      "rangeKm": 100,
+      "canTrack": true,
+      "sourceId": "s5",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SQS-53C bow sonar",
+      "type": "sonar",
+      "role": "Hull-mounted active and passive search for submarines",
+      "rangeKm": 20,
+      "canTrack": true,
+      "sourceId": "s6",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SQR-19 towed array",
+      "type": "sonar",
+      "role": "Passive long-range listening for submarines on a cable towed behind the ship",
+      "rangeKm": 50,
+      "canTrack": true,
+      "sourceId": "s7",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-32(V)3 electronic support",
+      "type": "esm",
+      "role": "Detects, identifies and bears on hostile radars",
+      "rangeKm": 150,
+      "canTrack": false,
+      "sourceId": "s8",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Bridge and lookout watch",
+      "type": "visual",
+      "role": "Eyes and binoculars from the bridge and weather decks",
+      "rangeKm": 18,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [],
+  "signatures": {
+    "radar": {
+      "grade": "medium",
+      "note": "Hull shaping from the DDG 51 design, with twin hangars adding structure aft. Still a 155 m steel ship."
+    },
+    "infrared": {
+      "grade": "medium",
+      "note": "Four gas turbines put out a strong exhaust plume, so the ship shows up clearly to heat-seeking sensors at close range."
+    },
+    "acoustic": {
+      "grade": "medium",
+      "note": "Gas turbine ships are louder than diesel-electric types, and the towed array and bow sonar make her an active participant in the underwater fight."
+    },
+    "visual": {
+      "grade": "medium",
+      "note": "A 154 m grey hull with a tall deckhouse is easy to see on a clear day, but it shows a low profile from a distance."
+    },
+    "sourceId": "s1",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The Flight IIA is the most common version of the Arleigh Burke destroyer. It adds two helicopter hangars at the stern, so the ship carries its own helicopters instead of only landing them. The SPY-1D(V) radar and Aegis combat system are the same family as Flight II. USS Mustin (DDG 89) is the example ship.",
+    "howItIsUsed": "A commander uses it the same way as a Flight II: as an air-defence escort that stays on the threat side of the carrier or convoy with the SPY-1D(V) radar on. The hangars change the picture below the surface and over the horizon. Two MH-60R helicopters give it a second set of eyes against submarines and small boats, and they can carry anti-submarine torpedoes and Hellfire missiles. Standard missiles handle aircraft and missiles at long range, ESSM adds close-in air defence, and Tomahawk gives land strike. The weakness is the same as any destroyer: the vertical launch cells are the magazine and cannot be reloaded quickly at sea. Treat the missile counts in this record as typical, not fixed.",
+    "typicalMissions": [
+      "Air and missile defence of a carrier or convoy",
+      "Anti-submarine escort using two helicopters",
+      "Anti-surface warfare and maritime security",
+      "Tomahawk land strike",
+      "Naval gunfire with the 5-inch gun"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/arleigh-burke-flt-iia/main.jpg",
+      "caption": "USS Mustin (DDG 89), a Flight IIA Arleigh Burke destroyer, underway in the Northern Persian Gulf in April 2005.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_050413-N-5526M-016_The_Arleigh_Burke-class_guided_missile_destroyer_USS_Mustin_(DDG_89)_underway_in_the_Northern_Persian_Gulf_while_conducting_Maritime_Security_Operations.jpg",
+      "author": "U.S. Navy photo by Photographer's Mate 1st Class Robert McRill",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy",
+      "attributionLine": "Photo: U.S. Navy photo by Photographer's Mate 1st Class Robert McRill, US-Gov (public domain), via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/arleigh-burke-flt-iia/second.jpg",
+      "caption": "USS Mustin (DDG 89) with the Republic of Korea destroyer ROKS Wang Geon, October 2011.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_111003-N-JO245-103_The_Arleigh_Burke-class_guided-missile_destroyer_USS_Mustin_(DDG_89)_and_the_Republic_of_Korea_navy_destroyer_ROKS_Wang.jpg",
+      "author": "U.S. Navy photo by Mass Communication Specialist Seaman Justin E. Yarborough",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy",
+      "attributionLine": "Photo: U.S. Navy photo by Mass Communication Specialist Seaman Justin E. Yarborough, US-Gov (public domain), via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "DDG-51 ARLEIGH BURKE-class",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://www.fas.org/man/dod-101/sys/ship/ddg-51.htm"
+    },
+    {
+      "id": "s2",
+      "title": "Fact File: Destroyers - DDG (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2016,
+      "url": "https://web.archive.org/web/2016/http://www.navy.mil/navydata/fact_display.asp?cid=4200&tid=900&ct=4"
+    },
+    {
+      "id": "s3",
+      "title": "USS Mustin (DDG-89)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/USS_Mustin_(DDG-89)"
+    },
+    {
+      "id": "s4",
+      "title": "AN/SPY-1 Phased Array Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-spy-1.htm"
+    },
+    {
+      "id": "s5",
+      "title": "AN/SPG-62 Fire Control Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-spg-62.htm"
+    },
+    {
+      "id": "s6",
+      "title": "AN/SQS-53C Sonar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sqs-53.htm"
+    },
+    {
+      "id": "s7",
+      "title": "AN/SQR-19 Tactical Towed Array Sonar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sqr-19.htm"
+    },
+    {
+      "id": "s8",
+      "title": "AN/SLQ-32 Electronic Warfare System",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-slq-32.htm"
+    },
+    {
+      "id": "s9",
+      "title": "Mk 36 Super Rapid Blooming Offboard Chaff",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/mk-36.htm"
+    },
+    {
+      "id": "s10",
+      "title": "AN/SLQ-25 Nixie Torpedo Countermeasure",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-slq-25.htm"
+    },
+    {
+      "id": "s11",
+      "title": "Mk 15 Phalanx Close-In Weapons System",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/mk-15.htm"
+    },
+    {
+      "id": "s12",
+      "title": "Fact File: Harpoon Missile (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2015,
+      "url": "https://web.archive.org/web/2015/http://www.navy.mil/navydata/fact_display.asp?cid=2200&tid=200&ct=2"
+    },
+    {
+      "id": "s13",
+      "title": "Fact File: Standard Missile (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2015,
+      "url": "https://web.archive.org/web/2015/http://www.navy.mil/navydata/fact_display.asp?cid=2200&tid=1200&ct=2"
+    },
+    {
+      "id": "s14",
+      "title": "Arleigh Burke-class destroyer",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Arleigh_Burke-class_destroyer"
+    },
+    {
+      "id": "s15",
+      "title": "AN/SPS-67 Surface Search Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sps-67.htm"
+    }
+  ],
+  "engineId": 9002
+}

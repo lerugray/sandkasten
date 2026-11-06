@@ -1,0 +1,291 @@
+{
+  "slug": "fa-18e-super-hornet",
+  "legacyIds": [342],
+  "engineName": "F/A-18E Super Hornet",
+  "name": "F/A-18E Super Hornet",
+  "designation": "F/A-18E",
+  "className": "F/A-18E/F Super Hornet",
+  "nation": "United States",
+  "side": "US Navy",
+  "service": "US Navy",
+  "domain": "fixed-wing",
+  "dimension": "air",
+  "functionId": "MF",
+  "role": "Single-seat carrier-based multirole strike fighter",
+  "serviceWindow": {
+    "enteredService": 2001,
+    "retired": null,
+    "statusNotes": "Initial operational capability September 2001 with VFA-115. Still in production and the backbone of US Navy carrier air wings as of the 2026-03-15 scenario date."
+  },
+  "dimensions": {
+    "lengthM": 18.31,
+    "wingspanM": 13.62,
+    "heightM": 4.88,
+    "weightEmptyKg": 14552,
+    "weightMaxKg": 29937,
+    "crew": "1 (pilot). The two-seat F/A-18F adds a weapon systems officer.",
+    "sourceId": "s3",
+    "provenance": "verified"
+  },
+  "propulsionSummary": "Two General Electric F414-GE-400 afterburning turbofans, each rated at about 22,000 lbf (98 kN) with afterburner.",
+  "performance": {
+    "maxSpeedKts": 1030,
+    "cruiseSpeedKts": 482,
+    "maxAltitudeFt": 50000,
+    "combatRadiusNm": 404,
+    "rangeNm": 1275,
+    "sourceId": "s3",
+    "provenance": "verified"
+  },
+  "sensorRangeKm": 180,
+  "weaponRangeKm": 100,
+  "damagePoints": 4,
+  "missileDefense": 0,
+  "engineSourceId": "s4",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "AIM-120C AMRAAM",
+      "type": "aam",
+      "rangeKm": 100,
+      "speedKts": 2700,
+      "pkAir": 85,
+      "pkSurface": 0,
+      "quantity": 6,
+      "warheadDamage": 30,
+      "seekerType": "active-radar",
+      "mountSummary": "Wingtip, wing and fuselage stations. The fighter-escort fit carries up to 7 AMRAAM plus 2 Sidewinders; the engine loadout counts 6.",
+      "sourceId": "s5",
+      "provenance": "verified"
+    },
+    {
+      "name": "AGM-84 Harpoon",
+      "type": "asm",
+      "rangeKm": 139,
+      "speedKts": 530,
+      "pkAir": 0,
+      "pkSurface": 95,
+      "quantity": 2,
+      "warheadDamage": 167,
+      "seekerType": "active-radar",
+      "mountSummary": "Underwing stations. Two missiles is a typical maritime-strike count; the engine carries them alongside the AMRAAM load.",
+      "sourceId": "s6",
+      "provenance": "estimated"
+    },
+    {
+      "name": "M61A1 Vulcan 20mm",
+      "type": "gun",
+      "rangeKm": 1.8,
+      "speedKts": 0,
+      "pkAir": 30,
+      "pkSurface": 20,
+      "quantity": 578,
+      "warheadDamage": 5,
+      "mountSummary": "Six-barrel 20 mm rotary cannon in the nose. Published magazine sizes differ by source and variant, so the round count is our figure.",
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [
+    {
+      "name": "Chaff/Flare",
+      "type": "chaff",
+      "effectiveness": 0.35,
+      "quantity": 60,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/ALQ-214 IDECM",
+      "type": "ecm",
+      "effectiveness": 0.3,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "sensors": [
+    {
+      "name": "AN/APG-79 AESA radar",
+      "type": "radar",
+      "role": "Air-to-air search and track, simultaneous air-to-ground and sea-surface modes",
+      "band": "X",
+      "rangeKm": 150,
+      "canTrack": true,
+      "sourceId": "s4",
+      "provenance": "verified"
+    },
+    {
+      "name": "AN/ALR-67(V)3 radar warning receiver",
+      "type": "esm",
+      "role": "Passive detection of hostile radar emissions, with cueing to the jammer and countermeasure dispenser",
+      "band": "Multiple radar bands",
+      "rangeKm": 150,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/ASQ-228 ATFLIR targeting pod",
+      "type": "ir",
+      "role": "Forward-looking infrared for navigation, target identification and laser designation",
+      "band": "Mid-wave infrared",
+      "rangeKm": 40,
+      "canTrack": true,
+      "sourceId": "s8",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Pilot visual lookout",
+      "type": "visual",
+      "role": "Visual identification of aircraft and ships in clear weather",
+      "rangeKm": 10,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [
+    {
+      "name": "Fighter escort (internal fuel only)",
+      "role": "Air-to-air patrol or carrier-group escort",
+      "combatRadiusNm": 404,
+      "stores": [
+        { "weaponName": "AIM-120C AMRAAM", "count": 2 },
+        { "weaponName": "AIM-9 Sidewinder", "count": 2 }
+      ],
+      "sourceId": "s3",
+      "provenance": "verified"
+    },
+    {
+      "name": "Strike, hi-lo-hi with three drop tanks",
+      "role": "Laser-guided bomb strike against land or ship targets",
+      "combatRadiusNm": 558,
+      "stores": [
+        { "weaponName": "GBU-10 laser-guided bomb", "count": 2 },
+        { "weaponName": "AIM-120C AMRAAM", "count": 1 },
+        { "weaponName": "AIM-9 Sidewinder", "count": 2 },
+        { "weaponName": "480 US gal drop tank", "count": 3 }
+      ],
+      "sourceId": "s3",
+      "provenance": "verified"
+    },
+    {
+      "name": "Anti-ship strike with mixed air-to-air fit",
+      "role": "Harpoon attack on surface ships with fighter self-defence",
+      "combatRadiusNm": 388,
+      "stores": [
+        { "weaponName": "AGM-84 Harpoon", "count": 2 },
+        { "weaponName": "AIM-120C AMRAAM", "count": 2 },
+        { "weaponName": "AIM-9 Sidewinder", "count": 2 },
+        { "weaponName": "480 US gal drop tank", "count": 2 }
+      ],
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "signatures": {
+    "radar": {
+      "grade": "medium",
+      "note": "Not a stealth aircraft, but the angled engine inlets, serrated panel joints and aligned edges cut the radar return from the front and rear."
+    },
+    "infrared": {
+      "grade": "high",
+      "note": "Two large afterburning turbofans give a strong heat source, especially from behind and when the afterburners light."
+    },
+    "visual": {
+      "grade": "medium",
+      "note": "A mid-size fighter at about 18 m long, easier to spot than a small trainer but not trailing heavy smoke."
+    },
+    "sourceId": "s3",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The F/A-18E Super Hornet is the US Navy's main carrier-based fighter. It is a single-seat, twin-engine jet that can shoot down other aircraft and also bomb ground targets or sink ships on the same sortie. It is a larger, longer-ranged development of the older F/A-18 Hornet.",
+    "howItIsUsed": "A commander keeps Super Hornets on deck as a flexible striking arm. In the air they fly escort for strike packages and patrol stations around the carrier group, using the AESA radar to see air targets far out and fire AMRAAM missiles before the enemy gets close. For a sea-control mission, two to four aircraft carry Harpoon anti-ship missiles and attack ships from beyond the range of most shipboard air defence. The aircraft is fast and agile but it is a conventional airframe, so its radar and infrared signatures are real. A pair flying low over open water stays hard to catch for an enemy with only gun or short-range defences, while a modern surface-to-air missile ship will still find it. Tanker aircraft and the carrier itself decide how far it can reach.",
+    "typicalMissions": [
+      "Fleet air defence and fighter escort",
+      "Anti-ship strike with Harpoon missiles",
+      "Precision strike on land targets",
+      "Suppression of enemy air defences",
+      "Aerial refuelling of other carrier aircraft"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/fa-18e-super-hornet/main.jpg",
+      "caption": "An F/A-18E Super Hornet of VFA-151 launches from the carrier USS Abraham Lincoln (CVN 72) in the Philippine Sea, 12 May 2022.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:FA-18E_Super_Hornet_took_off_from_USS_Abraham_Lincoln_in_2022_7191862.jpg",
+      "author": "Mass Communication Specialist 3rd Class Javier Reyes, U.S. Navy",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: MC3 Javier Reyes, U.S. Navy (US-Gov, public domain), via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/fa-18e-super-hornet/second.jpg",
+      "caption": "An F/A-18E Super Hornet of VFA-115 launches from USS Ronald Reagan (CVN 76) in the Gulf of Oman, 28 September 2008.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_080928-N-3610L-208_An_F-A-18E_Super_Hornet_assigned_to_the.jpg",
+      "author": "Mass Communication Specialist 3rd Class Torrey W. Lee, U.S. Navy",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: MC3 Torrey W. Lee, U.S. Navy (US-Gov, public domain), via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Fact File: F/A-18 Hornet strike fighter (archived copy of the navy.mil page)",
+      "publisher": "US Navy (navy.mil), archived by the Internet Archive",
+      "year": 2014,
+      "url": "https://web.archive.org/web/20140111033712/http://www.navy.mil/navydata/fact_display.asp?cid=1100&tid=1200&ct=1"
+    },
+    {
+      "id": "s2",
+      "title": "F/A-18 Super Hornet and EA-18 Growler",
+      "publisher": "Boeing Defense",
+      "year": 2026,
+      "url": "https://www.boeing.com/defense/fighters-and-bombers/fa-18-super-hornet-and-ea-18-growler"
+    },
+    {
+      "id": "s3",
+      "title": "Boeing F/A-18E/F Super Hornet (specification table compiled from the US Navy fact file, NATOPS and Standard Aircraft Characteristics; cross-checked against s1 and s2)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Boeing_F/A-18E/F_Super_Hornet"
+    },
+    {
+      "id": "s4",
+      "title": "AN/APG-79",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/AN/APG-79"
+    },
+    {
+      "id": "s5",
+      "title": "AIM-120 AMRAAM Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2017,
+      "url": "https://www.globalsecurity.org/military/systems/munitions/aim-120-specs.htm"
+    },
+    {
+      "id": "s6",
+      "title": "RGM-84 Harpoon",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/RGM-84_Harpoon"
+    },
+    {
+      "id": "s7",
+      "title": "F/A-18 Hornet Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2011,
+      "url": "https://www.globalsecurity.org/military/systems/aircraft/f-18-specs.htm"
+    },
+    {
+      "id": "s8",
+      "title": "F/A-18 Hornet",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://www.fas.org/man/dod-101/sys/ac/f-18.htm"
+    }
+  ]
+}
