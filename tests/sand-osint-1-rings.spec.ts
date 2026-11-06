@@ -11,6 +11,9 @@ type OsintPlot = {
   drawnOsint(): { sites: number; rings: number; labels: number; total: number };
   osintScreen(id: string): { x: number; y: number } | null;
   focusOsint(id: string, dist?: number): void;
+  focusFacility(id: string): void;
+  facilityScreen(id: string): { x: number; y: number } | null;
+  labels(): { text: string; x: number; y: number; w: number; h: number }[];
   view(): { dist: number };
 };
 type W = { __sandPlot?: OsintPlot };
@@ -65,7 +68,67 @@ test.describe("SAND-OSINT-1 /play plot", () => {
   });
 });
 
+const ARABIC = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+test.describe("SAND-OSINT-1 label rules", () => {
+  test("no label drawn on the plot contains Arabic-script characters, at theatre, Kish and Bandar Abbas zooms", async ({ page }) => {
+    test.setTimeout(90_000);
+    await openPlot(page);
+    for (const view of [
+      () => (window as unknown as W).__sandPlot!.focusOsint("ad-ir-s300-bandar-abbas", 700),
+      () => (window as unknown as W).__sandPlot!.focusFacility("apt-oikb"),
+      () => (window as unknown as W).__sandPlot!.focusFacility("apt-oibk"),
+      () => (window as unknown as W).__sandPlot!.focusFacility("apt-oikp"),
+    ]) {
+      await page.evaluate(view);
+      await page.waitForTimeout(3500);
+      const texts = await page.evaluate(() => (window as unknown as W).__sandPlot!.labels().map((l) => l.text));
+      expect(texts.length).toBeGreaterThan(0);
+      expect(texts.filter((t) => ARABIC.test(t))).toEqual([]);
+    }
+    // the facility panel names places in Latin script too (Havadarya's OSM local name is Persian)
+    const host = (await page.getByTestId("tactical-plot").boundingBox())!;
+    const s = (await page.evaluate(() => (window as unknown as W).__sandPlot!.facilityScreen("apt-oikp")))!;
+    await page.mouse.click(host.x + s.x, host.y + s.y);
+    await expect(page.getByTestId("facility-panel-title")).toContainText("Havadarya");
+    expect(await page.getByTestId("terminal-root").innerText()).not.toMatch(ARABIC);
+  });
+});
+
 test.describe("SAND-OSINT-1 MapLibre map", () => {
+  test("every OSINT label anchors to the nearest icon of its own feature, and none is in Arabic script", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForSelector(".maplibregl-canvas", { timeout: 30_000 });
+    await page.waitForSelector("[data-osint-label-id]", { timeout: 30_000 });
+    await page.waitForTimeout(2500);
+    const r = await page.evaluate(() => {
+      const icons = [...document.querySelectorAll<HTMLElement>("[data-osint-id]")].map((e) => {
+        const b = e.getBoundingClientRect();
+        return { id: e.dataset.osintId!, x: b.x + b.width / 2, y: b.y + b.height / 2 };
+      });
+      return [...document.querySelectorAll<HTMLElement>("[data-osint-label-id]")].map((e) => {
+        const b = e.getBoundingClientRect();
+        const cx = Math.max(b.x, Math.min(icons.find((i) => i.id === e.dataset.osintLabelId)?.x ?? 0, b.x + b.width));
+        const cy = Math.max(b.y, Math.min(icons.find((i) => i.id === e.dataset.osintLabelId)?.y ?? 0, b.y + b.height));
+        let best = "", bd = Infinity;
+        for (const i of icons) {
+          const d = Math.hypot(i.x - cx, i.y - cy);
+          if (d < bd) { bd = d; best = i.id; }
+        }
+        return { id: e.dataset.osintLabelId!, nearest: best, text: e.textContent ?? "" };
+      });
+    });
+    expect(r.length).toBeGreaterThan(5);
+    expect(r.filter((x) => x.id !== x.nearest)).toEqual([]);
+    expect(r.filter((x) => ARABIC.test(x.text))).toEqual([]);
+  });
+
+  test("the map credit line names OSINT sites: Auftragstaktik, like /play", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForSelector(".maplibregl-canvas", { timeout: 30_000 });
+    await expect(page.getByText("OSINT sites: Auftragstaktik")).toBeVisible();
+  });
+
   test("map toggles exist and a facility with OSINT fields shows them in its panel", async ({ page }) => {
     await page.goto("/");
     await page.waitForSelector(".maplibregl-canvas", { timeout: 30_000 });
@@ -104,8 +167,13 @@ test.describe("SAND-OSINT-1 snapshot scenario", () => {
     await page.waitForFunction(() => !!(window as unknown as W).__sandPlot, null, { timeout: 60_000 });
     await page.getByTestId("briefing").click({ timeout: 10_000 }).catch(() => {});
     await expect(page.getByTestId("terminal-root")).toContainText(/ADS-B|SNAPSHOT/i);
-    await page.keyboard.press("g");
+    // normal player view: no G (god mode) pressed
     await expect.poll(() => page.evaluate(() => (window as unknown as W).__sandPlot!.drawnTracks().units), { timeout: 20_000 }).toBeGreaterThan(20);
+    const text = await page.getByTestId("terminal-root").innerText();
+    expect(text).toMatch(/FORCES \(137\)/);
+    expect(text).not.toMatch(/NO TRAFFIC/);
+    expect(text).toMatch(/Hormuz air traffic, 6 November 2026/i);
+    expect(text).not.toMatch(/\d{8}T\d{6}Z/);
     await page.waitForFunction(() => ((window as unknown as W).__sandPlot?.drawnOsint().sites ?? 0) > 0, null, { timeout: 15_000 });
     const t0 = await page.getByTestId("terminal-root").innerText();
     await page.getByTestId("sim-toggle-pause").click();

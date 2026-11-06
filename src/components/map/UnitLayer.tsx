@@ -20,6 +20,12 @@ interface UnitLayerProps {
 const CLUSTER_PX = 24;
 
 /** Fan out markers that sit within CLUSTER_PX of each other on a ring, with a count badge at the true spot. */
+/** The heading leader makes a symbol's SVG taller than the symbol: this shifts the SVG so the symbol sits on its position. */
+function baseOffset(m: maplibregl.Marker): [number, number] {
+  const d = m.getElement().dataset;
+  return [Number(d.baseDx ?? 0), Number(d.baseDy ?? 0)];
+}
+
 function declutter(map: maplibregl.Map, markers: Map<string, maplibregl.Marker>, badges: maplibregl.Marker[]) {
   badges.forEach((b) => b.remove());
   badges.length = 0;
@@ -35,7 +41,7 @@ function declutter(map: maplibregl.Map, markers: Map<string, maplibregl.Marker>,
   }
   for (const g of groups) {
     if (g.length < 2) {
-      g[0].m.setOffset([0, 0]);
+      g[0].m.setOffset(baseOffset(g[0].m));
       continue;
     }
     const cx = g.reduce((a, o) => a + o.pt.x, 0) / g.length;
@@ -44,7 +50,8 @@ function declutter(map: maplibregl.Map, markers: Map<string, maplibregl.Marker>,
     g.sort((a, b) => a.id.localeCompare(b.id));
     g.forEach((o, i) => {
       const ang = -Math.PI / 2 + (i * 2 * Math.PI) / g.length;
-      o.m.setOffset([cx + Math.cos(ang) * r - o.pt.x, cy + Math.sin(ang) * r - o.pt.y]);
+      const [bx, by] = baseOffset(o.m);
+      o.m.setOffset([cx + Math.cos(ang) * r - o.pt.x + bx, cy + Math.sin(ang) * r - o.pt.y + by]);
     });
     const el = document.createElement("div");
     el.className = "unit-cluster-badge";
@@ -105,7 +112,7 @@ export function UnitLayer({
       };
 
       const svg = createSymbolSVG(symbolOptions);
-      const anchor = getSymbolAnchor(symbolOptions);
+      const symbolAnchor = getSymbolAnchor(symbolOptions);
 
       const existing = existingMarkers.get(unit.id);
       if (existing) {
@@ -126,9 +133,12 @@ export function UnitLayer({
         onUnitSelect(unit.id, e.shiftKey);
       });
 
+      el.dataset.baseDx = String(symbolAnchor.width / 2 - symbolAnchor.x);
+      el.dataset.baseDy = String(symbolAnchor.height / 2 - symbolAnchor.y);
       const marker = new maplibregl.Marker({
         element: el,
         anchor: "center",
+        offset: [symbolAnchor.width / 2 - symbolAnchor.x, symbolAnchor.height / 2 - symbolAnchor.y],
         draggable: !!onUnitDrag,
       })
         .setLngLat([unit.position.lng, unit.position.lat])

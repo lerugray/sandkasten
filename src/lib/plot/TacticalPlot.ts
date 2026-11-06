@@ -122,10 +122,22 @@ interface Track {
 }
 
 interface Rect {
+  /** index into labelEls when this is a facility/OSINT label a unit data block may displace */
+  ev?: number;
   x: number;
   y: number;
   w: number;
   h: number;
+}
+
+/** Label offsets on rings around a symbol: right, left, above, below, then the diagonals. */
+function ringSlots(w: number, ...radii: number[]): [number, number][] {
+  const out: [number, number][] = [];
+  for (const r of radii) {
+    const d = r * 0.72;
+    out.push([r, -8], [-r - w, -8], [-w / 2, -r - 10], [-w / 2, r - 4], [d, -d - 8], [d, d - 8], [-d - w, -d - 8], [-d - w, d - 8]);
+  }
+  return out;
 }
 
 function intersects(a: Rect, b: Rect): boolean {
@@ -269,6 +281,7 @@ export class TacticalPlot {
 
   // scene content
   private staticBatches: LineBatch[] = [];
+  private coastBatch: LineBatch | null = null;
   private facilityLayer: FacilityPlotLayer | null = null;
   private facilitySource: Facility[] | undefined;
   private facilityLabelCount = 0;
@@ -321,6 +334,9 @@ export class TacticalPlot {
   private labelPool: HTMLDivElement[] = [];
   private labelsUsed = 0;
   private labelRects: Rect[] = [];
+  private labelEls: HTMLDivElement[] = [];
+  private siteLabels = false;
+  private labelTexts: string[] = [];
   private gridLabels: HTMLDivElement[] = [];
   private gridRects: Rect[] = [];
 
@@ -485,6 +501,7 @@ export class TacticalPlot {
     grid.flush();
 
     this.staticBatches = [contour, coast, borders, grid];
+    this.coastBatch = coast;
     for (const b of this.staticBatches) this.scene.add(b.object);
 
     this.buildRelief();
@@ -748,6 +765,7 @@ export class TacticalPlot {
         return { x: s.x, y: s.y };
       },
       focusFacility: (id: string) => this.focusFacility(id),
+      labels: () => this.labelRects.map((r, i) => ({ text: this.labelTexts[i], x: r.x, y: r.y, w: r.w, h: r.h })),
       drawnOsint: () => ({
         sites: this.osintLayer?.drawn ?? 0,
         rings: this.osintLayer?.drawnRings ?? 0,
@@ -1232,6 +1250,8 @@ export class TacticalPlot {
     this.target.x = THREE.MathUtils.clamp(this.target.x, this.proj.x(b[0]), this.proj.x(b[2]));
     this.target.y = THREE.MathUtils.clamp(this.target.y, this.proj.y(b[1]), this.proj.y(b[3]));
     this.updateCamera();
+    // Natural Earth is good to roughly half a km; past that the facility outlines are the truth, so the coast steps back
+    if (this.coastBatch) this.coastBatch.material.opacity = THREE.MathUtils.clamp((this.kPx - 0.02) / 0.13, 0.08, 1);
     this.facilityLayer?.setView(this.kPx, this.input?.showFacilities !== false);
     this.osintLayer?.setView(this.kPx, true);
 
@@ -1294,6 +1314,8 @@ export class TacticalPlot {
     };
     this.labelsUsed = 0;
     this.labelRects.length = 0;
+    this.labelTexts.length = 0;
+    this.labelEls.length = 0;
     const dr = this.drawn;
     dr.weaponLines = dr.weaponHeads = dr.uncertaintyDiscs = dr.uncertaintyEdges = 0;
     dr.coverageDiscs = dr.coverageEdges = dr.unitSprites = dr.contactSprites = 0;
@@ -1664,8 +1686,9 @@ export class TacticalPlot {
     const osint = this.osintLayer && this.osintLayer.root.visible ? this.osintLayer : null;
     let used = 0;
     let osintUsed = 0;
+    this.siteLabels = true;
     if (((layer && layer.root.visible) || osint) && input) {
-      const placed: Rect[] = [];
+      const placed: Rect[] = [...this.gridRects];
       const selId = input.selectedFacilityId ?? null;
       const mt = layer ? layer.maxLabelTier(this.kPx) : -1;
       const close = this.kPx < 0.03;
@@ -1674,40 +1697,35 @@ export class TacticalPlot {
       const lo = this.groundAt(0, this.H, this.groundA), hi = this.groundAt(this.W, 0, this.groundB);
       const x0 = Math.min(lo?.x ?? -1e9, hi?.x ?? -1e9) - margin, x1 = Math.max(lo?.x ?? 1e9, hi?.x ?? 1e9) + margin;
       const y0 = Math.min(lo?.y ?? -1e9, hi?.y ?? -1e9) - margin, y1 = Math.max(lo?.y ?? 1e9, hi?.y ?? 1e9) + margin;
-      // obstacles a facility label must not sit on: every drawn facility symbol, every unit glyph, chrome
-      const obstacles: Rect[] = [];
-      const symTier = layer && layer.root.visible ? layer.maxTier(this.kPx) : -1;
-      for (const it of layer && layer.root.visible ? layer.items : []) {
-        if (it.tier > symTier) continue;
-        if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1) continue;
-        const s = this.toScreen(it.x, it.y, 0);
-        if (s.z < 1) obstacles.push({ x: s.x - 12, y: s.y - 12, w: 24, h: 24 });
-      }
+      // obstacles a label must not sit on: every drawn facility and OSINT symbol, every unit glyph,
+      // the runway strips, chrome and the grid labels
+      const obstacles: Rect[] = this.staticSymbolRects(x0, x1, y0, y1);
+      const symbolCount = obstacles.length;
+      this.runwayRects(obstacles, x0, x1, y0, y1);
       for (const t of this.tracks.values()) {
         const s = this.toScreen(t.pos.x + t.disp.x, t.pos.y + t.disp.y, t.z);
         if (s.z >= 1) continue;
         const hw = Math.max(12, (t.spriteW || 22) / 2) + 2, hh = Math.max(12, (t.spriteH || 22) / 2) + 2;
         obstacles.push({ x: s.x - hw, y: s.y - hh, w: hw * 2, h: hh * 2 });
       }
-      // OSINT symbols (and the dot on their true position) are obstacles too
-      if (osint) {
-        for (const it of osint.items) {
-          const s = this.toScreen(it.x + it.ox * this.kPx, it.y - it.oy * this.kPx, 0);
-          if (s.z < 1) obstacles.push({ x: s.x - OSINT_SYMBOL_PX / 2 - 1, y: s.y - OSINT_SYMBOL_PX / 2 - 1, w: OSINT_SYMBOL_PX + 2, h: OSINT_SYMBOL_PX + 2 });
-          const d = this.toScreen(it.x, it.y, 0);
-          if (d.z < 1 && (it.ox || it.oy)) obstacles.push({ x: d.x - 4, y: d.y - 4, w: 8, h: 8 });
+      const findOwn = (x: number, y: number) => {
+        for (let i = 0; i < symbolCount; i++) {
+          const o = obstacles[i];
+          if (Math.abs(o.x + o.w / 2 - x) < 1.5 && Math.abs(o.y + o.h / 2 - y) < 1.5) return o;
         }
-      }
+        return null;
+      };
       const hitsObstacle = (r: Rect, own: Rect | null) => obstacles.some((o) => o !== own && intersects(o, r));
       const draw = (it: { facility: Facility; x: number; y: number }, text: string, cls: string, dx: number, dy: number, free = false) => {
         const s = this.toScreen(it.x, it.y, 0);
         if (s.z >= 1) return false;
         const w = text.length * 7.6 + 8;
-        const own = obstacles.find((o) => Math.abs(o.x + o.w / 2 - s.x) < 1.5 && Math.abs(o.y + o.h / 2 - s.y) < 1.5) ?? null;
-        // right, left, above, below the symbol; the first slot that is clear of labels, symbols, glyphs and chrome wins
+        const own = findOwn(s.x, s.y);
+        // right, left, above, below the symbol, then a wider ring when runways crowd it; the first slot
+        // that is clear of labels, symbols, glyphs, runways, grid labels and chrome wins
         const slots: [number, number][] = free
           ? [[dx, dy]]
-          : [[14, -8], [-14 - w, -8], [-w / 2, -26], [-w / 2, 12]];
+          : [[14, -8], [-14 - w, -8], [-w / 2, -26], [-w / 2, 12], ...(it.facility.runways?.length ? ringSlots(w, 34, 56, 84) : [])];
         for (const [ox, oy] of slots) {
           const r = { x: s.x + ox, y: s.y + oy, w, h: 16 };
           if (placed.some((p) => intersects(p, r))) continue;
@@ -1731,11 +1749,20 @@ export class TacticalPlot {
           const w = text.length * 7.6 + 8;
           const half = OSINT_SYMBOL_PX / 2 + 4;
           const slots: [number, number][] = [[half, -8], [-half - w, -8], [-w / 2, -half - 16], [-w / 2, half]];
-          const own = obstacles.find((o) => Math.abs(o.x + o.w / 2 - sp.x) < 1.5 && Math.abs(o.y + o.h / 2 - sp.y) < 1.5) ?? null;
-          for (const [ox, oy] of slots) {
+          const own = findOwn(sp.x, sp.y);
+          const tried = [...slots, ...ringSlots(w, half + 24, half + 48)];
+          for (let si = 0; si < tried.length; si++) {
+            const [ox, oy] = tried[si];
             const r = { x: sp.x + ox, y: sp.y + oy, w, h: 16 };
             if (placed.some((p) => intersects(p, r)) || hitsObstacle(r, own) || this.underChrome(r)) continue;
             placed.push(r);
+            if (si >= slots.length) {
+              // a displaced plate is tied back to its own symbol so it cannot read as a neighbour's
+              const ex = Math.max(r.x, Math.min(sp.x, r.x + r.w)), ey = Math.max(r.y, Math.min(sp.y, r.y + r.h));
+              const g0 = this.groundAt(sp.x, sp.y, this.groundA), gx = g0 ? g0.x : 0, gy = g0 ? g0.y : 0;
+              const g1 = this.groundAt(ex, ey, this.groundB);
+              if (g0 && g1) batch.seg(gx, gy, 0, g1.x, g1.y, 0, C.dim, 0.8);
+            }
             this.label(it.x + it.ox * this.kPx, it.y - it.oy * this.kPx, 0, text, it.site.id === osel ? "tx-fac-label tx-fac-label--sel" : `tx-fac-label tx-osint-label${sideForAffiliation(it.site.affiliation) === "Iran" ? " tx-osint-label--hostile" : ""}`, ox, oy);
             osintUsed++;
             break;
@@ -1763,18 +1790,85 @@ export class TacticalPlot {
         draw(it, facilityLabelText(it.facility), "tx-fac-label", 13, -8);
       }
       if (close && layer) {
+        // runway designators sit beyond the runway ends, along the runway axis, never on the strip
         for (const it of layer.items) {
           if (used >= cap + 24) break;
           if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1 || !it.facility.runways?.length) continue;
           for (const e of layer.runwayEnds(it.facility)) {
             if (e.x < x0 || e.x > x1 || e.y < y0 || e.y > y1) continue;
-            draw({ facility: it.facility, x: e.x, y: e.y }, e.ident, "tx-fac-label tx-fac-label--end", -8, 6, true);
+            const se = this.toScreen(e.x, e.y, 0).clone(), so = this.toScreen(e.ox, e.oy, 0);
+            if (se.z >= 1 || so.z >= 1) continue;
+            let dx = se.x - so.x, dy = se.y - so.y;
+            const len = Math.hypot(dx, dy);
+            if (len < 70) continue;
+            dx /= len; dy /= len;
+            const w = e.ident.length * 7.6 + 8, h = 16;
+            for (const extra of [0, 22]) {
+              const rr = 5 + extra + Math.abs(dx) * w / 2 + Math.abs(dy) * h / 2;
+              const r = { x: se.x + dx * rr - w / 2, y: se.y + dy * rr - h / 2, w, h };
+              if (placed.some((p) => intersects(p, r)) || hitsObstacle(r, null) || this.underChrome(r)) continue;
+              placed.push(r);
+              this.label(e.x, e.y, 0, e.ident, "tx-fac-label tx-fac-label--end", r.x - se.x, r.y - se.y);
+              used++;
+              break;
+            }
           }
         }
       }
     }
+    this.siteLabels = false;
     this.facilityLabelCount = used;
     this.osintLabelCount = osintUsed;
+  }
+
+  /** Screen rects of every drawn facility symbol and OSINT symbol (plus the dot on its true position). */
+  private staticSymbolRects(x0 = -1e12, x1 = 1e12, y0 = -1e12, y1 = 1e12): Rect[] {
+    const out: Rect[] = [];
+    const layer = this.facilityLayer;
+    if (layer && layer.root.visible) {
+      const symTier = layer.maxTier(this.kPx);
+      for (const it of layer.items) {
+        if (it.tier > symTier || it.hidden) continue;
+        if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1) continue;
+        const s = this.toScreen(it.x, it.y, 0);
+        if (s.z < 1) out.push({ x: s.x - 12, y: s.y - 12, w: 24, h: 24 });
+      }
+    }
+    const osint = this.osintLayer && this.osintLayer.root.visible ? this.osintLayer : null;
+    if (osint) {
+      for (const it of osint.items) {
+        const s = this.toScreen(it.x + it.ox * this.kPx, it.y - it.oy * this.kPx, 0);
+        if (s.z < 1) out.push({ x: s.x - OSINT_SYMBOL_PX / 2 - 1, y: s.y - OSINT_SYMBOL_PX / 2 - 1, w: OSINT_SYMBOL_PX + 2, h: OSINT_SYMBOL_PX + 2 });
+        const d = this.toScreen(it.x, it.y, 0);
+        if (d.z < 1 && (it.ox || it.oy)) out.push({ x: d.x - 4, y: d.y - 4, w: 8, h: 8 });
+      }
+    }
+    return out;
+  }
+
+  /** Thin square samples along every drawn runway so labels can be kept off the strip. */
+  private runwayRects(out: Rect[], x0: number, x1: number, y0: number, y1: number) {
+    const layer = this.facilityLayer;
+    if (!layer || !layer.root.visible || this.kPx >= 1.4) return;
+    for (const it of layer.items) {
+      if (!it.facility.runways?.length) continue;
+      if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1) continue;
+      for (const sg of layer.runwaySegments(it.facility)) {
+        const a = this.toScreen(sg.ax, sg.ay, 0).clone(), b = this.toScreen(sg.bx, sg.by, 0);
+        if (a.z >= 1 || b.z >= 1) continue;
+        const hw = Math.max(1.1, sg.halfKm / this.kPx);
+        const size = Math.min(44, Math.max(26, 2 * (hw + 12)));
+        const len = Math.hypot(b.x - a.x, b.y - a.y);
+        const inset = size / 2;
+        const n = Math.max(1, Math.ceil((len - 2 * inset) / (size * 0.5)));
+        for (let k = 0; k <= n; k++) {
+          const t = len <= 2 * inset ? 0.5 : (inset + ((len - 2 * inset) * k) / n) / len;
+          const cx = a.x + (b.x - a.x) * t, cy = a.y + (b.y - a.y) * t;
+          if (cx < -40 || cx > this.W + 40 || cy < -40 || cy > this.H + 40) continue;
+          out.push({ x: cx - size / 2, y: cy - size / 2, w: size, h: size });
+        }
+      }
+    }
   }
 
   private ringLabel(x: number, y: number, text: string, friendly: boolean) {
@@ -1798,14 +1892,17 @@ export class TacticalPlot {
       return;
     }
     // ring and waypoint labels are short; estimate their box from the text
-    const rect = { x: s.x + dx, y: s.y + dy, w: text.length * 7.6 + 8, h: 16 };
+    const rect: Rect = { x: s.x + dx, y: s.y + dy, w: text.length * 7.6 + 8, h: 16 };
     if (this.underChrome(rect)) {
       if (el.style.display !== "none") el.style.display = "none";
       return;
     }
     if (el.style.display === "none") el.style.display = "";
     el.style.transform = `translate3d(${Math.round(rect.x)}px, ${Math.round(rect.y)}px, 0)`;
+    if (this.siteLabels) rect.ev = this.labelEls.length;
     this.labelRects.push(rect);
+    this.labelTexts.push(text);
+    this.labelEls.push(el);
   }
 
   /** Re-read the chrome rects a few times a second (panels open and close). */
@@ -1884,16 +1981,19 @@ export class TacticalPlot {
     list.sort((a, b) => rank(a) - rank(b));
 
     const BLOCKED = 1e9;
+    // a unit data block outranks facility and OSINT labels: when it has no clear slot it may displace them
+    let ignoreSites = false;
     const overlap = (r: Rect, set: Rect[]) => {
       let a = 0;
       for (const p of set) {
+        if (ignoreSites && p.ev !== undefined) continue;
         const ox = Math.min(r.x + r.w, p.x + p.w) - Math.max(r.x, p.x);
         const oy = Math.min(r.y + r.h, p.y + p.h) - Math.max(r.y, p.y);
         if (ox > 0 && oy > 0) a += ox * oy;
       }
       return a;
     };
-    const cost = (r: Rect) => (this.underChrome(r) ? BLOCKED : overlap(r, placed) + overlap(r, obstacles) * 2);
+    const cost = (r: Rect) => (this.underChrome(r) ? BLOCKED : overlap(r, placed) + overlap(r, obstacles) * 2 + overlap(r, this.gridRects) * 40);
     // best of the eight slots for the block's current size, sticking with the
     // current slot while it stays clear
     const bestSlot = (t: Track) => {
@@ -1910,6 +2010,7 @@ export class TacticalPlot {
     };
 
     const leaders = { friendly: [] as string[], hostile: [] as string[], unknown: [] as string[] };
+    const dropped = new Set<number>();
 
     for (const t of list) {
       const el = t.block!;
@@ -1937,13 +2038,12 @@ export class TacticalPlot {
       }
 
       // full block first; if nothing clear, one line; if that still lands on
-      // another label, an enemy or unknown track goes without (friendlies and
-      // the selection always keep theirs)
+      // another label, the track goes without (the selection always keeps its own)
       t.blockW = t.fullW;
       t.blockH = t.fullH;
       let pick = bestSlot(t);
       let compact = false;
-      const busy = (c: number) => c >= BLOCKED || c > t.blockW * t.blockH * 0.12;
+      const busy = (c: number) => c >= BLOCKED || c > t.blockW * t.blockH * 0.03;
       if (busy(pick.c)) {
         t.blockW = t.compactW;
         t.blockH = t.compactH;
@@ -1956,7 +2056,23 @@ export class TacticalPlot {
           t.blockH = t.fullH;
         }
       }
-      const keep = t.id === input.selectedUnitId || (t.unit && t.unit.side === input.playerSide);
+      const keep = t.id === input.selectedUnitId;
+      let displaced = false;
+      if (pick.c >= BLOCKED || busy(pick.c)) {
+        ignoreSites = true;
+        t.blockW = t.fullW;
+        t.blockH = t.fullH;
+        const full = bestSlot(t);
+        if (!busy(full.c)) { pick = full; compact = false; displaced = true; }
+        else {
+          t.blockW = t.compactW;
+          t.blockH = t.compactH;
+          const one = bestSlot(t);
+          if (!busy(one.c)) { pick = one; compact = true; displaced = true; }
+          else { t.blockW = compact ? t.compactW : t.fullW; t.blockH = compact ? t.compactH : t.fullH; }
+        }
+        ignoreSites = false;
+      }
       if (pick.c >= BLOCKED || (!keep && busy(pick.c))) {
         // no clear place: hide rather than show a sliced or stacked label
         if (el.style.display !== "none") el.style.display = "none";
@@ -1971,7 +2087,16 @@ export class TacticalPlot {
       t.slot = best;
       const o = this.slotOffset(t, best);
       const bx = Math.round(t.screen.x + o.x), by = Math.round(t.screen.y + o.y);
-      placed.push({ x: bx, y: by, w: t.blockW, h: t.blockH });
+      const blockRect = { x: bx, y: by, w: t.blockW, h: t.blockH };
+      if (displaced) {
+        for (const p of placed) {
+          if (p.ev === undefined || p.w === 0 || !intersects(p, blockRect)) continue;
+          this.labelEls[p.ev].style.display = "none";
+          dropped.add(p.ev);
+          p.w = 0; p.h = 0;
+        }
+      }
+      placed.push(blockRect);
 
       if (tilted || best >= 4) {
         // leader from the glyph edge to the block's near corner
@@ -1990,6 +2115,11 @@ export class TacticalPlot {
       el.style.transform = `translate3d(${bx}px, ${by}px, 0)`;
       const op = t.alpha.toFixed(2);
       if (el.style.opacity !== op) el.style.opacity = op;
+    }
+
+    if (dropped.size) {
+      this.labelRects = this.labelRects.filter((_, i) => !dropped.has(i));
+      this.labelTexts = this.labelTexts.filter((_, i) => !dropped.has(i));
     }
 
     for (const k of ["friendly", "hostile", "unknown"] as const) {
@@ -2042,6 +2172,7 @@ export class TacticalPlot {
     used.push(...spaced);
 
     this.gridRects = [];
+    const symbols = this.staticSymbolRects();
     for (let i = 0; i < Math.max(used.length, this.gridLabels.length); i++) {
       let el = this.gridLabels[i];
       if (i >= used.length) {
@@ -2055,7 +2186,8 @@ export class TacticalPlot {
         this.gridLabels.push(el);
       }
       const u = used[i];
-      if (this.underChrome({ x: u.x, y: u.y, w: u.text.length * 7.6 + 4, h: 14 })) {
+      const box = { x: u.x, y: u.y, w: u.text.length * 7.6 + 4, h: 14 };
+      if (this.underChrome(box) || symbols.some((q) => intersects(q, box))) {
         if (el.style.display !== "none") el.style.display = "none";
         continue;
       }

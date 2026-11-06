@@ -225,8 +225,9 @@ function platformFor(typeCode: string | undefined, countryCode: string | undefin
   return m;
 }
 
-function sideFor(mil: boolean, country: Country | undefined): string {
-  if (!mil) return SIDE_NEUTRAL;
+/** Only an aircraft whose type is in the platform DB can belong to a bloc; an UNKNOWN military contact stays Neutral. */
+function sideFor(mil: boolean, country: Country | undefined, mapped: boolean): string {
+  if (!mil || !mapped) return SIDE_NEUTRAL;
   if (country?.bloc === "coalition") return SIDE_COALITION;
   if (country?.bloc === "iran") return SIDE_IRAN;
   return SIDE_NEUTRAL;
@@ -242,7 +243,7 @@ function aircraftUnit(a: AdsbAircraft & { lat: number; lon: number }, mil: boole
     id: `adsb-${a.hex.replace(/^~/, "t").toLowerCase()}`,
     name: mapped ? `${ident} (${mapped.label}${cc})` : `${ident} [${typeCode ?? "UNK"}${cc}]`,
     platformId: mapped ? mapped.platformId : UNKNOWN_AIR_ID,
-    side: sideFor(mil, country),
+    side: sideFor(mil, country, !!mapped),
     position: { lng: round(a.lon, 5), lat: round(a.lat, 5) },
     heading: headingDeg(a),
     speed: Math.max(0, Math.round(a.gs ?? 0)),
@@ -271,8 +272,28 @@ function vesselUnit(v: AisVessel): Unit {
   };
 }
 
-function stamp(iso: string): string {
-  return iso.replace(/[-:]/g, "").replace(/\.\d+/, "");
+/** The side the player takes: the first bloc that has aircraft, so the snapshot's traffic is in the player's own picture. */
+export function playerSideFor(units: Unit[]): string {
+  return [SIDE_COALITION, SIDE_IRAN, SIDE_NEUTRAL].find((n) => units.some((u) => u.side === n)) ?? SIDE_NEUTRAL;
+}
+
+/** The plain-language opening of the briefing: what this is and what the player can do. */
+export function snapshotIntro(units: Unit[], fetchedAt: string): string {
+  const civil = units.filter((u) => u.mission === CIVIL_MISSION).length;
+  return (
+    `A real snapshot of the air over the Strait of Hormuz, as the public ADS-B network saw it on ${dateInWords(fetchedAt)}. ` +
+    `${units.length} aircraft are on the map${civil ? `, ${civil} of them civil airliners and cargo flights` : ""}. ` +
+    `You are the observer: every aircraft is listed under FORCES, click one to see its call sign, type, heading and altitude, ` +
+    `and speed up time to watch the traffic move. The AD, RADAR and NUC buttons show the air-defence and radar sites around the strait. ` +
+    `Nothing here shoots: all sides start weapons-hold and there is nothing to win or lose. `
+  );
+}
+
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+/** "6 November 2026, 19:02 UTC" from an ISO instant. */
+export function dateInWords(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")} UTC`;
 }
 
 function describeSources(sources: SnapshotSource[]): string {
@@ -360,12 +381,16 @@ export function buildSnapshotScenario(input: BuildInput): Scenario {
     `Sides ${Object.entries(sortedSides).map(([k, v]) => `${k} ${v}`).join(", ") || "(none)"}.`;
   const fetchedLabel = input.fetchedAt.replace("T", " ").replace(/:\d\dZ$/, "Z");
 
+  const played = playerSideFor(units);
+  const when = dateInWords(input.fetchedAt);
+  const intro = snapshotIntro(units, input.fetchedAt);
   return {
-    name: `Hormuz real snapshot ${stamp(input.fetchedAt)}`,
+    name: `Hormuz air traffic, ${when}`,
     description:
       `REAL-WORLD SNAPSHOT of the Strait of Hormuz airspace fetched ${input.fetchedAt} from public ADS-B data. ` +
       `${summary} Sources: ${describeSources(sources)}.`,
     briefing:
+      intro +
       `REAL snapshot taken ${fetchedLabel} (UTC) from public ADS-B data (adsb.lol, ODbL). ${summary} ` +
       `Aircraft start where the network saw them, on their reported heading, speed and altitude. ` +
       `UNKNOWN contacts (type not in the platform database) are unarmed Neutral traffic and take no part in combat; all sides start weapons-hold. ` +
@@ -379,11 +404,11 @@ export function buildSnapshotScenario(input: BuildInput): Scenario {
       bounds: bbox,
     },
     startTime: input.fetchedAt,
-    playerSide: SIDE_COALITION,
+    playerSide: played,
     sides: [
-      { name: SIDE_COALITION, color: "#00aaff", isAI: false, units: units.filter((u) => u.side === SIDE_COALITION) },
-      { name: SIDE_IRAN, color: "#ff4444", isAI: true, units: units.filter((u) => u.side === SIDE_IRAN) },
-      { name: SIDE_NEUTRAL, color: "#9aa0a6", isAI: true, units: units.filter((u) => u.side === SIDE_NEUTRAL) },
+      { name: SIDE_COALITION, color: "#00aaff", isAI: played !== SIDE_COALITION, units: units.filter((u) => u.side === SIDE_COALITION) },
+      { name: SIDE_IRAN, color: "#ff4444", isAI: played !== SIDE_IRAN, units: units.filter((u) => u.side === SIDE_IRAN) },
+      { name: SIDE_NEUTRAL, color: "#9aa0a6", isAI: played !== SIDE_NEUTRAL, units: units.filter((u) => u.side === SIDE_NEUTRAL) },
     ],
     referencePoints: [],
     snapshot,

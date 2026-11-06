@@ -444,6 +444,9 @@ const ENGLISH_BY_WORD = [
   [/دادگستری/, "Government compound"],
 ];
 
+// OSM objects whose only name is a bare type word ("Naval base"): the real, public name of the place.
+const CURATED_NAMES = { "way/176976419": "Qeshm Naval Base" };
+
 export function englishFallbackName(name, kind, areaType) {
   for (const [re, en] of ENGLISH_BY_WORD) if (re.test(name)) return en;
   if (kind === "airbase") return "Airstrip";
@@ -491,6 +494,11 @@ export function parseOsmFacilities(elements) {
     }
   }
   for (const f of out) {
+    const curated = CURATED_NAMES[f.sources[0].id];
+    if (curated) {
+      f.nameLocal = f.nameLocal ?? (f.name !== curated ? f.name : null);
+      f.name = curated;
+    }
     if (f.name && ARABIC_SCRIPT.test(f.name)) {
       f.nameLocal = f.nameLocal ?? f.name;
       f.name = englishFallbackName(f.name, f.kind, f.areaType);
@@ -667,6 +675,30 @@ function slug(s) {
   return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
+const normName = (n) => String(n ?? "").trim().toLowerCase().replace(/\s+/g, " ");
+
+/**
+ * Drops a second record with the same kind and name within 1.5 km (areas excluded). The richer one stays.
+ * @param {any[]} list
+ * @returns {any[]}
+ */
+export function dedupeSamePlace(list, maxM = 1500) {
+  const score = (f) => (f.runways?.length ? 4 : 0) + (f.polygon ? 2 : 0) + (f.osint ? 1 : 0);
+  const drop = new Set();
+  for (let i = 0; i < list.length; i++) {
+    const a = list[i];
+    if (a.kind === "military_area" || !a.name || drop.has(i)) continue;
+    for (let j = i + 1; j < list.length; j++) {
+      const b = list[j];
+      if (drop.has(j) || b.kind !== a.kind || normName(b.name) !== normName(a.name)) continue;
+      if (haversineM(a.position, b.position) > maxM) continue;
+      if (score(b) > score(a)) { drop.add(i); break; }
+      drop.add(j);
+    }
+  }
+  return list.filter((_, i) => !drop.has(i));
+}
+
 export function mergeFacilities({ ourairports, osmFacilities, osmRunways, runwayAttachM = 4000 }) {
   const airbases = ourairports.map((a) => ({ ...a, isMilitary: false, polygon: null, areaM2: null }));
   const osmAerodromes = osmFacilities.filter((f) => f.kind === "airbase");
@@ -732,7 +764,8 @@ export function mergeFacilities({ ourairports, osmFacilities, osmRunways, runway
   for (const o of others) merged.push(o);
 
   // A military area that is the polygon of a base we already hold as airbase/naval_base duplicates it.
-  const final = [];
+  /** @type {any[]} */
+  let final = [];
   for (const f of merged) {
     if (f.kind === "military_area" && (f.areaType === "airfield" || f.areaType === "naval_base")) {
       const twin = merged.find((g) => g !== f && (g.kind === "airbase" || g.kind === "naval_base") && haversineM(g.position, f.position) < 3000);
@@ -749,6 +782,9 @@ export function mergeFacilities({ ourairports, osmFacilities, osmRunways, runway
     const heliOnly = f.runways.length === 0 && (f.airportType === "heliport" || /heli/i.test(f.name ?? ""));
     if (heliOnly) f.kind = "heliport";
   }
+
+  // One record per real place: OSM often maps a port or helipad as several same-named pieces
+  final = dedupeSamePlace(final);
 
   // Stable ids
   const used = new Set();

@@ -1,7 +1,7 @@
 {
-  "name": "Hormuz real snapshot 20261106T190240Z",
+  "name": "Hormuz air traffic, 6 November 2026, 19:02 UTC",
   "description": "REAL-WORLD SNAPSHOT of the Strait of Hormuz airspace fetched 2026-11-06T19:02:40Z from public ADS-B data. 137 contacts: 0 mapped to platform-DB types, 137 UNKNOWN. Sides Neutral 137. Sources: adsb.lol /v2/mil (all military-registered aircraft): USED (requests 1, returned 384, uniqueInBbox 0); adsb.lol /v2/point/{lat}/{lon}/{radiusNm} (bbox tiles): USED (requests 4, returned 220, uniqueInBbox 150); AISStream (ships): SKIPPED - AISStream requires an API key; no keyless AIS source covers this bbox (vessels 0).",
-  "briefing": "REAL snapshot taken 2026-11-06 19:02Z (UTC) from public ADS-B data (adsb.lol, ODbL). 137 contacts: 0 mapped to platform-DB types, 137 UNKNOWN. Sides Neutral 137. Aircraft start where the network saw them, on their reported heading, speed and altitude. UNKNOWN contacts (type not in the platform database) are unarmed Neutral traffic and take no part in combat; all sides start weapons-hold. Sources: adsb.lol /v2/mil USED; adsb.lol /v2/point USED; AISStream SKIPPED (AISStream requires an API key; no keyless AIS source covers this bbox). ESTIMATED: positions are one receiver-network snapshot; sides come from the ICAO address block (state of registry), not the operator; types are matched by ICAO designator only (a family, not a variant); aircraft hold course and speed, no flight plans. Ships are not included. Full limitations and counts are in the scenario's snapshot block.",
+  "briefing": "A real snapshot of the air over the Strait of Hormuz, as the public ADS-B network saw it on 6 November 2026, 19:02 UTC. 137 aircraft are on the map, 137 of them civil airliners and cargo flights. You are the observer: every aircraft is listed under FORCES, click one to see its call sign, type, heading and altitude, and speed up time to watch the traffic move. The AD, RADAR and NUC buttons show the air-defence and radar sites around the strait. Nothing here shoots: all sides start weapons-hold and there is nothing to win or lose. REAL snapshot taken 2026-11-06 19:02Z (UTC) from public ADS-B data (adsb.lol, ODbL). 137 contacts: 0 mapped to platform-DB types, 137 UNKNOWN. Sides Neutral 137. Aircraft start where the network saw them, on their reported heading, speed and altitude. UNKNOWN contacts (type not in the platform database) are unarmed Neutral traffic and take no part in combat; all sides start weapons-hold. Sources: adsb.lol /v2/mil USED; adsb.lol /v2/point USED; AISStream SKIPPED (AISStream requires an API key; no keyless AIS source covers this bbox). ESTIMATED: positions are one receiver-network snapshot; sides come from the ICAO address block (state of registry), not the operator; types are matched by ICAO designator only (a family, not a variant); aircraft hold course and speed, no flight plans. Ships are not included. Full limitations and counts are in the scenario's snapshot block.",
   "theater": {
     "center": {
       "lng": 55.5,
@@ -16,12 +16,12 @@
     ]
   },
   "startTime": "2026-11-06T19:02:40Z",
-  "playerSide": "Coalition",
+  "playerSide": "Neutral",
   "sides": [
     {
       "name": "Coalition",
       "color": "#00aaff",
-      "isAI": false,
+      "isAI": true,
       "units": []
     },
     {
@@ -33,7 +33,7 @@
     {
       "name": "Neutral",
       "color": "#9aa0a6",
-      "isAI": true,
+      "isAI": false,
       "units": [
         {
           "id": "adsb-06a07d",

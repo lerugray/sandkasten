@@ -382,6 +382,11 @@ export function TerminalPlay() {
       lines.push({ id: m.id, time: m.time, tag: "INTL", text: `${m.title ? m.title.toUpperCase() + "  " : ""}${m.text.toUpperCase()}`, alarm: false });
     }
     lines.push(...holds);
+    const snap = demoScenarioConfig.scenario.snapshot;
+    if (snap) {
+      const n = snap.counts.units;
+      lines.push({ id: "snapshot", time: 0, tag: "ADSB", text: `SNAPSHOT ${snap.fetchedAt.slice(0, 16).replace("T", " ")}Z: ${n} AIRCRAFT IN VIEW, ALL LISTED UNDER FORCES`, alarm: false });
+    }
     return lines.sort((a, b) => a.time - b.time).slice(-40);
   }, [combatLog, messages, holds, playerSide, fog]);
 
@@ -707,7 +712,7 @@ export function TerminalPlay() {
       )}
 
       {/* Scale */}
-      <div className="tx-scale" aria-hidden="true">
+      <div className="tx-scale" aria-hidden="true" data-plot-occluder>
         <span ref={scaleBarRef} className="tx-scale-bar" />
         <span ref={scaleLabelRef} className="tx-scale-label" />
       </div>

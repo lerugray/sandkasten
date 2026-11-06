@@ -54,7 +54,7 @@ export function FacilityPanel({ facility: f, baseUnits = [], onClose, className 
       </div>
       <div className="px-3 py-2">
         <Row label="Kind" value={kind} testId="facility-kind" />
-        {f.nameLocal && <Row label="Local name" value={f.nameLocal} />}
+        {f.nameLocal && !/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(f.nameLocal) && <Row label="Local name" value={f.nameLocal} />}
         {codes && <Row label="ICAO / IATA" value={codes} />}
         {f.country && <Row label="Country" value={f.country} />}
         {f.municipality && <Row label="Near" value={f.municipality} />}

@@ -30,7 +30,24 @@ export interface FacilityItem {
   y: number;
   tier: 0 | 1 | 2 | 3;
   group: number;
+  /** Index inside its symbol group (position attribute slot). */
+  slot?: number;
+  /** Longest runway in km; 0 when none. */
+  rwKm?: number;
+  /** True while the symbol is withdrawn because its runways are drawn big enough to say it. */
+  hidden?: boolean;
 }
+
+export interface RunwayGeom {
+  ident: string;
+  x: number; y: number;
+  ox: number; oy: number;
+  ax: number; ay: number; bx: number; by: number;
+  halfKm: number;
+}
+
+/** A runway longer than this many screen px replaces the airfield symbol, which would sit on it. */
+const RUNWAY_REPLACES_SYMBOL_PX = 34;
 
 interface RunwaySeg {
   facility: Facility;
@@ -141,7 +158,11 @@ export class FacilityPlotLayer {
           .sort((a, b) => a.tier - b.tier);
         if (!list.length) continue;
         const pos = new Float32Array(list.length * 3);
-        list.forEach((it, i) => { pos[i * 3] = it.x; pos[i * 3 + 1] = it.y; pos[i * 3 + 2] = 0; });
+        list.forEach((it, i) => {
+          pos[i * 3] = it.x; pos[i * 3 + 1] = it.y; pos[i * 3 + 2] = 0;
+          (it as FacilityItem).slot = i;
+          (it as FacilityItem).rwKm = longestRunwayKm(it.facility, this.proj);
+        });
         const geom = new THREE.BufferGeometry();
         geom.setAttribute("position", new THREE.BufferAttribute(pos, 3));
         geom.setDrawRange(0, 0);
@@ -279,6 +300,7 @@ export class FacilityPlotLayer {
       n += count;
     }
     this.visibleSymbols = n;
+    this.withdrawSymbols(kmPerPx);
     if (this.runwayMesh && this.runwayMat) {
       const show = kmPerPx < RUNWAY_MAX_KM_PER_PX;
       this.runwayMesh.visible = show;
@@ -287,6 +309,20 @@ export class FacilityPlotLayer {
       this.runwayMat.uniforms.uAlpha.value = THREE.MathUtils.clamp((RUNWAY_MAX_KM_PER_PX - kmPerPx) / 0.6, 0.35, 0.95);
     }
     if (this.areas) this.areas.object.visible = kmPerPx < AREA_MAX_KM_PER_PX;
+  }
+
+  /** Airfield symbols step aside once their own runways are long enough on screen to be the marker. */
+  private withdrawSymbols(kmPerPx: number) {
+    for (const it of this.items) {
+      if (!it.rwKm || it.slot === undefined) continue;
+      const hide = it.rwKm / kmPerPx > RUNWAY_REPLACES_SYMBOL_PX && kmPerPx < RUNWAY_MAX_KM_PER_PX;
+      if (hide === !!it.hidden) continue;
+      it.hidden = hide;
+      const g = this.groups[it.group];
+      const attr = g.points.geometry.getAttribute("position") as THREE.BufferAttribute;
+      attr.setXYZ(it.slot, hide ? 1e9 : it.x, hide ? 1e9 : it.y, 0);
+      attr.needsUpdate = true;
+    }
   }
 
   get drawnSymbols() {
@@ -298,12 +334,25 @@ export class FacilityPlotLayer {
   }
 
   /** Runways drawn near the view, for runway-end labels at close range. */
-  runwayEnds(f: Facility): { ident: string; x: number; y: number }[] {
-    const out: { ident: string; x: number; y: number }[] = [];
+  runwayEnds(f: Facility): RunwayGeom[] {
+    const out: RunwayGeom[] = [];
     for (const r of f.runways ?? []) {
-      for (const e of r.ends) if (e.ident) out.push({ ident: e.ident, x: this.proj.x(e.lng), y: this.proj.y(e.lat) });
+      const [a, b] = r.ends;
+      const ax = this.proj.x(a.lng), ay = this.proj.y(a.lat), bx = this.proj.x(b.lng), by = this.proj.y(b.lat);
+      const halfKm = ((r.widthM ?? DEFAULT_RUNWAY_WIDTH_M) / 2) / 1000;
+      if (a.ident) out.push({ ident: a.ident, x: ax, y: ay, ox: bx, oy: by, ax, ay, bx, by, halfKm });
+      if (b.ident) out.push({ ident: b.ident, x: bx, y: by, ox: ax, oy: ay, ax, ay, bx, by, halfKm });
     }
     return out;
+  }
+
+  /** Every runway segment of a facility, in plot units. */
+  runwaySegments(f: Facility): { ax: number; ay: number; bx: number; by: number; halfKm: number }[] {
+    return (f.runways ?? []).map((r) => ({
+      ax: this.proj.x(r.ends[0].lng), ay: this.proj.y(r.ends[0].lat),
+      bx: this.proj.x(r.ends[1].lng), by: this.proj.y(r.ends[1].lat),
+      halfKm: ((r.widthM ?? DEFAULT_RUNWAY_WIDTH_M) / 2) / 1000,
+    }));
   }
 
   /** Facility under a screen point: symbol first, then runway strip, then area. */
@@ -323,6 +372,7 @@ export class FacilityPlotLayer {
         const count = g.tierEnd[mt];
         for (let i = 0; i < count; i++) {
           const it = g.items[i];
+          if (it.hidden) continue;
           const s = toScreen(it.x, it.y);
           if (s.z >= 1) continue;
           const d = Math.hypot(s.x - sx, s.y - sy);
@@ -367,6 +417,15 @@ export class FacilityPlotLayer {
     });
     for (const t of this.textures) t.dispose();
   }
+}
+
+function longestRunwayKm(f: Facility, proj: PlotProjection): number {
+  let best = 0;
+  for (const r of f.runways ?? []) {
+    const [a, b] = r.ends;
+    best = Math.max(best, Math.hypot(proj.x(a.lng) - proj.x(b.lng), proj.y(a.lat) - proj.y(b.lat)));
+  }
+  return best;
 }
 
 function inside(x: number, y: number, xy: number[]): boolean {

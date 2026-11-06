@@ -57,8 +57,18 @@ const LIGHT: BasePalette = {
   ferry: "#6e94b0", boundary: "#7a6f8a", boundarySub: "#b7b0c0", label: "#3d4651", labelDim: "#6b747e", waterLabel: "#5b83a3", halo: "#f4f2ee",
 };
 
-// Latin-script names only: an OSM feature with no English or Latin name goes unlabelled rather than showing Persian/Arabic script that cannot be read on imagery.
-const NAME = ["coalesce", ["get", "name_en"], ["get", "name:latin"]];
+/**
+ * Latin-script name only. OpenMapTiles copies the native name into name_en when no English one exists, so a name_en
+ * that equals a non-Latin name is dropped; the label then falls back to name:latin, or draws nothing.
+ */
+export const NAME = [
+  "case",
+  ["all", ["has", "name_en"], ["!", ["all", ["has", "name:nonlatin"], ["==", ["get", "name_en"], ["get", "name"]]]]],
+  ["get", "name_en"],
+  ["has", "name:latin"],
+  ["get", "name:latin"],
+  "",
+];
 const OFM = BASEMAP_SOURCE_ID;
 const widthRamp = (a: number, b: number, c: number) => ["interpolate", ["exponential", 1.4], ["zoom"], 8, a, 12, b, 16, c] as unknown as number;
 

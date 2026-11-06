@@ -14,10 +14,10 @@ import {
 } from "@/lib/map/styles";
 import { FacilityLayer, FACILITY_HIT_LAYERS } from "./FacilityLayer";
 import { FacilityPanel } from "./FacilityPanel";
-import { OsintLayer, OSINT_HIT_LAYER } from "./OsintLayer";
+import { OsintLayer } from "./OsintLayer";
 import { OsintPanel } from "./OsintPanel";
 import { OSINT_LAYERS, OSINT_LAYERS_ON, sitesFor } from "@/lib/osint/sites";
-import type { OsintLayerState } from "@/lib/osint/sites";
+import { OSINT_ATTRIBUTION, type OsintLayerState } from "@/lib/osint/sites";
 import { FACILITY_ATTRIBUTION, getFacility } from "@/lib/facilities/facilities";
 import type { Scenario } from "@/types/game";
 import type { Contact, UnitOrders } from "@/lib/simulation/gameState";
@@ -148,26 +148,11 @@ export function TacticalMap({
 
     map.on("click", (e) => {
       const target = e.originalEvent.target as HTMLElement;
-      if (target.closest(".unit-marker") || target.closest(".contact-marker")) return;
+      if (target.closest(".unit-marker") || target.closest(".contact-marker") || target.closest(".osint-marker")) return;
       const handled =
         onMapClickRef.current?.({ lng: e.lngLat.lng, lat: e.lngLat.lat }) === true;
       if (handled) return;
       onUnitSelectRef.current(null);
-      if (hasOsintRef.current && map.getLayer(OSINT_HIT_LAYER)) {
-        const op = 14;
-        const sitesHit = map.queryRenderedFeatures(
-          [
-            [e.point.x - op, e.point.y - op],
-            [e.point.x + op, e.point.y + op],
-          ],
-          { layers: [OSINT_HIT_LAYER] },
-        );
-        if (sitesHit.length) {
-          setSelectedOsintId(sitesHit[0].properties?.id as string);
-          setSelectedFacilityId(null);
-          return;
-        }
-      }
       setSelectedOsintId(null);
       if (!hasFacilitiesRef.current || !showFacilitiesRef.current) return;
       const pad = 10;
@@ -266,7 +251,20 @@ export function TacticalMap({
                 .map((u) => [Math.round(u.position.lng * 200) / 200, Math.round(u.position.lat * 200) / 200] as [number, number])}
             />
           )}
-          {hasOsint && <OsintLayer map={mapRef.current} sites={osintVisible} selectedId={selectedOsint ? selectedOsintId : null} />}
+          {hasOsint && (
+            <OsintLayer
+              map={mapRef.current}
+              sites={osintVisible}
+              selectedId={selectedOsint ? selectedOsintId : null}
+              onSelect={(id) => {
+                setSelectedOsintId(id);
+                setSelectedFacilityId(null);
+              }}
+              unitPositions={visibleUnits
+                .filter((u) => u.damageState !== "destroyed")
+                .map((u) => [Math.round(u.position.lng * 200) / 200, Math.round(u.position.lat * 200) / 200] as [number, number])}
+            />
+          )}
           <UnitLayer
             map={mapRef.current}
             units={visibleUnits}
@@ -386,6 +384,7 @@ export function TacticalMap({
           <span data-testid="map-attribution">
             {BASEMAP_CREDIT_TEXT}
             {hasFacilities ? `. ${FACILITY_ATTRIBUTION}` : ""}
+            {hasOsint ? ` ${OSINT_ATTRIBUTION}` : ""}
           </span>
           {satelliteOn && <span data-testid="map-satellite-credit">{SATELLITE_CREDIT_TEXT}</span>}
         </div>

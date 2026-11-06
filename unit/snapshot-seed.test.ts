@@ -12,6 +12,8 @@ import {
   countryOfHex,
   type AdsbAircraft,
   type BBox,
+  dateInWords,
+  playerSideFor,
 } from "@/lib/snapshot/seed";
 import { ADSB_BASE, USER_AGENT, aircraftFromRequests, adsbSources, fetchAdsb, tilePoints, type RecordedRequest } from "@/lib/snapshot/adsb";
 import { exampleSnapshotRaw, exampleSnapshotScenario } from "@/lib/snapshot/example";
@@ -159,9 +161,9 @@ describe("unknown contacts and sides", () => {
   });
 
   it("sides come from the ICAO address block; unknown contacts are Neutral and never hostile", () => {
-    const mk = (hex: string): AdsbAircraft => ({ hex, t: "C17", lat: 26, lon: 56, alt_baro: 25000, gs: 400, track: 10, dbFlags: 1 });
+    const mk = (hex: string, t = "F18S"): AdsbAircraft => ({ hex, t, lat: 26, lon: 56, alt_baro: 25000, gs: 400, track: 10, dbFlags: 1 });
     const s = buildSnapshotScenario({
-      aircraft: [mk("ae1111"), mk("43c001"), mk("730123"), mk("710001"), mk("123456")],
+      aircraft: [mk("ae1111"), mk("43c001"), mk("730123", "F14"), mk("710001"), mk("123456"), mk("ae2222", "C17"), mk("730456", "C17")],
       fetchedAt, sources: [], bbox: HORMUZ_BBOX,
     });
     const side = (id: string) => unitsOf(s).find((u) => u.id === `adsb-${id}`)!.side;
@@ -170,6 +172,9 @@ describe("unknown contacts and sides", () => {
     expect(side("730123")).toBe("Iran");
     expect(side("710001")).toBe("Neutral");
     expect(side("123456")).toBe("Neutral"); // no known block
+    // an UNKNOWN military contact (type not in the platform DB) stays Neutral whatever its registry
+    expect(side("ae2222")).toBe("Neutral");
+    expect(side("730456")).toBe("Neutral");
     for (const x of ["Neutral"]) {
       expect(isHostileSide(x, "Coalition")).toBe(false);
       expect(isHostileSide("Iran", x)).toBe(false);
@@ -195,7 +200,12 @@ describe("scenario shape, determinism and provenance", () => {
     expect(s.theater.bounds).toEqual(HORMUZ_BBOX);
     expect(s.theater.center).toEqual({ lng: 55.5, lat: 26.25 });
     expect(s.facilities).toBeUndefined();
-    for (const text of [s.name.replace("snapshot", "REAL snapshot"), s.description, s.briefing]) expect(text).toMatch(/real/i);
+    for (const text of [s.description, s.briefing]) expect(text).toMatch(/real/i);
+    // a human title with the date in words, not the raw id; a briefing that says what the player can do
+    expect(s.name).toBe(`Hormuz air traffic, ${dateInWords(fetchedAt)}`);
+    expect(dateInWords("2026-11-06T19:02:40Z")).toBe("6 November 2026, 19:02 UTC");
+    expect(s.name).not.toMatch(/\d{8}T\d{6}Z/);
+    expect(s.briefing).toMatch(/You are the observer/);
     expect(s.description).toContain(fetchedAt);
     expect(s.briefing).toContain("ESTIMATED");
     expect(s.briefing).toContain(AIS_SKIP_REASON);
@@ -378,3 +388,22 @@ describe("the simulation loads and runs snapshot scenarios", () => {
     expect(snap.gameState.contacts.length).toBeGreaterThan(0);
   });
 });
+
+describe("the committed example is a normal player view of its own traffic", () => {
+  it("the player side holds all 137 aircraft, so FORCES counts and lists them without god mode", () => {
+    const sc = exampleSnapshotScenario;
+    expect(sc.name).toBe("Hormuz air traffic, 6 November 2026, 19:02 UTC");
+    expect(sc.name).not.toMatch(/\d{8}T\d{6}Z/);
+    expect(sc.briefing).toMatch(/real snapshot/i);
+    expect(sc.briefing).toMatch(/observer/);
+    const mine = sc.playerSide;
+    const units = unitsOf(sc);
+    const mineUnits = sc.sides.find((x) => x.name === mine)!.units;
+    expect(units).toHaveLength(137);
+    expect(mineUnits).toHaveLength(137);
+    expect(playerSideFor(units)).toBe(mine);
+    expect(sc.sides.filter((x) => !x.isAI).map((x) => x.name)).toEqual([mine]);
+    expect(mine).toBe("Neutral");
+  });
+});
+

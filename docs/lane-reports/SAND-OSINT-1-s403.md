@@ -1,4 +1,4 @@
-SAND-OSINT-1 READY head=f634cec ad_sites=9 radars=3 snapshot_units=137 unit=156/156 e2e=68/68
+SAND-OSINT-1 READY head=PENDING ad_sites=9 radars=3 snapshot_units=137 unit=173/173 e2e=71/71
 
 # SAND-OSINT-1 (s403): Hormuz OSINT layers and ADS-B snapshot seed
 
@@ -12,6 +12,33 @@ Branch `s403/sand-osint-1`, from `origin/s403/sand-map-1` at 887e52c. Operator: 
 - **Default /play plot** (`src/lib/plot/osintLayer.ts`): engagement and detection rings, symbols, labels under the same collision rules as facilities, click for the detail panel, AD / RADAR / NUC toggles. Rings of 800 km or less always draw; Sepehr (3000 km) and AN/TPY-2 (1000 km) draw when selected, so they do not flood the view. ESTIMATED rings are dashed.
 - **MapLibre views** (`/`, `/editor`, `/play?map=legacy`): the same rings, symbols, labels, panel and per-layer toggles. Facilities with OSINT data show an OSINT section in the facility panel.
 - **Snapshot tool**: `node scripts/snapshot-seed.mjs`, the editor SNAPSHOT button (`/api/snapshot`), and `/play?scenario=snapshot`. Units map by platform-DB type; everything else becomes an UNKNOWN contact. No key is read or stored.
+
+## Round 2 (FIX1 after the DPR 2 look gave FAIL-PULL)
+
+Frames are in `docs/verification/sand-map-1-s403/` (SM) and `docs/verification/sand-osint-1-s403/` (SO), all 22 recaptured at DPR 2 at 1440x900 and 1920x1080 under the same names. A Gahkom/Dar view is SO `04-play-gahkom-dar`.
+
+Root cause of the label-over-runway defects: the plot's runway obstacle rects were built from one shared screen vector, so both ends of every strip were the same point and no strip blocked a label. Fixed with a copy; the runway-end designators had the same fault and now draw beyond the runway ends.
+
+| # | Item | Result | Frame |
+|---|---|---|---|
+| A | Labels over runways and each other (plot) | FIXED: runway strips block labels, designators beyond the ends, Bandar Abbas Intl / Havadarya / S-300PMU-2 plates clear, zoom-dependent density | SM `06-play-facilities`, `07-play-havadarya-panel`, SO `04-play-gahkom-dar` |
+| B | Persian/Arabic script labels | FIXED: English or transliterated names only (curated names, `name:en`); the facility panel hides an Arabic "Local name"; e2e checks plot labels and the Havadarya panel; unit test on the import | SM `07-play-havadarya-panel`, SO `02-snapshot-scenario` |
+| 1 | Unit symbols covering site icons on /map | FIXED: unit markers keep their true position (symbol anchor offset), site icons draw above units, an invisible obstacle layer keeps basemap and OSINT text off units | SO `03-map-osint` |
+| 2 | /map labels pointing at the wrong icon | FIXED: DOM labels laid out by `layoutLabels`, each beside its own icon; e2e asserts every label's nearest icon is its own; displaced plot labels get a leader line | SO `03-map-osint-1920x1080`, `02-snapshot-scenario` |
+| 3 | /map footer lacks "OSINT sites: Auftragstaktik" | FIXED, both views carry the same credit; e2e on /map | SM `01-map-tactical`, SO `03-map-osint` |
+| 4 | Snapshot first-time view | FIXED: title "Hormuz air traffic, 6 November 2026, 19:02 UTC", briefing, played as Neutral observer so FORCES (137) lists the traffic, GOD off by default, ADSB teletype line; e2e without pressing G | SO `02-snapshot-scenario` |
+| 5 | Duplicate AHMED BIN RASHID PORT; FDB3ND over scale bar and grid label | FIXED: same-place facilities de-duplicated in the import; scale bar and grid labels are occluders | SO `02-snapshot-scenario` |
+| 6 | Map labels over grid labels | FIXED: grid labels are reserved rects | SO `01-plot-ad-rings`, `02-snapshot-scenario` |
+| 7 | Unit diamond cutting "Hormuz" on /map | FIXED: obstacle layer under the units | SM `02-map-zoomed-bandar-abbas`, `03-map-terrain`, `04-map-satellite-credit` |
+| 8 | Facility outlines crossing the coastline at 1 NM | FIXED: the coarse coastline fades once zoomed past its accuracy | SM `06-play-facilities`, `07-play-havadarya-panel` |
+| 9 | Qeshm cluster overlaps; unnamed NAVAL BASE | FIXED: Qeshm labels offset with leader lines, the naval base has its real name | SO `01-plot-ad-rings`, `02-snapshot-scenario` |
+| D1 | Runway dedupe kept genuine parallel strips | FIXED earlier, unit-tested (Bandar Abbas 03L/21R, 03R/21L) | SM `06-play-facilities` |
+| D2 | Default snapshot shows civil traffic without G | FIXED, e2e asserts it | SO `02-snapshot-scenario` |
+| S3 | UNKNOWN military stays Neutral; geodesic rings | FIXED: `sideFor` keeps UNKNOWN Neutral; rings use `geodesicCircle` in the plot and on the map, unit-tested | SO `01-plot-ad-rings` |
+
+Also: a unit data block outranks site labels (it may displace one); the always-keep rule applies to the selected unit only, so a crowd of 137 aircraft thins out instead of stacking.
+
+Tests now: unit 173/173; e2e 71/71 with the GPU recipe (the globe test can time out under 3 parallel workers and passes alone).
 
 ## Sources, licences and terms
 
@@ -79,12 +106,13 @@ The SAND-MAP-1 frames 05 to 07 in `docs/verification/sand-map-1-s403/` were reca
 
 ## Known limits
 
-- Bushehr (about 50.9E) sits outside the plot camera clamp, so the plot cannot centre on it; the Bandar Abbas sites are the test targets.
-- A unit label can sit close to a facility label near the Hornet tracks in frame 01 (clear of symbols, not overlapping).
-- On the MapLibre map, a label can touch a unit icon where a ring site sits beside Qeshm.
+- Bushehr (about 50.9E) sits outside the plot camera clamp, so the plot cannot centre on it; the Bandar Abbas sites are the test targets. On /map Bushehr labels are checked by the nearest-icon test.
+- In the densest part of the snapshot (Dubai area) some aircraft data blocks are dropped rather than stacked; the full list is under FORCES.
+- Where the coarse Natural Earth coastline meets facility outlines, the land fill edge still shows faintly at 1 NM.
 - All AD placements are scenario assumptions anchored to real facilities, not surveyed positions.
 
 ## Steer entries acted on
 
 - `20261106T182116Z` (visual fixes): all frames recaptured at DPR 2 at both sizes including cold-boot `/play`; OSINT labels use the same collision rules (obstacles, halos, 12 px minimum); readable credit line; EOX licence needed no action.
 - `20261106T183238Z` (data fixes): already committed before this lane (runway designators from bearing, one runway per strip, `/play` credits, committed raw cache); the Havadarya 08 threshold spawn (heading 79) was re-checked and is fine. The OSINT import reuses the committed raw-cache approach so it regenerates offline.
+- Round 2: both entries were re-read at every checkpoint; no newer entries appeared.

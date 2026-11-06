@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { LineBatch } from "./lineBatch";
 import { PALETTE } from "./palette";
 import type { PlotProjection } from "./projection";
+import { geodesicCircle } from "@/lib/map/rangeRings";
 import { coLocationIndex, ringAlways, sideForAffiliation } from "@/lib/osint/sites";
 import type { OsintLayer, OsintSite } from "@/lib/osint/sites";
 
@@ -139,7 +140,11 @@ export class OsintPlotLayer {
       if (!sel && !ringAlways(s)) continue;
       const c = colorOf(s);
       const batch = sel ? this.selRing : s.estimated ? this.dashed : this.solid;
-      batch.circle(it.x, it.y, 0, s.rangeKm, c, sel ? 1 : 0.8, 160);
+      // true geodesic outline: the planar circle is visibly wrong for the 1000-3000 km rings
+      const ring = geodesicCircle(s.position.lng, s.position.lat, s.rangeKm, 160);
+      const pts = new Float32Array(ring.length * 2);
+      ring.forEach(([lng, lat], i) => { pts[i * 2] = this.proj.x(lng); pts[i * 2 + 1] = this.proj.y(lat); });
+      batch.polyline(pts, 0, c, sel ? 1 : 0.8);
     }
     this.solid.flush();
     this.dashed.flush();

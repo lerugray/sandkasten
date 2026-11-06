@@ -88,8 +88,10 @@ export function createSymbolSVG(options: SymbolOptions): string {
 export function getSymbolAnchor(options: SymbolOptions): {
   x: number;
   y: number;
+  width: number;
+  height: number;
 } {
-  const { affiliation, dimension, functionId = "", size = 30 } = options;
+  const { affiliation, dimension, functionId = "", size = 30, heading } = options;
   const sidc =
     "S" +
     AFFILIATION_CHAR[affiliation] +
@@ -97,7 +99,8 @@ export function getSymbolAnchor(options: SymbolOptions): {
     "P" +
     (functionId + "------").slice(0, 10);
 
-  const symbol = new ms.Symbol(sidc, { size });
+  const symbol = new ms.Symbol(sidc, { size, ...(heading !== undefined && { direction: heading }) });
   const anchor = symbol.getAnchor();
-  return { x: anchor.x, y: anchor.y };
+  const box = symbol.getSize();
+  return { x: anchor.x, y: anchor.y, width: box.width, height: box.height };
 }
