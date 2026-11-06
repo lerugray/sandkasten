@@ -61,7 +61,7 @@ describe("OSINT import: helpers", () => {
     const otherSystem = adFromAuftragstaktik({ ...atAd, id: "ts", system: "Tor-M1" });
     const out = dedupeSites([a, b, far, otherSystem]);
     expect(out.map((s) => s.id)).toEqual([a.id, far.id, otherSystem.id]);
-    expect(out[0].citations.map((c) => c.label)).toContain("Extra source");
+    expect(out[0].citations.map((c: { label: string }) => c.label)).toContain("Extra source");
   });
 
   test("curated site resolves a facility anchor, takes its range from the table, and rejects unknown anchors", () => {

@@ -229,10 +229,13 @@ export function OsintLayer({ map, sites, selectedId }: OsintLayerProps) {
       if (map.getSource(SRC_SITES)) return;
       build(map, sitesRef.current, selRef.current);
     };
+    // isStyleLoaded() is false while tiles stream in and style.load may already have fired, so also build on the next idle.
     if (map.isStyleLoaded()) ensure();
+    else map.once("idle", ensure);
     map.on("style.load", ensure);
     return () => {
       map.off("style.load", ensure);
+      map.off("idle", ensure);
       teardown(map);
     };
   }, [map]);

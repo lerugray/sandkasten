@@ -187,6 +187,7 @@ export function TacticalMap({
     });
 
     mapRef.current = map;
+    (window as unknown as { __sandMap?: maplibregl.Map }).__sandMap = map;
 
     return () => {
       map.remove();

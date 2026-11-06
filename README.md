@@ -61,12 +61,18 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Platform manual at `/database`: 16 Hormuz platforms (ships and aircraft) with real open-license photos and credits, sourced specs, plain-English "what it is / how it is used / typical missions", sensors, weapons, defenses and a numbered bibliography. Records live in `src/data/platforms/records/`; the simulation reads them through `src/lib/platforms/lookup.ts`. Estimation methods are in `src/data/platforms/METHODS.md`. Nothing is copied from CMO.
 
 ### Real-world map (default `/play` plot, plus the MapLibre views `/`, `/editor`, `/play?map=legacy`)
-- Real geotagged facilities for the Hormuz theater: 869 sites (192 airfields, 347 heliports, 12 naval bases, 44 ports, 274 military areas) and 207 runways drawn to scale (real length and width). Built by `scripts/build-facilities.mjs` from OurAirports (public domain) and OpenStreetMap (ODbL) into `data/facilities/hormuz.json`; credits in `data/facilities/ATTRIBUTION.md` and on the map
+- Real geotagged facilities for the Hormuz theater: 871 sites (192 airfields, 347 heliports, 13 naval bases, 45 ports, 274 military areas) and 198 runways drawn to scale (real length and width). Built by `scripts/build-facilities.mjs` from OurAirports (public domain) and OpenStreetMap (ODbL) into `data/facilities/hormuz.json`; credits in `data/facilities/ATTRIBUTION.md` and on the map
 - Distinct symbols per kind (airfield, heliport, naval base, port), military in amber and civil in grey; click one for a terminal-style detail panel (codes, elevation, runways with headings, surface and lighting, units based there). Selecting a unit shows its HOME BASE in the unit panel, with a link that jumps to the facility
 - Units can carry a `homeBase` (facility and runway end). The simulation has no takeoff or landing model, so a unit based on a runway simply starts on its threshold (the alert F-4 at Havadarya)
 - Map toggles top-left: FACILITIES, GLOBE (globe when zoomed out, flat at tactical zoom), TERRAIN (AWS Terrain Tiles relief and hillshade), SAT (EOX Sentinel-2 cloudless, 2018, CC BY-NC-SA 4.0; the credit and licence show in the status bar and the map attribution while SAT is on). The dark basemap stays the default
 - Base map: OpenFreeMap vector tiles (OpenStreetMap data, ODbL; OpenMapTiles schema). No account, no API key, no usage cap. The credit sits in the status bar and the map attribution control
 - The default `/play` Three.js plot draws the same facilities in its phosphor style: symbols tiered by importance, runways to true length and width when zoomed in (at least 2 px wide when zoomed out), area outlines at close range, collision-checked name labels and runway-end designators. Click a symbol or runway for the detail panel; the plot makes no tile requests
+
+### OSINT layers and real-world snapshots
+- Air defence, radar and nuclear sites for the Hormuz bbox: 9 AD sites, 3 radars, 2 nuclear sites, drawn with engagement or detection range rings in the default `/play` plot and in the MapLibre views. Click a site for its panel (system, side, range, ESTIMATED flag, platform-DB match, citations). Per-layer toggles AD, RADAR and NUC; rings of 800 km or less always draw, the very large ones (Sepehr 3000 km, AN/TPY-2 1000 km) draw when selected. Dashed rings are ESTIMATED, solid ones come from the platform database
+- Data comes from [Auftragstaktik](https://github.com/lerugray/auftragstaktik) (MIT, commit 7c5904e, copied into `data/osint/raw/` so the import runs offline) plus a curated supplement, because Auftragstaktik holds no air defence inside the Hormuz box. Supplement placements are anchored to real facilities and are scenario assumptions. Credits and licence text in `data/osint/ATTRIBUTION.md`. `npm run data:osint` regenerates `data/osint/hormuz.json` and the OSINT fields in `data/facilities/hormuz.json` (one record per real place, no duplicates)
+- The platform database has no ground SAM or radar yet, so all 12 AD/radar sites are ESTIMATED misses; the importer matches them automatically once records exist. The platform database is not edited by the import
+- Snapshot tool: `node scripts/snapshot-seed.mjs` (or SNAPSHOT in the editor) fetches live ADS-B from adsb.lol (keyless, ODbL; the tool limits itself to 1 request per second), maps military types found in the platform database to units and turns everything else into UNKNOWN contacts, then writes a scenario file the editor opens. AISStream needs an API key and is skipped; no key is stored in the repo. One example, fetched 2026-11-06T19:02:40Z, is committed in `data/snapshots/` and opens offline at `/play?scenario=snapshot`
 
 ### Simulation
 - Real-time simulation at `/play`
@@ -215,7 +221,8 @@ sandkasten/
 | **Platform database** | Own sourced records, photos and `/database` viewer for the Hormuz roster | Built, awaiting Ray's review; full roster is a later job |
 | **Remaining gaps** | Fuel consumption, aircraft altitude, game save/load | Next |
 | **WeGo Multiplayer** | WebSocket sync, turn system, lobby, server-side fog of war | Planned |
-| **Community** | Scenario sharing, Auftragstaktik OSINT import, campaign mode | Planned |
+| **OSINT** | Hormuz AD, radar and nuclear sites with true ranges, ADS-B snapshot to scenario | Built, awaiting Ray's review (AIS snapshots need a key, skipped) |
+| **Community** | Scenario sharing, campaign mode | Planned |
 
 See [TASKS.md](TASKS.md) for the full breakdown and [GDD.md](GDD.md) for design details.
 
