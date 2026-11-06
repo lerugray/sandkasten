@@ -7,6 +7,7 @@ import { runAIUpdate, type AIState } from "@/lib/ai/aiController";
 import {
   evaluateEvents,
   applyStateChanges,
+  mergeResults,
   type EventState,
 } from "@/lib/ai/events";
 import {
@@ -121,10 +122,15 @@ function tickStep(
   };
 
   // --- Phase 4: TCA Events (run BEFORE combat so doctrine changes take effect) ---
+  // An EndScenario result is held until the tick has finished: combat can still change the outcome.
   let newEventState = eventState;
+  let heldResult: ReturnType<typeof evaluateEvents>["pendingResult"];
+  let ranBeforeCombat: string[] = [];
   if (eventState) {
-    const eventResult = evaluateEvents(eventState, newGameState, aiState?.missions ?? []);
+    const eventResult = evaluateEvents(eventState, newGameState, aiState?.missions ?? [], { deferResult: true });
     newEventState = eventResult.eventState;
+    heldResult = eventResult.pendingResult;
+    ranBeforeCombat = eventResult.ran;
 
     if (eventResult.stateChanges.length > 0) {
       newGameState = applyStateChanges(newGameState, eventResult.stateChanges);
@@ -142,6 +148,19 @@ function tickStep(
     );
     newGameState = combatResult.state;
     newCombatState = combatResult.combatState;
+  }
+
+  // --- Phase 6: terminal pass on post-combat state; the held result is final once it is decided ---
+  if (newEventState) {
+    const terminal = evaluateEvents(newEventState, newGameState, aiState?.missions ?? [], {
+      deferResult: true,
+      terminalOnly: true,
+      skip: new Set(ranBeforeCombat),
+    });
+    if (terminal.stateChanges.length > 0) {
+      newGameState = applyStateChanges(newGameState, terminal.stateChanges);
+    }
+    newEventState = { ...terminal.eventState, scenarioResult: mergeResults(heldResult, terminal.pendingResult) };
   }
 
   return { gameState: newGameState, eventState: newEventState, combatState: newCombatState };

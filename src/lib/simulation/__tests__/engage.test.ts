@@ -196,6 +196,6 @@ describe("S2-9 one doctrine resolver for combat", () => {
       { type: "doctrine", action: { type: "ChangeDoctrine", side: "Iran", mission: "Quiet Patrol", changes: { roe: "weapons-hold" } } },
     ]);
     expect(out.sideDoctrineOverrides?.Iran).toBeUndefined();
-    expect(out.missionDoctrineOverrides?.["Quiet Patrol"]).toEqual({ roe: "weapons-hold" });
+    expect(out.missionDoctrineOverrides?.["Iran:Quiet Patrol"]).toEqual({ roe: "weapons-hold" });
   });
 });

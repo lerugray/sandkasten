@@ -100,10 +100,10 @@ describe("S2-9 AI reads runtime doctrine", () => {
     
     const resolveUnitDoctrine = (await import("../effectiveDoctrine")).resolveUnitDoctrine;
     
-    const docRed = resolveUnitDoctrine(state.sides[0].units[0], state, ai([patrolRed, patrolBlue]));
-    expect(docRed.roe).toBe("weapons-hold");
-    
-    const docBlue = resolveUnitDoctrine(state.sides[1].units[0], state, ai([patrolRed, patrolBlue]));
-    expect(docBlue.roe).toBe("weapons-free"); // default
+    const unitById = (id: string) => state.sides.flatMap((s) => s.units).find((u) => u.id === id)!;
+    const cfg = ai([patrolRed, patrolBlue]);
+
+    expect(resolveUnitDoctrine(unitById("red"), state, cfg).roe).toBe("weapons-hold");
+    expect(resolveUnitDoctrine(unitById("blue"), state, cfg).roe).toBe("weapons-tight"); // DEFAULT_DOCTRINE, unchanged
   });
 });

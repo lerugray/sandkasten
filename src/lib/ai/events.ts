@@ -89,6 +89,25 @@ export interface EventMessage {
 
 const RESULT_PRIORITY = { defeat: 3, draw: 2, victory: 1 } as const;
 
+type ScenarioResult = NonNullable<EventState["scenarioResult"]>;
+
+/** Defeat beats draw beats victory. */
+export function mergeResults(a: ScenarioResult | undefined, b: ScenarioResult | undefined): ScenarioResult | undefined {
+  if (!a || !b) return a ?? b;
+  return RESULT_PRIORITY[b.result] > RESULT_PRIORITY[a.result] ? b : a;
+}
+
+export interface EvaluateOptions {
+  /** Keep any EndScenario result out of eventState and return it as `pendingResult`, so the tick can finish first. */
+  deferResult?: boolean;
+  /** Evaluate only events that contain an EndScenario action. */
+  terminalOnly?: boolean;
+  /** Event names that already ran this tick and must not run again. */
+  skip?: ReadonlySet<string>;
+}
+
+const endsScenario = (e: ScenarioEvent) => e.actions.some((a) => a.type === "EndScenario");
+
 /**
  * Evaluate all events against current game state.
  * Returns updated event state with any fired actions applied.
@@ -97,9 +116,10 @@ const RESULT_PRIORITY = { defeat: 3, draw: 2, victory: 1 } as const;
 export function evaluateEvents(
   eventState: EventState,
   gameState: GameState,
-  aiMissions: Mission[]
-): { eventState: EventState; stateChanges: StateChange[] } {
-  if (eventState.scenarioResult) return { eventState, stateChanges: [] };
+  aiMissions: Mission[],
+  opts: EvaluateOptions = {}
+): { eventState: EventState; stateChanges: StateChange[]; pendingResult?: ScenarioResult; ran: string[] } {
+  if (eventState.scenarioResult) return { eventState, stateChanges: [], ran: [] };
 
   const changes: StateChange[] = [];
   const newFired = new Set(eventState.firedEvents);
@@ -107,6 +127,7 @@ export function evaluateEvents(
   const lastFired = { ...(eventState.lastFired ?? {}) };
   let pendingResult: EventState["scenarioResult"];
   const running = new Set<string>();
+  const ran: string[] = [];
 
   const run = (event: ScenarioEvent) => {
     running.add(event.name);
@@ -140,10 +161,7 @@ export function evaluateEvents(
           break;
 
         case "EndScenario":
-          // Defeat beats draw beats victory when several end the scenario in the same pass
-          if (!pendingResult || RESULT_PRIORITY[action.result] > RESULT_PRIORITY[pendingResult.result]) {
-            pendingResult = { result: action.result, message: action.message };
-          }
+          pendingResult = mergeResults(pendingResult, { result: action.result, message: action.message });
           break;
 
         case "TriggerEvent": {
@@ -158,10 +176,13 @@ export function evaluateEvents(
     }
     running.delete(event.name);
     newFired.add(event.name);
+    ran.push(event.name);
   };
 
   for (const event of eventState.events) {
     if (newFired.has(event.name) && !event.repeatable) continue;
+    if (opts.skip?.has(event.name)) continue;
+    if (opts.terminalOnly && !endsScenario(event)) continue;
 
     // Check triggers — at least one must match; remember the side that triggered
     const triggerSides: string[] = [];
@@ -195,10 +216,12 @@ export function evaluateEvents(
       ...eventState,
       firedEvents: newFired,
       messages: newMessages,
-      scenarioResult: pendingResult,
+      scenarioResult: opts.deferResult ? undefined : pendingResult,
       lastFired,
     },
     stateChanges: changes,
+    pendingResult: opts.deferResult ? pendingResult : undefined,
+    ran,
   };
 }
 
