@@ -1,1 +1,0 @@
-sed -i 's/? { \.\.\.state.missionDoctrineOverrides?\.\[mission.id\], \.\.\.state.missionDoctrineOverrides?\.\[mission.name\] }/? { \.\.\.state.missionDoctrineOverrides?\.[`${unit.side}:${mission.id}`], \.\.\.state.missionDoctrineOverrides?\.[`${unit.side}:${mission.name}`] }/' src/lib/ai/effectiveDoctrine.ts
