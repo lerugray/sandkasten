@@ -1,4 +1,8 @@
 import type { Scenario } from "@/types/game";
+import { hormuzFacilities, runwayThreshold } from "@/lib/facilities/facilities";
+
+// Sim has no takeoff/landing model: ground-start aircraft spawn at the real runway threshold, heading along the runway.
+const HAVADARYA_RWY_08 = runwayThreshold("apt-oikp", "08");
 
 export const demoScenario: Scenario = {
   name: "Strait of Hormuz Standoff",
@@ -199,6 +203,7 @@ export const demoScenario: Scenario = {
           altitude: 20000,
           damageState: "undamaged",
           mission: "CAP",
+          homeBase: { facilityId: "apt-ir-0161" }, // Oghab 44 Airbase, nearest military airfield with a 1.8 km+ runway
         },
         {
           id: "ir-f14-1",
@@ -211,10 +216,25 @@ export const demoScenario: Scenario = {
           altitude: 28000,
           damageState: "undamaged",
           mission: "CAP",
+          homeBase: { facilityId: "apt-ir-0161" }, // Oghab 44 Airbase, nearest military airfield with a 1.8 km+ runway
+        },
+        {
+          id: "ir-f4-2",
+          name: "Phantom 302 (alert)",
+          platformId: 265,
+          side: "Iran",
+          position: HAVADARYA_RWY_08.position,
+          heading: HAVADARYA_RWY_08.heading,
+          speed: 0,
+          altitude: 0,
+          damageState: "undamaged",
+          mission: "Alert",
+          homeBase: { facilityId: "apt-oikp", runwayEnd: "08" }, // Havadarya (Bandar Abbas), runway 08 threshold
         },
       ],
     },
   ],
+  facilities: hormuzFacilities,
   referencePoints: [
     {
       id: "transit-gate",

@@ -98,3 +98,9 @@ body {
 .maplibregl-popup-tip {
   border-top-color: var(--color-tactical-border) !important;
 }
+
+/* Keep MapLibre's attribution control above the 36px status bar */
+.maplibregl-ctrl-bottom-right,
+.maplibregl-ctrl-bottom-left {
+  margin-bottom: 36px;
+}

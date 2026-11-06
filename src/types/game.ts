@@ -1,3 +1,5 @@
+import type { Facility } from "@/lib/facilities/facilities";
+
 export interface Position {
   lng: number;
   lat: number;
@@ -16,6 +18,8 @@ export interface Unit {
   /** Damage points taken so far; damageState derives from this against the platform's damagePoints. */
   damage?: number;
   mission?: string;
+  /** Real-world base this unit operates from (facility id from data/facilities); runwayEnd is the threshold it starts on. */
+  homeBase?: { facilityId: string; runwayEnd?: string };
 }
 
 export interface Side {
@@ -46,6 +50,8 @@ export interface Scenario {
   playerSide: string;
   sides: Side[];
   referencePoints: ReferencePoint[];
+  /** Real-world installations (airbases, naval bases, ports) shown on the map; loaded from data/facilities. */
+  facilities?: Facility[];
 }
 
 export type Affiliation = "friendly" | "hostile" | "neutral" | "unknown";

@@ -62,7 +62,7 @@ describe("facility pipeline", () => {
     const names = osmFacilities.map((f) => f.name);
     expect(names).not.toContain("Gone");
     expect(osmFacilities.filter((f) => f.kind === "port").map((f) => f.name)).toEqual(["Shahid Rajaee Port"]);
-    expect(osmFacilities.find((f) => f.name === "Danger Area D1")?.areaType).toBe("danger_area");
+    expect((osmFacilities.find((f) => f.name === "Danger Area D1") as { areaType?: string } | undefined)?.areaType).toBe("danger_area");
     expect(osmRunways).toHaveLength(2);
     const r = osmRunways.find((x) => x.osmId === "way/951")!.runway;
     expect(r.ends[0].ident).toBe("06");
