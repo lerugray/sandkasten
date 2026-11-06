@@ -1,0 +1,6 @@
+"id","ident","type","name","latitude_deg","longitude_deg","elevation_ft","continent","iso_country","iso_region","municipality","scheduled_service","icao_code","iata_code","gps_code","local_code","home_link","wikipedia_link","keywords"
+1,"OIKB","large_airport","Bandar Abbas International Airport",27.218,56.378,33,"AS","IR","IR-23","Bandar Abbas","yes","OIKB","BND","OIKB",,,,
+2,"OIKQ","medium_airport","Qeshm Island Airport",26.7549,55.9024,31,"AS","IR","IR-23","Qeshm","yes","OIKQ","GSM","OIKQ",,,,
+3,"XX01","small_airport","Norunway ""Strip""",26.0,56.0,10,"AS","OM","OM-MU","Somewhere","no",,,,,,,
+4,"FAR1","small_airport","Far Away Field",40.0,10.0,10,"EU","IT","IT-25","Roma","no",,,,,,,
+5,"XX02","closed","Old Closed",26.1,56.1,10,"AS","OM","OM-MU","X","no",,,,,,,

@@ -41,3 +41,6 @@ state/
 # GS bot worktree (parallel-mode dispatcher; internal WIP not public)
 .bot-worktree/
 
+
+# Facility pipeline raw cache
+.cache/
