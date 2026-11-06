@@ -21,6 +21,7 @@ import { PlotProjection, type GeoPoint, FT_TO_KM, KM_PER_NM } from "./projection
 import { LineBatch } from "./lineBatch";
 import { PALETTE } from "./palette";
 import { sidcFor, symbolTexture } from "./symbolTextures";
+import { createAdaptiveScale, stepAdaptiveScale } from "./adaptiveScale";
 import { LabelPlacer, auditLabels, segHitsRect, type LabelItem, type Seg } from "./labelPlacer";
 import geo from "./data/hormuz-geo.json";
 import { THEMES, type DisplayMode, type PlotTheme } from "./themes";
@@ -180,7 +181,6 @@ function applyThemeColours(t: PlotTheme) {
 }
 
 const DPR_CAP = 2;
-const SCALE_MIN = 0.5;
 
 const CLS_LABEL: Record<Contact["classification"], string> = {
   unknown: "UNK",
@@ -295,9 +295,7 @@ export class TacticalPlot {
   // adaptive render scale: drop resolution when frames run long, recover when calm
   private renderScale = 1;
   private forcedScale: number | null = null;
-  private frameMs = 16.7;
-  private scaleCheckAt = 0;
-  private calmChecks = 0;
+  private adaptive = createAdaptiveScale();
   private occluderTimer: ReturnType<typeof setTimeout> | null = null;
   private occluderInterval: ReturnType<typeof setInterval> | null = null;
   private raycaster = new THREE.Raycaster();
@@ -1312,24 +1310,16 @@ export class TacticalPlot {
     this.composer.render(dt);
   };
 
-  /** Long frames for a second drop the render scale; three calm seconds bring it back. */
+  /** Long frames for a second drop the render scale; calm frames at the display's refresh interval bring it back. */
   private adaptScale(now: number, ms: number) {
-    this.frameMs += (Math.min(ms, 100) - this.frameMs) * 0.08;
-    if (this.forcedScale !== null || now < this.scaleCheckAt) return;
-    this.scaleCheckAt = now + 1000;
-    if (this.frameMs > 20 && this.renderScale > SCALE_MIN) {
-      this.renderScale = Math.max(SCALE_MIN, this.renderScale * 0.85);
-      this.calmChecks = 0;
-      this.resize();
-    } else if (this.frameMs < 14 && this.renderScale < 1) {
-      if (++this.calmChecks >= 3) {
-        this.renderScale = Math.min(1, this.renderScale / 0.85);
-        this.calmChecks = 0;
-        this.resize();
-      }
-    } else {
-      this.calmChecks = 0;
+    const next = stepAdaptiveScale(this.adaptive, now, ms);
+    if (this.forcedScale !== null) {
+      this.adaptive.scale = this.renderScale;
+      return;
     }
+    if (next === this.renderScale) return;
+    this.renderScale = next;
+    this.resize();
   }
 
   private stepCamera(dt: number) {

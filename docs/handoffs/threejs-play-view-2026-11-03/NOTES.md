@@ -244,8 +244,8 @@ Also: when a unit is selected, the view centre now eases left to make room for t
   8 px minimum leader, distances from the drawn symbol. One naming rule for map, list and traffic. The BRIEF button now
   toggles; the MutationObserver ignores the plot's own writes; Memory is deep-cloned before a repair; repair is bounded
   to one extra pass per frame.
-- Smoothness: DPR cap 2 with an adaptive render scale (0.5-1, drops after 1 s over 20 ms, recovers after 3 s under
-  14 ms), chrome rect reads moved out of the frame loop.
+- Smoothness: DPR cap 2 with an adaptive render scale (0.5-1, drops after 1 s over max(20 ms, 1.25x refresh), recovers to 1
+  after 3 calm seconds at <= 1.15x the measured refresh interval; src/lib/plot/adaptiveScale.ts), chrome rect reads moved out of the frame loop.
 
 ### Checks (honest state)
 - `tsc` clean (pre-existing sand-001 errors only); `npm run build` passes.
