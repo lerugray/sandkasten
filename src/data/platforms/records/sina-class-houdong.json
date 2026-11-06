@@ -26,7 +26,10 @@
     "displacementFullTons": 300,
     "crew": "About 31",
     "sourceId": "s2",
-    "provenance": "estimated"
+    "provenance": "verified",
+    "fieldCitations": {
+      "displacementFullTons": { "sourceId": "s2", "provenance": "estimated" }
+    }
   },
   "propulsionSummary": "Diesel engines driving propeller shafts for about 35 knots; GlobalSecurity says the Sina uses Chinese diesels, and the exact engine model and power are not published in the sources used.",
   "performance": {

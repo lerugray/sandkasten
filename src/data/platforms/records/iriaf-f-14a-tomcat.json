@@ -25,7 +25,11 @@
     "weightMaxKg": 33720,
     "crew": "2 (pilot and radar intercept officer)",
     "sourceId": "s3",
-    "provenance": "estimated"
+    "provenance": "verified",
+    "fieldCitations": {
+      "weightEmptyKg": { "sourceId": "s3", "provenance": "estimated" },
+      "weightMaxKg": { "sourceId": "s3", "provenance": "estimated" }
+    }
   },
   "propulsionSummary": "Two Pratt & Whitney TF30-P-414 afterburning turbofans, each rated at about 20,900 lbf (93 kN) with afterburner.",
   "performance": {
@@ -35,7 +39,7 @@
     "combatRadiusNm": 503,
     "rangeNm": 1600,
     "sourceId": "s3",
-    "provenance": "estimated"
+    "provenance": "verified"
   },
   "sensorRangeKm": 220,
   "weaponRangeKm": 150,

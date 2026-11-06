@@ -72,7 +72,6 @@ test.describe("platform database data", () => {
         }
         needSrc(x.sourceId, `weapon ${x.name}`);
         if (!["verified", "estimated"].includes(x.provenance)) w(`weapon ${x.name} provenance`);
-        
         if (x.provenance === "verified" && x.mountSummary && /engine|our figure|assumption/i.test(x.mountSummary)) {
           w(`weapon ${x.name} is marked verified but mountSummary mentions engine/assumption`);
         }
@@ -96,21 +95,28 @@ test.describe("platform database data", () => {
       }
 
       const d = r.dimensions;
-      if (!("lengthM" in d)) w("dimensions.lengthM missing");
-      if (!("crew" in d)) w("dimensions.crew missing");
+      // A required spec is a finite number or an explicit null (not published); absent or any other type fails.
+      const spec = (blk: Rec, name: string, label: string) => {
+        if (blk[name] !== null && !finite(blk[name])) w(`${label} must be a number or null (not published), got ${String(blk[name])}`);
+      };
+      spec(d, "lengthM", "dimensions.lengthM");
+      if (!d.crew) w("dimensions.crew missing");
       if (r.dimension === "sea") {
-        if (!("beamM" in d)) w("dimensions.beamM missing");
-        if (!("draftM" in d)) w("dimensions.draftM missing");
-        if (!("displacementFullTons" in d)) w("dimensions.displacementFullTons missing");
+        for (const k of ["beamM", "draftM", "displacementFullTons"]) spec(d, k, `dimensions.${k}`);
       }
       if (r.dimension === "air") {
-        if (!("weightEmptyKg" in d)) w("dimensions.weightEmptyKg missing");
-        if (!("weightMaxKg" in d)) w("dimensions.weightMaxKg missing");
-        if (r.domain === "fixed-wing" && !("wingspanM" in d)) w("dimensions.wingspanM missing");
-        if (r.domain === "fixed-wing" && !("heightM" in d)) w("dimensions.heightM missing");
+        for (const k of ["weightEmptyKg", "weightMaxKg"]) spec(d, k, `dimensions.${k}`);
+        if (r.domain === "fixed-wing") for (const k of ["wingspanM", "heightM"]) spec(d, k, `dimensions.${k}`);
       }
       if (!finite(r.performance?.maxSpeedKts)) w("performance.maxSpeedKts missing");
-      if (r.performance && !("cruiseSpeedKts" in r.performance)) w("performance.cruiseSpeedKts missing");
+      if (r.performance) spec(r.performance, "cruiseSpeedKts", "performance.cruiseSpeedKts");
+      for (const blk of ["dimensions", "performance"]) {
+        for (const [field, c] of Object.entries<Rec>(r[blk]?.fieldCitations ?? {})) {
+          needSrc(c.sourceId, `${blk}.${field} citation`);
+          if (!["verified", "estimated"].includes(c.provenance)) w(`${blk}.${field} citation provenance`);
+          if (!finite(r[blk][field])) w(`${blk}.${field} has a citation but no value`);
+        }
+      }
       if (!finite(r.serviceWindow?.enteredService)) w("serviceWindow.enteredService missing");
       for (const k of ["name", "designation", "className", "nation", "service", "role", "propulsionSummary", "engineName", "functionId"]) {
         if (!r[k]) w(`${k} empty`);

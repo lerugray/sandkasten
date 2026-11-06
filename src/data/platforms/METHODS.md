@@ -5,6 +5,13 @@ from Command: Modern Operations or any extraction of it. Rows tagged `verified` 
 source. Rows tagged `estimated` are our abstractions for the Sandkasten engine or figures the public record gives only as
 a range. Real-world facts are the shared starting point; the engine values below are ours.
 
+## Labels in the viewer
+- A spec block (dimensions, performance) has one source and tag. A single field that needs a different tag carries its own
+  `fieldCitations` entry and shows that source and EST on its row only; the rest of the block keeps the block's tag.
+- A spec the public record does not give is `null` in the record and shows as NOT PUBLISHED; it is never omitted.
+- SOURCES label per source: VERIFIED only when no citing row is estimated; MIXED when verified and estimated rows both cite
+  it (both counts shown); ESTIMATED when only estimated rows cite it; REFERENCE when no row cites it.
+
 ## Carry-over rule for the 14 original Hormuz platforms
 The demo scenario and its tests were tuned against the numbers `lookup.ts` held before this database. Those engine-read
 numbers (`sensorRangeKm`, `weaponRangeKm`, `damagePoints`, `missileDefense`, and every weapon and defense row's

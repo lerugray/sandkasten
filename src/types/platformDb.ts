@@ -25,9 +25,16 @@ export interface PlatformPhoto {
   attributionLine: string;
 }
 
+export interface FieldCitation {
+  sourceId: string;
+  provenance: Provenance;
+}
+
 export interface SpecBlock {
   sourceId: string;
   provenance: Provenance;
+  // Per-field override: a field listed here shows its own source and tag; every other field uses the block's.
+  fieldCitations?: Record<string, FieldCitation>;
 }
 
 export interface PlatformDimensions extends SpecBlock {
@@ -44,7 +51,7 @@ export interface PlatformDimensions extends SpecBlock {
 
 export interface PlatformPerformance extends SpecBlock {
   maxSpeedKts: number;
-  cruiseSpeedKts?: number;
+  cruiseSpeedKts?: number | null; // null = not published
   maxAltitudeFt?: number;
   combatRadiusNm?: number;
   rangeNm?: number;

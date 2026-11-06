@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PLATFORM_RECORDS, getPlatformRecord } from "@/data/platforms";
 import { createSymbolSVG } from "@/lib/symbols/milsymbolFactory";
-import type { Grade, PlatformRecord, Provenance } from "@/types/platformDb";
+import type { Grade, PlatformRecord, Provenance, SpecBlock } from "@/types/platformDb";
 
 const GRADES: Grade[] = ["very-low", "low", "medium", "high", "very-high"];
 
@@ -16,6 +16,8 @@ function collectCitations(r: PlatformRecord): Citation[] {
   const c: Citation[] = [
     r.dimensions,
     r.performance,
+    ...Object.values(r.dimensions.fieldCitations ?? {}),
+    ...Object.values(r.performance.fieldCitations ?? {}),
     r.signatures,
     { sourceId: r.engineSourceId, provenance: r.engineProvenance },
     ...r.weapons,
@@ -24,6 +26,16 @@ function collectCitations(r: PlatformRecord): Citation[] {
     ...r.loadouts,
   ].map((x) => ({ sourceId: x.sourceId, provenance: x.provenance }));
   return c;
+}
+
+function fieldCite(block: SpecBlock, field: string): Citation {
+  return block.fieldCitations?.[field] ?? block;
+}
+
+export function sourceLabel(verified: number, estimated: number): "VERIFIED" | "MIXED" | "ESTIMATED" | "REFERENCE" {
+  if (verified > 0 && estimated > 0) return "MIXED";
+  if (verified > 0) return "VERIFIED";
+  return estimated > 0 ? "ESTIMATED" : "REFERENCE";
 }
 
 function groupOf(r: PlatformRecord): "Surface" | "Air" {
@@ -155,30 +167,30 @@ function Detail({ r }: { r: PlatformRecord }) {
   const citations = useMemo(() => collectCitations(r), [r]);
   const d = r.dimensions;
   const p = r.performance;
-  const dimC: Citation = d;
-  const perfC: Citation = p;
+  const dc = (f: string) => fieldCite(d, f);
+  const pc = (f: string) => fieldCite(p, f);
   const eng: Citation = { sourceId: r.engineSourceId, provenance: r.engineProvenance };
 
   const dimRows: [string, React.ReactNode, Citation | null][] = [];
-  dimRows.push(["Length", fmt(d.lengthM, " m"), dimC]);
-  if (r.dimension === "sea") dimRows.push(["Beam", fmt(d.beamM, " m"), dimC]);
-  if (r.dimension === "air" && r.domain === "fixed-wing") dimRows.push(["Wingspan", fmt(d.wingspanM, " m"), dimC]);
-  if (r.dimension === "sea") dimRows.push(["Draft", fmt(d.draftM, " m"), dimC]);
-  if (r.dimension === "air" || r.domain === "sub") dimRows.push(["Height", fmt(d.heightM, " m"), dimC]);
-  if (r.dimension === "sea") dimRows.push(["Full-load displacement", fmt(d.displacementFullTons, " t"), dimC]);
-  if (r.dimension === "air") dimRows.push(["Empty weight", fmt(d.weightEmptyKg, " kg"), dimC]);
-  if (r.dimension === "air") dimRows.push(["Max takeoff weight", fmt(d.weightMaxKg, " kg"), dimC]);
-  dimRows.push(["Crew", d.crew, dimC]);
+  dimRows.push(["Length", fmt(d.lengthM, " m"), dc("lengthM")]);
+  if (r.dimension === "sea") dimRows.push(["Beam", fmt(d.beamM, " m"), dc("beamM")]);
+  if (r.dimension === "air" && r.domain === "fixed-wing") dimRows.push(["Wingspan", fmt(d.wingspanM, " m"), dc("wingspanM")]);
+  if (r.dimension === "sea") dimRows.push(["Draft", fmt(d.draftM, " m"), dc("draftM")]);
+  if (r.dimension === "air" || r.domain === "sub") dimRows.push(["Height", fmt(d.heightM, " m"), dc("heightM")]);
+  if (r.dimension === "sea") dimRows.push(["Full-load displacement", fmt(d.displacementFullTons, " t"), dc("displacementFullTons")]);
+  if (r.dimension === "air") dimRows.push(["Empty weight", fmt(d.weightEmptyKg, " kg"), dc("weightEmptyKg")]);
+  if (r.dimension === "air") dimRows.push(["Max takeoff weight", fmt(d.weightMaxKg, " kg"), dc("weightMaxKg")]);
+  dimRows.push(["Crew", d.crew, dc("crew")]);
 
   const perfRows: [string, React.ReactNode, Citation | null][] = [
-    ["Propulsion", r.propulsionSummary, perfC],
-    ["Max speed", fmt(p.maxSpeedKts, " kt"), perfC],
-    ["Cruise speed", fmt(p.cruiseSpeedKts, " kt"), perfC],
+    ["Propulsion", r.propulsionSummary, p],
+    ["Max speed", fmt(p.maxSpeedKts, " kt"), pc("maxSpeedKts")],
+    ["Cruise speed", fmt(p.cruiseSpeedKts, " kt"), pc("cruiseSpeedKts")],
   ];
-  if (r.dimension === "air") perfRows.push(["Service ceiling", fmt(p.maxAltitudeFt, " ft"), perfC]);
-  if (r.dimension === "air") perfRows.push(["Combat radius", fmt(p.combatRadiusNm, " NM"), perfC]);
-  perfRows.push(["Range", fmt(p.rangeNm, " NM"), perfC]);
-  if (r.domain === "rotary" || r.domain === "fixed-wing") perfRows.push(["Endurance", fmt(p.enduranceHours, " h"), perfC]);
+  if (r.dimension === "air") perfRows.push(["Service ceiling", fmt(p.maxAltitudeFt, " ft"), pc("maxAltitudeFt")]);
+  if (r.dimension === "air") perfRows.push(["Combat radius", fmt(p.combatRadiusNm, " NM"), pc("combatRadiusNm")]);
+  perfRows.push(["Range", fmt(p.rangeNm, " NM"), pc("rangeNm")]);
+  if (r.domain === "rotary" || r.domain === "fixed-wing") perfRows.push(["Endurance", fmt(p.enduranceHours, " h"), pc("enduranceHours")]);
 
   const s = r.signatures;
   const sigRows: [string, React.ReactNode, Citation | null][] = [
@@ -357,8 +369,8 @@ function Detail({ r }: { r: PlatformRecord }) {
           {srcStats.map(({ src, verified, estimated }, i) => (
             <li key={src.id} data-testid="db-source">
               <span className="db-src">[SRC {i + 1}]</span>{" "}
-              <span className={verified > 0 ? "db-verified" : estimated > 0 ? "db-est" : "db-dim"}>
-                {verified > 0 ? "VERIFIED" : estimated > 0 ? "ESTIMATED" : "REFERENCE"}
+              <span className={verified > 0 && estimated === 0 ? "db-verified" : estimated > 0 ? "db-est" : "db-dim"}>
+                {sourceLabel(verified, estimated)}
               </span>{" "}
               {src.title.replace(/\bs(\d+)\b/g, "SRC $1")}. {src.publisher}, {src.year}.{" "}
               <a href={src.url} target="_blank" rel="noreferrer">{src.url}</a>
@@ -371,7 +383,7 @@ function Detail({ r }: { r: PlatformRecord }) {
           ))}
         </ol>
         <p className="db-fine">
-          VERIFIED rows are published figures read from the source. EST rows, and every engine value
+          VERIFIED rows are published figures read from the source. MIXED sources back both kinds of row. EST rows, and every engine value
           (damage points, kill probabilities, effectiveness, signature grades), are Sandkasten abstractions;
           the formulas are in src/data/platforms/METHODS.md.
         </p>
