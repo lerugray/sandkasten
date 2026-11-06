@@ -3,7 +3,10 @@ export const SCALE_MIN = 0.5;
 const STEP = 0.85;
 const CHECK_MS = 1000;
 const WINDOW_MS = 2000;
-const REFRESH_MIN = 4;
+const REFRESH_MIN = 6.9; // 144 Hz: one short delta cannot pin the estimate below a real display
+const WARMUP_FRAMES = 5; // the first rAF intervals can be partial
+const FULL_WINDOW_MS = 1500;
+const FULL_WINDOW_SAMPLES = 20;
 const REFRESH_MAX = 17.5; // nothing slower than ~57 Hz is treated as the display's own rate
 const REFRESH_RISE = 0.033; // per 1 s check: the envelope rises slowly, falls at once
 const DROP_MS = 20;
@@ -18,6 +21,7 @@ export interface AdaptiveScaleState {
   frameMs: number;
   /** The display's own frame interval: slow lower envelope of recent rAF deltas. */
   refreshMs: number;
+  frames: number;
   checkAt: number;
   calmChecks: number;
   calmNeeded: number;
@@ -30,6 +34,7 @@ export function createAdaptiveScale(): AdaptiveScaleState {
     scale: 1,
     frameMs: 16.7,
     refreshMs: 16.7,
+    frames: 0,
     checkAt: 0,
     calmChecks: 0,
     calmNeeded: BASE_CALM_CHECKS,
@@ -52,13 +57,21 @@ function percentile20(recent: { d: number }[]): number {
 export function stepAdaptiveScale(s: AdaptiveScaleState, nowMs: number, frameDeltaMs: number): number {
   const d = Math.min(frameDeltaMs, 100);
   s.frameMs += (d - s.frameMs) * 0.08;
+  if (++s.frames <= WARMUP_FRAMES) {
+    s.checkAt = nowMs + CHECK_MS;
+    return s.scale;
+  }
   s.recent.push({ t: nowMs, d });
   while (s.recent.length > 1 && s.recent[0].t < nowMs - WINDOW_MS) s.recent.shift();
   if (nowMs < s.checkAt) return s.scale;
   s.checkAt = nowMs + CHECK_MS;
 
-  const candidate = Math.min(REFRESH_MAX, Math.max(REFRESH_MIN, percentile20(s.recent)));
-  s.refreshMs = candidate < s.refreshMs ? candidate : s.refreshMs + (candidate - s.refreshMs) * REFRESH_RISE;
+  const full =
+    s.recent.length >= FULL_WINDOW_SAMPLES && nowMs - s.recent[0].t >= FULL_WINDOW_MS;
+  if (full) {
+    const candidate = Math.min(REFRESH_MAX, Math.max(REFRESH_MIN, percentile20(s.recent)));
+    s.refreshMs = candidate < s.refreshMs ? candidate : s.refreshMs + (candidate - s.refreshMs) * REFRESH_RISE;
+  }
 
   const dropAbove = Math.max(DROP_MS, DROP_RATIO * s.refreshMs);
   if (s.frameMs > dropAbove && s.scale > SCALE_MIN) {

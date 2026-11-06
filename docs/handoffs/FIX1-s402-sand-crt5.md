@@ -37,3 +37,12 @@ Note: the card says "do not commit or push"; the s402 brief overrides that (comm
 - Red -> green: with `REFRESH_MAX = 34` the suite is 6 pass / 1 fail (new test 5); with 17.5 it is 7 pass / 0 fail. The 60 Hz and 120 Hz recovery tests stay green. `npm run build` passes.
 - Known trade-off: a genuine 30-40 Hz display is now treated as a slow machine and will sit at reduced scale under any frame time above about 22 ms.
 - Still for the seat elsewhere: real Playwright runner, existing e2e, hand repro on the 60 Hz Mac.
+
+## Round 3 (Dot re-review of ad316eb, S2): startup partial intervals pinned the refresh estimate
+
+**Verdict: FIX READY.** Confirmed: the first frame ran a check with one sample, so a partial 4 ms interval became `refreshMs`; it falls at once but rises only 3.3% per second, so recovery after a later hitch took about 47 s.
+
+- `adaptiveScale.ts`: the first 5 deltas are ignored for the refresh estimate (and the first check is delayed 1 s); `refreshMs` is only updated once the window is full (>= 20 samples spanning >= 1.5 s); `REFRESH_MIN` raised from 4 to 6.9 ms (144 Hz) so one short delta cannot pin it.
+- New tests (4): Dot's repro (4 ms first delta, 3 s at 60 Hz, 5 s at 30 ms, 10 s at 60 Hz -> back to 1); a burst of 1-4 ms partial deltas then 60 Hz; a 1 ms first delta then 120 Hz; a 100 ms first delta then clean 60 Hz never drops.
+- Red -> green: on `ad316eb` 7 pass / 4 fail (all four new tests); now 11 pass / 0 fail. The earlier 7 tests stay green. `npm run build` passes.
+- Still for the seat elsewhere: real Playwright runner, existing e2e, hand repro on the 60 Hz Mac.

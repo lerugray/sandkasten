@@ -75,3 +75,42 @@ test("sustained 25 ms load keeps the scale dropped for the whole run", () => {
   }
   expect(r.scale).toBeLessThanOrEqual(0.6);
 });
+
+function startup(first: number[], hz: number) {
+  const r = newRun();
+  for (const d of first) {
+    r.t += d;
+    r.scale = stepAdaptiveScale(r.s, r.t, d);
+  }
+  feed(r, hz, 3);
+  feed(r, 30, 5);
+  return r;
+}
+
+test("startup: a 4 ms first delta then 60 Hz does not slow recovery (Dot's repro)", () => {
+  const r = startup([4], 1000 / 60);
+  expect(r.scale).toBeLessThanOrEqual(0.6);
+  feed(r, 1000 / 60, 10);
+  expect(r.scale).toBe(1);
+});
+
+test("startup: a burst of tiny partial deltas then 60 Hz still recovers within 10 s", () => {
+  const r = startup([1, 2, 2, 3, 1, 2, 4, 3], 1000 / 60);
+  feed(r, 1000 / 60, 10);
+  expect(r.scale).toBe(1);
+});
+
+test("startup: a 1 ms first delta then 120 Hz still recovers within 10 s", () => {
+  const r = startup([1], 1000 / 120);
+  feed(r, 1000 / 120, 10);
+  expect(r.scale).toBe(1);
+});
+
+test("startup: a huge first delta then clean 60 Hz never drops", () => {
+  const r = newRun();
+  r.t += 100;
+  r.scale = stepAdaptiveScale(r.s, r.t, 100);
+  feed(r, 1000 / 60, 20);
+  expect(r.changes).toEqual([]);
+  expect(r.scale).toBe(1);
+});
