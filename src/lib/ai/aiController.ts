@@ -147,7 +147,7 @@ function executeMission(
     case "cap":
       return executeCAP(unit, orders, mission, doctrine, threats);
     case "strike":
-      return executeStrike(unit, orders, mission, allUnits);
+      return executeStrike(unit, orders, mission, threats);
     case "escort":
       return executeEscort(unit, orders, mission, allUnits);
     case "transit":
@@ -213,18 +213,15 @@ function executeStrike(
   unit: Unit,
   orders: UnitOrders,
   mission: Mission,
-  allUnits: Unit[]
+  threats: Threat[]
 ): UnitOrders {
   if (orders.waypoints.length > 0) return orders;
 
-  // Find target
+  // Aim at where this side last placed the target, never at the unit's true position
   let targetPos: Position | null = null;
 
   if (mission.targetUnitId) {
-    const target = allUnits.find((u) => u.id === mission.targetUnitId);
-    if (target && target.damageState !== "destroyed") {
-      targetPos = target.position;
-    }
+    targetPos = threats.find((t) => t.contact.actualUnitId === mission.targetUnitId)?.position ?? null;
   }
 
   if (!targetPos && mission.referencePoints.length > 0) {

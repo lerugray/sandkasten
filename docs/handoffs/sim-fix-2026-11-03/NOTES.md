@@ -40,10 +40,10 @@ Test names are `describe` blocks in `src/lib/*/__tests__/`.
 | S2-12 CAP vs nearby ship | FIXED | "S2-12 CAP picks an air contact" in `ai.test.ts` | CAP filters to air contacts |
 | S2-13 transit restarts | FIXED | "S2-13 a one-shot transit stays finished" (2) in `ai.test.ts` | A non-repeating transit stops on completion; repeating still restarts |
 | S2-14 neutrals as targets | FIXED | "S2-14 neutrals" in `engage.test.ts` | `isHostileSide` excludes Civilian/Neutral for auto-fire |
-| S2-15 victory by time | FIXED | "S2-15 the demo is won by transiting" (3) in `events.test.ts` | Victory is `UnitEntersArea` for `us-cvn-1` in `transit-gate`; defeat on carrier loss beats a later victory (defeat > draw > victory) |
+| S2-15 victory by time | FIXED (s401 completion) | "S2-15 the demo is won by transiting" (3) in `events.test.ts` covers the event definitions only; the tick-level result is "S2-15 the result is decided after combat" (3) in `terminal.test.ts` | Victory is `UnitEntersArea` for `us-cvn-1` in `transit-gate`; defeat beats draw beats victory. The tick holds an `EndScenario` result until combat finishes, then re-evaluates terminal events on post-combat state (`engine.ts` Phase 6) |
 | S2-16 endless defences | FIXED | "S2-16 expendable defences" in `combat.test.ts` | Chaff etc. are spent per try (24 uses) |
 | S2-17 event side filters | FIXED | "S2-17 event side filters" (4) in `events.test.ts` | Side checks use the detected / triggering side; `TimeInterval` state kept in `EventState`, not the shared scenario |
-| S2-18 AI uses true positions | FIXED | "S2-18 AI fires on its own contacts" (`engage.test.ts`) and "S2-18 every side keeps contacts" (`sensors.test.ts`) | Per-side contact stores (`state.sideContacts`, `contactsFor`); AI reasons from its own contacts; detection event fires |
+| S2-18 AI uses true positions | FIXED (s401 completion) | "S2-18 AI fires on its own contacts" (`engage.test.ts`), "S2-18 every side keeps contacts" (`sensors.test.ts`), and "S2-18 strike missions aim at what the side has detected" (3, `ai.test.ts`) | Per-side contact stores; AI reasons from its own contacts. `executeStrike` aims at the acting side's contact for `targetUnitId`, else the strike-area reference point |
 | S2-19 detection vs time compression | FIXED | "S2-19 detection cadence is independent of time compression" in `sensors.test.ts` | Detection runs on a sim-time schedule (`GameState.schedule`); dt clamp 2000 ms, sim substeps at most 5000 ms |
 
 ## Decisions and interpretations to review
@@ -116,3 +116,16 @@ All weapon counts, ranges, Pk, damage points, missile-defense scores are simulat
 - Chosin and Nitze: in commission on the date; neither was shown to be in the Gulf then (Chosin deployed with CSG 9 in Sep 2026). Counterfactual placement.
 - Remaining active US cruisers in March 2026: Princeton, Robert Smalls, Gettysburg, Chosin, Cape St. George (Wikipedia Ticonderoga page). Swap Chosin for another if preferred.
 - E-2C: E-2D transition scheduled for July 2026 (audit); not proof of retirement before the date.
+
+## s401 completions (fix1, s402)
+
+Red runs are on ee05df68 (the unfixed branch tip); green runs are on the fix branch.
+
+| Item | Red on ee05df68 | Green |
+|---|---|---|
+| S2-8 | already green at ee05df68 (`combat.test.ts` "S2-8", Dot's repro and control) | unchanged |
+| S2-9 | `ai.test.ts` "mission doctrine overrides distinguish side" and `engage.test.ts` "a mission-scoped runtime change does not leak to the side" failed (2 tests; the code was right, the tests checked the wrong unit, the wrong default ROE and the old bare key) | both pass; the Blue unit keeps the default `weapons-tight` while Red's Patrol holds |
+| S2-15 | `terminal.test.ts` was a 0-byte file ("No test suite found"); the new "ship lost on the tick it enters the gate" test fails with victory instead of defeat | 3 of 3 pass |
+| S2-18 | "S2-18 strike missions aim at what the side has detected": 3 of 3 fail (aimed at the true position) | 3 of 3 pass |
+
+Unit totals: ee05df68 had 9 files, 60 tests, 58 pass, 2 fail, plus the empty suite file. Now 9 files, 66 tests, all pass.

@@ -107,3 +107,35 @@ describe("S2-9 AI reads runtime doctrine", () => {
     expect(resolveUnitDoctrine(unitById("blue"), state, cfg).roe).toBe("weapons-tight"); // DEFAULT_DOCTRINE, unchanged
   });
 });
+
+describe("S2-18 strike missions aim at what the side has detected", () => {
+  const REF = { lng: 56.5, lat: 26.5 };
+  const strike = () =>
+    mission({ id: "s1", name: "Strike", type: "strike", assignedUnitIds: ["f4"], targetUnitId: "mahan", referencePoints: [REF], repeating: false });
+  const scene = () =>
+    makeState([unit("f4", "Iran", F4, 56, 27, { altitude: 25000, speed: 400 }), unit("mahan", "US Navy", MAHAN, 58, 24)]);
+
+  it("with no contact it flies to the strike area reference point, not the ship", () => {
+    const orders = runAIUpdate(scene(), ai([strike()]));
+    const wps = orders.get("f4")!.waypoints.map((w) => w.position);
+    expect(wps[0]).toEqual(REF);
+    expect(wps.some((p) => p.lng === 58 && p.lat === 24)).toBe(false);
+  });
+
+  it("with a contact it flies to the reported position, not the true one", () => {
+    const state = scene();
+    const mahan = state.sides.flatMap((s) => s.units).find((u) => u.id === "mahan")!;
+    const reported = { lng: 57.7, lat: 24.3 };
+    const withContact = withContacts(state, "Iran", [contactOn(state, mahan, "Iran", "tracked", { position: reported })]);
+    const wps = runAIUpdate(withContact, ai([strike()])).get("f4")!.waypoints.map((w) => w.position);
+    expect(wps[0]).toEqual(reported);
+  });
+
+  it("another side's contact does not guide the strike", () => {
+    const state = scene();
+    const mahan = state.sides.flatMap((s) => s.units).find((u) => u.id === "mahan")!;
+    const otherSide = withContacts(state, "US Navy", [contactOn(state, mahan, "US Navy", "tracked")]);
+    const wps = runAIUpdate(otherSide, ai([strike()])).get("f4")!.waypoints.map((w) => w.position);
+    expect(wps[0]).toEqual(REF);
+  });
+});
