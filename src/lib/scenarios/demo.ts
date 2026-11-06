@@ -1,5 +1,6 @@
 import type { Scenario } from "@/types/game";
 import { hormuzFacilities, runwayThreshold } from "@/lib/facilities/facilities";
+import { osintSites } from "@/lib/osint/sites";
 
 // Sim has no takeoff/landing model: ground-start aircraft spawn at the real runway threshold, heading along the runway.
 const HAVADARYA_RWY_08 = runwayThreshold("apt-oikp", "08");
@@ -235,6 +236,7 @@ export const demoScenario: Scenario = {
     },
   ],
   facilities: hormuzFacilities,
+  osint: osintSites,
   referencePoints: [
     {
       id: "transit-gate",

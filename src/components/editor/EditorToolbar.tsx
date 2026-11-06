@@ -10,6 +10,11 @@ interface EditorToolbarProps {
   onSetPlacingSide: (side: string) => void;
   selectedUnit?: Unit;
   onRemoveUnit: (unitId: string) => void;
+  /** Open the committed real-world snapshot scenario. */
+  onOpenSnapshot: () => void;
+  /** Fetch a fresh snapshot through /api/snapshot. */
+  onFetchSnapshot: () => void;
+  snapshotStatus: { busy: boolean; message: string | null };
 }
 
 export function EditorToolbar({
@@ -20,6 +25,9 @@ export function EditorToolbar({
   onSetPlacingSide,
   selectedUnit,
   onRemoveUnit,
+  onOpenSnapshot,
+  onFetchSnapshot,
+  snapshotStatus,
 }: EditorToolbarProps) {
   const unitCount = scenario.sides.reduce((n, s) => n + s.units.length, 0);
 
@@ -53,6 +61,35 @@ export function EditorToolbar({
         >
           Scenario Settings
         </button>
+      </div>
+
+      {/* Real-world snapshot (ADS-B, adsb.lol) */}
+      <div className="p-2 border-b border-[var(--color-tactical-border)]">
+        <div className="text-[var(--color-tactical-text-dim)] uppercase tracking-wider mb-2">
+          Snapshot
+        </div>
+        <button
+          onClick={onOpenSnapshot}
+          data-testid="editor-snapshot-open"
+          title="Open the committed real-world Hormuz ADS-B snapshot"
+          className="w-full text-left px-2 py-1.5 rounded mb-1 cursor-pointer hover:bg-[var(--color-tactical-border)]"
+        >
+          SNAPSHOT
+        </button>
+        <button
+          onClick={onFetchSnapshot}
+          disabled={snapshotStatus.busy}
+          data-testid="editor-snapshot-fetch"
+          title="Fetch a fresh snapshot from adsb.lol (about 6 seconds, keyless)"
+          className="w-full text-left px-2 py-1 rounded mb-1 cursor-pointer text-[var(--color-tactical-text-dim)] hover:bg-[var(--color-tactical-border)] disabled:opacity-60 disabled:cursor-wait"
+        >
+          {snapshotStatus.busy ? "Fetching..." : "Fetch fresh"}
+        </button>
+        {snapshotStatus.message && (
+          <div data-testid="editor-snapshot-status" className="text-[var(--color-tactical-text-dim)] break-words">
+            {snapshotStatus.message}
+          </div>
+        )}
       </div>
 
       {/* Side selector for placement */}

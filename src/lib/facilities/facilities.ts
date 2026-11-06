@@ -1,6 +1,7 @@
 import type { Feature, FeatureCollection, LineString, Point, Polygon } from "geojson";
 import data from "../../../data/facilities/hormuz.json";
 import { shortFacilityName } from "./labels";
+import type { OsintFacilityFields } from "@/lib/osint/types";
 
 export type FacilityKind = "airbase" | "heliport" | "naval_base" | "port" | "military_area";
 
@@ -25,7 +26,7 @@ export interface Runway {
 }
 
 export interface FacilitySource {
-  source: "ourairports" | "osm";
+  source: "ourairports" | "osm" | "auftragstaktik";
   id: string;
   ident?: string;
   role?: string;
@@ -50,6 +51,8 @@ export interface Facility {
   airportType?: string;
   areaType?: string;
   sources: FacilitySource[];
+  /** Curated OSINT fields (data/osint): affiliation, function, notes, citation. */
+  osint?: OsintFacilityFields;
 }
 
 export interface FacilityDataMeta {

@@ -22,6 +22,9 @@ import { LineBatch } from "./lineBatch";
 import { PALETTE } from "./palette";
 import { sidcFor, symbolTexture } from "./symbolTextures";
 import { FacilityPlotLayer } from "./facilityLayer";
+import { OsintPlotLayer, OSINT_SYMBOL_PX } from "./osintLayer";
+import { sideForAffiliation, siteLabel } from "@/lib/osint/sites";
+import type { OsintSite } from "@/lib/osint/sites";
 import { shortFacilityName } from "@/lib/facilities/labels";
 import type { Facility } from "@/lib/facilities/facilities";
 import geo from "./data/hormuz-geo.json";
@@ -47,12 +50,16 @@ export interface PlotInput {
   facilities?: Facility[];
   selectedFacilityId?: string | null;
   showFacilities?: boolean;
+  /** Real-world AD, radar and nuclear sites (already filtered by the layer toggles); rebuilt when the array identity changes. */
+  osint?: OsintSite[];
+  selectedOsintId?: string | null;
 }
 
 export interface PlotCallbacks {
   onUnitSelect: (unitId: string | null, shiftKey: boolean) => void;
   onMapClick: (p: GeoPoint) => boolean | void;
   onFacilitySelect?: (facilityId: string | null) => void;
+  onOsintSelect?: (siteId: string | null) => void;
 }
 
 export interface PlotReadouts {
@@ -265,6 +272,9 @@ export class TacticalPlot {
   private facilityLayer: FacilityPlotLayer | null = null;
   private facilitySource: Facility[] | undefined;
   private facilityLabelCount = 0;
+  private osintLayer: OsintPlotLayer | null = null;
+  private osintSource: OsintSite[] | undefined;
+  private osintLabelCount = 0;
   private relief: THREE.Mesh | null = null;
   private reliefWire: LineSegments2 | null = null;
   private solid = new LineBatch({ width: 1.4, renderOrder: 20 });
@@ -617,6 +627,19 @@ export class TacticalPlot {
       this.facilityLayer = input.facilities?.length ? new FacilityPlotLayer(P, input.facilities) : null;
       if (this.facilityLayer) this.scene.add(this.facilityLayer.root);
     }
+    if (input.osint !== this.osintSource) {
+      this.osintSource = input.osint;
+      if (this.osintLayer) {
+        this.scene.remove(this.osintLayer.root);
+        this.osintLayer.dispose();
+      }
+      this.osintLayer = input.osint?.length ? new OsintPlotLayer(P, input.osint) : null;
+      if (this.osintLayer) {
+        this.scene.add(this.osintLayer.root);
+        this.osintLayer.resize(this.W * this.dpr, this.H * this.dpr, this.dpr);
+      }
+    }
+    this.osintLayer?.setSelected(input.selectedOsintId ?? null);
 
     // units the player may see
     for (const u of this.visibleUnits(input)) {
@@ -725,6 +748,26 @@ export class TacticalPlot {
         return { x: s.x, y: s.y };
       },
       focusFacility: (id: string) => this.focusFacility(id),
+      drawnOsint: () => ({
+        sites: this.osintLayer?.drawn ?? 0,
+        rings: this.osintLayer?.drawnRings ?? 0,
+        labels: this.osintLabelCount,
+        total: this.osintLayer?.items.length ?? 0,
+      }),
+      osintScreen: (id: string) => {
+        const it = this.osintLayer?.get(id);
+        if (!it) return null;
+        const s = this.toScreen(it.x + it.ox * this.kPx, it.y - it.oy * this.kPx, 0);
+        return { x: s.x, y: s.y };
+      },
+      focusOsint: (id: string, dist?: number) => {
+        const it = this.osintLayer?.get(id);
+        if (!it) return;
+        this.vel.set(0, 0);
+        this.glide = new THREE.Vector2(it.x, it.y);
+        this.zoomAnchor = null;
+        this.distGoal = dist ?? 120;
+      },
       setDist: (km: number) => { this.distGoal = this.dist = km; this.updateCamera(); },
       drawnTracks: () => ({ units: this.drawn.unitSprites, contacts: this.drawn.contactSprites }),
       tilt: (on: boolean) => this.setTilt(on),
@@ -1032,6 +1075,11 @@ export class TacticalPlot {
       this.callbacks.onUnitSelect(hit.id, shiftKey);
       return;
     }
+    const osint = this.osintLayer ? this.osintLayer.pick(x, y, (px, py) => this.toScreen(px, py, 0), this.kPx) : null;
+    if (osint) {
+      this.callbacks.onOsintSelect?.(osint.site.id);
+      return;
+    }
     const fac = this.pickFacility(x, y);
     if (fac) {
       this.callbacks.onFacilitySelect?.(fac.id);
@@ -1071,6 +1119,7 @@ export class TacticalPlot {
     this.bloom.resolution.set(w * this.dpr, h * this.dpr);
     const rw = w * this.dpr, rh = h * this.dpr;
     for (const b of [...this.staticBatches, this.solid, this.thin, this.dashed]) b.setResolution(rw, rh);
+    this.osintLayer?.resize(rw, rh, this.dpr);
     if (this.reliefWire) (this.reliefWire.material as LineMaterial).resolution.set(rw, rh);
     (this.dots.material as THREE.PointsMaterial).size = 3 * this.dpr;
     (this.marks.material as THREE.PointsMaterial).size = 7 * this.dpr;
@@ -1184,6 +1233,7 @@ export class TacticalPlot {
     this.target.y = THREE.MathUtils.clamp(this.target.y, this.proj.y(b[1]), this.proj.y(b[3]));
     this.updateCamera();
     this.facilityLayer?.setView(this.kPx, this.input?.showFacilities !== false);
+    this.osintLayer?.setView(this.kPx, true);
 
     const t = this.tiltAmt;
     if (this.relief && this.reliefWire) {
@@ -1611,11 +1661,13 @@ export class TacticalPlot {
 
   private facilityLabels(input: PlotInput | null, batch: LineBatch) {
     const layer = this.facilityLayer;
+    const osint = this.osintLayer && this.osintLayer.root.visible ? this.osintLayer : null;
     let used = 0;
-    if (layer && layer.root.visible && input) {
+    let osintUsed = 0;
+    if (((layer && layer.root.visible) || osint) && input) {
       const placed: Rect[] = [];
       const selId = input.selectedFacilityId ?? null;
-      const mt = layer.maxLabelTier(this.kPx);
+      const mt = layer ? layer.maxLabelTier(this.kPx) : -1;
       const close = this.kPx < 0.03;
       const cap = 36;
       const margin = 60 * this.kPx;
@@ -1624,8 +1676,8 @@ export class TacticalPlot {
       const y0 = Math.min(lo?.y ?? -1e9, hi?.y ?? -1e9) - margin, y1 = Math.max(lo?.y ?? 1e9, hi?.y ?? 1e9) + margin;
       // obstacles a facility label must not sit on: every drawn facility symbol, every unit glyph, chrome
       const obstacles: Rect[] = [];
-      const symTier = layer.maxTier(this.kPx);
-      for (const it of layer.items) {
+      const symTier = layer && layer.root.visible ? layer.maxTier(this.kPx) : -1;
+      for (const it of layer && layer.root.visible ? layer.items : []) {
         if (it.tier > symTier) continue;
         if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1) continue;
         const s = this.toScreen(it.x, it.y, 0);
@@ -1636,6 +1688,15 @@ export class TacticalPlot {
         if (s.z >= 1) continue;
         const hw = Math.max(12, (t.spriteW || 22) / 2) + 2, hh = Math.max(12, (t.spriteH || 22) / 2) + 2;
         obstacles.push({ x: s.x - hw, y: s.y - hh, w: hw * 2, h: hh * 2 });
+      }
+      // OSINT symbols (and the dot on their true position) are obstacles too
+      if (osint) {
+        for (const it of osint.items) {
+          const s = this.toScreen(it.x + it.ox * this.kPx, it.y - it.oy * this.kPx, 0);
+          if (s.z < 1) obstacles.push({ x: s.x - OSINT_SYMBOL_PX / 2 - 1, y: s.y - OSINT_SYMBOL_PX / 2 - 1, w: OSINT_SYMBOL_PX + 2, h: OSINT_SYMBOL_PX + 2 });
+          const d = this.toScreen(it.x, it.y, 0);
+          if (d.z < 1 && (it.ox || it.oy)) obstacles.push({ x: d.x - 4, y: d.y - 4, w: 8, h: 8 });
+        }
       }
       const hitsObstacle = (r: Rect, own: Rect | null) => obstacles.some((o) => o !== own && intersects(o, r));
       const draw = (it: { facility: Facility; x: number; y: number }, text: string, cls: string, dx: number, dy: number, free = false) => {
@@ -1659,7 +1720,29 @@ export class TacticalPlot {
         }
         return false;
       };
-      if (selId) {
+      if (osint) {
+        const osel = input.selectedOsintId ?? null;
+        const order = [...osint.items].sort((a, b) => (a.site.id === osel ? -1 : 0) - (b.site.id === osel ? -1 : 0));
+        for (const it of order) {
+          if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1) continue;
+          const sp = this.toScreen(it.x + it.ox * this.kPx, it.y - it.oy * this.kPx, 0);
+          if (sp.z >= 1) continue;
+          const text = siteLabel(it.site).toUpperCase();
+          const w = text.length * 7.6 + 8;
+          const half = OSINT_SYMBOL_PX / 2 + 4;
+          const slots: [number, number][] = [[half, -8], [-half - w, -8], [-w / 2, -half - 16], [-w / 2, half]];
+          const own = obstacles.find((o) => Math.abs(o.x + o.w / 2 - sp.x) < 1.5 && Math.abs(o.y + o.h / 2 - sp.y) < 1.5) ?? null;
+          for (const [ox, oy] of slots) {
+            const r = { x: sp.x + ox, y: sp.y + oy, w, h: 16 };
+            if (placed.some((p) => intersects(p, r)) || hitsObstacle(r, own) || this.underChrome(r)) continue;
+            placed.push(r);
+            this.label(it.x + it.ox * this.kPx, it.y - it.oy * this.kPx, 0, text, it.site.id === osel ? "tx-fac-label tx-fac-label--sel" : `tx-fac-label tx-osint-label${sideForAffiliation(it.site.affiliation) === "Iran" ? " tx-osint-label--hostile" : ""}`, ox, oy);
+            osintUsed++;
+            break;
+          }
+        }
+      }
+      if (selId && layer) {
         const it = layer.get(selId);
         if (it) {
           const px = this.pxAt(it.x, it.y);
@@ -1672,14 +1755,14 @@ export class TacticalPlot {
           draw(it, facilityLabelText(it.facility), "tx-fac-label tx-fac-label--sel", 14, -8);
         }
       }
-      const byTier = layer.items.filter((it) => it.tier <= mt).sort((p, q) => p.tier - q.tier);
+      const byTier = (layer && layer.root.visible ? layer.items : []).filter((it) => it.tier <= mt).sort((p, q) => p.tier - q.tier);
       for (const it of byTier) {
         if (used >= cap) break;
         if (it.facility.id === selId) continue;
         if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1) continue;
         draw(it, facilityLabelText(it.facility), "tx-fac-label", 13, -8);
       }
-      if (close) {
+      if (close && layer) {
         for (const it of layer.items) {
           if (used >= cap + 24) break;
           if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1 || !it.facility.runways?.length) continue;
@@ -1691,6 +1774,7 @@ export class TacticalPlot {
       }
     }
     this.facilityLabelCount = used;
+    this.osintLabelCount = osintUsed;
   }
 
   private ringLabel(x: number, y: number, text: string, friendly: boolean) {

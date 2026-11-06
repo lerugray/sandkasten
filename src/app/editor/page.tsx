@@ -8,6 +8,7 @@ import { UnitPlacer } from "@/components/editor/UnitPlacer";
 import { ScenarioSettings } from "@/components/editor/ScenarioSettings";
 import type { Scenario, Unit, Side, Position } from "@/types/game";
 import { ClassicFonts } from "@/components/ClassicFonts";
+import { exampleSnapshotScenario, withFacilities } from "@/lib/snapshot/example";
 
 const DEFAULT_SCENARIO: Scenario = {
   name: "New Scenario",
@@ -33,6 +34,7 @@ export default function EditorPage() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [activePanel, setActivePanel] = useState<"none" | "place" | "settings">("none");
   const [placingSide, setPlacingSide] = useState<string>("Side A");
+  const [snapshotStatus, setSnapshotStatus] = useState<{ busy: boolean; message: string | null }>({ busy: false, message: null });
 
   const allUnits = scenario.sides.flatMap((s) => s.units);
   const selectedUnit = selectedUnitId ? allUnits.find((u) => u.id === selectedUnitId) : null;
@@ -135,6 +137,34 @@ export default function EditorPage() {
     input.click();
   }, []);
 
+  const openScenario = useCallback((loaded: Scenario) => {
+    setScenario(loaded);
+    setSelectedUnitId(null);
+    setPinnedRingIds(new Set());
+    setPlacingSide(loaded.sides[0]?.name ?? "Side A");
+    setActivePanel("none");
+  }, []);
+
+  // The committed example: a file in data/snapshots, imported at build time.
+  const openSnapshot = useCallback(() => {
+    openScenario(exampleSnapshotScenario);
+    setSnapshotStatus({ busy: false, message: `Opened ${exampleSnapshotScenario.snapshot?.fetchedAt ?? "snapshot"}` });
+  }, [openScenario]);
+
+  // A fresh one: the server fetches adsb.lol (rate limited, keyless) and builds the same scenario.
+  const fetchSnapshot = useCallback(async () => {
+    setSnapshotStatus({ busy: true, message: "Contacting adsb.lol..." });
+    try {
+      const res = await fetch("/api/snapshot?civil=1");
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.error ?? `HTTP ${res.status}`);
+      openScenario(withFacilities(body as Scenario));
+      setSnapshotStatus({ busy: false, message: `Fetched ${(body as Scenario).snapshot?.fetchedAt ?? "snapshot"}` });
+    } catch (err) {
+      setSnapshotStatus({ busy: false, message: `Fetch failed: ${err instanceof Error ? err.message : "unknown error"}` });
+    }
+  }, [openScenario]);
+
   return (
     <div className={`h-screen w-screen flex flex-col bg-[var(--color-tactical-dark)] ${theme === "light" ? "theme-light" : ""}`}>
       <ClassicFonts />
@@ -186,6 +216,9 @@ export default function EditorPage() {
           onSetPlacingSide={setPlacingSide}
           selectedUnit={selectedUnit ?? undefined}
           onRemoveUnit={removeUnit}
+          onOpenSnapshot={openSnapshot}
+          onFetchSnapshot={fetchSnapshot}
+          snapshotStatus={snapshotStatus}
         />
 
         {/* Map area */}

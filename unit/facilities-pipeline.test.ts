@@ -239,9 +239,13 @@ describe("facility pipeline", () => {
     });
   });
 
-  test("hormuz.json regenerates byte-for-byte offline from the committed raw snapshot", () => {
-    const out = join(mkdtempSync(join(tmpdir(), "fac-")), "hormuz.json");
-    execFileSync("node", ["scripts/build-facilities.mjs", "--offline", "--out", out], { cwd: join(__dirname, ".."), stdio: "pipe" });
-    expect(readFileSync(out, "utf8")).toBe(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8"));
+  test("hormuz.json regenerates byte-for-byte offline from the committed raw snapshots (facilities, then OSINT overlay)", () => {
+    const dir = mkdtempSync(join(tmpdir(), "fac-"));
+    const out = join(dir, "hormuz.json");
+    const cwd = join(__dirname, "..");
+    execFileSync("node", ["scripts/build-facilities.mjs", "--offline", "--out", out], { cwd, stdio: "pipe" });
+    execFileSync("node", ["scripts/import-osint.mjs", "--facilities", out, "--out", join(dir, "osint.json")], { cwd, stdio: "pipe" });
+    expect(readFileSync(out, "utf8")).toBe(readFileSync(join(cwd, "data", "facilities", "hormuz.json"), "utf8"));
+    expect(readFileSync(join(dir, "osint.json"), "utf8")).toBe(readFileSync(join(cwd, "data", "osint", "hormuz.json"), "utf8"));
   });
 });

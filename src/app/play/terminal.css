@@ -808,3 +808,26 @@
   display: block;
   margin: 4px 0 0 !important;
 }
+
+.tx-osint-label {
+  color: var(--tx-hi);
+}
+.tx-osint-label--hostile {
+  color: var(--tx-alarm);
+}
+
+.tx-osint-toggles {
+  position: absolute;
+  top: 52px;
+  left: 362px;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--tx-panel);
+  border: 1px solid var(--tx-rule);
+}
+.tx-osint-toggles .tx-group-label {
+  display: inline;
+}

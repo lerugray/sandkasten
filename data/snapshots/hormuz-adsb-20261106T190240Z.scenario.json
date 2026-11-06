@@ -1,0 +1,2435 @@
+{
+  "name": "Hormuz real snapshot 20261106T190240Z",
+  "description": "REAL-WORLD SNAPSHOT of the Strait of Hormuz airspace fetched 2026-11-06T19:02:40Z from public ADS-B data. 137 contacts: 0 mapped to platform-DB types, 137 UNKNOWN. Sides Neutral 137. Sources: adsb.lol /v2/mil (all military-registered aircraft): USED (requests 1, returned 384, uniqueInBbox 0); adsb.lol /v2/point/{lat}/{lon}/{radiusNm} (bbox tiles): USED (requests 4, returned 220, uniqueInBbox 150); AISStream (ships): SKIPPED - AISStream requires an API key; no keyless AIS source covers this bbox (vessels 0).",
+  "briefing": "REAL snapshot taken 2026-11-06 19:02Z (UTC) from public ADS-B data (adsb.lol, ODbL). 137 contacts: 0 mapped to platform-DB types, 137 UNKNOWN. Sides Neutral 137. Aircraft start where the network saw them, on their reported heading, speed and altitude. UNKNOWN contacts (type not in the platform database) are unarmed Neutral traffic and take no part in combat; all sides start weapons-hold. Sources: adsb.lol /v2/mil USED; adsb.lol /v2/point USED; AISStream SKIPPED (AISStream requires an API key; no keyless AIS source covers this bbox). ESTIMATED: positions are one receiver-network snapshot; sides come from the ICAO address block (state of registry), not the operator; types are matched by ICAO designator only (a family, not a variant); aircraft hold course and speed, no flight plans. Ships are not included. Full limitations and counts are in the scenario's snapshot block.",
+  "theater": {
+    "center": {
+      "lng": 55.5,
+      "lat": 26.25
+    },
+    "zoom": 6,
+    "bounds": [
+      50,
+      22.5,
+      61,
+      30
+    ]
+  },
+  "startTime": "2026-11-06T19:02:40Z",
+  "playerSide": "Coalition",
+  "sides": [
+    {
+      "name": "Coalition",
+      "color": "#00aaff",
+      "isAI": false,
+      "units": []
+    },
+    {
+      "name": "Iran",
+      "color": "#ff4444",
+      "isAI": true,
+      "units": []
+    },
+    {
+      "name": "Neutral",
+      "color": "#9aa0a6",
+      "isAI": true,
+      "units": [
+        {
+          "id": "adsb-06a07d",
+          "name": "QTR51U [B77L QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.25894,
+            "lat": 25.27447
+          },
+          "heading": 158,
+          "speed": 266,
+          "altitude": 8150,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77L",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a07e",
+          "name": "QTR72L [B77L QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 52.82247,
+            "lat": 25.29267
+          },
+          "heading": 260,
+          "speed": 381,
+          "altitude": 20000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77L",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a080",
+          "name": "QTR8423 [B77L QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.35992,
+            "lat": 24.66023
+          },
+          "heading": 292,
+          "speed": 478,
+          "altitude": 28000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77L",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a095",
+          "name": "QTR7H [A320 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.27228,
+            "lat": 23.0186
+          },
+          "heading": 297,
+          "speed": 418,
+          "altitude": 33975,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a09c",
+          "name": "QTR7P [A320 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.58807,
+            "lat": 25.29476
+          },
+          "heading": 159,
+          "speed": 137,
+          "altitude": 100,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a0ab",
+          "name": "QTR38H [B788 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 50.93474,
+            "lat": 26.57982
+          },
+          "heading": 140,
+          "speed": 447,
+          "altitude": 23050,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B788",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a0bd",
+          "name": "QTR1434 [B788 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 50.35827,
+            "lat": 27.23264
+          },
+          "heading": 144,
+          "speed": 491,
+          "altitude": 27000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B788",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a0c0",
+          "name": "QTR1K [B788 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.87216,
+            "lat": 24.82892
+          },
+          "heading": 95,
+          "speed": 538,
+          "altitude": 40975,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B788",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a10b",
+          "name": "QTR957 [A359 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 54.71654,
+            "lat": 24.27887
+          },
+          "heading": 301,
+          "speed": 430,
+          "altitude": 40000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A359",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a120",
+          "name": "QTR43U [A35K QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.31947,
+            "lat": 25.28169
+          },
+          "heading": 302,
+          "speed": 203,
+          "altitude": 1550,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A35K",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a122",
+          "name": "QTR91B [A35K QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.04513,
+            "lat": 24.97192
+          },
+          "heading": 80,
+          "speed": 548,
+          "altitude": 35000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A35K",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a12b",
+          "name": "QTR863 [A35K QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 60.14346,
+            "lat": 24.18203
+          },
+          "heading": 268,
+          "speed": 429,
+          "altitude": 38000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A35K",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a13d",
+          "name": "QTR933 [B77W QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 59.54875,
+            "lat": 23.78114
+          },
+          "heading": 291,
+          "speed": 449,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a145",
+          "name": "QTR835 [A388 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 52.5649,
+            "lat": 24.85698
+          },
+          "heading": 285,
+          "speed": 396,
+          "altitude": 20075,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A388",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a1bd",
+          "name": "VOZ001 [B77W QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 53.66884,
+            "lat": 24.58563
+          },
+          "heading": 285,
+          "speed": 450,
+          "altitude": 33425,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a1c4",
+          "name": "QTR3K [A320 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 53.33725,
+            "lat": 24.66783
+          },
+          "heading": 285,
+          "speed": 407,
+          "altitude": 20000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a1e7",
+          "name": "QTR8950 [B77L QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 53.1957,
+            "lat": 24.95726
+          },
+          "heading": 104,
+          "speed": 542,
+          "altitude": 31750,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77L",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a1eb",
+          "name": "QTR8452 [B77L QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.61449,
+            "lat": 23.12771
+          },
+          "heading": 116,
+          "speed": 542,
+          "altitude": 31000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77L",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a2ec",
+          "name": "QTR604 [B789 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 54.1412,
+            "lat": 24.78679
+          },
+          "heading": 72,
+          "speed": 519,
+          "altitude": 29025,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a2ed",
+          "name": "A7-BHJ [B789 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 59.47283,
+            "lat": 24.48913
+          },
+          "heading": 103,
+          "speed": 540,
+          "altitude": 39000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a2f3",
+          "name": "QTR340 [B789 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.2331,
+            "lat": 26.25746
+          },
+          "heading": 140,
+          "speed": 453,
+          "altitude": 21000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a2fa",
+          "name": "QTR977 [B789 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.51626,
+            "lat": 25.08518
+          },
+          "heading": 277,
+          "speed": 427,
+          "altitude": 37975,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a2fb",
+          "name": "QTR2J [B789 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.93244,
+            "lat": 22.60125
+          },
+          "heading": 103,
+          "speed": 537,
+          "altitude": 39000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a373",
+          "name": "QTR817 [B77W QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.55635,
+            "lat": 25.5407
+          },
+          "heading": 242,
+          "speed": 189,
+          "altitude": 2450,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a38d",
+          "name": "A7-BOI [B77W QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.28956,
+            "lat": 22.52824
+          },
+          "heading": 298,
+          "speed": 434,
+          "altitude": 36000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a3b4",
+          "name": "QTR6R [B788 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 59.06957,
+            "lat": 24.72771
+          },
+          "heading": 96,
+          "speed": 546,
+          "altitude": 39000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B788",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a3b5",
+          "name": "QTR8V [B788 QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.5378,
+            "lat": 25.43875
+          },
+          "heading": 110,
+          "speed": 183,
+          "altitude": 2175,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B788",
+          "unknown": true
+        },
+        {
+          "id": "adsb-06a3b6",
+          "name": "QTR8210 [B77L QA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 50.17669,
+            "lat": 27.45744
+          },
+          "heading": 146,
+          "speed": 482,
+          "altitude": 29025,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77L",
+          "unknown": true
+        },
+        {
+          "id": "adsb-323232",
+          "name": "UNIDENT [UNK IT]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.14797,
+            "lat": 25.72508
+          },
+          "heading": 132,
+          "speed": 98,
+          "altitude": 14000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "unknown": true
+        },
+        {
+          "id": "adsb-3c7a51",
+          "name": "CFG2548 [A339 DE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.27741,
+            "lat": 24.21854
+          },
+          "heading": 123,
+          "speed": 394,
+          "altitude": 15700,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A339",
+          "unknown": true
+        },
+        {
+          "id": "adsb-4ba9f5",
+          "name": "THY6182 [A332 TR]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.00744,
+            "lat": 24.90703
+          },
+          "heading": 112,
+          "speed": 499,
+          "altitude": 41000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A332",
+          "unknown": true
+        },
+        {
+          "id": "adsb-4bb14d",
+          "name": "THY6292 [B77L TR]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 53.96236,
+            "lat": 25.62319
+          },
+          "heading": 287,
+          "speed": 426,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77L",
+          "unknown": true
+        },
+        {
+          "id": "adsb-4d24fe",
+          "name": "ETD441 [A332]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.94793,
+            "lat": 23.49766
+          },
+          "heading": 297,
+          "speed": 384,
+          "altitude": 21575,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A332",
+          "unknown": true
+        },
+        {
+          "id": "adsb-500214",
+          "name": "MEA429 [A21N]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 54.68714,
+            "lat": 25.32702
+          },
+          "heading": 273,
+          "speed": 377,
+          "altitude": 13675,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-504e7c",
+          "name": "PVV9602 [B742]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 54.65988,
+            "lat": 25.00099
+          },
+          "heading": 90,
+          "speed": 237,
+          "altitude": 4775,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B742",
+          "unknown": true
+        },
+        {
+          "id": "adsb-6010e3",
+          "name": "EX-47002 [B742]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.61293,
+            "lat": 24.91304
+          },
+          "heading": 113,
+          "speed": 541,
+          "altitude": 33025,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B742",
+          "unknown": true
+        },
+        {
+          "id": "adsb-702034",
+          "name": "S2-AFM [B738]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 60.10382,
+            "lat": 23.58108
+          },
+          "heading": 291,
+          "speed": 398,
+          "altitude": 38000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B738",
+          "unknown": true
+        },
+        {
+          "id": "adsb-7020ab",
+          "name": "UBG350 [B738]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.30676,
+            "lat": 23.74548
+          },
+          "heading": 118,
+          "speed": 487,
+          "altitude": 26850,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B738",
+          "unknown": true
+        },
+        {
+          "id": "adsb-7020b2",
+          "name": "UBG333 [B738]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.30181,
+            "lat": 25.10949
+          },
+          "heading": 277,
+          "speed": 407,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B738",
+          "unknown": true
+        },
+        {
+          "id": "adsb-706064",
+          "name": "KAC341 [A20N KW]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.16064,
+            "lat": 26.40773
+          },
+          "heading": 147,
+          "speed": 498,
+          "altitude": 35025,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A20N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-70612d",
+          "name": "JZR533 [A20N KW]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 54.76288,
+            "lat": 25.67729
+          },
+          "heading": 110,
+          "speed": 516,
+          "altitude": 37025,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A20N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-706131",
+          "name": "JZR507 [A20N KW]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 59.39675,
+            "lat": 24.50542
+          },
+          "heading": 103,
+          "speed": 509,
+          "altitude": 37025,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A20N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-70c0fa",
+          "name": "OMA407 [B38M OM]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 50.73486,
+            "lat": 26.76686
+          },
+          "heading": 294,
+          "speed": 406,
+          "altitude": 31975,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-70c0fb",
+          "name": "OMA406 [B38M OM]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.49376,
+            "lat": 25.20836
+          },
+          "heading": 136,
+          "speed": 502,
+          "altitude": 37000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-70c102",
+          "name": "OMA696 [B38M OM]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.36545,
+            "lat": 25.28471
+          },
+          "heading": 146,
+          "speed": 475,
+          "altitude": 33000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-70c106",
+          "name": "OMA648 [B38M OM]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.99766,
+            "lat": 26.62453
+          },
+          "heading": 110,
+          "speed": 524,
+          "altitude": 33000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-70c108",
+          "name": "OMA833 [B38M OM]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.82868,
+            "lat": 23.33245
+          },
+          "heading": 119,
+          "speed": 371,
+          "altitude": 16625,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-70c10d",
+          "name": "OMS773 [A20N OM]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.73331,
+            "lat": 22.76688
+          },
+          "heading": 136,
+          "speed": 451,
+          "altitude": 22525,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A20N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-717ccf",
+          "name": "KNE900 [A20N SA]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.75342,
+            "lat": 24.84572
+          },
+          "heading": 102,
+          "speed": 494,
+          "altitude": 29025,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A20N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-72866b",
+          "name": "IAW449 [B738]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.61791,
+            "lat": 24.66957
+          },
+          "heading": 103,
+          "speed": 515,
+          "altitude": 37000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B738",
+          "unknown": true
+        },
+        {
+          "id": "adsb-74482f",
+          "name": "RJA615 [UNK]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.12292,
+            "lat": 25.30561
+          },
+          "heading": 273,
+          "speed": 283,
+          "altitude": 6125,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "unknown": true
+        },
+        {
+          "id": "adsb-7609b9",
+          "name": "PIA261 [A320 PK]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.68275,
+            "lat": 24.24129
+          },
+          "heading": 285,
+          "speed": 330,
+          "altitude": 14550,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-760a05",
+          "name": "FJL600 [A320 PK]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 52.94891,
+            "lat": 23.11601
+          },
+          "heading": 234,
+          "speed": 419,
+          "altitude": 36000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-760a15",
+          "name": "FJL502 [UNK PK]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.97023,
+            "lat": 24.80676
+          },
+          "heading": 292,
+          "speed": 395,
+          "altitude": 23125,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "unknown": true
+        },
+        {
+          "id": "adsb-778823",
+          "name": "FYC728 [A320]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 50.0816,
+            "lat": 27.30368
+          },
+          "heading": 323,
+          "speed": 401,
+          "altitude": 36000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8003f2",
+          "name": "AXB686 [B738 IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 53.23907,
+            "lat": 24.81421
+          },
+          "heading": 105,
+          "speed": 485,
+          "altitude": 24900,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B738",
+          "unknown": true
+        },
+        {
+          "id": "adsb-800b44",
+          "name": "AXB881 [A320 IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.50105,
+            "lat": 22.69693
+          },
+          "heading": 286,
+          "speed": 392,
+          "altitude": 38000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-800d7a",
+          "name": "SEJ5124 [B738 IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.97235,
+            "lat": 24.60539
+          },
+          "heading": 288,
+          "speed": 353,
+          "altitude": 24075,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B738",
+          "unknown": true
+        },
+        {
+          "id": "adsb-801428",
+          "name": "IGO54N [A21N IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.44241,
+            "lat": 24.0114
+          },
+          "heading": 283,
+          "speed": 418,
+          "altitude": 25500,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-801527",
+          "name": "IGO1267 [A20N IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.50277,
+            "lat": 23.62489
+          },
+          "heading": 268,
+          "speed": 205,
+          "altitude": 3175,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A20N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-80154d",
+          "name": "IGO1301 [A21N IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.16302,
+            "lat": 22.78532
+          },
+          "heading": 286,
+          "speed": 422,
+          "altitude": 32000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-801584",
+          "name": "AXB261 [A20N IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.84134,
+            "lat": 22.8686
+          },
+          "heading": 286,
+          "speed": 412,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A20N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8015c6",
+          "name": "IGO1201 [A21N IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.71856,
+            "lat": 25.15017
+          },
+          "heading": 283,
+          "speed": 398,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-801641",
+          "name": "AXB231 [B38M IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 59.94685,
+            "lat": 23.76664
+          },
+          "heading": 282,
+          "speed": 421,
+          "altitude": 30000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8016b7",
+          "name": "IGO37F [A21N IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.70913,
+            "lat": 23.73042
+          },
+          "heading": 302,
+          "speed": 441,
+          "altitude": 19450,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-801736",
+          "name": "IGO1306 [A21N IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.92062,
+            "lat": 25.17103
+          },
+          "heading": 77,
+          "speed": 500,
+          "altitude": 33000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-801783",
+          "name": "AXB835 [B38M IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.87215,
+            "lat": 24.26852
+          },
+          "heading": 308,
+          "speed": 404,
+          "altitude": 26525,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-801859",
+          "name": "AIC32C [B789 IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.09895,
+            "lat": 24.75848
+          },
+          "heading": 292,
+          "speed": 439,
+          "altitude": 36000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8018be",
+          "name": "IGO53C [A21N IN]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.10089,
+            "lat": 24.49327
+          },
+          "heading": 113,
+          "speed": 510,
+          "altitude": 35000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89405f",
+          "name": "GFA270 [A320 BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 54.19266,
+            "lat": 24.79233
+          },
+          "heading": 114,
+          "speed": 498,
+          "altitude": 34600,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89408e",
+          "name": "GFA125 [B789 BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 50.63284,
+            "lat": 26.26674
+          },
+          "heading": 211,
+          "speed": 0,
+          "altitude": 0,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-894094",
+          "name": "GFA060 [A20N BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.39524,
+            "lat": 25.98505
+          },
+          "heading": 133,
+          "speed": 373,
+          "altitude": 18625,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A20N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-894097",
+          "name": "A9C-FF [B789 BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 50.63534,
+            "lat": 26.26535
+          },
+          "heading": 211,
+          "speed": 0,
+          "altitude": 0,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89409d",
+          "name": "GFA546 [A20N BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 54.6401,
+            "lat": 24.44552
+          },
+          "heading": 39,
+          "speed": 13,
+          "altitude": 0,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A20N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89409f",
+          "name": "GFA153 [B789 BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.46437,
+            "lat": 24.21405
+          },
+          "heading": 295,
+          "speed": 445,
+          "altitude": 37975,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8940a0",
+          "name": "GFA249 [B789 BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.36033,
+            "lat": 25.01615
+          },
+          "heading": 281,
+          "speed": 458,
+          "altitude": 29975,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8940cc",
+          "name": "DHX401 [B763 BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.70468,
+            "lat": 23.4619
+          },
+          "heading": 337,
+          "speed": 440,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B763",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8940cd",
+          "name": "GFA284 [A21N BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 52.92526,
+            "lat": 25.33878
+          },
+          "heading": 121,
+          "speed": 503,
+          "altitude": 30300,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8940d3",
+          "name": "GFA282 [A21N BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 53.50135,
+            "lat": 25.03216
+          },
+          "heading": 125,
+          "speed": 508,
+          "altitude": 32550,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8940dc",
+          "name": "GFA135 [A21N BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.79797,
+            "lat": 24.87114
+          },
+          "heading": 292,
+          "speed": 428,
+          "altitude": 29975,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8940dd",
+          "name": "GFA065 [UNK BH]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.34195,
+            "lat": 24.66738
+          },
+          "heading": 293,
+          "speed": 402,
+          "altitude": 32000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8960d2",
+          "name": "UAE9775 [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.27656,
+            "lat": 24.20172
+          },
+          "heading": 289,
+          "speed": 443,
+          "altitude": 30000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8960dc",
+          "name": "UAE7Y [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.31659,
+            "lat": 24.49905
+          },
+          "heading": 289,
+          "speed": 463,
+          "altitude": 30000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89610f",
+          "name": "A6-ECH [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.35848,
+            "lat": 25.24728
+          },
+          "heading": 301,
+          "speed": 10,
+          "altitude": 0,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896187",
+          "name": "UAE5T [A388 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.41172,
+            "lat": 25.22652
+          },
+          "heading": 301,
+          "speed": 148,
+          "altitude": 350,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A388",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89620b",
+          "name": "UAE603 [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.5533,
+            "lat": 24.42737
+          },
+          "heading": 289,
+          "speed": 447,
+          "altitude": 32000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896215",
+          "name": "UAE529 [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.76808,
+            "lat": 24.36083
+          },
+          "heading": 289,
+          "speed": 432,
+          "altitude": 36000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89625c",
+          "name": "ETD7AN [A320 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.64292,
+            "lat": 23.97021
+          },
+          "heading": 283,
+          "speed": 417,
+          "altitude": 29175,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8962e6",
+          "name": "ETD477 [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.24966,
+            "lat": 22.76232
+          },
+          "heading": 286,
+          "speed": 429,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896303",
+          "name": "UAE542 [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.43473,
+            "lat": 24.35262
+          },
+          "heading": 131,
+          "speed": 529,
+          "altitude": 28975,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896304",
+          "name": "UAE42N [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.1398,
+            "lat": 23.16641
+          },
+          "heading": 125,
+          "speed": 528,
+          "altitude": 33000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896308",
+          "name": "UAE1TV [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.22075,
+            "lat": 24.80052
+          },
+          "heading": 95,
+          "speed": 534,
+          "altitude": 35000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89630d",
+          "name": "UAE8M [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.3805,
+            "lat": 25.24797
+          },
+          "heading": 301,
+          "speed": 10,
+          "altitude": 0,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896311",
+          "name": "A6-ENO [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.38463,
+            "lat": 25.23863
+          },
+          "heading": 107,
+          "speed": 10,
+          "altitude": 0,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89634a",
+          "name": "ABY620 [A320 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 53.01295,
+            "lat": 25.7092
+          },
+          "heading": 291,
+          "speed": 405,
+          "altitude": 32400,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89637d",
+          "name": "ETD637 [A320 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 53.20409,
+            "lat": 23.53876
+          },
+          "heading": 240,
+          "speed": 411,
+          "altitude": 34925,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896397",
+          "name": "ETD1GM [A320 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.32448,
+            "lat": 23.60234
+          },
+          "heading": 80,
+          "speed": 519,
+          "altitude": 35025,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89639a",
+          "name": "UAE78L [A388 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.23511,
+            "lat": 25.43102
+          },
+          "heading": 133,
+          "speed": 284,
+          "altitude": 8375,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A388",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89639e",
+          "name": "UAE88 [A388 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.85758,
+            "lat": 26.6276
+          },
+          "heading": 128,
+          "speed": 541,
+          "altitude": 41000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A388",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8963b1",
+          "name": "FDB3ND [B738 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 54.3091,
+            "lat": 25.52231
+          },
+          "heading": 288,
+          "speed": 398,
+          "altitude": 22250,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B738",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8963d3",
+          "name": "UAE12W [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.52163,
+            "lat": 24.12584
+          },
+          "heading": 289,
+          "speed": 428,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8963d9",
+          "name": "UAE6U [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.86126,
+            "lat": 25.05881
+          },
+          "heading": 281,
+          "speed": 332,
+          "altitude": 7225,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8963de",
+          "name": "UAE46 [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.07259,
+            "lat": 26.82871
+          },
+          "heading": 116,
+          "speed": 541,
+          "altitude": 33000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8963f4",
+          "name": "A6-EOW [A388 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 60.37143,
+            "lat": 24.60719
+          },
+          "heading": 96,
+          "speed": 552,
+          "altitude": 39000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A388",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89640a",
+          "name": "ETD50E [B789 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 59.6687,
+            "lat": 23.05339
+          },
+          "heading": 89,
+          "speed": 558,
+          "altitude": 37000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89644d",
+          "name": "UAE83F [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.01354,
+            "lat": 24.49127
+          },
+          "heading": 43,
+          "speed": 374,
+          "altitude": 18725,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896450",
+          "name": "UAE320 [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.37188,
+            "lat": 25.24259
+          },
+          "heading": 31,
+          "speed": 0,
+          "altitude": 0,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89645b",
+          "name": "UAE6AL [A388 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.52404,
+            "lat": 25.16473
+          },
+          "heading": 299,
+          "speed": 197,
+          "altitude": 1950,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A388",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896468",
+          "name": "FDB1ZH [B738 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 50.72773,
+            "lat": 27.21118
+          },
+          "heading": 146,
+          "speed": 494,
+          "altitude": 37000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B738",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896488",
+          "name": "ETD218 [B789 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.18301,
+            "lat": 23.60683
+          },
+          "heading": 104,
+          "speed": 546,
+          "altitude": 35625,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89649d",
+          "name": "ETD800 [A388 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 54.61248,
+            "lat": 24.48239
+          },
+          "heading": 304,
+          "speed": 186,
+          "altitude": 975,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A388",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8964af",
+          "name": "UAE71K [A388 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.05417,
+            "lat": 25.53557
+          },
+          "heading": 120,
+          "speed": 292,
+          "altitude": 10075,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A388",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8964b2",
+          "name": "UAE500 [A388 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.33409,
+            "lat": 25.10809
+          },
+          "heading": 118,
+          "speed": 338,
+          "altitude": 10525,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A388",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896502",
+          "name": "ABY502 [A320 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.10032,
+            "lat": 23.89893
+          },
+          "heading": 126,
+          "speed": 514,
+          "altitude": 28225,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896512",
+          "name": "FDB2VK [B38M AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.63904,
+            "lat": 24.97403
+          },
+          "heading": 121,
+          "speed": 385,
+          "altitude": 17575,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896539",
+          "name": "ETD846 [B789 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 50.28728,
+            "lat": 27.55362
+          },
+          "heading": 145,
+          "speed": 527,
+          "altitude": 39000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896559",
+          "name": "ABY800 [A21N AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.26085,
+            "lat": 24.92933
+          },
+          "heading": 113,
+          "speed": 500,
+          "altitude": 27350,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896587",
+          "name": "ABY821 [A21N AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.76979,
+            "lat": 24.60301
+          },
+          "heading": 98,
+          "speed": 510,
+          "altitude": 33000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8965b4",
+          "name": "FDB6 [B38M AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.34715,
+            "lat": 25.32121
+          },
+          "heading": 152,
+          "speed": 283,
+          "altitude": 7700,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8965c1",
+          "name": "FDB7UE [B38M AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 52.18252,
+            "lat": 26.56257
+          },
+          "heading": 110,
+          "speed": 522,
+          "altitude": 35000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8965d4",
+          "name": "FDB1538 [B38M AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 58.26152,
+            "lat": 24.20563
+          },
+          "heading": 289,
+          "speed": 417,
+          "altitude": 32000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8965d6",
+          "name": "FDB1242 [B38M AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.43728,
+            "lat": 24.82553
+          },
+          "heading": 294,
+          "speed": 355,
+          "altitude": 16850,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896603",
+          "name": "FDB1460 [B38M AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.95977,
+            "lat": 24.30101
+          },
+          "heading": 289,
+          "speed": 396,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896626",
+          "name": "A6-EXI [A359 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 52.20782,
+            "lat": 26.41314
+          },
+          "heading": 110,
+          "speed": 564,
+          "altitude": 41000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A359",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89664c",
+          "name": "ETD889 [B77W AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.78889,
+            "lat": 23.94356
+          },
+          "heading": 283,
+          "speed": 397,
+          "altitude": 31450,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B77W",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89665d",
+          "name": "ABY617 [A320 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.90278,
+            "lat": 26.23251
+          },
+          "heading": 297,
+          "speed": 407,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896665",
+          "name": "A6-FQH [B38M AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 52.48021,
+            "lat": 23.16872
+          },
+          "heading": 251,
+          "speed": 416,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896668",
+          "name": "ABY463 [A320 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 55.54273,
+            "lat": 25.42893
+          },
+          "heading": 101,
+          "speed": 282,
+          "altitude": 7225,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89668a",
+          "name": "FDB3VG [B38M AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 51.4898,
+            "lat": 26.52723
+          },
+          "heading": 290,
+          "speed": 407,
+          "altitude": 34000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B38M",
+          "unknown": true
+        },
+        {
+          "id": "adsb-89668b",
+          "name": "A6-AQL [A320 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 54.66726,
+            "lat": 24.44121
+          },
+          "heading": 127,
+          "speed": 17,
+          "altitude": 0,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8966ad",
+          "name": "ABY402 [A320 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 57.24064,
+            "lat": 24.70551
+          },
+          "heading": 292,
+          "speed": 356,
+          "altitude": 28175,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A320",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8966bd",
+          "name": "ETD140 [A21N AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 50.74427,
+            "lat": 26.97874
+          },
+          "heading": 147,
+          "speed": 475,
+          "altitude": 31000,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A21N",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8966c3",
+          "name": "ETD359 [B789 AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.30992,
+            "lat": 23.32765
+          },
+          "heading": 297,
+          "speed": 409,
+          "altitude": 28925,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "B789",
+          "unknown": true
+        },
+        {
+          "id": "adsb-8966d4",
+          "name": "ETD823 [A35K AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 54.69792,
+            "lat": 24.39994
+          },
+          "heading": 308,
+          "speed": 162,
+          "altitude": 700,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "typeCode": "A35K",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896700",
+          "name": "UAE72N [UNK AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.02575,
+            "lat": 24.7234
+          },
+          "heading": 7,
+          "speed": 404,
+          "altitude": 15025,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896769",
+          "name": "ABY467 [UNK AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.35826,
+            "lat": 25.25049
+          },
+          "heading": 107,
+          "speed": 436,
+          "altitude": 18975,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "unknown": true
+        },
+        {
+          "id": "adsb-896e7d",
+          "name": "896E7D [UNK AE]",
+          "platformId": 9900,
+          "side": "Neutral",
+          "position": {
+            "lng": 56.33814,
+            "lat": 25.19915
+          },
+          "heading": 0,
+          "speed": 0,
+          "altitude": 0,
+          "damageState": "undamaged",
+          "mission": "Snapshot (civil ADS-B)",
+          "unknown": true
+        }
+      ]
+    }
+  ],
+  "referencePoints": [],
+  "snapshot": {
+    "schema": 1,
+    "kind": "adsb-snapshot",
+    "fetchedAt": "2026-11-06T19:02:40Z",
+    "bbox": [
+      50,
+      22.5,
+      61,
+      30
+    ],
+    "sources": [
+      {
+        "id": "adsblol-mil",
+        "name": "adsb.lol /v2/mil (all military-registered aircraft)",
+        "url": "https://api.adsb.lol/v2/mil",
+        "terms": "Free to use, data ODbL 1.0, attribution to adsb.lol, 'as is'; an API key may be required in future",
+        "rateLimit": "self-limited to 1 request/second, single attempt, no retries (adsb.lol publishes no numeric limit)",
+        "fetchedAt": "2026-11-06T19:02:35Z",
+        "status": "used",
+        "counts": {
+          "requests": 1,
+          "returned": 384,
+          "uniqueInBbox": 0
+        }
+      },
+      {
+        "id": "adsblol-point",
+        "name": "adsb.lol /v2/point/{lat}/{lon}/{radiusNm} (bbox tiles)",
+        "url": "https://api.adsb.lol/v2/point/{lat}/{lon}/{radiusNm}",
+        "terms": "Free to use, data ODbL 1.0, attribution to adsb.lol, 'as is'; an API key may be required in future",
+        "rateLimit": "self-limited to 1 request/second, single attempt, no retries (adsb.lol publishes no numeric limit)",
+        "fetchedAt": "2026-11-06T19:02:40Z",
+        "status": "used",
+        "counts": {
+          "requests": 4,
+          "returned": 220,
+          "uniqueInBbox": 150
+        }
+      },
+      {
+        "id": "aisstream",
+        "name": "AISStream (ships)",
+        "url": "https://aisstream.io/",
+        "terms": "Free tier but requires a personal API key; not used by this tool",
+        "rateLimit": "n/a (not requested)",
+        "fetchedAt": null,
+        "status": "skipped",
+        "reason": "AISStream requires an API key; no keyless AIS source covers this bbox",
+        "counts": {
+          "vessels": 0
+        }
+      }
+    ],
+    "limitations": [
+      "ESTIMATED: positions, altitudes, speeds and headings are one ADS-B receiver-network snapshot (adsb.lol); aircraft with transponders off or no coverage are absent, and military aircraft often fly without broadcasting.",
+      "ESTIMATED: side assignment uses the ICAO 24-bit address block (state of registry), not the operator or flag. Coalition = US, GB, FR, DE, IT, NL, CA, AU registry; Iran = Iranian registry; every other military aircraft is Neutral.",
+      "ESTIMATED: platform mapping is by ICAO type designator only (a family, not a variant): E2 -> E-2C, H60 -> SH-60B, F14 -> F-14A/D. Aircraft with no exact match are UNKNOWN contacts (generic unarmed placeholder, Neutral side).",
+      "Ships are not included: AISStream requires an API key; no keyless AIS source covers this bbox.",
+      "Aircraft fly straight on their snapshot heading and speed; there is no flight-plan data, so they leave the theater.",
+      "No military aircraft were visible on ADS-B inside the box at fetch time (none is not the same as none flying).",
+      "Civil aircraft are included as Neutral UNKNOWN contacts (137); they carry the real transponder type code but no platform record."
+    ],
+    "counts": {
+      "units": 137,
+      "mappedByType": {},
+      "unknownContacts": 137,
+      "bySide": {
+        "Neutral": 137
+      }
+    }
+  }
+}

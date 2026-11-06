@@ -6,6 +6,9 @@ import dynamic from "next/dynamic";
 import { DetailPanel } from "@/components/map/DetailPanel";
 import { FacilityPanel } from "@/components/map/FacilityPanel";
 import { getFacility } from "@/lib/facilities/facilities";
+import { OsintPanel } from "@/components/map/OsintPanel";
+import { OSINT_ATTRIBUTION, OSINT_LAYERS, OSINT_LAYERS_ON, sitesFor } from "@/lib/osint/sites";
+import type { OsintLayerState } from "@/lib/osint/sites";
 import { ContactList } from "@/components/game/ContactList";
 import { OrderPanel } from "@/components/game/OrderPanel";
 import { useFireControls } from "@/components/game/useFireControls";
@@ -143,6 +146,8 @@ export function TerminalPlay() {
 
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
+  const [selectedOsintId, setSelectedOsintId] = useState<string | null>(null);
+  const [osintLayers, setOsintLayers] = useState<OsintLayerState>(OSINT_LAYERS_ON);
   const [facilityFocus, setFacilityFocus] = useState<{ n: number; facilityId: string } | null>(null);
   const [pinnedRingIds, setPinnedRingIds] = useState<Set<string>>(new Set());
   const [isPlacingWaypoint, setIsPlacingWaypoint] = useState(false);
@@ -246,12 +251,13 @@ export function TerminalPlay() {
         else if (measureMode) toggleMeasure();
         else if (isPlacingWaypoint) setIsPlacingWaypoint(false);
         else if (selectedUnitId) setSelectedUnitId(null);
+        else if (selectedOsintId) setSelectedOsintId(null);
         else if (selectedFacilityId) setSelectedFacilityId(null);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePause, setSpeed, toggleMeasure, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, selectedFacilityId]);
+  }, [togglePause, setSpeed, toggleMeasure, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, selectedFacilityId, selectedOsintId]);
 
   // The briefing card goes away on the first key or click anywhere, and when
   // the clock starts. It never swallows that input: the key or click still acts.
@@ -389,14 +395,31 @@ export function TerminalPlay() {
       });
     }
     setSelectedUnitId(unitId);
-    if (unitId) setSelectedFacilityId(null);
+    if (unitId) {
+      setSelectedFacilityId(null);
+      setSelectedOsintId(null);
+    }
     setIsPlacingWaypoint(false);
   }, []);
 
   const handleFacilitySelect = useCallback((facilityId: string | null) => {
     setSelectedFacilityId(facilityId);
-    if (facilityId) setSelectedUnitId(null);
+    if (facilityId) {
+      setSelectedUnitId(null);
+      setSelectedOsintId(null);
+    }
   }, []);
+
+  const handleOsintSelect = useCallback((siteId: string | null) => {
+    setSelectedOsintId(siteId);
+    if (siteId) {
+      setSelectedUnitId(null);
+      setSelectedFacilityId(null);
+    }
+  }, []);
+
+  const osintVisible = useMemo(() => sitesFor(osintLayers, demoScenarioConfig.scenario.osint ?? []), [osintLayers]);
+  const selectedOsint = selectedOsintId ? osintVisible.find((o) => o.id === selectedOsintId) ?? null : null;
 
   const showFacility = useCallback((facilityId: string) => {
     setSelectedFacilityId(facilityId);
@@ -447,11 +470,13 @@ export function TerminalPlay() {
       simTime: gameState.simTime,
       facilities: demoScenarioConfig.scenario.facilities,
       selectedFacilityId,
+      osint: osintVisible,
+      selectedOsintId: selectedOsint ? selectedOsintId : null,
       mode: measureMode ? "measure" : isPlacingWaypoint && selectedUnitId ? "waypoint" : "select",
     }),
     [allUnits, playerSide, gameState.contacts, gameState.orders, gameState.simTime, godMode, weaponsInFlight, combatLog,
       selectedUnitId, pinnedRingIds, showSensorCoverage, measureStart, measureEnd, measureMode, isPlacingWaypoint,
-      selectedFacilityId]
+      selectedFacilityId, osintVisible, selectedOsint, selectedOsintId]
   );
 
   // "-- MORE --" pager cue when the left panel has content below the fold
@@ -482,6 +507,7 @@ export function TerminalPlay() {
         focusRequest={focusRequest}
         facilityFocusRequest={facilityFocus}
         onFacilitySelect={handleFacilitySelect}
+        onOsintSelect={handleOsintSelect}
         onUnitSelect={handleUnitSelect}
         onMapClick={handleMapClick}
       />
@@ -662,6 +688,12 @@ export function TerminalPlay() {
         </div>
       )}
 
+      {selectedOsint && (
+        <div className="tx-right" data-plot-occluder>
+          <OsintPanel site={selectedOsint} onClose={() => setSelectedOsintId(null)} className="tx-panel tx-detail tx-facility" />
+        </div>
+      )}
+
       {/* Mode banners */}
       {isPlacingWaypoint && <div className="tx-banner" data-plot-occluder>CLICK MAP TO PLACE WAYPOINT</div>}
       {measureMode && (
@@ -681,8 +713,25 @@ export function TerminalPlay() {
       </div>
 
       <div className="tx-credit" data-testid="plot-attribution" data-plot-occluder>
-        Facilities © OpenStreetMap contributors (ODbL), OurAirports (public domain). Land, coast, depth: Natural Earth, NOAA ETOPO1 (public domain).
+        Facilities © OpenStreetMap contributors (ODbL), OurAirports (public domain). Land, coast, depth: Natural Earth, NOAA ETOPO1 (public domain). {OSINT_ATTRIBUTION}
       </div>
+
+      {demoScenarioConfig.scenario.osint?.length ? (
+        <div className="tx-osint-toggles" data-testid="plot-osint-toggles" data-plot-occluder>
+          <span className="tx-group-label">OSINT</span>
+          {OSINT_LAYERS.map((l) => (
+            <Cmd
+              key={l.id}
+              onClick={() => setOsintLayers((p) => ({ ...p, [l.id]: !p[l.id] }))}
+              active={osintLayers[l.id]}
+              testId={`plot-toggle-osint-${l.id}`}
+              ariaLabel={`Toggle ${l.label}`}
+            >
+              {l.short}
+            </Cmd>
+          ))}
+        </div>
+      ) : null}
 
       <Teletype lines={ttyLines} />
 

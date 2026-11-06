@@ -10,6 +10,8 @@
     "test": "vitest run && playwright test",
     "test:ui": "npx playwright test --ui",
     "test:unit": "vitest run",
+    "data:facilities": "node scripts/build-facilities.mjs --offline",
+    "data:osint": "node scripts/import-osint.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {

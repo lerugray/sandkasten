@@ -1,0 +1,538 @@
+{
+ "meta": {
+  "schema": 1,
+  "theater": "Strait of Hormuz",
+  "bbox": {
+   "south": 22.5,
+   "west": 50,
+   "north": 30,
+   "east": 61
+  },
+  "generated": "2026-11-06",
+  "generator": "scripts/import-osint.mjs",
+  "attribution": "Site records from Auftragstaktik (MIT, github.com/lerugray/auftragstaktik) and a curated Sandkasten supplement; see data/osint/ATTRIBUTION.md",
+  "sources": [
+   {
+    "name": "Auftragstaktik",
+    "url": "https://github.com/lerugray/auftragstaktik",
+    "licence": "MIT (README; the repository carries no LICENSE file)",
+    "commit": "7c5904e30d89fa34ec31181c62d7073f4074a778",
+    "files": [
+     "airDefense.ts",
+     "radarSites.ts",
+     "nuclearFacilities.ts",
+     "militaryInstallations.ts"
+    ]
+   },
+   {
+    "name": "Sandkasten curated supplement",
+    "url": "data/osint/curated/hormuz-supplement.json",
+    "licence": "MIT (this repository); entries cite public sources"
+   }
+  ],
+  "counts": {
+   "ad": 9,
+   "radar": 3,
+   "nuclear": 2,
+   "estimated": 12,
+   "platformMatches": 0,
+   "platformMisses": 12,
+   "installationsMerged": 9,
+   "installationsCreated": 2
+  },
+  "dropped": [
+   {
+    "id": "cp-hormuz",
+    "reason": "Chokepoint, not a facility: the strait is the theater itself and has no single position"
+   },
+   {
+    "id": "17 air defence records",
+    "reason": "outside the Hormuz bbox"
+   },
+   {
+    "id": "17 radar records",
+    "reason": "outside the Hormuz bbox"
+   },
+   {
+    "id": "15 nuclear records",
+    "reason": "outside the Hormuz bbox"
+   },
+   {
+    "id": "30 installation records",
+    "reason": "outside the Hormuz bbox"
+   }
+  ]
+ },
+ "sites": [
+  {
+   "id": "ad-bh-patriot-isa",
+   "layer": "ad",
+   "system": "MIM-104 Patriot",
+   "kind": "sam",
+   "name": "Patriot battery, Isa Air Base",
+   "operator": "Bahrain",
+   "affiliation": "gulf",
+   "rangeKm": 160,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Bahrain is a Patriot operator (public reporting); placement at Isa Air Base is a scenario assumption",
+   "notes": "160 km is the Auftragstaktik SYSTEM_RANGES figure for MIM-104 Patriot.",
+   "citations": [
+    {
+     "label": "Isa Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Isa_Air_Base"
+    },
+    {
+     "label": "MIM-104 Patriot (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/MIM-104_Patriot"
+    }
+   ],
+   "position": {
+    "lat": 25.9184,
+    "lng": 50.5906
+   },
+   "facilityId": "apt-obbs",
+   "positionBasis": "facility-anchor",
+   "origin": "curated",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries MIM-104 Patriot; the OSINT range is used as published"
+   },
+   "estimated": true
+  },
+  {
+   "id": "ad-ir-3khordad-qeshm",
+   "layer": "ad",
+   "system": "3rd Khordad",
+   "kind": "sam",
+   "name": "3rd Khordad battery, Qeshm",
+   "operator": "Iran",
+   "affiliation": "iran",
+   "rangeKm": 75,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "3rd Khordad is an Iranian-built medium-range SAM publicly shown by Iranian state media (about 75 km); placement on Qeshm is a scenario assumption",
+   "notes": "Notional coverage of the strait's central approaches from Qeshm Island. Range is the Iranian-stated figure.",
+   "citations": [
+    {
+     "label": "CSIS Missile Defense Project: Iranian air defense",
+     "url": "https://missilethreat.csis.org/"
+    }
+   ],
+   "position": {
+    "lat": 26.70306,
+    "lng": 55.9516
+   },
+   "facilityId": "apt-ir-0123",
+   "positionBasis": "facility-anchor",
+   "origin": "curated",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries 3rd Khordad; the OSINT range is used as published"
+   },
+   "estimated": true
+  },
+  {
+   "id": "ad-ir-s300-bandar-abbas",
+   "layer": "ad",
+   "system": "S-300PMU-2",
+   "kind": "sam",
+   "name": "S-300PMU-2 battery, Bandar Abbas",
+   "operator": "Iran",
+   "affiliation": "iran",
+   "rangeKm": 200,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Iran is a documented S-300PMU-2 operator (Auftragstaktik record ir-s300-isfahan, CSIS Missile Threat); placement at Bandar Abbas is a scenario assumption",
+   "notes": "Notional placement at the IRIAF fighter base that defends the strait's northern shore. 200 km is the public maximum range of the 48N6E2 missile.",
+   "citations": [
+    {
+     "label": "CSIS Missile Defense Project: S-300",
+     "url": "https://missilethreat.csis.org/"
+    },
+    {
+     "label": "S-300 missile system (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/S-300_missile_system"
+    }
+   ],
+   "position": {
+    "lat": 27.1583,
+    "lng": 56.1725
+   },
+   "facilityId": "apt-oikp",
+   "positionBasis": "facility-anchor",
+   "origin": "curated",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries S-300PMU-2; the OSINT range is used as published"
+   },
+   "estimated": true
+  },
+  {
+   "id": "ad-ir-s300-bushehr",
+   "layer": "ad",
+   "system": "S-300PMU-2",
+   "kind": "sam",
+   "name": "S-300PMU-2 battery, Bushehr",
+   "operator": "Iran",
+   "affiliation": "iran",
+   "rangeKm": 200,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Iran is a documented S-300PMU-2 operator (CSIS Missile Threat); a battery guarding the Bushehr plant has been reported in open sources, placement here is a scenario assumption",
+   "notes": "Placed at the Bushehr nuclear plant. 200 km is the public maximum range of the 48N6E2 missile.",
+   "citations": [
+    {
+     "label": "CSIS Missile Defense Project: S-300",
+     "url": "https://missilethreat.csis.org/"
+    },
+    {
+     "label": "Bushehr Nuclear Power Plant (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Bushehr_Nuclear_Power_Plant"
+    }
+   ],
+   "position": {
+    "lat": 28.83,
+    "lng": 50.89
+   },
+   "positionBasis": "facility-anchor",
+   "origin": "curated",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries S-300PMU-2; the OSINT range is used as published"
+   },
+   "estimated": true
+  },
+  {
+   "id": "ad-ir-tor-bushehr",
+   "layer": "ad",
+   "system": "Tor-M1",
+   "kind": "sam",
+   "name": "Tor-M1 point defence, Bushehr",
+   "operator": "Iran",
+   "affiliation": "iran",
+   "rangeKm": 12,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Iran took delivery of 29 Tor-M1 systems from Russia in 2007 (Wikipedia: Tor missile system); use for point defence of the Bushehr plant is reported, placement is a scenario assumption",
+   "notes": "Short-range point defence, 12 km maximum engagement range.",
+   "citations": [
+    {
+     "label": "Tor missile system (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Tor_missile_system"
+    }
+   ],
+   "position": {
+    "lat": 28.83,
+    "lng": 50.89
+   },
+   "positionBasis": "facility-anchor",
+   "origin": "curated",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries Tor-M1; the OSINT range is used as published"
+   },
+   "estimated": true
+  },
+  {
+   "id": "ad-sa-patriot-dhahran",
+   "layer": "ad",
+   "system": "MIM-104 Patriot",
+   "kind": "sam",
+   "name": "Patriot battery, Dhahran",
+   "operator": "Saudi Arabia",
+   "affiliation": "gulf",
+   "rangeKm": 160,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Saudi Arabia is a Patriot operator (Auftragstaktik record sa-patriot-riyadh); Dhahran has been defended by Patriot since 1991, placement is anchored to King Abdulaziz Air Base",
+   "notes": "160 km is the Auftragstaktik SYSTEM_RANGES figure for MIM-104 Patriot.",
+   "citations": [
+    {
+     "label": "MIM-104 Patriot (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/MIM-104_Patriot"
+    }
+   ],
+   "position": {
+    "lat": 26.2654,
+    "lng": 50.152
+   },
+   "facilityId": "apt-oedr",
+   "positionBasis": "facility-anchor",
+   "origin": "curated",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries MIM-104 Patriot; the OSINT range is used as published"
+   },
+   "estimated": true
+  },
+  {
+   "id": "ad-us-patriot-dhafra",
+   "layer": "ad",
+   "system": "MIM-104 Patriot",
+   "kind": "sam",
+   "name": "Patriot battery, Al Dhafra",
+   "operator": "United States / UAE",
+   "affiliation": "us-gulf",
+   "rangeKm": 160,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Patriot batteries have been deployed at Al Dhafra Air Base (public reporting); placement is anchored to the base",
+   "notes": "160 km is the Auftragstaktik SYSTEM_RANGES figure for MIM-104 Patriot.",
+   "citations": [
+    {
+     "label": "Al Dhafra Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Al_Dhafra_Air_Base"
+    },
+    {
+     "label": "MIM-104 Patriot (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/MIM-104_Patriot"
+    }
+   ],
+   "position": {
+    "lat": 24.2482,
+    "lng": 54.5477
+   },
+   "facilityId": "apt-omam",
+   "positionBasis": "facility-anchor",
+   "origin": "curated",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries MIM-104 Patriot; the OSINT range is used as published"
+   },
+   "estimated": true
+  },
+  {
+   "id": "ad-us-patriot-udeid",
+   "layer": "ad",
+   "system": "MIM-104 Patriot",
+   "kind": "sam",
+   "name": "Patriot battery, Al Udeid",
+   "operator": "United States / Qatar",
+   "affiliation": "us-gulf",
+   "rangeKm": 160,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Patriot batteries defend Al Udeid Air Base (US and Qatari operation, public reporting); placement is anchored to the base",
+   "notes": "160 km is the Auftragstaktik SYSTEM_RANGES figure for MIM-104 Patriot.",
+   "citations": [
+    {
+     "label": "Al Udeid Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Al_Udeid_Air_Base"
+    },
+    {
+     "label": "MIM-104 Patriot (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/MIM-104_Patriot"
+    }
+   ],
+   "position": {
+    "lat": 25.1173,
+    "lng": 51.315
+   },
+   "facilityId": "apt-otbh",
+   "positionBasis": "facility-anchor",
+   "origin": "curated",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries MIM-104 Patriot; the OSINT range is used as published"
+   },
+   "estimated": true
+  },
+  {
+   "id": "ad-us-thaad-dhafra",
+   "layer": "ad",
+   "system": "THAAD",
+   "kind": "sam",
+   "name": "THAAD battery, Al Dhafra",
+   "operator": "UAE / United States",
+   "affiliation": "us-gulf",
+   "rangeKm": 200,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "The UAE operates THAAD and US THAAD batteries deployed to the UAE (public reporting); placement is anchored to Al Dhafra",
+   "notes": "Exo-/endo-atmospheric ballistic missile defence, about 200 km engagement range (Lockheed Martin / MDA public figure). Shares the Al Dhafra anchor with the Patriot battery; the panel fans out co-located sites.",
+   "citations": [
+    {
+     "label": "Terminal High Altitude Area Defense (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Terminal_High_Altitude_Area_Defense"
+    }
+   ],
+   "position": {
+    "lat": 24.2482,
+    "lng": 54.5477
+   },
+   "facilityId": "apt-omam",
+   "positionBasis": "facility-anchor",
+   "origin": "curated",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries THAAD; the OSINT range is used as published"
+   },
+   "estimated": true
+  },
+  {
+   "id": "nuc-ae-barakah",
+   "layer": "nuclear",
+   "system": "reactor",
+   "kind": "reactor",
+   "name": "Barakah Nuclear Power Plant",
+   "operator": "UAE (ENEC)",
+   "affiliation": "gulf",
+   "position": {
+    "lat": 23.96,
+    "lng": 52.26
+   },
+   "positionBasis": "source-coordinates",
+   "rangeKm": 20,
+   "rangeKind": "exclusion",
+   "status": "active",
+   "source": "IAEA PRIS, ENEC",
+   "citations": [
+    {
+     "label": "Auftragstaktik (MIT) src/lib/data/nuclearFacilities.ts @ 7c5904e, record ae-barakah",
+     "url": "https://github.com/lerugray/auftragstaktik"
+    }
+   ],
+   "origin": "auftragstaktik",
+   "originId": "ae-barakah",
+   "notes": "4 APR-1400 reactors (Korean design). First nuclear plant in the Arab world. All 4 units operational as of 2024.",
+   "platform": {
+    "status": "miss",
+    "note": "Not a platform: exclusion radius from the source record"
+   },
+   "estimated": false
+  },
+  {
+   "id": "nuc-ir-bushehr-reactor",
+   "layer": "nuclear",
+   "system": "reactor",
+   "kind": "reactor",
+   "name": "Bushehr Nuclear Power Plant",
+   "operator": "Iran",
+   "affiliation": "iran",
+   "position": {
+    "lat": 28.83,
+    "lng": 50.89
+   },
+   "positionBasis": "source-coordinates",
+   "rangeKm": 20,
+   "rangeKind": "exclusion",
+   "status": "active",
+   "source": "IAEA PRIS",
+   "citations": [
+    {
+     "label": "Auftragstaktik (MIT) src/lib/data/nuclearFacilities.ts @ 7c5904e, record ir-bushehr-reactor",
+     "url": "https://github.com/lerugray/auftragstaktik"
+    }
+   ],
+   "origin": "auftragstaktik",
+   "originId": "ir-bushehr-reactor",
+   "notes": "Iran's only power-producing reactor. 1000MW VVER-1000, Russian-built. IAEA safeguarded. Unit 2 under construction.",
+   "platform": {
+    "status": "miss",
+    "note": "Not a platform: exclusion radius from the source record"
+   },
+   "estimated": false
+  },
+  {
+   "id": "radar-ir-khalij-fars",
+   "layer": "radar",
+   "system": "Khalij Fars",
+   "kind": "coastal",
+   "name": "Khalij Fars, Strait of Hormuz coast",
+   "operator": "Iran",
+   "affiliation": "iran",
+   "position": {
+    "lat": 26.95,
+    "lng": 56.1
+   },
+   "positionBasis": "source-coordinates",
+   "rangeKm": 300,
+   "rangeKind": "detection",
+   "status": "confirmed",
+   "lastConfirmed": "2024-01-01",
+   "source": "Iranian Navy public statements",
+   "citations": [
+    {
+     "label": "Auftragstaktik (MIT) src/lib/data/radarSites.ts @ 7c5904e, record ir-khalij-fars",
+     "url": "https://github.com/lerugray/auftragstaktik"
+    }
+   ],
+   "origin": "auftragstaktik",
+   "originId": "ir-khalij-fars",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries Khalij Fars; the OSINT range is used as published"
+   },
+   "estimated": true
+  },
+  {
+   "id": "radar-ir-sepehr",
+   "layer": "radar",
+   "system": "Sepehr",
+   "kind": "early-warning",
+   "name": "Sepehr, Southern Iran",
+   "operator": "Iran",
+   "affiliation": "iran",
+   "position": {
+    "lat": 29.5,
+    "lng": 53
+   },
+   "positionBasis": "source-coordinates",
+   "rangeKm": 3000,
+   "rangeKind": "detection",
+   "status": "suspected",
+   "lastConfirmed": "2023-06-01",
+   "source": "Iranian state media claims, unverified range",
+   "citations": [
+    {
+     "label": "Auftragstaktik (MIT) src/lib/data/radarSites.ts @ 7c5904e, record ir-sepehr",
+     "url": "https://github.com/lerugray/auftragstaktik"
+    }
+   ],
+   "origin": "auftragstaktik",
+   "originId": "ir-sepehr",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries Sepehr; the OSINT range is used as published"
+   },
+   "estimated": true
+  },
+  {
+   "id": "radar-us-tpy2-udeid",
+   "layer": "radar",
+   "system": "AN/TPY-2",
+   "kind": "tracking",
+   "name": "AN/TPY-2 X-band radar, Qatar",
+   "operator": "United States",
+   "affiliation": "us-gulf",
+   "rangeKm": 1000,
+   "rangeKind": "detection",
+   "status": "assessed",
+   "source": "A forward-based AN/TPY-2 radar in Qatar is publicly reported (US missile defence cooperation); placement is anchored to Al Udeid, the range is the public figure for the forward-based mode",
+   "notes": "Ring drawn only when selected (range exceeds the map's useful ring size).",
+   "citations": [
+    {
+     "label": "AN/TPY-2 transportable radar (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/AN/TPY-2_transportable_radar"
+    },
+    {
+     "label": "Al Udeid Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Al_Udeid_Air_Base"
+    }
+   ],
+   "position": {
+    "lat": 25.1173,
+    "lng": 51.315
+   },
+   "facilityId": "apt-otbh",
+   "positionBasis": "facility-anchor",
+   "origin": "curated",
+   "platform": {
+    "status": "miss",
+    "note": "No platform DB record carries AN/TPY-2; the OSINT range is used as published"
+   },
+   "estimated": true
+  }
+ ]
+}

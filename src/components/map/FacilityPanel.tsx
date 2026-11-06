@@ -2,6 +2,7 @@
 
 import { KIND_LABEL } from "@/lib/facilities/facilities";
 import type { Facility, Runway } from "@/lib/facilities/facilities";
+import { AFFILIATION_LABEL } from "@/lib/osint/sites";
 
 interface FacilityPanelProps {
   facility: Facility;
@@ -62,6 +63,28 @@ export function FacilityPanel({ facility: f, baseUnits = [], onClose, className 
         {f.areaType && <Row label="Area type" value={f.areaType.replace("_", " ")} />}
         {f.areaM2 ? <Row label="Area" value={`${(f.areaM2 / 1e6).toFixed(2)} km2`} /> : null}
       </div>
+      {f.osint && (
+        <div className="px-3 pb-2" data-testid="facility-osint">
+          <div className="text-[var(--color-tactical-text-dim)] uppercase tracking-wider border-t border-[var(--color-tactical-border)] pt-2 pb-1">OSINT</div>
+          <Row label="Affiliation" value={AFFILIATION_LABEL[f.osint.affiliation]} testId="facility-osint-affiliation" />
+          <div className="py-0.5 text-[var(--color-tactical-text)]" data-testid="facility-osint-function">{f.osint.function}</div>
+          {f.osint.notes && <div className="py-0.5 text-[var(--color-tactical-text-dim)]">{f.osint.notes}</div>}
+          <div className="py-0.5 text-[var(--color-tactical-text-dim)]" data-testid="facility-osint-source">
+            Source: {f.osint.source}
+            {f.osint.citations.map((c) => (
+              <div key={c.label}>
+                {c.url ? (
+                  <a href={c.url} target="_blank" rel="noreferrer" className="underline">
+                    {c.label}
+                  </a>
+                ) : (
+                  c.label
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {f.kind === "airbase" && (
         <div className="px-3 pb-2" data-testid="facility-runways">
           <div className="text-[var(--color-tactical-text-dim)] uppercase tracking-wider border-t border-[var(--color-tactical-border)] pt-2 pb-1">
@@ -101,7 +124,7 @@ export function FacilityPanel({ facility: f, baseUnits = [], onClose, className 
         </div>
       )}
       <div className="px-3 pb-2 text-[var(--color-tactical-text-dim)]">
-        Source: {Array.from(new Set(f.sources.map((s) => (s.source === "osm" ? "OpenStreetMap" : "OurAirports")))).join(" + ")}
+        Source: {Array.from(new Set(f.sources.map((s) => (s.source === "osm" ? "OpenStreetMap" : s.source === "auftragstaktik" ? "Auftragstaktik" : "OurAirports")))).join(" + ")}
       </div>
     </div>
   );

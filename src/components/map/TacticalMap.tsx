@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 import maplibregl from "maplibre-gl";
 import {
   ADAPTIVE_PROJECTION,
@@ -14,6 +14,10 @@ import {
 } from "@/lib/map/styles";
 import { FacilityLayer, FACILITY_HIT_LAYERS } from "./FacilityLayer";
 import { FacilityPanel } from "./FacilityPanel";
+import { OsintLayer, OSINT_HIT_LAYER } from "./OsintLayer";
+import { OsintPanel } from "./OsintPanel";
+import { OSINT_LAYERS, OSINT_LAYERS_ON, sitesFor } from "@/lib/osint/sites";
+import type { OsintLayerState } from "@/lib/osint/sites";
 import { FACILITY_ATTRIBUTION, getFacility } from "@/lib/facilities/facilities";
 import type { Scenario } from "@/types/game";
 import type { Contact, UnitOrders } from "@/lib/simulation/gameState";
@@ -76,7 +80,15 @@ export function TacticalMap({
   const [terrainOn, setTerrainOn] = useState(false);
   const [satelliteOn, setSatelliteOn] = useState(false);
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
+  const [osintLayers, setOsintLayers] = useState<OsintLayerState>(OSINT_LAYERS_ON);
+  const [selectedOsintId, setSelectedOsintId] = useState<string | null>(null);
   const hasFacilities = !!scenario.facilities?.length;
+  const hasOsint = !!scenario.osint?.length;
+  const hasOsintRef = useRef(hasOsint);
+  hasOsintRef.current = hasOsint;
+  const osintVisible = useMemo(() => sitesFor(osintLayers, scenario.osint ?? []), [osintLayers, scenario.osint]);
+  const osintVisibleRef = useRef(osintVisible);
+  osintVisibleRef.current = osintVisible;
   const hasFacilitiesRef = useRef(hasFacilities);
   hasFacilitiesRef.current = hasFacilities;
   const showFacilitiesRef = useRef(showFacilities);
@@ -141,6 +153,22 @@ export function TacticalMap({
         onMapClickRef.current?.({ lng: e.lngLat.lng, lat: e.lngLat.lat }) === true;
       if (handled) return;
       onUnitSelectRef.current(null);
+      if (hasOsintRef.current && map.getLayer(OSINT_HIT_LAYER)) {
+        const op = 14;
+        const sitesHit = map.queryRenderedFeatures(
+          [
+            [e.point.x - op, e.point.y - op],
+            [e.point.x + op, e.point.y + op],
+          ],
+          { layers: [OSINT_HIT_LAYER] },
+        );
+        if (sitesHit.length) {
+          setSelectedOsintId(sitesHit[0].properties?.id as string);
+          setSelectedFacilityId(null);
+          return;
+        }
+      }
+      setSelectedOsintId(null);
       if (!hasFacilitiesRef.current || !showFacilitiesRef.current) return;
       const pad = 10;
       const layers = FACILITY_HIT_LAYERS.filter((id) => map.getLayer(id));
@@ -202,8 +230,13 @@ export function TacticalMap({
   }, [mapReady, globeOn, terrainOn, satelliteOn, theme]);
 
   useEffect(() => {
-    if (selectedUnitId) setSelectedFacilityId(null);
+    if (selectedUnitId) {
+      setSelectedFacilityId(null);
+      setSelectedOsintId(null);
+    }
   }, [selectedUnitId]);
+
+  const selectedOsint = selectedOsintId ? osintVisible.find((s) => s.id === selectedOsintId) : undefined;
 
   const selectedFacility = selectedFacilityId
     ? getFacility(selectedFacilityId, scenario.facilities)
@@ -232,6 +265,7 @@ export function TacticalMap({
                 .map((u) => [Math.round(u.position.lng * 200) / 200, Math.round(u.position.lat * 200) / 200] as [number, number])}
             />
           )}
+          {hasOsint && <OsintLayer map={mapRef.current} sites={osintVisible} selectedId={selectedOsint ? selectedOsintId : null} />}
           <UnitLayer
             map={mapRef.current}
             units={visibleUnits}
@@ -296,6 +330,9 @@ export function TacticalMap({
       >
         {([
           ["facilities", "FACILITIES", showFacilities, setShowFacilities, hasFacilities],
+          ...OSINT_LAYERS.map(
+            (l) => [`osint-${l.id}`, l.short, osintLayers[l.id], (v: boolean) => setOsintLayers((p) => ({ ...p, [l.id]: v })), hasOsint] as const,
+          ),
           ["globe", "GLOBE", globeOn, setGlobeOn, true],
           ["terrain", "TERRAIN", terrainOn, setTerrainOn, true],
           ["satellite", "SAT", satelliteOn, setSatelliteOn, true],
@@ -318,6 +355,8 @@ export function TacticalMap({
             </button>
           ))}
       </div>
+
+      {selectedOsint && <OsintPanel site={selectedOsint} onClose={() => setSelectedOsintId(null)} />}
 
       {selectedFacility && (
         <FacilityPanel

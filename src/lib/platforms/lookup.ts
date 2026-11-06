@@ -262,6 +262,19 @@ PLATFORM_RECORDS.forEach((r, i) =>
   r.legacyIds.forEach((id) => platformMap.set(id, platformMap.get(RECORD_PLATFORMS[i].id)!)),
 );
 
+// Placeholder profiles for real-world snapshot contacts whose type is not in the platform DB (see
+// lib/snapshot/seed.ts). They are engine-side only: not in PLATFORMS (so not offered by the editor's
+// unit picker or getAllPlatforms()), unarmed, no sensor range (detection falls back to its default).
+// The unit stays on the Neutral/Civilian side, which isHostileSide() keeps out of combat.
+export const UNKNOWN_AIR_PLATFORM_ID = 9900;
+export const UNKNOWN_SURFACE_PLATFORM_ID = 9901;
+platformMap.set(UNKNOWN_AIR_PLATFORM_ID, {
+  id: UNKNOWN_AIR_PLATFORM_ID, name: "Unknown aircraft [snapshot contact]", dimension: "air", functionId: "MF", damagePoints: 50,
+});
+platformMap.set(UNKNOWN_SURFACE_PLATFORM_ID, {
+  id: UNKNOWN_SURFACE_PLATFORM_ID, name: "Unknown vessel [snapshot contact]", dimension: "sea", functionId: "XM", damagePoints: 100,
+});
+
 export function getPlatform(id: number): PlatformInfo | undefined {
   return platformMap.get(id);
 }

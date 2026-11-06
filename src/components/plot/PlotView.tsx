@@ -14,6 +14,7 @@ export interface PlotViewProps {
   focusRequest?: { n: number; unitId: string } | null;
   facilityFocusRequest?: { n: number; facilityId: string } | null;
   onFacilitySelect?: (facilityId: string | null) => void;
+  onOsintSelect?: (siteId: string | null) => void;
   onUnitSelect: (unitId: string | null, shiftKey?: boolean) => void;
   onMapClick: (p: GeoPoint) => boolean | void;
 }
@@ -21,12 +22,12 @@ export interface PlotViewProps {
 // Hosts the Three.js plot. The plot owns its canvas and animation loop; this
 // component only forwards React state into it, so React renders never tear
 // the scene down.
-export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, focusRequest, facilityFocusRequest, onUnitSelect, onMapClick, onFacilitySelect }: PlotViewProps) {
+export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, focusRequest, facilityFocusRequest, onUnitSelect, onMapClick, onFacilitySelect, onOsintSelect }: PlotViewProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<TacticalPlot | null>(null);
-  const cbRef = useRef({ onUnitSelect, onMapClick, onFacilitySelect });
-  cbRef.current = { onUnitSelect, onMapClick, onFacilitySelect };
+  const cbRef = useRef({ onUnitSelect, onMapClick, onFacilitySelect, onOsintSelect });
+  cbRef.current = { onUnitSelect, onMapClick, onFacilitySelect, onOsintSelect };
 
   useEffect(() => {
     if (!hostRef.current || !overlayRef.current) return;
@@ -34,6 +35,7 @@ export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, f
       onUnitSelect: (id, shift) => cbRef.current.onUnitSelect(id, shift),
       onMapClick: (p) => cbRef.current.onMapClick(p),
       onFacilitySelect: (id) => cbRef.current.onFacilitySelect?.(id),
+      onOsintSelect: (id) => cbRef.current.onOsintSelect?.(id),
     });
     plotRef.current = plot;
     const host = hostRef.current as HTMLDivElement & { __plot?: unknown };
