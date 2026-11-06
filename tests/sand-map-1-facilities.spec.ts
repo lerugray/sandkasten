@@ -77,8 +77,8 @@ test.describe("SAND-MAP-1 facilities + globe/terrain", () => {
     const panel = page.getByTestId("facility-panel");
     await expect(panel).toBeVisible();
     await expect(page.getByTestId("facility-panel-title")).toContainText("Oghab");
-    await expect(page.getByTestId("facility-runway-row")).toHaveCount(2);
-    await expect(panel).toContainText("2,437 m");
+    await expect(page.getByTestId("facility-runway-row")).toHaveCount(1);
+    await expect(panel).toContainText("2,733 m");
     await expect(page.getByTestId("facility-base-unit").first()).toBeVisible();
     await page.getByTestId("facility-panel-close").click();
     await expect(panel).toBeHidden();

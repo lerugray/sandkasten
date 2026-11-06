@@ -24,3 +24,9 @@ It combines two open datasets. Everything is open data; no Google Earth or Googl
 - Names are English where `name:en` exists in OSM, otherwise the OSM `name` (often Persian or Arabic script); the local name is kept in `nameLocal`.
 - Runway end positions come from OurAirports where charted. Otherwise they are derived from OSM centrelines (`derivedEnds: true`). Some OSM runways have no designator.
 - OSM coverage of military sites is partial. Bandar Abbas Naval Base is not mapped as a naval base in OSM.
+
+## Raw snapshot and runway rules
+
+`data/facilities/raw/<fetch-date>/` holds the dated raw responses the data was built from (OurAirports CSVs slimmed to the Hormuz bbox, the five Overpass JSON responses). `node scripts/build-facilities.mjs --offline` rebuilds `hormuz.json` from it with no network; a unit test checks the output is byte-identical.
+
+Runway designators are assigned from each threshold's true bearing (runway N heads about N x 10 degrees from that end), never from OSM vertex order or CSV column order. One runway is kept per physical strip: OSM geometry wins, OurAirports surface, lighting, width and declared length are merged in, and OSM segments of one strip are joined whatever order they arrive in.

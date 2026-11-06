@@ -2,7 +2,7 @@
 // Builds data/facilities/hormuz.json from OurAirports (public domain) + OpenStreetMap/Overpass (ODbL).
 //
 //   node scripts/build-facilities.mjs                 fetch live, cache raw responses, write output
-//   node scripts/build-facilities.mjs --offline       rebuild from the raw cache (.cache/facilities/<fetch-date>)
+//   node scripts/build-facilities.mjs --offline       rebuild from the committed raw snapshot (data/facilities/raw/<fetch-date>)
 //   --fetch-date YYYY-MM-DD   pin the cache directory / recorded date (default: today, or newest cache when --offline)
 //   --bbox S,W,N,E            override the theater bounding box
 //   --out path                output file (default data/facilities/hormuz.json)
@@ -16,6 +16,7 @@ import {
   parseOsmFacilities,
   parseOsmRunways,
   parseOurAirports,
+  slimOurAirports,
 } from "./lib/facilities.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -29,7 +30,8 @@ const opt = (n, d) => {
 const [S, W, N, E] = (opt("bbox", "22.5,50.0,30.0,61.0")).split(",").map(Number);
 const BBOX = { south: S, west: W, north: N, east: E };
 const OUT = resolve(ROOT, opt("out", "data/facilities/hormuz.json"));
-const CACHE_ROOT = join(ROOT, ".cache", "facilities");
+// Committed on purpose: the dated raw responses (OurAirports slimmed to the bbox) let the data regenerate offline.
+const CACHE_ROOT = join(ROOT, "data", "facilities", "raw");
 const OA_BASE = "https://davidmegginson.github.io/ourairports-data";
 const UA = "sandkasten-facility-pipeline/1.0 (https://github.com/lerugray/sandkasten)";
 const ENDPOINTS = [
@@ -77,7 +79,7 @@ function pickCacheDir() {
   if (pinned) return { date: pinned, dir: join(CACHE_ROOT, pinned) };
   if (flag("offline")) {
     const dates = existsSync(CACHE_ROOT) ? readdirSync(CACHE_ROOT).sort() : [];
-    if (!dates.length) throw new Error("--offline but no cache in .cache/facilities");
+    if (!dates.length) throw new Error("--offline but no snapshot in data/facilities/raw");
     const date = dates[dates.length - 1];
     return { date, dir: join(CACHE_ROOT, date) };
   }
@@ -98,8 +100,13 @@ async function cached(dir, name, fetcher) {
 const { date: fetchDate, dir: cacheDir } = pickCacheDir();
 console.log(`facility pipeline: bbox S${S} W${W} N${N} E${E}, fetch date ${fetchDate}${flag("offline") ? " (offline)" : ""}`);
 
-const airportsCsv = await cached(cacheDir, "airports.csv", () => fetchText(`${OA_BASE}/airports.csv`));
-const runwaysCsv = await cached(cacheDir, "runways.csv", () => fetchText(`${OA_BASE}/runways.csv`));
+const slim = async () => {
+  const [a, r] = await Promise.all([fetchText(`${OA_BASE}/airports.csv`), fetchText(`${OA_BASE}/runways.csv`)]);
+  return slimOurAirports(a, r, BBOX);
+};
+let slimmed;
+const airportsCsv = await cached(cacheDir, "airports.csv", async () => (slimmed ??= await slim()).airports);
+const runwaysCsv = await cached(cacheDir, "runways.csv", async () => (slimmed ??= await slim()).runways);
 const queries = buildOverpassQueries(BBOX);
 const raw = {};
 for (const [name, q] of Object.entries(queries)) {

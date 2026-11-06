@@ -525,6 +525,21 @@
   color: var(--tx-phosphor);
 }
 
+.tx-credit {
+  position: absolute;
+  right: 8px;
+  bottom: 212px;
+  z-index: 6;
+  max-width: 62%;
+  padding: 1px 6px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--tx-phosphor);
+  background: rgba(2, 10, 6, 0.82);
+  text-align: right;
+  pointer-events: none;
+}
+
 /* ---- teletype ---- */
 .tx-tty {
   position: absolute;

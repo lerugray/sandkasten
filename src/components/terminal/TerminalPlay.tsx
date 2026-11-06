@@ -680,6 +680,10 @@ export function TerminalPlay() {
         <span ref={scaleLabelRef} className="tx-scale-label" />
       </div>
 
+      <div className="tx-credit" data-testid="plot-attribution" data-plot-occluder>
+        Facilities © OpenStreetMap contributors (ODbL), OurAirports (public domain). Land, coast, depth: Natural Earth, NOAA ETOPO1 (public domain).
+      </div>
+
       <Teletype lines={ttyLines} />
 
       {/* Command bar */}

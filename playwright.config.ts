@@ -2,6 +2,9 @@ import { defineConfig, devices } from "@playwright/test";
 
 const PORT = Number(process.env.SAND_E2E_PORT ?? 3001);
 
+// SAND_E2E_GPU=1: hardware GL for WebGL-heavy specs (the software renderer runs the plot at ~2 fps).
+const GPU_ARGS = process.env.SAND_E2E_GPU ? ["--use-gl=angle", "--use-angle=gl-egl", "--ignore-gpu-blocklist", "--mute-audio"] : ["--mute-audio"];
+
 export default defineConfig({
   testDir: "./tests",
   fullyParallel: true,
@@ -17,7 +20,7 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: { ...devices["Desktop Chrome"], launchOptions: { args: GPU_ARGS } },
     },
   ],
   webServer: {

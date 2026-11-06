@@ -72,6 +72,25 @@ export function parseCsv(text) {
   return rows.map((r) => Object.fromEntries(header.map((h, i) => [h, r[i] ?? ""])));
 }
 
+function csvField(v) {
+  return /[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+}
+
+export function toCsv(header, rows) {
+  return [header.join(","), ...rows.map((r) => header.map((h) => csvField(String(r[h] ?? ""))).join(","))].join("\n") + "\n";
+}
+
+/** Keep only what parseOurAirports can use: airports in the bbox of a kept type, and their runways. */
+export function slimOurAirports(airportsCsv, runwaysCsv, bbox) {
+  const aRows = parseCsv(airportsCsv);
+  const rRows = parseCsv(runwaysCsv);
+  const aHead = airportsCsv.slice(0, airportsCsv.indexOf("\n")).replace(/\r$/, "").split(",").map((h) => h.replace(/^"|"$/g, ""));
+  const rHead = runwaysCsv.slice(0, runwaysCsv.indexOf("\n")).replace(/\r$/, "").split(",").map((h) => h.replace(/^"|"$/g, ""));
+  const keep = aRows.filter((a) => OA_KEEP.has(a.type) && inBbox({ lat: num(a.latitude_deg), lng: num(a.longitude_deg) }, bbox));
+  const ids = new Set(keep.map((a) => a.id));
+  return { airports: toCsv(aHead, keep), runways: toCsv(rHead, rRows.filter((r) => ids.has(r.airport_ref))) };
+}
+
 export function inBbox(p, bbox) {
   return p.lat >= bbox.south && p.lat <= bbox.north && p.lng >= bbox.west && p.lng <= bbox.east;
 }
@@ -92,21 +111,75 @@ export function normalizeSurface(raw) {
   return "unknown";
 }
 
+const circDist = (x, y) => {
+  const d = Math.abs(((x - y) % 360 + 360) % 360);
+  return d > 180 ? 360 - d : d;
+};
+
+function parseDesignator(raw) {
+  const m = /^\s*(\d{1,2})\s*([LRC]?)\s*$/i.exec(String(raw ?? ""));
+  if (!m) return null;
+  const n = Number(m[1]);
+  if (n < 1 || n > 36) return null;
+  return { text: `${String(n).padStart(2, "0")}${m[2].toUpperCase()}`, n, letter: m[2].toUpperCase() };
+}
+
+const FLIP = { L: "R", R: "L", C: "C", "": "" };
+
+function designatorFor(headingDeg, letter = "") {
+  const n = Math.round(headingDeg / 10) % 36 || 36;
+  return { text: `${String(n).padStart(2, "0")}${letter}`, n, letter };
+}
+
+/** Pair of designators for a strip; a lone designator implies its reciprocal. Null when nothing parses. */
+export function designatorPair(identA, identB) {
+  const a = parseDesignator(identA);
+  const b = parseDesignator(identB);
+  if (a && b) return [a, b];
+  const one = a ?? b;
+  if (!one) return null;
+  const recip = designatorFor(((one.n * 10 + 180) % 360) || 360, FLIP[one.letter]);
+  return [one, recip];
+}
+
+/**
+ * Designators are assigned from true bearing, never from vertex or column order: runway N is the one a pilot
+ * lines up on heading ~N*10 deg from that threshold. Ends come back in ascending designator order, so the
+ * result is the same whichever way the strip was digitised.
+ */
 function runwayFromEnds(id, a, b, props) {
   const lengthM = Math.round(haversineM(a, b));
-  const hdg = bearingDeg(a, b);
+  const hdgAB = bearingDeg(a, b);
+  const hdgBA = (hdgAB + 180) % 360;
+  const tokens = [props.identA, props.identB].flatMap((x) => String(x ?? "").split(/[/;,-]/)).map((x) => x.trim()).filter(Boolean);
+  let identA = tokens[0] ?? "";
+  let identB = tokens[1] ?? "";
+  const pair = designatorPair(identA, identB);
+  if (pair) {
+    const [p, q] = pair;
+    const straight = circDist(p.n * 10, hdgAB) + circDist(q.n * 10, hdgBA);
+    const swapped = circDist(q.n * 10, hdgAB) + circDist(p.n * 10, hdgBA);
+    [identA, identB] = straight <= swapped ? [p.text, q.text] : [q.text, p.text];
+  } else if (!identA && !identB) {
+    identA = designatorFor(hdgAB).text;
+    identB = designatorFor(hdgBA).text;
+  }
+  let ends = [
+    { ident: identA, lat: round(a.lat), lng: round(a.lng), headingTrue: Math.round(hdgAB) % 360 },
+    { ident: identB, lat: round(b.lat), lng: round(b.lng), headingTrue: Math.round(hdgBA) % 360 },
+  ];
+  const key = (e) => parseDesignator(e.ident)?.n ?? (e.headingTrue < 180 ? e.headingTrue / 10 : 100 + e.headingTrue);
+  if (key(ends[1]) < key(ends[0]) || (key(ends[1]) === key(ends[0]) && ends[1].ident < ends[0].ident)) ends = [ends[1], ends[0]];
+  const ident = ends.map((e) => e.ident).filter(Boolean).join("/");
   return {
-    id,
+    id: ident || id,
     lengthM: props.lengthM ?? lengthM,
     widthM: props.widthM ?? null,
-    headingTrue: Math.round(hdg),
+    headingTrue: ends[0].headingTrue,
     surface: props.surface ?? "unknown",
     lighted: props.lighted ?? null,
     closed: props.closed ?? false,
-    ends: [
-      { ident: props.identA, lat: round(a.lat), lng: round(a.lng), headingTrue: Math.round(hdg) },
-      { ident: props.identB, lat: round(b.lat), lng: round(b.lng), headingTrue: Math.round((hdg + 180) % 360) },
-    ],
+    ends,
     derivedEnds: props.derivedEnds ?? false,
     source: props.source,
   };
@@ -417,35 +490,114 @@ function sameAerodrome(oa, osm) {
   return d < 4000 && sharesToken(oa.name, osm.name);
 }
 
-function sameStrip(o, rw) {
-  // Collinear and overlapping along the axis: same physical runway (or a segment/extension of it).
-  const lat0 = o.ends[0].lat;
-  const kx = Math.cos(rad(lat0)) * 111320;
+const STRIP_ACROSS_M = 60;
+const STRIP_GAP_M = 120;
+
+function frame(o) {
+  const a0 = o.ends[0];
+  const kx = Math.cos(rad(a0.lat)) * 111320;
   const ky = 110574;
-  const P = (e) => ({ x: (e.lng - o.ends[0].lng) * kx, y: (e.lat - o.ends[0].lat) * ky });
+  const P = (e) => ({ x: (e.lng - a0.lng) * kx, y: (e.lat - a0.lat) * ky });
   const a = P(o.ends[0]);
   const b = P(o.ends[1]);
   const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
   const ux = (b.x - a.x) / len;
   const uy = (b.y - a.y) / len;
-  const along = (q) => (q.x - a.x) * ux + (q.y - a.y) * uy;
-  const across = (q) => Math.abs(-(q.x - a.x) * uy + (q.y - a.y) * ux);
-  const c = P(rw.ends[0]);
-  const d = P(rw.ends[1]);
-  if (Math.max(across(c), across(d)) > 90) return false;
-  const lo = Math.max(0, Math.min(along(c), along(d)));
-  const hi = Math.min(len, Math.max(along(c), along(d)));
-  const overlap = hi - lo;
-  const shorter = Math.min(len, Math.abs(along(c) - along(d))) || 1;
-  return overlap > 0.5 * shorter;
+  return {
+    len,
+    P,
+    along: (q) => (q.x - a.x) * ux + (q.y - a.y) * uy,
+    across: (q) => Math.abs(-(q.x - a.x) * uy + (q.y - a.y) * ux),
+  };
 }
 
-function dedupeRunways(list) {
-  const out = [];
-  for (const rw of list) {
-    if (!out.some((o) => sameStrip(o, rw) || sameStrip(rw, o))) out.push(rw);
+function midpoint(o) {
+  return { lat: (o.ends[0].lat + o.ends[1].lat) / 2, lng: (o.ends[0].lng + o.ends[1].lng) / 2 };
+}
+
+/** Charted and surveyed copies of one strip rarely line up exactly: same designators (letters not in conflict) and close midpoints. */
+function samePair(o, rw) {
+  const key = (r) => r.ends.map((e) => parseDesignator(e.ident)).filter(Boolean);
+  const x = key(o);
+  const y = key(rw);
+  if (x.length !== 2 || y.length !== 2) return false;
+  for (let i = 0; i < 2; i++) {
+    if (x[i].n !== y[i].n) return false;
+    if (x[i].letter && y[i].letter && x[i].letter !== y[i].letter) return false;
   }
-  return out;
+  return circDist(o.ends[0].headingTrue, rw.ends[0].headingTrue) <= 12 && haversineM(midpoint(o), midpoint(rw)) <= 1500;
+}
+
+/** Same physical strip: collinear with it and overlapping or within a short gap (segments, displaced thresholds). */
+function sameStrip(o, rw) {
+  if (samePair(o, rw)) return true;
+  const f = frame(o);
+  const c = f.P(rw.ends[0]);
+  const d = f.P(rw.ends[1]);
+  if (Math.max(f.across(c), f.across(d)) > STRIP_ACROSS_M) return false;
+  const lo = Math.min(f.along(c), f.along(d));
+  const hi = Math.max(f.along(c), f.along(d));
+  return Math.max(0, lo - f.len, -hi) <= STRIP_GAP_M;
+}
+
+const sourceKey = (rw) => `${rw.source.source}:${rw.source.id}`;
+
+function mergeStrip(members) {
+  const osm = members.filter((m) => m.source.source === "osm");
+  const oa = members.filter((m) => m.source.source !== "osm").sort((x, y) => y.lengthM - x.lengthM || sourceKey(x).localeCompare(sourceKey(y)));
+  const byLen = (x, y) => y.lengthM - x.lengthM || sourceKey(x).localeCompare(sourceKey(y));
+  osm.sort(byLen);
+  // OSM geometry wins (extent of all its segments along the longest one); OurAirports metadata is merged in.
+  let a;
+  let b;
+  if (osm.length) {
+    const f = frame(osm[0]);
+    let lo = null;
+    let hi = null;
+    for (const m of osm)
+      for (const e of m.ends) {
+        const t = f.along(f.P(e));
+        if (!lo || t < lo.t) lo = { t, e };
+        if (!hi || t > hi.t) hi = { t, e };
+      }
+    a = lo.e;
+    b = hi.e;
+  } else {
+    a = oa[0].ends[0];
+    b = oa[0].ends[1];
+  }
+  const withRef = [...osm, ...oa].find((m) => m.ends.some((e) => e.ident));
+  const first = (key, bad) => [...osm, ...oa].map((m) => m[key]).find((v) => v != null && v !== bad);
+  const primary = osm[0] ?? oa[0];
+  const sources = [...osm, ...oa].map((m) => m.source);
+  const rw = runwayFromEnds(primary.id, a, b, {
+    identA: withRef?.ends[0].ident,
+    identB: withRef?.ends[1].ident,
+    widthM: first("widthM"),
+    surface: first("surface", "unknown") ?? "unknown",
+    lighted: first("lighted"),
+    closed: members.some((m) => m.closed),
+    lengthM: oa.length ? oa[0].lengthM ?? undefined : undefined,
+    derivedEnds: !osm.length && oa[0].derivedEnds,
+    source: primary.source,
+  });
+  if (sources.length > 1) rw.sources = sources;
+  return rw;
+}
+
+/** One runway per physical strip, independent of input order (union-find over the collinear relation). */
+function reconcileRunways(list) {
+  const parent = list.map((_, i) => i);
+  const find = (i) => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+  for (let i = 0; i < list.length; i++)
+    for (let j = i + 1; j < list.length; j++) if (sameStrip(list[i], list[j]) || sameStrip(list[j], list[i])) parent[find(j)] = find(i);
+  const groups = new Map();
+  list.forEach((rw, i) => {
+    const r = find(i);
+    if (!groups.has(r)) groups.set(r, []);
+    groups.get(r).push(rw);
+  });
+  return [...groups.values()].map(mergeStrip).sort((x, y) => y.lengthM - x.lengthM || x.id.localeCompare(y.id) || x.ends[0].lat - y.ends[0].lat);
 }
 
 function slug(s) {
@@ -475,9 +627,10 @@ export function mergeFacilities({ ourairports, osmFacilities, osmRunways, runway
     }
   }
 
-  // Attach OSM runway geometry: to the nearest aerodrome within range; add only where OurAirports lacks that strip.
+  // Attach OSM runway geometry to the nearest aerodrome within range, then reconcile each aerodrome's strips.
   const airMerged = merged.filter((f) => f.kind === "airbase");
   const osmRunwayCount = { attached: 0, orphans: 0 };
+  const osmByAerodrome = new Map();
   for (const r of osmRunways) {
     let best = null;
     let bestD = Infinity;
@@ -490,15 +643,27 @@ export function mergeFacilities({ ourairports, osmFacilities, osmRunways, runway
       }
     }
     if (best && bestD <= runwayAttachM) {
-      // Short OSM strips next to a charted runway are stopways, blast pads or segments, not extra runways.
-      if (best.runways.length && r.runway.lengthM < 600) {
+      if (!osmByAerodrome.has(best)) osmByAerodrome.set(best, []);
+      osmByAerodrome.get(best).push(r);
+    } else osmRunwayCount.orphans++;
+  }
+  for (const [f, rs] of osmByAerodrome) {
+    const charted = f.runways.length > 0;
+    for (const r of rs) {
+      // A short lone OSM strip next to charted runways is a stopway, blast pad or segment, not an extra runway.
+      const joins = [...f.runways, ...rs.map((x) => x.runway)].some((o) => o !== r.runway && (sameStrip(o, r.runway) || sameStrip(r.runway, o)));
+      if (charted && r.runway.lengthM < 600 && !joins) {
         osmRunwayCount.orphans++;
         continue;
       }
-      best.runways = dedupeRunways([...best.runways, r.runway]);
-      if (!best.sources.some((s) => s.id === r.osmId)) best.sources.push({ source: "osm", id: r.osmId, role: "runway" });
+      f.pendingRunways = [...(f.pendingRunways ?? []), r.runway];
+      if (!f.sources.some((s) => s.id === r.osmId)) f.sources.push({ source: "osm", id: r.osmId, role: "runway" });
       osmRunwayCount.attached++;
-    } else osmRunwayCount.orphans++;
+    }
+  }
+  for (const f of airMerged) {
+    f.runways = reconcileRunways([...f.runways, ...(f.pendingRunways ?? [])]);
+    delete f.pendingRunways;
   }
 
   for (const o of others) merged.push(o);
@@ -518,7 +683,6 @@ export function mergeFacilities({ ourairports, osmFacilities, osmRunways, runway
     if (f.kind !== "airbase") continue;
     if (!f.isMilitary) f.isMilitary = MIL_AIR_NAME.test(f.name ?? "");
     f.use = f.isMilitary ? "military" : "civil";
-    f.runways.sort((a, b) => (b.lengthM ?? 0) - (a.lengthM ?? 0));
     const heliOnly = f.runways.length === 0 && (f.airportType === "heliport" || /heli/i.test(f.name ?? ""));
     if (heliOnly) f.kind = "heliport";
   }

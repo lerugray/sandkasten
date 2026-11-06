@@ -37,6 +37,14 @@ test.describe("SAND-MAP-2 default /play facilities", () => {
     await expect(page.getByTestId("plot-canvas")).toBeVisible();
   });
 
+  test("the plot shows persistent OSM / OurAirports credits", async ({ page }) => {
+    await openPlot(page);
+    const credit = page.getByTestId("plot-attribution");
+    await expect(credit).toBeVisible();
+    await expect(credit).toContainText("OpenStreetMap contributors");
+    await expect(credit).toContainText("OurAirports");
+  });
+
   test("clicking Oghab 44 opens the facility panel with runways; X closes it", async ({ page }) => {
     await openPlot(page);
     await page.evaluate(() => window.__sandPlot!.focusFacility("apt-ir-0161"));
@@ -48,8 +56,8 @@ test.describe("SAND-MAP-2 default /play facilities", () => {
     const panel = page.getByTestId("facility-panel");
     await expect(panel).toBeVisible();
     await expect(page.getByTestId("facility-panel-title")).toContainText("Oghab");
-    await expect(page.getByTestId("facility-runway-row")).toHaveCount(2);
-    await expect(panel).toContainText("2,437 m");
+    await expect(page.getByTestId("facility-runway-row")).toHaveCount(1);
+    await expect(panel).toContainText("2,733 m");
     await page.getByTestId("facility-panel-close").click();
     await expect(panel).toBeHidden();
   });
