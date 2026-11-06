@@ -78,4 +78,34 @@ describe("S2-15 the result is decided after combat", () => {
     expect(t1.eventState!.messages).toHaveLength(1);
     expect(t1.eventState!.scenarioResult?.result).toBe("victory");
   });
+
+  it("a post-combat event cannot force a terminal event that already ran before combat", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.55);
+    const { state, combat } = scene(20);
+    const gateScore: ScenarioEvent = {
+      name: "Gate Score",
+      repeatable: true,
+      triggers: [{ type: "UnitEntersArea", side: "US Navy", areaId: "transit-gate", unitId: "us-cvn-1" }],
+      conditions: [],
+      actions: [
+        { type: "DisplayMessage", side: "US Navy", text: "scored" },
+        { type: "ChangeScore", side: "US Navy", amount: 10 },
+        { type: "EndScenario", result: "victory", message: "gate" },
+      ],
+    };
+    const lossForcesScore: ScenarioEvent = {
+      name: "Loss Forces Score",
+      repeatable: false,
+      triggers: [{ type: "UnitDestroyed", unitId: "us-cvn-1" }],
+      conditions: [],
+      actions: [
+        { type: "TriggerEvent", eventName: "Gate Score" },
+        { type: "EndScenario", result: "defeat", message: "lost" },
+      ],
+    };
+    const t1 = simulationTick(state, 1000, undefined, events([gateScore, lossForcesScore]), combat);
+    expect(t1.eventState!.scenarioResult?.result).toBe("defeat");
+    expect(t1.gameState.score["US Navy"]).toBe(10);
+    expect(t1.eventState!.messages).toHaveLength(1);
+  });
 });

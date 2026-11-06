@@ -48,3 +48,23 @@ This round changed only unit-test files, `engine.ts`, `events.ts`, `aiController
 - `design-system.spec.ts`
 
 `zz-playcheck.spec.ts` was dropped.
+
+---
+
+## Round 2 (Dot re-review of 8cae8ad3: REJECT, 1 S2)
+
+**Verdict: FIX READY.** `npm run test:unit` is 9 files / 67 tests, all pass (66 plus one new). `npm run build` passes. No e2e or browser was run.
+
+### S2: terminal no-double-fire missed `TriggerEvent`
+
+- **Cause.** The recursive `TriggerEvent` branch in `evaluateEvents` did not honour `opts.skip`, which the main loop does. A post-combat terminal event could therefore force an event that had already run before combat.
+- **Red (8cae8ad).** New test "a post-combat event cannot force a terminal event that already ran before combat" in `terminal.test.ts`. A repeatable "Gate Score" event (score +10, message, EndScenario) runs before combat. The carrier is then destroyed, and "Loss Forces Score" forces "Gate Score" in the terminal pass. The test failed with `expected 20 to be 10` (score), and the same event also posted its message twice.
+- **Green.** The `TriggerEvent` branch now breaks when `opts.skip` holds the target. The test passes: score 10, 1 message, result `defeat`.
+
+### S3: platform ids 9001-9004
+
+Not touched. The brief says to keep M61A2/412 and Nimitz RAM as they are, and the demo, `lookup.ts` and `demoFacts.test.ts` all reference those ids. Removing or renumbering them is not trivially safe, so it stays for the platform-db card.
+
+### E2E specs
+
+No change since round 1. This round touched only `events.ts` and `terminal.test.ts`, so the spec list above stands.

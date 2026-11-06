@@ -167,7 +167,7 @@ export function evaluateEvents(
         case "TriggerEvent": {
           // Forced: runs the other event's actions now. Events already running are skipped (cycle guard).
           const target = eventState.events.find((e) => e.name === action.eventName);
-          if (!target || running.has(target.name)) break;
+          if (!target || running.has(target.name) || opts.skip?.has(target.name)) break;
           if (newFired.has(target.name) && !target.repeatable) break;
           run(target);
           break;
