@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, describe } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -23,7 +23,7 @@ function build() {
   return { ourairports, osmFacilities, osmRunways, ...mergeFacilities({ ourairports, osmFacilities, osmRunways }) };
 }
 
-test.describe("facility pipeline", () => {
+describe("facility pipeline", () => {
   test("parseCsv handles quoted fields, doubled quotes and empties", () => {
     const rows = parseCsv(fx("facilities-airports.csv"));
     expect(rows).toHaveLength(5);
