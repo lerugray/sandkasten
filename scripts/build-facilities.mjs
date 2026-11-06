@@ -143,7 +143,7 @@ const output = {
         attribution: "© OpenStreetMap contributors",
       },
     ],
-    counts: { facilities: unique.length, runways, ...counts, osmRunwaysAttached: osmRunwayCount.attached, osmRunwaysOrphaned: osmRunwayCount.orphans },
+    counts: { facilities: unique.length, runways, ...counts, osmRunwaysAttached: osmRunwayCount.attached, osmRunwaysSkipped: osmRunwayCount.orphans },
   },
   facilities: unique,
 };

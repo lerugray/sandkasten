@@ -14,7 +14,7 @@ export const TERRAIN_ATTRIBUTION =
 
 // EOX Sentinel-2 cloudless. 2017 is CC BY 4.0 but has white no-data holes over the Gulf of Oman / Hormuz theater at every zoom;
 // 2018 is gap-free but CC BY-NC-SA 4.0 (non-commercial). Flip SATELLITE_YEAR to 2017 for the CC BY layer.
-export const SATELLITE_YEAR: 2017 | 2018 = 2018;
+export const SATELLITE_YEAR: number = 2018;
 const SATELLITE_LICENCE = SATELLITE_YEAR === 2017 ? "CC BY 4.0" : "CC BY-NC-SA 4.0";
 export const SATELLITE_TILES = `https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-${SATELLITE_YEAR}_3857/default/g/{z}/{y}/{x}.jpg`;
 export const SATELLITE_ATTRIBUTION = `<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless ${SATELLITE_YEAR}</a> by <a href="https://eox.at" target="_blank" rel="noopener">EOX IT Services GmbH</a> (Contains modified Copernicus Sentinel data ${SATELLITE_YEAR}), ${SATELLITE_LICENCE}`;
