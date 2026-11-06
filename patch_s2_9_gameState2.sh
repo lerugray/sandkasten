@@ -1,0 +1,1 @@
+sed -i 's/  missionDoctrineOverrides?: Record<string, Partial<Doctrine>>;/  missionDoctrineOverrides?: Record<string, Partial<Doctrine>>; \/\/ keyed by `${side}:${mission.id}` or `${side}:${mission.name}`/' src/lib/simulation/gameState.ts
