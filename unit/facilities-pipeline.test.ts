@@ -26,14 +26,14 @@ function build() {
 describe("facility pipeline", () => {
   test("parseCsv handles quoted fields, doubled quotes and empties", () => {
     const rows = parseCsv(fx("facilities-airports.csv"));
-    expect(rows).toHaveLength(5);
+    expect(rows).toHaveLength(6);
     expect(rows[2].name).toBe('Norunway "Strip"');
     expect(rows[0].iata_code).toBe("BND");
   });
 
   test("OurAirports: bbox + type filter, real runway ends, derived ends flagged", () => {
     const { ourairports } = build();
-    expect(ourairports.map((a) => a.ident).sort()).toEqual(["OIKB", "OIKQ", "XX01"]);
+    expect(ourairports.map((a) => a.ident).sort()).toEqual(["OIKB", "OIKQ", "XX01", "XXH1"]);
     const oikb = ourairports.find((a) => a.ident === "OIKB")!;
     const rw = oikb.runways[0];
     expect(rw.id).toBe("03/21");
@@ -93,6 +93,9 @@ describe("facility pipeline", () => {
     expect(osmOnly.use).toBe("military");
 
     expect(osmRunwayCount.attached).toBe(2);
+    const heli = facilities.filter((f) => f.kind === "heliport");
+    expect(heli.map((f) => f.name)).toEqual(["Offshore Platform Heliport"]);
+    expect(heli[0].runways).toBeUndefined();
     expect(facilities.filter((f) => f.kind === "naval_base")).toHaveLength(1);
     expect(facilities.filter((f) => f.kind === "port")).toHaveLength(1);
     expect(facilities.filter((f) => f.kind === "military_area")).toHaveLength(1);

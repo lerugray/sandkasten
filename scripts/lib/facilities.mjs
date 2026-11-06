@@ -417,18 +417,33 @@ function sameAerodrome(oa, osm) {
   return d < 4000 && sharesToken(oa.name, osm.name);
 }
 
+function sameStrip(o, rw) {
+  // Collinear and overlapping along the axis: same physical runway (or a segment/extension of it).
+  const lat0 = o.ends[0].lat;
+  const kx = Math.cos(rad(lat0)) * 111320;
+  const ky = 110574;
+  const P = (e) => ({ x: (e.lng - o.ends[0].lng) * kx, y: (e.lat - o.ends[0].lat) * ky });
+  const a = P(o.ends[0]);
+  const b = P(o.ends[1]);
+  const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+  const ux = (b.x - a.x) / len;
+  const uy = (b.y - a.y) / len;
+  const along = (q) => (q.x - a.x) * ux + (q.y - a.y) * uy;
+  const across = (q) => Math.abs(-(q.x - a.x) * uy + (q.y - a.y) * ux);
+  const c = P(rw.ends[0]);
+  const d = P(rw.ends[1]);
+  if (Math.max(across(c), across(d)) > 90) return false;
+  const lo = Math.max(0, Math.min(along(c), along(d)));
+  const hi = Math.min(len, Math.max(along(c), along(d)));
+  const overlap = hi - lo;
+  const shorter = Math.min(len, Math.abs(along(c) - along(d))) || 1;
+  return overlap > 0.5 * shorter;
+}
+
 function dedupeRunways(list) {
-  // Same strip = ends within 250 m of each other (either orientation).
   const out = [];
   for (const rw of list) {
-    const dup = out.find((o) => {
-      const [a, b] = o.ends;
-      const [c, d] = rw.ends;
-      const same = haversineM(a, c) < 250 && haversineM(b, d) < 250;
-      const flip = haversineM(a, d) < 250 && haversineM(b, c) < 250;
-      return same || flip;
-    });
-    if (!dup) out.push(rw);
+    if (!out.some((o) => sameStrip(o, rw) || sameStrip(rw, o))) out.push(rw);
   }
   return out;
 }
@@ -475,6 +490,11 @@ export function mergeFacilities({ ourairports, osmFacilities, osmRunways, runway
       }
     }
     if (best && bestD <= runwayAttachM) {
+      // Short OSM strips next to a charted runway are stopways, blast pads or segments, not extra runways.
+      if (best.runways.length && r.runway.lengthM < 600) {
+        osmRunwayCount.orphans++;
+        continue;
+      }
       best.runways = dedupeRunways([...best.runways, r.runway]);
       if (!best.sources.some((s) => s.id === r.osmId)) best.sources.push({ source: "osm", id: r.osmId, role: "runway" });
       osmRunwayCount.attached++;
@@ -499,24 +519,24 @@ export function mergeFacilities({ ourairports, osmFacilities, osmRunways, runway
     if (!f.isMilitary) f.isMilitary = MIL_AIR_NAME.test(f.name ?? "");
     f.use = f.isMilitary ? "military" : "civil";
     f.runways.sort((a, b) => (b.lengthM ?? 0) - (a.lengthM ?? 0));
+    const heliOnly = f.runways.length === 0 && (f.airportType === "heliport" || /heli/i.test(f.name ?? ""));
+    if (heliOnly) f.kind = "heliport";
   }
 
   // Stable ids
   const used = new Set();
   for (const f of final) {
     let base;
-    if (f.kind === "airbase") base = f.icao || f.ident ? `apt-${slug(f.icao || f.ident)}` : `apt-${slug(f.sources[0].id)}`;
+    if (f.kind === "airbase" || f.kind === "heliport") base = f.icao || f.ident ? `apt-${slug(f.icao || f.ident)}` : `apt-${slug(f.sources[0].id)}`;
     else base = `${f.kind === "naval_base" ? "nav" : f.kind === "port" ? "port" : "mil"}-${slug(f.sources[0].id)}`;
     let id = base;
     for (let n = 2; used.has(id); n++) id = `${base}-${n}`;
     used.add(id);
     f.id = id;
-    f.name = f.name || (f.kind === "airbase" ? f.icao || "Unnamed airfield" : f.kind === "naval_base" ? "Unnamed naval base" : f.kind === "port" ? "Unnamed port" : `Unnamed ${f.areaType ?? "military"} area`);
+    f.name = f.name || (f.kind === "airbase" ? f.icao || "Unnamed airfield" : f.kind === "heliport" ? "Unnamed heliport" : f.kind === "naval_base" ? "Unnamed naval base" : f.kind === "port" ? "Unnamed port" : `Unnamed ${f.areaType ?? "military"} area`);
     delete f.key;
     delete f.ident;
-    if (f.kind !== "airbase") {
-      delete f.runways;
-    }
+    if (f.kind !== "airbase") delete f.runways;
   }
 
   final.sort((a, b) => a.kind.localeCompare(b.kind) || a.id.localeCompare(b.id));
