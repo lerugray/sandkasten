@@ -10,6 +10,7 @@ import {
 } from "@/lib/facilities/facilities";
 import type { Facility } from "@/lib/facilities/facilities";
 
+import { MAP_FONT } from "@/lib/map/styles";
 const POINT_TIERS = [
   { tier: 0, minzoom: 3, labelMinzoom: 6.5 },
   { tier: 1, minzoom: 5.5, labelMinzoom: 7 },
@@ -234,7 +235,7 @@ function build(map: maplibregl.Map, facilities: Facility[]) {
       filter: ["==", ["get", "tier"], tier],
       layout: {
         "text-field": ["get", "name"],
-        "text-font": ["Open Sans Regular"],
+        "text-font": [MAP_FONT],
         "text-size": 12,
         "text-offset": [0, 1.7],
         "text-anchor": "top",

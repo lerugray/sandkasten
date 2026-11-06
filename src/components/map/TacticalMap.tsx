@@ -6,6 +6,8 @@ import {
   ADAPTIVE_PROJECTION,
   FLAT_PROJECTION,
   HILLSHADE_LAYER_ID,
+  BASEMAP_CREDIT_TEXT,
+  SATELLITE_CREDIT_TEXT,
   SATELLITE_LAYER_ID,
   TERRAIN_SOURCE_ID,
   getMapStyle,
@@ -328,9 +330,13 @@ export function TacticalMap({
         )}
         <span>Z{zoom.toFixed(1)}</span>
         {contacts && <span>{contacts.length} contacts</span>}
-        {hasFacilities && (
-          <span data-testid="map-attribution" className="text-sm truncate">
-            {FACILITY_ATTRIBUTION}
+        <span data-testid="map-attribution" className="text-sm truncate">
+          {BASEMAP_CREDIT_TEXT}
+          {hasFacilities ? `. ${FACILITY_ATTRIBUTION}` : ""}
+        </span>
+        {satelliteOn && (
+          <span data-testid="map-satellite-credit" className="text-sm truncate">
+            {SATELLITE_CREDIT_TEXT}
           </span>
         )}
         <span className="ml-auto">{scenario.name}</span>
