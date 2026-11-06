@@ -178,3 +178,34 @@ describe("S2-3 / card 1: DDG 89 Harpoon row is a plain scenario assumption", () 
     expect(notes).toContain("The modifications require removal of Harpoon missile capability");
   });
 });
+
+describe("round 2: a VERIFIED figure needs a source that states it for that variant", () => {
+  const notes = fs.readFileSync(path.join(ROOT, "docs/handoffs/platform-db-2026-11-03/NOTES.md"), "utf-8");
+  const methods = fs.readFileSync(path.join(ROOT, "src/data/platforms/METHODS.md"), "utf-8");
+
+  it("Iranian F-14A performance is not verified from F-14D/F-14B tables; METHODS.md gives the method", () => {
+    const perf = bySlug("iriaf-f-14a-tomcat").performance;
+    expect(perf.provenance).toBe("estimated");
+    for (const [field, c] of Object.entries<Rec>(perf.fieldCitations ?? {})) {
+      expect(c.provenance, `performance.${field}`).not.toBe("verified");
+    }
+    expect(methods).toMatch(/F-14A performance/);
+  });
+
+  it("Nimitz draft is not verified against FAS s1 (which gives no draft); it cites the source that states it, tagged estimated", () => {
+    const d = bySlug("nimitz-cvn-68").dimensions;
+    expect(d.draftM).toBe(11.3);
+    const c = d.fieldCitations?.draftM;
+    expect(c, "draftM needs its own citation").toBeDefined();
+    expect(c.provenance).toBe("estimated");
+    expect(c.sourceId).toBe("s13");
+    expect(bySlug("nimitz-cvn-68").sources.find((s: Rec) => s.id === "s13").publisher).toBe("Wikipedia");
+    expect(notes).toContain("a draft of 37 ft");
+  });
+
+  it("the row renders EST for Nimitz draft and plain for its other dimensions", () => {
+    const m = html("nimitz-cvn-68");
+    expect(kvRow(m, "Draft")).toContain("EST");
+    for (const label of ["Length", "Beam", "Full-load displacement"]) expect(kvRow(m, label), label).not.toContain("EST");
+  });
+});
