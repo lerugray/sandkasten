@@ -46,4 +46,6 @@ The uncapped numbers moved up, which is machine load noise (the box was busy); t
 - OpenFreeMap is a free community service with no SLA. If it ever goes away, `BASEMAP_TILEJSON` is the one line to repoint (self-hosted PMTiles of the same OpenMapTiles schema would work without other changes).
 - Satellite default stays 2018 CC BY-NC-SA until Ray decides; 2017 (CC BY) has no-data holes over the theater.
 - Status bar is now two rows: the existing row, then a 12px credits row (base map, facilities, and imagery with its licence when SAT is on). MapLibre's own attribution control moved to bottom-left above it and is 12px (was 10px).
+- Fixed while testing: the map handle `__maplibreMap` (read by the editor unit placer) was set on `load`; the vector style makes `load` wait on remote tiles, so an early click was dropped (sand-001 failed 2 of 4 under load). It is now set at construction (6/6 after).
+- Final run on head: unit 100/100, GPU e2e 60/60 (two earlier runs each had one load-related failure: the sand-001 one above, and a 30 s click timeout in the globe test at load average 25+ that passed 3/3 in isolation).
 - Not done: no takeoff or landing model (sim fence).
