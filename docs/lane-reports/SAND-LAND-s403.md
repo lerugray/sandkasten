@@ -1,4 +1,4 @@
-SAND-LAND READY head=HEADSHA main_e2e=36/36 merged_e2e=44/44 unit=83/83 gpu=ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)
+SAND-LAND READY head=eea530b main_e2e=36/36 merged_e2e=44/44 unit=83/83 gpu=ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)
 
 Branch `s403/sand-land` = simfix `b5ff3a6` + merge of platformdb `2268216`. Main was 8afe1a5 when run (origin/main has since gained only a docs card, 6e70e22). Unit on main: no suite exists (vitest arrives with simfix).
 
