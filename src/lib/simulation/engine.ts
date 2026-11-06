@@ -1,7 +1,8 @@
 import type { Unit } from "@/types/game";
-import type { GameState, Contact } from "./gameState";
+import type { GameState, Contact, PhaseSchedule } from "./gameState";
 import { updateUnitMovement } from "./movement";
 import { runDetectionChecks, mergeContact } from "./detection";
+import { ageContacts } from "./contacts";
 import { runAIUpdate, type AIState } from "@/lib/ai/aiController";
 import {
   evaluateEvents,
@@ -14,7 +15,20 @@ import {
 } from "./combat";
 
 const DETECTION_INTERVAL_MS = 5000; // run detection every 5 sim-seconds
-let lastDetectionTime = 0;
+const AI_INTERVAL_MS = 5000; // same cadence as detection
+/** A stalled frame (background tab, debugger) must not become a huge jump in game time. */
+const MAX_REAL_DT_MS = 2000;
+/** The phases run on a 5 s grid, so a long step is cut into pieces no longer than that. */
+const MAX_SUBSTEP_MS = 5000;
+
+/** Next due time on the grid, keeping the remainder so cadence does not drift with the step size. */
+function advanceDue(due: number, now: number, interval: number): number {
+  return due + interval * (Math.floor((now - due) / interval) + 1);
+}
+
+let contactSeq = 0;
+
+type TickResult = { gameState: GameState; eventState?: EventState; combatState?: CombatState };
 
 /**
  * Advance the simulation by one tick.
@@ -28,25 +42,44 @@ export function simulationTick(
   aiState?: AIState,
   eventState?: EventState,
   combatState?: CombatState
-): { gameState: GameState; eventState?: EventState; combatState?: CombatState } {
-  if (state.isPaused) return { gameState: state, eventState, combatState };
+): TickResult {
+  // A finished scenario stays finished
+  if (state.isPaused || eventState?.scenarioResult) return { gameState: state, eventState, combatState };
 
-  const simDtMs = dtMs * state.speed;
+  const simDtMs = Math.min(Math.max(dtMs, 0), MAX_REAL_DT_MS) * state.speed;
+  const steps = Math.max(1, Math.ceil(simDtMs / MAX_SUBSTEP_MS));
+  const stepMs = simDtMs / steps;
+
+  let result: TickResult = { gameState: state, eventState, combatState };
+  for (let i = 0; i < steps; i++) {
+    result = tickStep(result.gameState, stepMs, aiState, result.eventState, result.combatState);
+    if (result.eventState?.scenarioResult) break;
+  }
+  return result;
+}
+
+function tickStep(
+  state: GameState,
+  simDtMs: number,
+  aiState?: AIState,
+  eventState?: EventState,
+  combatState?: CombatState
+): TickResult {
   const simDtSeconds = simDtMs / 1000;
   const newSimTime = state.simTime + simDtMs;
+  let schedule: PhaseSchedule = state.schedule;
 
-  // --- Phase 0: AI Decision-making (throttled, same cadence as detection) ---
-  let currentOrders = state.orders;
-  if (aiState) {
-    currentOrders = runAIUpdate(
-      { ...state, simTime: newSimTime },
-      aiState
-    );
+  // Work on a copy of the orders so nothing ever mutates the caller's map
+  let currentOrders = new Map(state.orders);
+
+  // --- Phase 0: AI Decision-making ---
+  if (aiState && newSimTime >= schedule.aiAt) {
+    currentOrders = runAIUpdate({ ...state, simTime: newSimTime, orders: currentOrders }, aiState);
+    schedule = { ...schedule, aiAt: advanceDue(schedule.aiAt, newSimTime, AI_INTERVAL_MS) };
   }
 
   // --- Phase 1: Movement ---
-  const stateWithOrders = { ...state, orders: currentOrders };
-  const newSides = stateWithOrders.sides.map((side) => ({
+  const newSides = state.sides.map((side) => ({
     ...side,
     units: side.units.map((unit) => {
       if (unit.damageState === "destroyed") return unit;
@@ -55,46 +88,36 @@ export function simulationTick(
       if (!orders) return unit;
 
       const result = updateUnitMovement(unit, orders, simDtSeconds);
-      // Update orders if waypoints were consumed
       currentOrders.set(unit.id, result.orders);
       return result.unit;
     }),
   }));
 
-  // --- Phase 2: Detection (throttled) ---
-  let newContacts = [...state.contacts];
-
-  if (newSimTime - lastDetectionTime >= DETECTION_INTERVAL_MS) {
-    lastDetectionTime = newSimTime;
-    newContacts = runDetectionPhase(newSides, { ...stateWithOrders, simTime: newSimTime });
+  // --- Phase 2: Detection (every side, on its own schedule) ---
+  let playerContacts = state.contacts;
+  let sideContacts = state.sideContacts;
+  if (newSimTime >= schedule.detectionAt) {
+    schedule = { ...schedule, detectionAt: advanceDue(schedule.detectionAt, newSimTime, DETECTION_INTERVAL_MS) };
+    const detectState: GameState = { ...state, sides: newSides, orders: currentOrders, simTime: newSimTime };
+    const detected = runDetectionPhase(detectState);
+    playerContacts = detected.player;
+    sideContacts = detected.others;
   }
 
-  // --- Phase 3: Contact aging ---
-  newContacts = newContacts
-    .map((contact) => {
-      const age = newSimTime - contact.lastUpdateTime;
-      if (age > 120000) {
-        return null;
-      }
-      if (age > 60000 && contact.classification === "tracked") {
-        return { ...contact, classification: "classified" as const };
-      }
-      if (age > 30000) {
-        return {
-          ...contact,
-          positionUncertainty: contact.positionUncertainty + 0.5,
-        };
-      }
-      return contact;
-    })
-    .filter((c): c is Contact => c !== null);
+  // --- Phase 3: Contact aging, and dropping contacts on units that no longer exist ---
+  const alive = new Set(newSides.flatMap((s) => s.units).filter((u) => u.damageState !== "destroyed").map((u) => u.id));
+  const keep = (list: Contact[]) => ageContacts(list.filter((c) => alive.has(c.actualUnitId)), newSimTime);
+  playerContacts = keep(playerContacts);
+  sideContacts = Object.fromEntries(Object.entries(sideContacts).map(([side, list]) => [side, keep(list)]));
 
   let newGameState: GameState = {
     ...state,
     simTime: newSimTime,
     sides: newSides,
-    contacts: newContacts,
+    contacts: playerContacts,
+    sideContacts,
     orders: currentOrders,
+    schedule,
   };
 
   // --- Phase 4: TCA Events (run BEFORE combat so doctrine changes take effect) ---
@@ -108,13 +131,13 @@ export function simulationTick(
     }
   }
 
-  // --- Phase 5: Combat (uses runtime doctrine overrides from TCA events) ---
+  // --- Phase 5: Combat (doctrine resolved per unit, including runtime overrides from events) ---
   let newCombatState = combatState;
   if (combatState) {
     const combatResult = runCombatPhase(
       newGameState,
       combatState,
-      aiState?.sideDoctrine ?? {},
+      { missions: aiState?.missions ?? [], sideDoctrine: aiState?.sideDoctrine ?? {} },
       simDtSeconds
     );
     newGameState = combatResult.state;
@@ -124,74 +147,55 @@ export function simulationTick(
   return { gameState: newGameState, eventState: newEventState, combatState: newCombatState };
 }
 
-function runDetectionPhase(
-  sides: GameState["sides"],
-  state: GameState
-): Contact[] {
-  const contacts = [...state.contacts];
-  const allUnits = sides.flatMap((s) => s.units);
+/** Every side's sensors against every other side's units; each side only ever updates its own contacts. */
+function runDetectionPhase(state: GameState): { player: Contact[]; others: Record<string, Contact[]> } {
+  const allUnits: Unit[] = state.sides.flatMap((s) => s.units);
   const playerSide = state.scenario.playerSide;
+  const stores: Record<string, Contact[]> = {};
 
-  // For each friendly unit, check detection against all non-friendly units
-  const friendlyUnits = allUnits.filter((u) => u.side === playerSide && u.damageState !== "destroyed");
-  const hostileUnits = allUnits.filter((u) => u.side !== playerSide && u.side !== "Civilian" && u.damageState !== "destroyed");
+  for (const side of state.sides) {
+    const contacts = [...(side.name === playerSide ? state.contacts : state.sideContacts[side.name] ?? [])];
+    const detectors = side.units.filter((u) => u.damageState !== "destroyed");
+    const targets = allUnits.filter((u) => u.side !== side.name && u.side !== "Civilian" && u.damageState !== "destroyed");
 
-  for (const detector of friendlyUnits) {
-    const detectorOrders = state.orders.get(detector.id);
-    if (!detectorOrders) continue;
+    for (const detector of detectors) {
+      const detectorOrders = state.orders.get(detector.id);
+      if (!detectorOrders) continue;
 
-    for (const target of hostileUnits) {
-      const targetOrders = state.orders.get(target.id);
-      if (!targetOrders) continue;
+      for (const target of targets) {
+        const targetOrders = state.orders.get(target.id);
+        if (!targetOrders) continue;
 
-      const result = runDetectionChecks(detector, detectorOrders, target, targetOrders);
-      if (!result) continue;
+        const result = runDetectionChecks(detector, detectorOrders, target, targetOrders);
+        if (!result) continue;
 
-      // Find existing contact for this target
-      const existingIdx = contacts.findIndex(
-        (c) => c.actualUnitId === target.id && c.side === playerSide
-      );
-
-      if (existingIdx >= 0) {
-        // Update existing contact
-        contacts[existingIdx] = mergeContact(
-          contacts[existingIdx],
-          result,
-          target.position,
-          state.simTime
-        );
-      } else {
-        // New contact
-        const jitterLat = (Math.random() - 0.5) * result.uncertainty * 0.009;
-        const jitterLng = (Math.random() - 0.5) * result.uncertainty * 0.009;
-
-        contacts.push({
-          id: `contact-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          detectedById: detector.id,
-          actualUnitId: target.id,
-          side: playerSide,
-          classification: result.classification,
-          position: {
-            lat: target.position.lat + jitterLat,
-            lng: target.position.lng + jitterLng,
-          },
-          positionUncertainty: result.uncertainty,
-          lastUpdateTime: state.simTime,
-          sensorType: result.sensorType,
-          platformName: result.classification === "classified"
-            ? target.name
-            : undefined,
-        });
+        const existingIdx = contacts.findIndex((c) => c.actualUnitId === target.id);
+        if (existingIdx >= 0) {
+          contacts[existingIdx] = mergeContact(contacts[existingIdx], result, target.position, state.simTime);
+        } else {
+          const jitterLat = (Math.random() - 0.5) * result.uncertainty * 0.009;
+          const jitterLng = (Math.random() - 0.5) * result.uncertainty * 0.009;
+          contactSeq += 1;
+          contacts.push({
+            id: `contact-${contactSeq}`,
+            detectedById: detector.id,
+            actualUnitId: target.id,
+            side: side.name,
+            classification: result.classification,
+            position: { lat: target.position.lat + jitterLat, lng: target.position.lng + jitterLng },
+            positionUncertainty: result.uncertainty,
+            baseUncertainty: result.uncertainty,
+            lastUpdateTime: state.simTime,
+            lastFixTime: state.simTime,
+            sensorType: result.sensorType,
+            platformName: result.classification === "classified" ? target.name : undefined,
+          });
+        }
       }
     }
+    stores[side.name] = contacts;
   }
 
-  return contacts;
-}
-
-/**
- * Reset detection timer (call when loading a new game state)
- */
-export function resetDetectionTimer(): void {
-  lastDetectionTime = 0;
+  const { [playerSide]: player = state.contacts, ...others } = stores;
+  return { player, others };
 }

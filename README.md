@@ -46,12 +46,12 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Missiles fly with trails and target lines; intercepts and hits flash briefly
 - Drag to pan (it coasts when you let go), wheel to zoom at the cursor, `T` tilts the plot into a low 3D theater with NOAA relief, wireframe sensor domes and aircraft at altitude
 - Terminal chrome: vendored JetBrains Mono, one phosphor green, one alarm red, function-key command bar, teletype traffic strip fed by the combat log, intel and autopause
-- Keys: `Space` pause, `1`-`6` speed, `S` sensors, `M` measure, `G` god mode, `T` tilt, `A` autopause, `H`/`?` help
+- Keys: `Space` pause, `1`-`6` speed, `S` sensors, `M` measure, `G` god mode, `T` tilt, `A` autopause, `H`/`?` help, `E` engage the chosen contact, `N` next contact, `R` cycle rules of engagement, `F` weapons free, `X` weapons hold
 - The old MapLibre map stays at `/play?map=legacy` for comparison
 
 ### Foundation
 - Dark tactical map with NATO MIL-STD-2525 symbols (home page, editor, legacy play view)
-- Demo scenario: US carrier strike group vs. Iranian naval forces, Strait of Hormuz
+- Demo scenario: US carrier strike group vs. Iranian naval forces, Strait of Hormuz. You win by taking the carrier into the transit gate; losing the carrier is a defeat. Ship classes were fact-checked against a 2026-03-15 date (see `docs/handoffs/sim-fix-2026-11-03/NOTES.md`)
 - Click units for detailed Info/Sensors/Weapons panels
 - Shift+click to pin sensor range rings
 - Sensor coverage overlay — toggle radar coverage circles (`S` key)
@@ -62,13 +62,14 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 
 ### Simulation
 - Real-time simulation at `/play`
-- Waypoint-based movement with four throttle settings
+- Waypoint-based movement with a STOP and four throttle settings; a unit that finishes its route holds position
 - Radar detection (range-based probability, radar horizon)
 - ESM passive detection of active emitters
 - Contact classification: Unknown → Detected → Classified → Tracked
-- Fog of war — you see only what your sensors report
+- Fog of war — you see only what your sensors report; every side (not just yours) reasons from its own contacts
 - God mode toggle to see all units (`G` key)
-- Contacts degrade and fade without fresh sensor data
+- Contacts degrade and fade without fresh sensor data; a weak ESM bearing cannot keep a stale track alive
+- One authoritative game state: pausing, speed changes and orders no longer rewind the clock
 - Time controls: pause/play, 1x through 60x speed
 - Autopause on new contacts, damage, incoming weapons, intel messages (configurable)
 
@@ -79,6 +80,10 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Cascading doctrine: side → mission → unit overrides
 
 ### Combat
+- **Player ENGAGE order** — pick a unit, a contact (DETECTED or better) and a weapon (or AUTO) in the order panel, then ENGAGE (`E`). Range, ammo, weapon domain and shooter state are checked the same way the AI is; a refusal says why. Only sensor knowledge is used, never true positions
+- **Rules of engagement per unit** — WEAPONS HOLD / TIGHT / FREE (`X` / `R` / `F`). Default is TIGHT: a unit fires only in self-defence (a weapon in flight at it), at contacts classified hostile. FREE fires at any contact DETECTED or better
+- **Cumulative damage** — each unit keeps a running damage total; damaged / mission-kill / destroyed come from the total (15% / 50% / 80% of the platform's damage points). Aircraft keep a separate one-hit rule (`AIRCRAFT_ONE_HIT_RATIO`)
+- Defences are spent: chaff runs out, each try counts
 - Anti-ship missile launch, flight, intercept
 - WRA-based salvo sizing — ships fire 2-8 missiles based on target's missile defense
 - Weapon tracks on map — dashed lines showing missiles in flight
@@ -98,8 +103,9 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Covers controls, game concepts, sidebar guide, and media feed setup
 
 ### Testing
-- 36 Playwright E2E tests covering page loads, simulation gameplay, combat, autopause, and the terminal design system (vendored font, no remote fonts, chrome never resizes the plot)
-- `npm test` runs all tests headless; `npm run test:ui` opens the visual debugger
+- Vitest unit tests (`npm run test:unit`) cover movement, sensors and contacts, combat and damage, engage and ROE, AI missions, event scripting, the simulation session and the demo's ship facts
+- Playwright E2E tests (`npm run test:e2e`) covering page loads, simulation gameplay, combat, autopause, and the terminal design system (vendored font, no remote fonts, chrome never resizes the plot)
+- `npm test` runs the unit tests, then all E2E tests headless; `npm run test:ui` opens the visual debugger
 
 ---
 

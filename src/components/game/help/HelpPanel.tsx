@@ -96,6 +96,8 @@ function ControlsTab({ terminal }: { terminal: boolean }) {
         {terminal && <div><KeyLabel>1</KeyLabel>-<KeyLabel>6</KeyLabel> Time speed 1x, 2x, 5x, 10x, 30x, 60x</div>}
         {terminal && <div><KeyLabel>S</KeyLabel> Sensor coverage <KeyLabel>M</KeyLabel> Measure <KeyLabel>G</KeyLabel> God mode</div>}
         {terminal && <div><KeyLabel>T</KeyLabel> Tilt the plot into the 3D theater and back</div>}
+        {terminal && <div><KeyLabel>E</KeyLabel> Engage the chosen contact <KeyLabel>N</KeyLabel> Next contact</div>}
+        {terminal && <div><KeyLabel>R</KeyLabel> Cycle rules of engagement <KeyLabel>F</KeyLabel> Weapons free <KeyLabel>X</KeyLabel> Weapons hold</div>}
         {terminal && <div><KeyLabel>A</KeyLabel> Autopause settings</div>}
         <div><KeyLabel>H</KeyLabel> or <KeyLabel>?</KeyLabel> Open this help panel</div>
         <div><KeyLabel>Esc</KeyLabel> Close panels and deselect units</div>

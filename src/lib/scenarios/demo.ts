@@ -5,7 +5,7 @@ export const demoScenario: Scenario = {
   description:
     "A US carrier strike group transits the Strait of Hormuz while Iranian naval forces patrol the coastline.",
   briefing:
-    "Your carrier strike group must transit the Strait of Hormuz. Iranian fast attack craft and patrol vessels have been observed in the area. Rules of engagement: weapons tight — engage only if fired upon.",
+    "Your carrier strike group must transit the Strait of Hormuz: bring USS Nimitz into the marked transit gate in the strait. Iranian fast attack craft and patrol vessels have been observed in the area. Rules of engagement: weapons tight — engage only if fired upon.",
   theater: {
     center: { lng: 56.5, lat: 26.5 },
     zoom: 7,
@@ -31,8 +31,10 @@ export const demoScenario: Scenario = {
         },
         {
           id: "us-cg-1",
-          name: "USS Bunker Hill (CG-52)",
-          platformId: 598,
+          // Replaces USS Bunker Hill (CG-52, decommissioned 22 Sep 2023). USS Chosin is in active service (AAW cruiser role):
+          // https://en.wikipedia.org/wiki/USS_Chosin ; https://news.usni.org/2026/09/28/usni-news-fleet-and-marine-tracker-sept-28-2026
+          name: "USS Chosin (CG-65)",
+          platformId: 9001,
           side: "US Navy",
           position: { lng: 57.3, lat: 25.3 },
           heading: 315,
@@ -53,8 +55,9 @@ export const demoScenario: Scenario = {
         },
         {
           id: "us-ddg-2",
+          // Cole is Flight I: own profile 9003 (https://www.history.navy.mil/browse-by-topic/ships/modern-ships/uss-cole.html)
           name: "USS Cole (DDG-67)",
-          platformId: 111,
+          platformId: 9003,
           side: "US Navy",
           position: { lng: 57.1, lat: 25.4 },
           heading: 315,
@@ -64,8 +67,10 @@ export const demoScenario: Scenario = {
         },
         {
           id: "us-ffg-1",
-          name: "USS Taylor (FFG-50)",
-          platformId: 1283,
+          // Replaces USS Taylor (FFG-50, decommissioned 8 May 2015); no Perry-class frigates remain.
+          // USS Nitze (Flight IIA) in active service: https://en.wikipedia.org/wiki/USS_Nitze
+          name: "USS Nitze (DDG-94)",
+          platformId: 9002,
           side: "US Navy",
           position: { lng: 57.9, lat: 25.0 },
           heading: 315,
@@ -173,6 +178,7 @@ export const demoScenario: Scenario = {
         },
         {
           id: "ir-ff-1",
+          // FLAGGED: reportedly sunk 1-2 Mar 2026 (see NOTES-demo.md and lookup.ts profile 1652); kept for Ray's decision.
           name: "Bayandor (FF-81)",
           platformId: 1652,
           side: "Iran",
@@ -209,5 +215,18 @@ export const demoScenario: Scenario = {
       ],
     },
   ],
-  referencePoints: [],
+  referencePoints: [
+    {
+      id: "transit-gate",
+      name: "Strait of Hormuz transit gate",
+      type: "area",
+      side: "US Navy",
+      points: [
+        { lng: 56.2, lat: 26.5 },
+        { lng: 56.7, lat: 26.5 },
+        { lng: 56.7, lat: 26.8 },
+        { lng: 56.2, lat: 26.8 },
+      ],
+    },
+  ],
 };

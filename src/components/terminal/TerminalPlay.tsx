@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { DetailPanel } from "@/components/map/DetailPanel";
 import { ContactList } from "@/components/game/ContactList";
 import { OrderPanel } from "@/components/game/OrderPanel";
+import { useFireControls } from "@/components/game/useFireControls";
 import { MessageLog } from "@/components/game/MessageLog";
 import { CombatLog } from "@/components/game/CombatLog";
 import { MediaFeed } from "@/components/game/infowar/MediaFeed";
@@ -36,6 +37,8 @@ const LEFT_COL = 360;
 const TTY_H = 150;
 
 type Tab = "forces" | "messages" | "combat" | "media";
+
+const ROE_SHORT = { "weapons-hold": "HOLD", "weapons-tight": "TIGHT", "weapons-free": "FREE" } as const;
 
 const CLS_LABEL: Record<Contact["classification"], string> = {
   unknown: "UNK",
@@ -128,6 +131,9 @@ export function TerminalPlay() {
     clearWaypoints,
     setThrottle,
     toggleRadar,
+    setRoe,
+    engage,
+    orderFeedback,
     markMessageRead,
     resetSimulation,
     setAutopausePrefs,
@@ -275,6 +281,40 @@ export function TerminalPlay() {
   const playerSide = gameState.scenario.playerSide;
   const selectedUnit = selectedUnitId ? allUnits.find((u) => u.id === selectedUnitId) : null;
   const selectedOrders = selectedUnitId ? gameState.orders.get(selectedUnitId) : undefined;
+  const contactTag = useCallback((c: Contact) => `${c.platformName ?? `TN${trackNumber(c.id)}`} ${CLS_LABEL[c.classification]}`, []);
+  const { fire, engageTarget, cycleTarget, setRoeFor } = useFireControls({
+    unit: selectedUnit && selectedUnit.side === gameState.scenario.playerSide ? selectedUnit : null,
+    gameState,
+    config: demoScenarioConfig,
+    orderFeedback,
+    setRoe,
+    engage,
+    contactLabel: contactTag,
+  });
+
+  const cycleRoe = useCallback(() => {
+    if (!fire) return;
+    setRoeFor(fire.roe === "weapons-tight" ? "weapons-free" : fire.roe === "weapons-free" ? "weapons-hold" : "weapons-tight");
+  }, [fire, setRoeFor]);
+
+  // Fire keys: E engage, N next contact, R cycles the ROE, F/X set weapons free/hold directly
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || !fire) return;
+      const el = e.target as HTMLElement;
+      if (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable) return;
+      const k = e.key.toLowerCase();
+      if (k === "e") engageTarget();
+      else if (k === "n") cycleTarget();
+      else if (k === "f") setRoeFor("weapons-free");
+      else if (k === "r") cycleRoe();
+      else if (k === "x") setRoeFor("weapons-hold");
+      else return;
+      e.preventDefault();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [fire, engageTarget, cycleTarget, cycleRoe, setRoeFor]);
   const friendlyUnits = allUnits.filter((u) => u.side === playerSide);
   const messages = useMemo(() => eventState?.messages ?? [], [eventState?.messages]);
   const unreadCount = messages.filter((m) => !m.read).length;
@@ -509,6 +549,7 @@ export function TerminalPlay() {
                     onClearWaypoints={() => clearWaypoints(selectedUnit.id)}
                     onSetThrottle={(t) => setThrottle(selectedUnit.id, t)}
                     onToggleRadar={() => toggleRadar(selectedUnit.id)}
+                    fire={fire}
                   />
                 </section>
               )}
@@ -623,6 +664,11 @@ export function TerminalPlay() {
         </Cmd>
         <Cmd cap="T" onClick={() => setTilt((v) => !v)} active={tilt} ariaLabel="Toggle 3D tilt">
           TILT
+        </Cmd>
+        <span className="tx-rule-v" />
+        <Cmd cap="E" onClick={engageTarget} testId="cmd-engage" ariaLabel="Engage selected contact">ENGAGE</Cmd>
+        <Cmd cap="R" onClick={cycleRoe} testId="cmd-roe" active={fire?.roe === "weapons-free"} alarm={fire?.roe === "weapons-free"} ariaLabel="Cycle rules of engagement">
+          {fire ? ROE_SHORT[fire.roe] : "ROE"}
         </Cmd>
         <span className="tx-anchor">
           <Cmd cap="A" onClick={() => setShowAutopauseSettings((s) => !s)} active={prefs.enabled} ariaLabel="Autopause settings">
