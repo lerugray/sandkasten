@@ -57,7 +57,8 @@ const LIGHT: BasePalette = {
   ferry: "#6e94b0", boundary: "#7a6f8a", boundarySub: "#b7b0c0", label: "#3d4651", labelDim: "#6b747e", waterLabel: "#5b83a3", halo: "#f4f2ee",
 };
 
-const NAME = ["coalesce", ["get", "name_en"], ["get", "name:latin"], ["get", "name"]];
+// Latin-script names only: an OSM feature with no English or Latin name goes unlabelled rather than showing Persian/Arabic script that cannot be read on imagery.
+const NAME = ["coalesce", ["get", "name_en"], ["get", "name:latin"]];
 const OFM = BASEMAP_SOURCE_ID;
 const widthRamp = (a: number, b: number, c: number) => ["interpolate", ["exponential", 1.4], ["zoom"], 8, a, 12, b, 16, c] as unknown as number;
 
@@ -83,16 +84,16 @@ function baseLayers(id: string, p: BasePalette): LayerSpecification[] {
 
 /** Borders and place names sit above the satellite and hillshade layers so they stay readable on imagery. */
 function overlayLayers(id: string, p: BasePalette): LayerSpecification[] {
-  const halo = { "text-halo-color": p.halo, "text-halo-width": 1.4 };
+  const halo = { "text-halo-color": p.halo, "text-halo-width": 2 };
   return [
     { id: `${id}-boundary-sub`, type: "line", source: OFM, "source-layer": "boundary", minzoom: 4, filter: ["all", ["in", ["get", "admin_level"], ["literal", [3, 4]]], ["!=", ["get", "maritime"], 1]], paint: { "line-color": p.boundarySub, "line-width": 0.8, "line-dasharray": [3, 2] } },
     { id: `${id}-boundary-country`, type: "line", source: OFM, "source-layer": "boundary", filter: ["all", ["==", ["get", "admin_level"], 2], ["!=", ["get", "maritime"], 1]], paint: { "line-color": p.boundary, "line-width": ["interpolate", ["linear"], ["zoom"], 2, 0.6, 8, 1.2, 14, 1.8], "line-dasharray": [4, 2] } },
-    { id: `${id}-water-label`, type: "symbol", source: OFM, "source-layer": "water_name", minzoom: 3, layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": 11, "text-letter-spacing": 0.15, "text-max-width": 8 }, paint: { "text-color": p.waterLabel, ...halo } },
-    { id: `${id}-place-village`, type: "symbol", source: OFM, "source-layer": "place", minzoom: 10, filter: ["in", ["get", "class"], ["literal", ["village", "suburb", "hamlet", "neighbourhood"]]], layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": 10.5 }, paint: { "text-color": p.labelDim, ...halo } },
-    { id: `${id}-place-town`, type: "symbol", source: OFM, "source-layer": "place", minzoom: 7, filter: ["==", ["get", "class"], "town"], layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": 11.5 }, paint: { "text-color": p.label, ...halo } },
-    { id: `${id}-place-city`, type: "symbol", source: OFM, "source-layer": "place", minzoom: 4, filter: ["==", ["get", "class"], "city"], layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": ["interpolate", ["linear"], ["zoom"], 4, 11, 10, 15] as never }, paint: { "text-color": p.label, ...halo } },
-    { id: `${id}-place-state`, type: "symbol", source: OFM, "source-layer": "place", minzoom: 4, maxzoom: 8, filter: ["==", ["get", "class"], "state"], layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": 10.5, "text-transform": "uppercase", "text-letter-spacing": 0.1 }, paint: { "text-color": p.labelDim, ...halo } },
-    { id: `${id}-place-country`, type: "symbol", source: OFM, "source-layer": "place", maxzoom: 7, filter: ["==", ["get", "class"], "country"], layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": ["interpolate", ["linear"], ["zoom"], 2, 10, 6, 15] as never, "text-transform": "uppercase", "text-letter-spacing": 0.12 }, paint: { "text-color": p.label, ...halo } },
+    { id: `${id}-water-label`, type: "symbol", source: OFM, "source-layer": "water_name", minzoom: 3, layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": 12, "text-letter-spacing": 0.15, "text-max-width": 8 }, paint: { "text-color": p.waterLabel, ...halo } },
+    { id: `${id}-place-village`, type: "symbol", source: OFM, "source-layer": "place", minzoom: 10, filter: ["in", ["get", "class"], ["literal", ["village", "suburb", "hamlet", "neighbourhood"]]], layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": 12 }, paint: { "text-color": p.labelDim, ...halo } },
+    { id: `${id}-place-town`, type: "symbol", source: OFM, "source-layer": "place", minzoom: 7, filter: ["==", ["get", "class"], "town"], layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": 12 }, paint: { "text-color": p.label, ...halo } },
+    { id: `${id}-place-city`, type: "symbol", source: OFM, "source-layer": "place", minzoom: 4, filter: ["==", ["get", "class"], "city"], layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": ["interpolate", ["linear"], ["zoom"], 4, 12, 10, 15] as never }, paint: { "text-color": p.label, ...halo } },
+    { id: `${id}-place-state`, type: "symbol", source: OFM, "source-layer": "place", minzoom: 4, maxzoom: 8, filter: ["==", ["get", "class"], "state"], layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": 12, "text-transform": "uppercase", "text-letter-spacing": 0.1 }, paint: { "text-color": p.labelDim, ...halo } },
+    { id: `${id}-place-country`, type: "symbol", source: OFM, "source-layer": "place", maxzoom: 7, filter: ["==", ["get", "class"], "country"], layout: { "text-field": NAME as never, "text-font": [MAP_FONT], "text-size": ["interpolate", ["linear"], ["zoom"], 2, 12, 6, 15] as never, "text-transform": "uppercase", "text-letter-spacing": 0.12 }, paint: { "text-color": p.label, ...halo } },
   ];
 }
 

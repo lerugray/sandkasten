@@ -170,10 +170,10 @@
   padding: 1px 3px;
 }
 .tx-fac-label {
-  color: var(--tx-phosphor-dim, #2b9e5c);
-  background: rgba(2, 6, 4, 0.6);
+  color: var(--tx-phosphor, #3ddc84);
+  background: rgba(2, 6, 4, 0.72);
   padding: 1px 3px;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.04em;
   pointer-events: none;
 }

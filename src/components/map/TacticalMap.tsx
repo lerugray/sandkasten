@@ -107,14 +107,19 @@ export function TacticalMap({
       attributionControl: false,
     });
 
-    map.addControl(
-      new maplibregl.NavigationControl({ showCompass: false }),
-      "top-right"
-    );
-    map.addControl(
-      new maplibregl.AttributionControl({ compact: true }),
-      "bottom-left"
-    );
+    // bottom-right, collapsed to its info icon: the full credit line is always shown in the status bar, and the
+    // bottom-left corner belongs to the unit/facility panel.
+    const attrib = new maplibregl.AttributionControl({ compact: true });
+    map.addControl(attrib, "bottom-right");
+    // added after the attribution so it stacks above the info icon instead of covering it
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+    const closeAttrib = () => {
+      const el = map.getContainer().querySelector(".maplibregl-ctrl-attrib");
+      el?.classList.remove("maplibregl-compact-show");
+      el?.removeAttribute("open");
+    };
+    closeAttrib();
+    map.once("load", closeAttrib);
 
     // Exposed at construction: the editor placer reads it, and `load` waits on the remote tiles.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -222,6 +227,9 @@ export function TacticalMap({
               facilities={scenario.facilities!}
               visible={showFacilities}
               selectedId={selectedFacilityId}
+              unitPositions={visibleUnits
+                .filter((u) => u.damageState !== "destroyed")
+                .map((u) => [Math.round(u.position.lng * 200) / 200, Math.round(u.position.lat * 200) / 200] as [number, number])}
             />
           )}
           <UnitLayer
@@ -334,7 +342,7 @@ export function TacticalMap({
           {contacts && <span>{contacts.length} contacts</span>}
           <span className="ml-auto">{scenario.name}</span>
         </div>
-        <div className="px-4 pb-1 text-xs leading-4 flex flex-wrap gap-x-6">
+        <div className="px-4 pb-1 text-[13px] leading-5 text-[#cbd5e1] flex flex-wrap gap-x-6">
           <span data-testid="map-attribution">
             {BASEMAP_CREDIT_TEXT}
             {hasFacilities ? `. ${FACILITY_ATTRIBUTION}` : ""}

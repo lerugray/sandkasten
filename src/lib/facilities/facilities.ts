@@ -1,5 +1,6 @@
 import type { Feature, FeatureCollection, LineString, Point, Polygon } from "geojson";
 import data from "../../../data/facilities/hormuz.json";
+import { shortFacilityName } from "./labels";
 
 export type FacilityKind = "airbase" | "heliport" | "naval_base" | "port" | "military_area";
 
@@ -150,6 +151,7 @@ export function facilityPointsGeoJSON(list: Facility[] = hormuzFacilities): Feat
       properties: {
         id: f.id,
         name: f.name,
+        label: shortFacilityName(f.name),
         kind: f.kind,
         use: f.use ?? (f.kind === "naval_base" ? "military" : "civil"),
         tier: facilityTier(f),

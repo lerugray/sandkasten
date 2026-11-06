@@ -22,6 +22,7 @@ import { LineBatch } from "./lineBatch";
 import { PALETTE } from "./palette";
 import { sidcFor, symbolTexture } from "./symbolTextures";
 import { FacilityPlotLayer } from "./facilityLayer";
+import { shortFacilityName } from "@/lib/facilities/labels";
 import type { Facility } from "@/lib/facilities/facilities";
 import geo from "./data/hormuz-geo.json";
 
@@ -81,6 +82,8 @@ interface Track {
   from: THREE.Vector2;
   to: THREE.Vector2;
   pos: THREE.Vector2;
+  /** world offset that fans out co-located glyphs; zero when the glyph is alone */
+  disp: THREE.Vector2;
   z: number;
   t0: number;
   history: number[]; // x,y pairs, oldest first
@@ -774,7 +777,7 @@ export class TacticalPlot {
     if (!t) {
       t = {
         key, kind, id,
-        from: new THREE.Vector2(), to: new THREE.Vector2(NaN, NaN), pos: new THREE.Vector2(),
+        from: new THREE.Vector2(), to: new THREE.Vector2(NaN, NaN), pos: new THREE.Vector2(), disp: new THREE.Vector2(),
         z: 0, t0: 0, history: [], lastHistSim: -Infinity,
         spriteW: 0, spriteH: 0, blockText: "", blockW: 0, blockH: 0, slot: 0,
         compactText: "", compactW: 0, compactH: 0, fullW: 0, fullH: 0, shownText: "",
@@ -1246,6 +1249,7 @@ export class TacticalPlot {
     dr.coverageDiscs = dr.coverageEdges = dr.unitSprites = dr.contactSprites = 0;
     dr.waypointPaths.length = 0;
     this.refreshOccluders(now);
+    this.spreadTracks();
     this.facilityLabels(input, solid);
 
     const dashPx = 7, gapPx = 5;
@@ -1379,7 +1383,9 @@ export class TacticalPlot {
       for (const t of this.tracks.values()) {
         if (!t.sprite) continue;
         const px = this.pxAt(t.pos.x, t.pos.y, t.z);
-        t.sprite.position.set(t.pos.x, t.pos.y, t.z);
+        const gx = t.pos.x + t.disp.x, gy = t.pos.y + t.disp.y;
+        t.sprite.position.set(gx, gy, t.z);
+        if (t.disp.x !== 0 || t.disp.y !== 0) thin.seg(t.pos.x, t.pos.y, t.z, gx, gy, t.z, C.dim, 0.5);
         const pulse = t.paintT ? Math.max(0, 1 - (now - t.paintT) / 350) : 0;
         const s = this.spriteK * (1 + pulse * 0.25);
         t.sprite.scale.set(t.spriteW * s, t.spriteH * s, 1);
@@ -1401,9 +1407,9 @@ export class TacticalPlot {
         if (hdg !== undefined && spd > 0) {
           const L = (14 + Math.min(26, spd * 0.06)) * px;
           const a = THREE.MathUtils.degToRad(hdg);
-          solid.seg(t.pos.x, t.pos.y, t.z, t.pos.x + Math.sin(a) * L, t.pos.y + Math.cos(a) * L, t.z, col, 0.85 * t.alpha);
+          solid.seg(gx, gy, t.z, gx + Math.sin(a) * L, gy + Math.cos(a) * L, t.z, col, 0.85 * t.alpha);
         }
-        if (t.z > 0.01) thin.seg(t.pos.x, t.pos.y, 0, t.pos.x, t.pos.y, t.z, col, 0.45);
+        if (t.z > 0.01) thin.seg(gx, gy, 0, gx, gy, t.z, col, 0.45);
 
         // radar sweep on emitters
         if (t.unit && input.orders.get(t.unit.id)?.radarActive) {
@@ -1519,7 +1525,7 @@ export class TacticalPlot {
     u.uAngle.value = angle % (Math.PI * 2);
     (u.uColor.value as THREE.Color).copy(color);
     u.uAlpha.value = alpha;
-    m.position.set(t.pos.x, t.pos.y, 0.001);
+    m.position.set(t.pos.x + t.disp.x, t.pos.y + t.disp.y, 0.001);
     m.scale.set(radius, radius, 1);
     m.visible = true;
   }
@@ -1558,12 +1564,48 @@ export class TacticalPlot {
   private reticle(batch: LineBatch, t: Track, half: number, col: THREE.Color, alpha: number) {
     const px = this.pxAt(t.pos.x, t.pos.y, t.z);
     const h = half * px, a = 6 * px;
-    const { x, y } = t.pos;
+    const x = t.pos.x + t.disp.x, y = t.pos.y + t.disp.y;
     const z = t.z;
     for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
       const cx = x + sx * h, cy = y + sy * h;
       batch.seg(cx, cy, z, cx - sx * a, cy, z, col, alpha);
       batch.seg(cx, cy, z, cx, cy - sy * a, z, col, alpha);
+    }
+  }
+
+
+  /** Fan out glyphs that would sit on top of each other so each can be told apart and clicked; the tether shows the true spot. */
+  private spreadTracks() {
+    const near: { t: Track; sx: number; sy: number }[] = [];
+    for (const t of this.tracks.values()) {
+      t.disp.set(0, 0);
+      if (t.kind === "weapon" || !t.sprite) continue;
+      const s = this.toScreen(t.pos.x, t.pos.y, t.z);
+      if (s.z >= 1 || s.x < -40 || s.x > this.W + 40 || s.y < -40 || s.y > this.H + 40) continue;
+      near.push({ t, sx: s.x, sy: s.y });
+    }
+    if (near.length < 2) return;
+    near.sort((a, b) => (a.t.id < b.t.id ? -1 : a.t.id > b.t.id ? 1 : 0));
+    const used = new Set<number>();
+    for (let i = 0; i < near.length; i++) {
+      if (used.has(i)) continue;
+      const group = [i];
+      for (let j = i + 1; j < near.length; j++) {
+        if (used.has(j)) continue;
+        if (Math.hypot(near[i].sx - near[j].sx, near[i].sy - near[j].sy) < 16) group.push(j);
+      }
+      if (group.length < 2) continue;
+      const n = group.length;
+      let cx = 0, cy = 0;
+      for (const g of group) { cx += near[g].sx; cy += near[g].sy; used.add(g); }
+      cx /= n; cy /= n;
+      const r = 14 + 3.5 * n;
+      group.forEach((g, k) => {
+        const a = -Math.PI / 2 + (2 * Math.PI * k) / n;
+        const e = near[g];
+        const px = this.pxAt(e.t.pos.x, e.t.pos.y, 0);
+        e.t.disp.set(((cx + Math.cos(a) * r) - e.sx) * px, -((cy + Math.sin(a) * r) - e.sy) * px);
+      });
     }
   }
 
@@ -1580,15 +1622,42 @@ export class TacticalPlot {
       const lo = this.groundAt(0, this.H, this.groundA), hi = this.groundAt(this.W, 0, this.groundB);
       const x0 = Math.min(lo?.x ?? -1e9, hi?.x ?? -1e9) - margin, x1 = Math.max(lo?.x ?? 1e9, hi?.x ?? 1e9) + margin;
       const y0 = Math.min(lo?.y ?? -1e9, hi?.y ?? -1e9) - margin, y1 = Math.max(lo?.y ?? 1e9, hi?.y ?? 1e9) + margin;
-      const draw = (it: { facility: Facility; x: number; y: number }, text: string, cls: string, dx: number, dy: number) => {
+      // obstacles a facility label must not sit on: every drawn facility symbol, every unit glyph, chrome
+      const obstacles: Rect[] = [];
+      const symTier = layer.maxTier(this.kPx);
+      for (const it of layer.items) {
+        if (it.tier > symTier) continue;
+        if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1) continue;
+        const s = this.toScreen(it.x, it.y, 0);
+        if (s.z < 1) obstacles.push({ x: s.x - 12, y: s.y - 12, w: 24, h: 24 });
+      }
+      for (const t of this.tracks.values()) {
+        const s = this.toScreen(t.pos.x + t.disp.x, t.pos.y + t.disp.y, t.z);
+        if (s.z >= 1) continue;
+        const hw = Math.max(12, (t.spriteW || 22) / 2) + 2, hh = Math.max(12, (t.spriteH || 22) / 2) + 2;
+        obstacles.push({ x: s.x - hw, y: s.y - hh, w: hw * 2, h: hh * 2 });
+      }
+      const hitsObstacle = (r: Rect, own: Rect | null) => obstacles.some((o) => o !== own && intersects(o, r));
+      const draw = (it: { facility: Facility; x: number; y: number }, text: string, cls: string, dx: number, dy: number, free = false) => {
         const s = this.toScreen(it.x, it.y, 0);
         if (s.z >= 1) return false;
-        const r = { x: s.x + dx, y: s.y + dy, w: text.length * 7.6 + 8, h: 16 };
-        if (placed.some((p) => intersects(p, r))) return false;
-        placed.push(r);
-        this.label(it.x, it.y, 0, text, cls, dx, dy);
-        used++;
-        return true;
+        const w = text.length * 7.6 + 8;
+        const own = obstacles.find((o) => Math.abs(o.x + o.w / 2 - s.x) < 1.5 && Math.abs(o.y + o.h / 2 - s.y) < 1.5) ?? null;
+        // right, left, above, below the symbol; the first slot that is clear of labels, symbols, glyphs and chrome wins
+        const slots: [number, number][] = free
+          ? [[dx, dy]]
+          : [[14, -8], [-14 - w, -8], [-w / 2, -26], [-w / 2, 12]];
+        for (const [ox, oy] of slots) {
+          const r = { x: s.x + ox, y: s.y + oy, w, h: 16 };
+          if (placed.some((p) => intersects(p, r))) continue;
+          if (!free && hitsObstacle(r, own)) continue;
+          if (this.underChrome(r)) continue;
+          placed.push(r);
+          this.label(it.x, it.y, 0, text, cls, ox, oy);
+          used++;
+          return true;
+        }
+        return false;
       };
       if (selId) {
         const it = layer.get(selId);
@@ -1603,9 +1672,10 @@ export class TacticalPlot {
           draw(it, facilityLabelText(it.facility), "tx-fac-label tx-fac-label--sel", 14, -8);
         }
       }
-      for (const it of layer.items) {
+      const byTier = layer.items.filter((it) => it.tier <= mt).sort((p, q) => p.tier - q.tier);
+      for (const it of byTier) {
         if (used >= cap) break;
-        if (it.tier > mt || it.facility.id === selId) continue;
+        if (it.facility.id === selId) continue;
         if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1) continue;
         draw(it, facilityLabelText(it.facility), "tx-fac-label", 13, -8);
       }
@@ -1615,7 +1685,7 @@ export class TacticalPlot {
           if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1 || !it.facility.runways?.length) continue;
           for (const e of layer.runwayEnds(it.facility)) {
             if (e.x < x0 || e.x > x1 || e.y < y0 || e.y > y1) continue;
-            draw({ facility: it.facility, x: e.x, y: e.y }, e.ident, "tx-fac-label tx-fac-label--end", -8, 6);
+            draw({ facility: it.facility, x: e.x, y: e.y }, e.ident, "tx-fac-label tx-fac-label--end", -8, 6, true);
           }
         }
       }
@@ -1704,7 +1774,7 @@ export class TacticalPlot {
     const now = performance.now();
 
     for (const t of this.tracks.values()) {
-      const s = this.toScreen(t.pos.x, t.pos.y, t.z);
+      const s = this.toScreen(t.pos.x + t.disp.x, t.pos.y + t.disp.y, t.z);
       t.screen.set(s.x, s.y);
       t.onScreen = s.z < 1 && s.x > -40 && s.x < this.W + 40 && s.y > -40 && s.y < this.H + 40;
       if (!t.onScreen) {
@@ -2006,6 +2076,5 @@ function formatDeg(v: number, pos: string, neg: string, width: number): string {
 export type PlotHandle = ReturnType<TacticalPlot["getHandle"]>;
 
 function facilityLabelText(f: Facility): string {
-  const n = f.name.toUpperCase();
-  return n.length > 26 ? n.slice(0, 25) + "." : n;
+  return shortFacilityName(f.name).toUpperCase();
 }

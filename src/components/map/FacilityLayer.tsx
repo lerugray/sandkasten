@@ -12,10 +12,10 @@ import type { Facility } from "@/lib/facilities/facilities";
 
 import { MAP_FONT } from "@/lib/map/styles";
 const POINT_TIERS = [
-  { tier: 0, minzoom: 3, labelMinzoom: 6.5 },
-  { tier: 1, minzoom: 5.5, labelMinzoom: 7 },
-  { tier: 2, minzoom: 7.5, labelMinzoom: 8.5 },
-  { tier: 3, minzoom: 9.5, labelMinzoom: 10.5 },
+  { tier: 0, minzoom: 3, labelMinzoom: 7 },
+  { tier: 1, minzoom: 5.5, labelMinzoom: 8 },
+  { tier: 2, minzoom: 7.5, labelMinzoom: 9.5 },
+  { tier: 3, minzoom: 9.5, labelMinzoom: 11 },
 ];
 const pointLayerId = (tier: number) => `facility-points-t${tier}`;
 const labelLayerId = (tier: number) => `facility-labels-t${tier}`;
@@ -25,6 +25,15 @@ export const FACILITY_HIT_LAYERS = [...FACILITY_POINT_LAYERS, "facility-areas-fi
 const SRC_POINTS = "facility-points-src";
 const SRC_AREAS = "facility-areas-src";
 const SRC_RUNWAYS = "facility-runways-src";
+const SRC_OBST = "facility-unit-obstacles-src";
+const OBST_LAYER = "facility-unit-obstacles";
+
+function obstacleCollection(pos: [number, number][]) {
+  return {
+    type: "FeatureCollection" as const,
+    features: pos.map((c) => ({ type: "Feature" as const, geometry: { type: "Point" as const, coordinates: c }, properties: {} })),
+  };
+}
 const ALL_LAYERS = [
   "facility-areas-fill",
   "facility-areas-line",
@@ -32,6 +41,7 @@ const ALL_LAYERS = [
   "facility-selected-ring",
   "facility-runways",
   ...FACILITY_POINT_LAYERS,
+  OBST_LAYER,
   ...POINT_TIERS.map((t) => labelLayerId(t.tier)),
 ];
 
@@ -126,6 +136,7 @@ function drawIcon(kind: string, color: string): ImageData {
 }
 
 function ensureImages(map: maplibregl.Map) {
+  if (!map.hasImage("fac-blank")) map.addImage("fac-blank", { width: 48, height: 48, data: new Uint8Array(48 * 48 * 4) });
   for (const kind of Object.keys(GLYPHS)) {
     for (const [use, color] of [
       ["military", MIL],
@@ -141,7 +152,7 @@ function ensureImages(map: maplibregl.Map) {
 const PX_PER_M_Z8 = 256 / 70000;
 const PX_PER_M_Z16 = 65536 / 70000;
 
-function build(map: maplibregl.Map, facilities: Facility[]) {
+function build(map: maplibregl.Map, facilities: Facility[], unitPositions: [number, number][]) {
   ensureImages(map);
 
   map.addSource(SRC_AREAS, { type: "geojson", data: facilityAreasGeoJSON(facilities), attribution: FACILITY_ATTRIBUTION });
@@ -210,7 +221,7 @@ function build(map: maplibregl.Map, facilities: Facility[]) {
       ],
     },
   });
-  POINT_TIERS.forEach(({ tier, minzoom, labelMinzoom }) => {
+  POINT_TIERS.forEach(({ tier, minzoom }) => {
     map.addLayer({
       id: pointLayerId(tier),
       type: "symbol",
@@ -221,12 +232,16 @@ function build(map: maplibregl.Map, facilities: Facility[]) {
         "icon-image": ["concat", "fac-", ["get", "kind"], "-", ["get", "use"]],
         "icon-size": ["interpolate", ["linear"], ["zoom"], 4, 0.5, 8, 0.75, 12, 1],
         "icon-allow-overlap": ["step", ["zoom"], false, 9, true],
+        "icon-padding": 2,
+        "symbol-sort-key": tier,
       },
       paint: {
         // fade at runway-scale zoom so the symbol does not hide the runway it marks
         "icon-opacity": ["interpolate", ["linear"], ["zoom"], 11.5, 1, 13.5, 0.4],
       },
     });
+  });
+  POINT_TIERS.forEach(({ tier, labelMinzoom }) => {
     map.addLayer({
       id: labelLayerId(tier),
       type: "symbol",
@@ -234,26 +249,39 @@ function build(map: maplibregl.Map, facilities: Facility[]) {
       minzoom: labelMinzoom,
       filter: ["==", ["get", "tier"], tier],
       layout: {
-        "text-field": ["get", "name"],
+        "text-field": ["get", "label"],
         "text-font": [MAP_FONT],
-        "text-size": 12,
-        "text-offset": [0, 1.7],
-        "text-anchor": "top",
+        "text-size": 12.5,
+        "text-variable-anchor": ["right", "left", "bottom", "top"],
+        "text-radial-offset": 1.5,
+        "text-justify": "auto",
         "text-max-width": 9,
+        "text-padding": 4,
+        "symbol-sort-key": tier,
         "text-optional": true,
       },
       paint: {
         "text-color": ["match", ["get", "use"], "military", MIL, CIV],
         "text-halo-color": "rgba(11, 17, 32, 0.95)",
-        "text-halo-width": 1.5,
+        "text-halo-width": 2,
       },
     });
+  });
+  // Units are DOM markers MapLibre cannot see; an invisible symbol per unit keeps facility labels off them.
+  // Added last: MapLibre places the top-most layer first, so this one claims its space before the labels.
+  map.addSource(SRC_OBST, { type: "geojson", data: obstacleCollection(unitPositions) });
+  map.addLayer({
+    id: OBST_LAYER,
+    type: "symbol",
+    source: SRC_OBST,
+    layout: { "icon-image": "fac-blank", "icon-allow-overlap": true, "icon-padding": 2 },
+    paint: { "icon-opacity": 0 },
   });
 }
 
 function teardown(map: maplibregl.Map) {
   for (const id of [...ALL_LAYERS].reverse()) if (map.getLayer(id)) map.removeLayer(id);
-  for (const id of [SRC_POINTS, SRC_RUNWAYS, SRC_AREAS]) if (map.getSource(id)) map.removeSource(id);
+  for (const id of [SRC_POINTS, SRC_RUNWAYS, SRC_AREAS, SRC_OBST]) if (map.getSource(id)) map.removeSource(id);
 }
 
 interface FacilityLayerProps {
@@ -261,9 +289,13 @@ interface FacilityLayerProps {
   facilities: Facility[];
   visible: boolean;
   selectedId: string | null;
+  /** unit positions [lng, lat]: labels keep clear of them */
+  unitPositions?: [number, number][];
 }
 
-export function FacilityLayer({ map, facilities, visible, selectedId }: FacilityLayerProps) {
+export function FacilityLayer({ map, facilities, visible, selectedId, unitPositions = [] }: FacilityLayerProps) {
+  const unitPosRef = useRef(unitPositions);
+  unitPosRef.current = unitPositions;
   const visibleRef = useRef(visible);
   const selectedRef = useRef(selectedId);
 
@@ -281,7 +313,7 @@ export function FacilityLayer({ map, facilities, visible, selectedId }: Facility
   useEffect(() => {
     const ensure = () => {
       if (map.getSource(SRC_POINTS)) return;
-      build(map, facilities);
+      build(map, facilities, unitPosRef.current);
       apply();
     };
     if (map.isStyleLoaded()) ensure();
@@ -292,6 +324,11 @@ export function FacilityLayer({ map, facilities, visible, selectedId }: Facility
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, facilities]);
+
+  const unitKey = unitPositions.map((p) => p.join(",")).join(";");
+  useEffect(() => {
+    (map.getSource(SRC_OBST) as maplibregl.GeoJSONSource | undefined)?.setData(obstacleCollection(unitPosRef.current));
+  }, [map, unitKey]);
 
   useEffect(() => {
     visibleRef.current = visible;
