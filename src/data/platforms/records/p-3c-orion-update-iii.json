@@ -1,0 +1,202 @@
+{
+  "slug": "p-3c-orion-update-iii",
+  "legacyIds": [466],
+  "engineName": "P-3C Orion Update III",
+  "name": "P-3C Orion Update III",
+  "designation": "P-3C Update III",
+  "className": "Lockheed P-3 Orion, P-3C Update III version",
+  "nation": "United States",
+  "side": "US Navy",
+  "service": "US Navy",
+  "domain": "fixed-wing",
+  "dimension": "air",
+  "functionId": "MF",
+  "role": "Land-based maritime patrol and anti-submarine warfare aircraft",
+  "serviceWindow": {
+    "enteredService": 1986,
+    "retired": null,
+    "statusNotes": "The Update III standard was approved for full production in January 1986. The US Navy has replaced the P-3C in its front-line patrol squadrons with the P-8A Poseidon; the last active patrol squadron, VP-40, moved to the P-8A in 2020. A small number of P-3 variants still fly with the Navy in test and research roles, and other nations still operate the P-3C. In the 2026 scenario this is a legacy US airframe, so use it as a stand-in or for a historical match-up."
+  },
+  "dimensions": {
+    "sourceId": "s1",
+    "provenance": "verified",
+    "lengthM": 35.61,
+    "wingspanM": 30.37,
+    "heightM": 10.27,
+    "weightEmptyKg": 27890,
+    "weightMaxKg": 61235,
+    "crew": "11 (five officers and six enlisted)"
+  },
+  "propulsionSummary": "Four Allison T56-A-14 turboprop engines, each rated at roughly 4,600 to 4,900 horsepower depending on the source, drive four-blade propellers.",
+  "performance": {
+    "sourceId": "s1",
+    "provenance": "verified",
+    "maxSpeedKts": 411,
+    "cruiseSpeedKts": 328,
+    "maxAltitudeFt": 28300,
+    "combatRadiusNm": 845,
+    "rangeNm": 2070,
+    "enduranceHours": 17.2
+  },
+  "sensorRangeKm": 280,
+  "weaponRangeKm": 0,
+  "damagePoints": 5,
+  "missileDefense": 0,
+  "engineSourceId": "s1",
+  "engineProvenance": "estimated",
+  "weapons": [],
+  "defenses": [],
+  "sensors": [
+    {
+      "name": "AN/APS-115 maritime surveillance radar",
+      "type": "radar",
+      "role": "Surface search radar for ships and surfaced submarines. No public detection range found, so this is an open estimate matching the engine value.",
+      "rangeKm": 280,
+      "canTrack": true,
+      "sourceId": "s4",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/ALR-66B(V)3 ESM",
+      "type": "esm",
+      "role": "Passive set that detects, finds and classifies radar emissions from ships, aircraft and land radars. No public range found, so this is an open estimate.",
+      "rangeKm": 300,
+      "canTrack": false,
+      "sourceId": "s1",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/AAS-36 infrared detecting set",
+      "type": "ir",
+      "role": "Passive thermal imaging of surface contacts, day or night. No public range found, so this is an open estimate.",
+      "rangeKm": 20,
+      "canTrack": true,
+      "sourceId": "s1",
+      "provenance": "estimated"
+    },
+    {
+      "name": "DIFAR sonobuoys (AN/ARR-78 receiver, UYS-1 acoustic processor)",
+      "type": "sonar",
+      "role": "Dropped buoys listen for submarines and radio the sound back to the aircraft, which computes a bearing. A buoy hears only a short distance. No public range found, so this is an open estimate.",
+      "rangeKm": 10,
+      "canTrack": true,
+      "sourceId": "s1",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Magnetic anomaly detector (MAD)",
+      "type": "sonar",
+      "role": "Detects the magnetic disturbance of a submarine hull directly below the aircraft; used to confirm a contact for the final attack. Works at very short range. No public range found, so this is an open estimate.",
+      "rangeKm": 1,
+      "canTrack": true,
+      "sourceId": "s1",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [
+    {
+      "name": "Anti-submarine patrol",
+      "role": "Find submarines with sonobuoys and attack with lightweight torpedoes. Radius is the published mission radius with 3 hours on station at 1,500 ft.",
+      "combatRadiusNm": 845,
+      "stores": [
+        { "weaponName": "Mk 46/50 lightweight torpedo", "count": 8 },
+        { "weaponName": "Sonobuoy", "count": 87 }
+      ],
+      "sourceId": "s1",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Anti-surface patrol",
+      "role": "Search for ships with radar and attack with missiles from the wing pylons; the radius is carried over from the anti-submarine figure and is not a published figure for this load.",
+      "combatRadiusNm": 845,
+      "stores": [
+        { "weaponName": "AGM-84 Harpoon", "count": 2 },
+        { "weaponName": "AGM-65 Maverick", "count": 2 },
+        { "weaponName": "Sonobuoy", "count": 40 }
+      ],
+      "sourceId": "s1",
+      "provenance": "estimated"
+    }
+  ],
+  "signatures": {
+    "radar": {
+      "grade": "high",
+      "note": "A large four-engine airliner-sized airframe with big spinning propellers gives a strong radar return."
+    },
+    "infrared": {
+      "grade": "medium",
+      "note": "Four turboprops give a moderate heat signature, much lower than a jet airliner of this size."
+    },
+    "acoustic": {
+      "grade": "high",
+      "note": "Four large propellers are loud, but a submerged submarine usually cannot hear an aircraft flying overhead."
+    },
+    "visual": {
+      "grade": "high",
+      "note": "A 30 m wingspan and a long fuselage are easy to spot, especially at the low altitudes used for sonobuoy drops."
+    },
+    "sourceId": "s1",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The P-3C Orion is a four-engine turboprop patrol aircraft flown from land bases. It stays in the air for many hours to hunt submarines and watch the sea surface. It carries sonobuoys, a radar, an infrared camera, radar warning gear and a magnetic detector, with torpedoes and missiles for attack. The Update III is the version fitted with the improved acoustic computer system.",
+    "howItIsUsed": "A commander sends the Orion out to cover a large patch of ocean for hours, flying low for sonobuoy drops and higher for radar search. It drops patterns of sonobuoys, listens for a submarine, uses the magnetic detector to pin it down and attacks with a torpedo. Against surface ships it uses radar and infrared to find and identify them, and can fire Harpoon or Maverick missiles. It is slow and has no defenses against fighters or surface-to-air missiles, so keep it clear of enemy air cover. Its strength is long endurance and an effective sonobuoy search. Its weakness is that it needs a friendly air base within a few hundred miles.",
+    "typicalMissions": [
+      "Anti-submarine barrier or area search",
+      "Maritime patrol and surface ship surveillance",
+      "Anti-ship strike with Harpoon missiles",
+      "Over-the-horizon targeting for ships",
+      "Search and rescue support"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/p-3c-orion-update-iii/main.jpg",
+      "caption": "A P-3C Orion of Patrol Squadron 46 (VP-46) in flight, 1989.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:P-3C_Orion_of_VP-46_in_flight_in_1989.JPEG",
+      "author": "US Navy (U.S. DefenseImagery photo DN-ST-89-11009)",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: US Navy (DefenseImagery DN-ST-89-11009), Public Domain, via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/p-3c-orion-update-iii/second.jpg",
+      "caption": "A P-3C Orion of Patrol Squadron 5 (VP-5) in flight around 1988, with an AGM-84 missile under the wing.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:P-3C_Orion_of_VP-5_in_flight_c1988.JPEG",
+      "author": "US Navy (U.S. DefenseImagery photo DN-ST-89-01965)",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: US Navy (DefenseImagery DN-ST-89-01965), Public Domain, via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "P-3C Orion Update III and technical data",
+      "publisher": "Federation of American Scientists",
+      "year": 2026,
+      "url": "https://man.fas.org/dod-101/sys/ac/p-3.htm"
+    },
+    {
+      "id": "s2",
+      "title": "P-3 Orion long range ASW aircraft (US Navy fact file, archived copy)",
+      "publisher": "US Navy via the Internet Archive",
+      "year": 2011,
+      "url": "https://web.archive.org/web/20110316155749/http://www.navy.mil/navydata/fact_display.asp?cid=1100&tid=1400&ct=1"
+    },
+    {
+      "id": "s3",
+      "title": "P-3 Orion",
+      "publisher": "GlobalSecurity.org",
+      "year": 2026,
+      "url": "https://www.globalsecurity.org/military/systems/aircraft/p-3.htm"
+    },
+    {
+      "id": "s4",
+      "title": "Lockheed P-3 Orion",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Lockheed_P-3_Orion"
+    }
+  ]
+}

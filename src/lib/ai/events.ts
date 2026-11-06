@@ -18,11 +18,11 @@ import { distanceKm } from "@/lib/simulation/movement";
 export type Trigger =
   | { type: "ScenarioLoaded" }
   | { type: "Time"; time: number } // sim time (unix ms)
-  | { type: "TimeInterval"; intervalMs: number; lastFired?: number }
+  | { type: "TimeInterval"; intervalMs: number }
   | { type: "UnitDetected"; side: string; detectedBySide: string }
   | { type: "UnitDestroyed"; unitId?: string; side?: string; unitType?: string }
   | { type: "UnitDamaged"; unitId: string }
-  | { type: "UnitEntersArea"; side: string; areaId: string }
+  | { type: "UnitEntersArea"; side: string; areaId: string; unitId?: string }
   | { type: "UnitLeavesArea"; side: string; areaId: string }
   | { type: "SideScore"; side: string; threshold: number; comparison: "gte" | "lte" };
 
@@ -74,6 +74,8 @@ export interface EventState {
   firedEvents: Set<string>; // names of events that have fired
   messages: EventMessage[]; // messages displayed to the player
   scenarioResult?: { result: "victory" | "defeat" | "draw"; message: string };
+  /** Sim time each TimeInterval trigger last fired, keyed "event name#trigger index". */
+  lastFired?: Record<string, number>;
 }
 
 export interface EventMessage {
@@ -85,47 +87,55 @@ export interface EventMessage {
   read: boolean;
 }
 
+const RESULT_PRIORITY = { defeat: 3, draw: 2, victory: 1 } as const;
+
+type ScenarioResult = NonNullable<EventState["scenarioResult"]>;
+
+/** Defeat beats draw beats victory. */
+export function mergeResults(a: ScenarioResult | undefined, b: ScenarioResult | undefined): ScenarioResult | undefined {
+  if (!a || !b) return a ?? b;
+  return RESULT_PRIORITY[b.result] > RESULT_PRIORITY[a.result] ? b : a;
+}
+
+export interface EvaluateOptions {
+  /** Keep any EndScenario result out of eventState and return it as `pendingResult`, so the tick can finish first. */
+  deferResult?: boolean;
+  /** Evaluate only events that contain an EndScenario action. */
+  terminalOnly?: boolean;
+  /** Event names that already ran this tick and must not run again. */
+  skip?: ReadonlySet<string>;
+}
+
+const endsScenario = (e: ScenarioEvent) => e.actions.some((a) => a.type === "EndScenario");
+
 /**
  * Evaluate all events against current game state.
  * Returns updated event state with any fired actions applied.
+ * Once the scenario has a result it is final: nothing fires afterwards.
  */
 export function evaluateEvents(
   eventState: EventState,
   gameState: GameState,
-  aiMissions: Mission[]
-): { eventState: EventState; stateChanges: StateChange[] } {
+  aiMissions: Mission[],
+  opts: EvaluateOptions = {}
+): { eventState: EventState; stateChanges: StateChange[]; pendingResult?: ScenarioResult; ran: string[] } {
+  if (eventState.scenarioResult) return { eventState, stateChanges: [], ran: [] };
+
   const changes: StateChange[] = [];
   const newFired = new Set(eventState.firedEvents);
   const newMessages = [...eventState.messages];
-  let scenarioResult = eventState.scenarioResult;
+  const lastFired = { ...(eventState.lastFired ?? {}) };
+  let pendingResult: EventState["scenarioResult"];
+  const running = new Set<string>();
+  const ran: string[] = [];
 
-  for (const event of eventState.events) {
-    // Skip if already fired and not repeatable
-    if (newFired.has(event.name) && !event.repeatable) continue;
-
-    // Check triggers — at least one must match
-    const triggered = event.triggers.some((t) =>
-      evaluateTrigger(t, gameState, newFired)
-    );
-    if (!triggered) continue;
-
-    // Check conditions — all must match
-    const conditionsMet =
-      event.conditions.length === 0 ||
-      event.conditions.every((c) =>
-        evaluateCondition(c, gameState, newFired)
-      );
-    if (!conditionsMet) continue;
-
-    // Fire the event
-    newFired.add(event.name);
-
-    // Execute actions
+  const run = (event: ScenarioEvent) => {
+    running.add(event.name);
     for (const action of event.actions) {
       switch (action.type) {
         case "DisplayMessage":
           newMessages.push({
-            id: `msg-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+            id: `msg-${gameState.simTime}-${newMessages.length}-${Math.random().toString(36).slice(2, 6)}`,
             side: action.side,
             title: action.title,
             text: action.text,
@@ -147,34 +157,58 @@ export function evaluateEvents(
           break;
 
         case "ChangeScore":
-          changes.push({
-            type: "score",
-            side: action.side,
-            amount: action.amount,
-          });
+          changes.push({ type: "score", side: action.side, amount: action.amount });
           break;
 
         case "EndScenario":
-          scenarioResult = {
-            result: action.result,
-            message: action.message,
-          };
+          pendingResult = mergeResults(pendingResult, { result: action.result, message: action.message });
           break;
 
         case "TriggerEvent": {
-          // Find and force-fire another event
-          const targetEvent = eventState.events.find(
-            (e) => e.name === action.eventName
-          );
-          if (targetEvent) {
-            newFired.add(targetEvent.name);
-            // Recursion limited — triggered events just get marked as fired
-            // Their actions will be processed next cycle
-          }
+          // Forced: runs the other event's actions now. Events already running are skipped (cycle guard).
+          const target = eventState.events.find((e) => e.name === action.eventName);
+          if (!target || running.has(target.name) || opts.skip?.has(target.name)) break;
+          if (newFired.has(target.name) && !target.repeatable) break;
+          run(target);
           break;
         }
       }
     }
+    running.delete(event.name);
+    newFired.add(event.name);
+    ran.push(event.name);
+  };
+
+  for (const event of eventState.events) {
+    if (newFired.has(event.name) && !event.repeatable) continue;
+    if (opts.skip?.has(event.name)) continue;
+    if (opts.terminalOnly && !endsScenario(event)) continue;
+
+    // Check triggers — at least one must match; remember the side that triggered
+    const triggerSides: string[] = [];
+    let triggered = false;
+    event.triggers.forEach((t, i) => {
+      const key = `${event.name}#${i}`;
+      const hit = evaluateTrigger(t, gameState, lastFired, key);
+      if (hit) {
+        triggered = true;
+        const side = triggerSide(t, gameState);
+        if (side) triggerSides.push(side);
+      }
+    });
+    if (!triggered) continue;
+
+    const conditionsMet =
+      event.conditions.length === 0 ||
+      event.conditions.every((c) => evaluateCondition(c, gameState, newFired, triggerSides));
+    if (!conditionsMet) continue;
+
+    // A TimeInterval only counts as having fired when the whole event does
+    event.triggers.forEach((t, i) => {
+      if (t.type === "TimeInterval") lastFired[`${event.name}#${i}`] = gameState.simTime;
+    });
+
+    run(event);
   }
 
   return {
@@ -182,10 +216,31 @@ export function evaluateEvents(
       ...eventState,
       firedEvents: newFired,
       messages: newMessages,
-      scenarioResult,
+      scenarioResult: opts.deferResult ? undefined : pendingResult,
+      lastFired,
     },
     stateChanges: changes,
+    pendingResult: opts.deferResult ? pendingResult : undefined,
+    ran,
   };
+}
+
+/** The side a trigger is about, for conditions that ask which side caused the event. */
+function triggerSide(trigger: Trigger, state: GameState): string | undefined {
+  switch (trigger.type) {
+    case "UnitDetected":
+    case "UnitEntersArea":
+    case "UnitLeavesArea":
+    case "SideScore":
+      return trigger.side;
+    case "UnitDestroyed":
+      if (trigger.side) return trigger.side;
+      return state.sides.flatMap((s) => s.units).find((u) => u.id === trigger.unitId)?.side;
+    case "UnitDamaged":
+      return state.sides.flatMap((s) => s.units).find((u) => u.id === trigger.unitId)?.side;
+    default:
+      return undefined;
+  }
 }
 
 // --- State changes that need to be applied to GameState ---
@@ -240,6 +295,7 @@ export function applyStateChanges(
             unitId: u.id,
             waypoints: [],
             throttle: 2,
+            speedKts: u.speed,
             radarActive: true,
           });
         }
@@ -274,32 +330,27 @@ export function applyStateChanges(
       }
 
       case "doctrine": {
-        // Apply doctrine changes to game state so combat system picks them up
+        // A change aimed at a mission edits only that mission; otherwise it edits the side
         const docAction = change.action;
         if (docAction.mission) {
-          // Mission-level doctrine change — store in game state for AI to read
+          const prior = newState.missionDoctrineOverrides ?? {};
           newState = {
             ...newState,
             missionDoctrineOverrides: {
-              ...(newState.missionDoctrineOverrides ?? {}),
-              [docAction.mission]: {
-                ...((newState.missionDoctrineOverrides ?? {})[docAction.mission] ?? {}),
-                ...docAction.changes,
-              },
+              ...prior,
+              [`${docAction.side}:${docAction.mission}`]: { ...(prior[`${docAction.side}:${docAction.mission}`] ?? {}), ...docAction.changes },
+            },
+          };
+        } else {
+          const prior = newState.sideDoctrineOverrides ?? {};
+          newState = {
+            ...newState,
+            sideDoctrineOverrides: {
+              ...prior,
+              [docAction.side]: { ...(prior[docAction.side] ?? {}), ...docAction.changes },
             },
           };
         }
-        // Also update the side-level doctrine so combat system sees it
-        newState = {
-          ...newState,
-          sideDoctrineOverrides: {
-            ...(newState.sideDoctrineOverrides ?? {}),
-            [docAction.side]: {
-              ...((newState.sideDoctrineOverrides ?? {})[docAction.side] ?? {}),
-              ...docAction.changes,
-            },
-          },
-        };
         break;
       }
     }
@@ -313,7 +364,8 @@ export function applyStateChanges(
 function evaluateTrigger(
   trigger: Trigger,
   state: GameState,
-  firedEvents: Set<string>
+  lastFired: Record<string, number>,
+  key: string
 ): boolean {
   switch (trigger.type) {
     case "ScenarioLoaded":
@@ -324,18 +376,19 @@ function evaluateTrigger(
       return state.simTime >= trigger.time;
 
     case "TimeInterval": {
-      const last = trigger.lastFired ?? state.scenario.startTime;
-      if (state.simTime - last >= trigger.intervalMs) {
-        trigger.lastFired = state.simTime; // mutate for tracking
-        return true;
-      }
-      return false;
+      const last = lastFired[key] ?? state.scenario.startTime;
+      return state.simTime - last >= trigger.intervalMs;
     }
 
-    case "UnitDetected":
-      return state.contacts.some(
-        (c) => c.side === trigger.detectedBySide
-      );
+    case "UnitDetected": {
+      // `side` is the side of the unit that was detected, `detectedBySide` the side holding the contact
+      const store =
+        trigger.detectedBySide === state.scenario.playerSide
+          ? state.contacts
+          : state.sideContacts[trigger.detectedBySide] ?? [];
+      const units = new Map(state.sides.flatMap((s) => s.units).map((u) => [u.id, u]));
+      return store.some((c) => units.get(c.actualUnitId)?.side === trigger.side);
+    }
 
     case "UnitDestroyed": {
       const allUnits = state.sides.flatMap((s) => s.units);
@@ -371,6 +424,7 @@ function evaluateTrigger(
       return allUnits.some(
         (u) =>
           u.side === trigger.side &&
+          (trigger.unitId === undefined || u.id === trigger.unitId) &&
           u.damageState !== "destroyed" &&
           isPointInPolygon(u.position, area.points)
       );
@@ -407,7 +461,8 @@ function evaluateTrigger(
 function evaluateCondition(
   condition: Condition,
   state: GameState,
-  firedEvents: Set<string>
+  firedEvents: Set<string>,
+  triggerSides: string[]
 ): boolean {
   switch (condition.type) {
     case "RandomChance":
@@ -440,8 +495,8 @@ function evaluateCondition(
     }
 
     case "SideIs":
-      // This is evaluated contextually — always true for now
-      return true;
+      // The side the trigger was about; a trigger with no side cannot satisfy it
+      return triggerSides.includes(condition.side);
 
     default:
       return false;

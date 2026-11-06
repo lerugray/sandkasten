@@ -65,7 +65,6 @@ export function moveAlongBearing(
 }
 
 // Speed in knots for a given throttle setting
-// Falls back to simple defaults if no platform speed profile
 const DEFAULT_SPEEDS: Record<number, number> = {
   1: 5, // loiter
   2: 15, // cruise
@@ -80,16 +79,20 @@ const DEFAULT_AIR_SPEEDS: Record<number, number> = {
   4: 550,
 };
 
+/** Arrival tolerance (km): 1 m, only there to absorb floating point error. */
+const ARRIVAL_EPSILON_KM = 0.001;
+
+/**
+ * Commanded speed in knots. Precedence: waypoint speed, then the held authored
+ * speed (cleared by any throttle or route order), then the throttle table.
+ * Throttle 0 is an explicit stop.
+ */
 export function getUnitSpeed(unit: Unit, orders: UnitOrders): number {
-  // If unit has explicit speed set, use it
-  if (unit.speed > 0 && orders.waypoints.length === 0) return unit.speed;
+  const leg = orders.waypoints[0];
+  if (leg?.speed) return leg.speed;
+  if (orders.speedKts !== undefined) return orders.speedKts;
+  if (orders.throttle <= 0) return 0;
 
-  // Check if current waypoint has a speed override
-  if (orders.waypoints.length > 0 && orders.waypoints[0].speed) {
-    return orders.waypoints[0].speed;
-  }
-
-  // Use throttle-based default
   const isAir = unit.altitude !== undefined && unit.altitude > 0;
   const defaults = isAir ? DEFAULT_AIR_SPEEDS : DEFAULT_SPEEDS;
   return defaults[orders.throttle] ?? defaults[2];
@@ -100,60 +103,49 @@ export function updateUnitMovement(
   orders: UnitOrders,
   dtSeconds: number
 ): { unit: Unit; orders: UnitOrders } {
-  if (orders.waypoints.length === 0) {
-    // No waypoints — unit holds position at current speed/heading
-    if (unit.speed > 0) {
-      // Move along current heading
-      const distKm = (unit.speed * KM_PER_NM * dtSeconds) / 3600;
-      const newPos = moveAlongBearing(unit.position, unit.heading, distKm);
-      return {
-        unit: { ...unit, position: newPos },
-        orders,
-      };
+  let position = unit.position;
+  let heading = unit.heading;
+  let altitude = unit.altitude;
+  let waypoints = orders.waypoints;
+  let heldSpeed = orders.speedKts;
+  let speed = getUnitSpeed(unit, orders);
+  let budgetKm = (speed * KM_PER_NM * dtSeconds) / 3600;
+
+  while (waypoints.length > 0) {
+    const leg = waypoints[0];
+    // A leg with its own speed changes how far the remaining time goes
+    const legSpeed = leg.speed ?? speed;
+    if (legSpeed !== speed && speed > 0) {
+      budgetKm *= legSpeed / speed;
+      speed = legSpeed;
     }
-    return { unit, orders };
+    const dist = distanceKm(position, leg.position);
+    if (dist <= ARRIVAL_EPSILON_KM || dist <= budgetKm) {
+      budgetKm = Math.max(0, budgetKm - dist);
+      position = leg.position;
+      if (leg.altitude !== undefined) altitude = leg.altitude;
+      waypoints = waypoints.slice(1);
+      if (waypoints.length > 0) heading = bearingDeg(position, waypoints[0].position);
+      continue;
+    }
+    heading = bearingDeg(position, leg.position);
+    position = moveAlongBearing(position, heading, budgetKm);
+    budgetKm = 0;
+    break;
   }
 
-  const speed = getUnitSpeed(unit, orders);
-  const distKm = (speed * KM_PER_NM * dtSeconds) / 3600;
-
-  const target = orders.waypoints[0].position;
-  const distToWaypoint = distanceKm(unit.position, target);
-  const bearing = bearingDeg(unit.position, target);
-
-  // Arrival threshold: 0.5 km
-  if (distToWaypoint <= 0.5 || distKm >= distToWaypoint) {
-    // Reached waypoint — pop it and move to next
-    const newWaypoints = orders.waypoints.slice(1);
-    const newUnit = {
-      ...unit,
-      position: target,
-      heading: newWaypoints.length > 0
-        ? bearingDeg(target, newWaypoints[0].position)
-        : bearing,
-      speed,
-    };
-
-    // Apply altitude from waypoint if set
-    if (orders.waypoints[0].altitude !== undefined) {
-      newUnit.altitude = orders.waypoints[0].altitude;
-    }
-
-    return {
-      unit: newUnit,
-      orders: { ...orders, waypoints: newWaypoints },
-    };
+  if (waypoints.length === 0 && orders.waypoints.length > 0) {
+    // Route finished: hold position there until given a new order
+    heldSpeed = 0;
+    speed = 0;
+  } else if (waypoints.length === 0 && budgetKm > 0) {
+    position = moveAlongBearing(position, heading, budgetKm);
   }
 
-  // Move toward waypoint
-  const newPos = moveAlongBearing(unit.position, bearing, distKm);
+  const moved = position !== unit.position || speed !== unit.speed || heading !== unit.heading || altitude !== unit.altitude;
+  const routeChanged = waypoints !== orders.waypoints || heldSpeed !== orders.speedKts;
   return {
-    unit: {
-      ...unit,
-      position: newPos,
-      heading: bearing,
-      speed,
-    },
-    orders,
+    unit: moved ? { ...unit, position, heading, speed, ...(altitude !== undefined ? { altitude } : {}) } : unit,
+    orders: routeChanged ? { ...orders, waypoints, speedKts: heldSpeed } : orders,
   };
 }

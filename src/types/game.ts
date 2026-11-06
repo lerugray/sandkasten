@@ -13,6 +13,8 @@ export interface Unit {
   speed: number;
   altitude?: number;
   damageState: "undamaged" | "damaged" | "mission-kill" | "destroyed";
+  /** Damage points taken so far; damageState derives from this against the platform's damagePoints. */
+  damage?: number;
   mission?: string;
 }
 
@@ -55,4 +57,12 @@ export function getAffiliation(
   if (unit.side === playerSide) return "friendly";
   if (unit.side === "Civilian" || unit.side === "Neutral") return "neutral";
   return "hostile";
+}
+
+/** Sides that never take part in combat: no detection of them as enemies, no automatic fire on them. */
+const NON_COMBATANT_SIDES = new Set(["Civilian", "Neutral"]);
+
+/** The one hostility predicate shared by detection, AI and combat. */
+export function isHostileSide(a: string, b: string): boolean {
+  return a !== b && !NON_COMBATANT_SIDES.has(a) && !NON_COMBATANT_SIDES.has(b);
 }

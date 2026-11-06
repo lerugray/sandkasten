@@ -14,6 +14,7 @@ import { demoScenarioConfig } from "@/lib/scenarios/demoConfig";
 import { useSimulation } from "@/lib/simulation/useSimulation";
 import { useInfoWar } from "@/lib/infowar/useInfoWar";
 import { formatMeasurement } from "@/components/map/MeasurementLayer";
+import { useFireControls } from "@/components/game/useFireControls";
 import { ClassicFonts } from "@/components/ClassicFonts";
 
 export function LegacyPlay() {
@@ -29,6 +30,9 @@ export function LegacyPlay() {
     clearWaypoints,
     setThrottle,
     toggleRadar,
+    setRoe,
+    engage,
+    orderFeedback,
     markMessageRead,
     resetSimulation,
     setAutopausePrefs,
@@ -116,6 +120,15 @@ export function LegacyPlay() {
 
   const allUnits = gameState.sides.flatMap((s) => s.units);
   const selectedUnit = selectedUnitId ? allUnits.find((u) => u.id === selectedUnitId) : null;
+  const { fire } = useFireControls({
+    unit: selectedUnit && selectedUnit.side === gameState.scenario.playerSide ? selectedUnit : null,
+    gameState,
+    config: demoScenarioConfig,
+    orderFeedback,
+    setRoe,
+    engage,
+    contactLabel: (c) => `${c.platformName ?? `TN${c.id.slice(-4)}`} ${c.classification.toUpperCase()}`,
+  });
   const selectedOrders = selectedUnitId ? gameState.orders.get(selectedUnitId) : undefined;
   const friendlyUnits = allUnits.filter((u) => u.side === gameState.scenario.playerSide);
 
@@ -422,6 +435,7 @@ export function LegacyPlay() {
                       onClearWaypoints={() => clearWaypoints(selectedUnit.id)}
                       onSetThrottle={(t) => setThrottle(selectedUnit.id, t)}
                       onToggleRadar={() => toggleRadar(selectedUnit.id)}
+                      fire={fire}
                     />
                   </div>
                 )}

@@ -1,0 +1,346 @@
+{
+  "slug": "arleigh-burke-flt-ii",
+  "legacyIds": [
+    111
+  ],
+  "engineName": "DDG 72 Mahan [Arleigh Burke Flight II]",
+  "name": "Arleigh Burke Flight II destroyer",
+  "designation": "DDG 72 USS Mahan",
+  "className": "Arleigh Burke class (DDG 51), Flight II",
+  "nation": "United States",
+  "side": "US Navy",
+  "service": "US Navy",
+  "domain": "surface",
+  "dimension": "sea",
+  "functionId": "CL",
+  "role": "Aegis guided-missile destroyer for air defence, surface warfare, anti-submarine warfare and land strike",
+  "serviceWindow": {
+    "enteredService": 1998,
+    "retired": null,
+    "statusNotes": "USS Mahan, the first Flight II ship, was commissioned on 14 February 1998 and is in active service as of 2026-03-15."
+  },
+  "dimensions": {
+    "lengthM": 154,
+    "beamM": 18,
+    "draftM": 9.4,
+    "displacementFullTons": 8637,
+    "crew": "329 total (32 officers, 27 chief petty officers, 270 enlisted), the Navy class figure",
+    "sourceId": "s3",
+    "provenance": "verified"
+  },
+  "propulsionSummary": "Four General Electric LM2500 gas turbines drive two shafts for about 100,000 shaft horsepower.",
+  "performance": {
+    "maxSpeedKts": 30,
+    "cruiseSpeedKts": 20,
+    "rangeNm": 4400,
+    "sourceId": "s1",
+    "provenance": "verified"
+  },
+  "sensorRangeKm": 324,
+  "weaponRangeKm": 167,
+  "damagePoints": 1190,
+  "missileDefense": 16,
+  "engineSourceId": "s1",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "RIM-66M SM-2MR",
+      "type": "sam",
+      "rangeKm": 93,
+      "speedKts": 2300,
+      "pkAir": 85,
+      "pkSurface": 90,
+      "quantity": 50,
+      "warheadDamage": 80,
+      "seekerType": "semi-active",
+      "mountSummary": "Fired from the Mk 41 vertical launch system (90 cells on the Flight II ship, shared with Tomahawk and ASROC). The 93 km engine range is a Sandkasten abstraction. The Navy fact file gives SM-2 Medium Range as up to 90 nautical miles (about 167 km), so this row is estimated. Missile count is a typical mix, not a published load.",
+      "sourceId": "s13",
+      "provenance": "estimated"
+    },
+    {
+      "name": "RGM-84 Harpoon",
+      "type": "asm",
+      "rangeKm": 139,
+      "speedKts": 530,
+      "pkAir": 0,
+      "pkSurface": 95,
+      "quantity": 8,
+      "warheadDamage": 167,
+      "seekerType": "active-radar",
+      "mountSummary": "Two quad launchers (8 missiles) on the Flight II ship per the ship article. The Navy fact file gives Harpoon range as over 67 nautical miles (about 124 km), so the 139 km engine range is estimated.",
+      "sourceId": "s12",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Mk 15 Phalanx CIWS",
+      "type": "gun",
+      "rangeKm": 1.8,
+      "speedKts": 0,
+      "pkAir": 50,
+      "pkSurface": 30,
+      "quantity": 1200,
+      "warheadDamage": 10,
+      "mountSummary": "20 mm six-barrel gun, 3,000 to 4,500 rounds per minute, one mount in the engine model. FAS lists Phalanx range as classified, so the 1.8 km engine range and the round count are estimated.",
+      "sourceId": "s11",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [
+    {
+      "name": "Mk 36 SRBOC Chaff",
+      "type": "chaff",
+      "effectiveness": 0.3,
+      "quantity": 24,
+      "sourceId": "s9",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-32(V)3 ECM",
+      "type": "ecm",
+      "effectiveness": 0.25,
+      "sourceId": "s8",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Mk 15 Phalanx",
+      "type": "ciws",
+      "effectiveness": 0.5,
+      "sourceId": "s11",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-25 Nixie",
+      "type": "decoy",
+      "effectiveness": 0.2,
+      "sourceId": "s10",
+      "provenance": "estimated"
+    }
+  ],
+  "sensors": [
+    {
+      "name": "AN/SPY-1D phased-array radar",
+      "type": "radar",
+      "role": "Aegis air search and track, four fixed arrays on the deckhouse, tracks hundreds of targets at once",
+      "band": "S-band",
+      "rangeKm": 324,
+      "canTrack": true,
+      "sourceId": "s4",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SPS-67(V)3 surface search radar",
+      "type": "radar",
+      "role": "Surface search and navigation, picks out ships and low flyers",
+      "band": "C-band",
+      "rangeKm": 40,
+      "canTrack": true,
+      "sourceId": "s15",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SPG-62 fire control radars (3)",
+      "type": "radar",
+      "role": "Illuminates the target for semi-active SM-2 missiles in the last seconds of flight",
+      "band": "I/J-band",
+      "rangeKm": 100,
+      "canTrack": true,
+      "sourceId": "s5",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SQS-53C bow sonar",
+      "type": "sonar",
+      "role": "Hull-mounted active and passive search for submarines",
+      "rangeKm": 20,
+      "canTrack": true,
+      "sourceId": "s6",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SQR-19 towed array",
+      "type": "sonar",
+      "role": "Passive long-range listening for submarines on a cable towed behind the ship",
+      "rangeKm": 50,
+      "canTrack": true,
+      "sourceId": "s7",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-32(V)3 electronic support",
+      "type": "esm",
+      "role": "Detects, identifies and bears on hostile radars",
+      "rangeKm": 150,
+      "canTrack": false,
+      "sourceId": "s8",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Bridge and lookout watch",
+      "type": "visual",
+      "role": "Eyes and binoculars from the bridge and weather decks",
+      "rangeKm": 18,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [],
+  "signatures": {
+    "radar": {
+      "grade": "medium",
+      "note": "The DDG 51 was the first US Navy ship designed with hull shaping to cut radar cross-section, but it is still a 154 m steel ship."
+    },
+    "infrared": {
+      "grade": "medium",
+      "note": "Four gas turbines put out a strong exhaust plume, so the ship shows up clearly to heat-seeking sensors at close range."
+    },
+    "acoustic": {
+      "grade": "medium",
+      "note": "Gas turbine ships are louder than diesel-electric types, and the towed array and bow sonar make her an active participant in the underwater fight."
+    },
+    "visual": {
+      "grade": "medium",
+      "note": "A 154 m grey hull with a tall deckhouse is easy to see on a clear day, but it shows a low profile from a distance."
+    },
+    "sourceId": "s1",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The Flight II Arleigh Burke is a 154 m US Navy guided-missile destroyer. It carries the Aegis combat system, whose four fixed radar arrays track hundreds of air targets at once and steer long-range Standard missiles onto them. USS Mahan was the first Flight II ship and is the example used here.",
+    "howItIsUsed": "A commander uses it as the air-defence anchor of a task group. It sits between the carrier or the convoy and the threat axis and keeps the SPY-1D radar on full power so incoming aircraft and missiles are picked up early. The Standard missiles, which need the three SPG-62 illuminators in the final seconds, are the main reach. Harpoon missiles give it an anti-ship punch of its own, and the 5-inch gun and Phalanx deal with small boats and leakers. Its weakness is magazine depth: the 90 vertical cells hold only so many missiles, and a swarm of cheap boats or drones can burn them faster than the ship can reload at sea. Mahan fired warning shots at IRGC boats in the Strait of Hormuz in January 2017, which is the kind of close encounter the ship's guns and lookouts are for.",
+    "typicalMissions": [
+      "Air and missile defence of a carrier or convoy",
+      "Anti-surface warfare and maritime security patrol",
+      "Anti-submarine escort with towed array and helicopter",
+      "Tomahawk land strike",
+      "Presence and escort in the Strait of Hormuz"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/arleigh-burke-flt-ii/main.jpg",
+      "caption": "USS Mahan (DDG 72), first of the Flight II Arleigh Burke destroyers, underway in October 2008.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:USS_Mahan_DDG-72_-_081026-N-1082Z-106.jpg",
+      "author": "Mass Communication Specialist 2nd Class Jason R. Zalasky, U.S. Navy",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy",
+      "attributionLine": "Photo: Mass Communication Specialist 2nd Class Jason R. Zalasky, U.S. Navy, US-Gov (public domain), via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/arleigh-burke-flt-ii/second.jpg",
+      "caption": "USS Mahan (DDG 72) underway in January 2021.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:USS_Mahan_(DDG_72)_(210115-N-QD512-1369).jpg",
+      "author": "Petty Officer 2nd Class Kaleb Sarten, U.S. Navy",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy",
+      "attributionLine": "Photo: Petty Officer 2nd Class Kaleb Sarten, U.S. Navy, US-Gov (public domain), via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "DDG-51 ARLEIGH BURKE-class",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://www.fas.org/man/dod-101/sys/ship/ddg-51.htm"
+    },
+    {
+      "id": "s2",
+      "title": "Fact File: Destroyers - DDG (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2016,
+      "url": "https://web.archive.org/web/2016/http://www.navy.mil/navydata/fact_display.asp?cid=4200&tid=900&ct=4"
+    },
+    {
+      "id": "s3",
+      "title": "USS Mahan (DDG-72)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/USS_Mahan_(DDG-72)"
+    },
+    {
+      "id": "s4",
+      "title": "AN/SPY-1 Phased Array Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-spy-1.htm"
+    },
+    {
+      "id": "s5",
+      "title": "AN/SPG-62 Fire Control Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-spg-62.htm"
+    },
+    {
+      "id": "s6",
+      "title": "AN/SQS-53C Sonar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sqs-53.htm"
+    },
+    {
+      "id": "s7",
+      "title": "AN/SQR-19 Tactical Towed Array Sonar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sqr-19.htm"
+    },
+    {
+      "id": "s8",
+      "title": "AN/SLQ-32 Electronic Warfare System",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-slq-32.htm"
+    },
+    {
+      "id": "s9",
+      "title": "Mk 36 Super Rapid Blooming Offboard Chaff",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/mk-36.htm"
+    },
+    {
+      "id": "s10",
+      "title": "AN/SLQ-25 Nixie Torpedo Countermeasure",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-slq-25.htm"
+    },
+    {
+      "id": "s11",
+      "title": "Mk 15 Phalanx Close-In Weapons System",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/mk-15.htm"
+    },
+    {
+      "id": "s12",
+      "title": "Fact File: Harpoon Missile (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2015,
+      "url": "https://web.archive.org/web/2015/http://www.navy.mil/navydata/fact_display.asp?cid=2200&tid=200&ct=2"
+    },
+    {
+      "id": "s13",
+      "title": "Fact File: Standard Missile (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2015,
+      "url": "https://web.archive.org/web/2015/http://www.navy.mil/navydata/fact_display.asp?cid=2200&tid=1200&ct=2"
+    },
+    {
+      "id": "s14",
+      "title": "Arleigh Burke-class destroyer",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Arleigh_Burke-class_destroyer"
+    },
+    {
+      "id": "s15",
+      "title": "AN/SPS-67 Surface Search Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sps-67.htm"
+    }
+  ]
+}
