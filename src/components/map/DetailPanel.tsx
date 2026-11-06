@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getPlatform } from "@/lib/platforms/lookup";
 import type { Unit } from "@/types/game";
+import { getFacility } from "@/lib/facilities/facilities";
 
 interface PlatformDetail {
   name: string;
@@ -27,6 +28,8 @@ interface PlatformDetail {
 interface DetailPanelProps {
   unit: Unit;
   onClose: () => void;
+  /** Opens the home-base facility (the plot or map selects it and shows its panel). */
+  onShowFacility?: (facilityId: string) => void;
   /** Placement and frame classes; the terminal display on /play docks it in its own column. */
   className?: string;
 }
@@ -34,7 +37,8 @@ interface DetailPanelProps {
 const DEFAULT_PANEL_CLASS =
   "absolute bottom-8 left-2 z-20 w-96 bg-[var(--color-tactical-panel)] border border-[var(--color-tactical-border)] rounded text-xs shadow-lg";
 
-export function DetailPanel({ unit, onClose, className = DEFAULT_PANEL_CLASS }: DetailPanelProps) {
+export function DetailPanel({ unit, onClose, onShowFacility, className = DEFAULT_PANEL_CLASS }: DetailPanelProps) {
+  const home = unit.homeBase ? getFacility(unit.homeBase.facilityId) : undefined;
   const platform = getPlatform(unit.platformId);
   const [detail, setDetail] = useState<PlatformDetail | null>(null);
   const [loading, setLoading] = useState(false);
@@ -146,6 +150,26 @@ export function DetailPanel({ unit, onClose, className = DEFAULT_PANEL_CLASS }: 
               <>
                 <span className="text-[var(--color-tactical-text-dim)]">ALT</span>
                 <span>{unit.altitude.toLocaleString()} ft</span>
+              </>
+            )}
+
+            {home && (
+              <>
+                <span className="text-[var(--color-tactical-text-dim)]">HOME BASE</span>
+                <span data-testid="detail-home-base">
+                  {onShowFacility ? (
+                    <button
+                      data-testid="detail-home-base-link"
+                      onClick={() => onShowFacility(home.id)}
+                      className="underline cursor-pointer text-left"
+                    >
+                      {home.name}
+                    </button>
+                  ) : (
+                    home.name
+                  )}
+                  {unit.homeBase?.runwayEnd ? ` RWY ${unit.homeBase.runwayEnd}` : ""}
+                </span>
               </>
             )}
 

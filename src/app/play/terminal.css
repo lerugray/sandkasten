@@ -149,6 +149,7 @@
 
 .tx-grid-label,
 .tx-ring-label,
+.tx-fac-label,
 .tx-wp-label,
 .tx-measure-label {
   position: absolute;
@@ -167,6 +168,21 @@
   color: var(--tx-phosphor);
   background: rgba(2, 6, 4, 0.7);
   padding: 1px 3px;
+}
+.tx-fac-label {
+  color: var(--tx-phosphor-dim, #2b9e5c);
+  background: rgba(2, 6, 4, 0.6);
+  padding: 1px 3px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+.tx-fac-label--sel {
+  color: var(--tx-hi);
+}
+.tx-fac-label--end {
+  background: none;
+  color: var(--tx-hi);
 }
 .tx-ring-label--alarm {
   color: var(--tx-alarm);
@@ -461,6 +477,13 @@
 .tx-detail {
   width: 100%;
   font-size: 14px;
+}
+.tx-facility {
+  overflow-y: auto;
+  max-height: calc(100vh - 52px - 214px);
+}
+.tx-facility > div:last-child {
+  max-height: none !important;
 }
 .tx-detail > div:last-child {
   max-height: calc(100vh - 52px - 214px - 90px) !important;

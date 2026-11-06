@@ -21,6 +21,8 @@ import { PlotProjection, type GeoPoint, FT_TO_KM, KM_PER_NM } from "./projection
 import { LineBatch } from "./lineBatch";
 import { PALETTE } from "./palette";
 import { sidcFor, symbolTexture } from "./symbolTextures";
+import { FacilityPlotLayer } from "./facilityLayer";
+import type { Facility } from "@/lib/facilities/facilities";
 import geo from "./data/hormuz-geo.json";
 
 export type PlotMode = "select" | "waypoint" | "measure";
@@ -40,11 +42,16 @@ export interface PlotInput {
   measureEnd: GeoPoint | null;
   simTime: number;
   mode: PlotMode;
+  /** Real-world installations to draw; the layer is rebuilt when the array identity changes. */
+  facilities?: Facility[];
+  selectedFacilityId?: string | null;
+  showFacilities?: boolean;
 }
 
 export interface PlotCallbacks {
   onUnitSelect: (unitId: string | null, shiftKey: boolean) => void;
   onMapClick: (p: GeoPoint) => boolean | void;
+  onFacilitySelect?: (facilityId: string | null) => void;
 }
 
 export interface PlotReadouts {
@@ -252,6 +259,9 @@ export class TacticalPlot {
 
   // scene content
   private staticBatches: LineBatch[] = [];
+  private facilityLayer: FacilityPlotLayer | null = null;
+  private facilitySource: Facility[] | undefined;
+  private facilityLabelCount = 0;
   private relief: THREE.Mesh | null = null;
   private reliefWire: LineSegments2 | null = null;
   private solid = new LineBatch({ width: 1.4, renderOrder: 20 });
@@ -567,6 +577,18 @@ export class TacticalPlot {
     this.glide = t.to.clone();
   }
 
+  /** Glide to a facility and zoom until its longest runway fills a good part of the screen. */
+  focusFacility(facilityId: string) {
+    const it = this.facilityLayer?.get(facilityId);
+    if (!it) return;
+    let longestKm = 0;
+    for (const r of it.facility.runways ?? []) longestKm = Math.max(longestKm, r.lengthM / 1000);
+    this.vel.set(0, 0);
+    this.glide = new THREE.Vector2(it.x, it.y);
+    this.zoomAnchor = null;
+    this.distGoal = THREE.MathUtils.clamp(Math.max(longestKm, 1.2) * 2.6 / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 400);
+  }
+
   zoomBy(factor: number) {
     this.zoomAnchor = null;
     this.distGoal = THREE.MathUtils.clamp(this.distGoal * factor, 15, 2600);
@@ -583,6 +605,15 @@ export class TacticalPlot {
     }
     this.input = input;
     const P = this.proj;
+    if (input.facilities !== this.facilitySource) {
+      this.facilitySource = input.facilities;
+      if (this.facilityLayer) {
+        this.scene.remove(this.facilityLayer.root);
+        this.facilityLayer.dispose();
+      }
+      this.facilityLayer = input.facilities?.length ? new FacilityPlotLayer(P, input.facilities) : null;
+      if (this.facilityLayer) this.scene.add(this.facilityLayer.root);
+    }
 
     // units the player may see
     for (const u of this.visibleUnits(input)) {
@@ -678,6 +709,20 @@ export class TacticalPlot {
         };
       },
       frames: () => this.frames,
+      drawnFacilities: () => ({
+        symbols: this.facilityLayer?.drawnSymbols ?? 0,
+        runways: this.facilityLayer?.drawnRunways ?? 0,
+        labels: this.facilityLabelCount,
+        total: this.facilityLayer?.items.length ?? 0,
+      }),
+      facilityScreen: (id: string) => {
+        const it = this.facilityLayer?.get(id);
+        if (!it) return null;
+        const s = this.toScreen(it.x, it.y, 0);
+        return { x: s.x, y: s.y };
+      },
+      focusFacility: (id: string) => this.focusFacility(id),
+      setDist: (km: number) => { this.distGoal = this.dist = km; this.updateCamera(); },
       drawnTracks: () => ({ units: this.drawn.unitSprites, contacts: this.drawn.contactSprites }),
       tilt: (on: boolean) => this.setTilt(on),
       view: () => ({ dist: this.dist, tilt: this.tiltAmt, target: { x: this.target.x, y: this.target.y } }),
@@ -966,6 +1011,13 @@ export class TacticalPlot {
     return null;
   }
 
+  private pickFacility(x: number, y: number): Facility | null {
+    const layer = this.facilityLayer;
+    if (!layer || this.input?.showFacilities === false) return null;
+    const g = this.groundAt(x, y);
+    return layer.pick(x, y, g ? { x: g.x, y: g.y } : null, this.kPx, (px, py) => this.toScreen(px, py, 0));
+  }
+
   private handleClick(x: number, y: number, shiftKey: boolean) {
     const input = this.input;
     if (input && input.mode !== "select") {
@@ -975,6 +1027,11 @@ export class TacticalPlot {
     const hit = this.pick(x, y);
     if (hit) {
       this.callbacks.onUnitSelect(hit.id, shiftKey);
+      return;
+    }
+    const fac = this.pickFacility(x, y);
+    if (fac) {
+      this.callbacks.onFacilitySelect?.(fac.id);
       return;
     }
     const g = this.groundAt(x, y);
@@ -1123,6 +1180,7 @@ export class TacticalPlot {
     this.target.x = THREE.MathUtils.clamp(this.target.x, this.proj.x(b[0]), this.proj.x(b[2]));
     this.target.y = THREE.MathUtils.clamp(this.target.y, this.proj.y(b[1]), this.proj.y(b[3]));
     this.updateCamera();
+    this.facilityLayer?.setView(this.kPx, this.input?.showFacilities !== false);
 
     const t = this.tiltAmt;
     if (this.relief && this.reliefWire) {
@@ -1188,6 +1246,7 @@ export class TacticalPlot {
     dr.coverageDiscs = dr.coverageEdges = dr.unitSprites = dr.contactSprites = 0;
     dr.waypointPaths.length = 0;
     this.refreshOccluders(now);
+    this.facilityLabels(input, solid);
 
     const dashPx = 7, gapPx = 5;
     dashed.material.dashSize = dashPx * this.kPx;
@@ -1506,6 +1565,62 @@ export class TacticalPlot {
       batch.seg(cx, cy, z, cx - sx * a, cy, z, col, alpha);
       batch.seg(cx, cy, z, cx, cy - sy * a, z, col, alpha);
     }
+  }
+
+  private facilityLabels(input: PlotInput | null, batch: LineBatch) {
+    const layer = this.facilityLayer;
+    let used = 0;
+    if (layer && layer.root.visible && input) {
+      const placed: Rect[] = [];
+      const selId = input.selectedFacilityId ?? null;
+      const mt = layer.maxLabelTier(this.kPx);
+      const close = this.kPx < 0.03;
+      const cap = 36;
+      const margin = 60 * this.kPx;
+      const lo = this.groundAt(0, this.H, this.groundA), hi = this.groundAt(this.W, 0, this.groundB);
+      const x0 = Math.min(lo?.x ?? -1e9, hi?.x ?? -1e9) - margin, x1 = Math.max(lo?.x ?? 1e9, hi?.x ?? 1e9) + margin;
+      const y0 = Math.min(lo?.y ?? -1e9, hi?.y ?? -1e9) - margin, y1 = Math.max(lo?.y ?? 1e9, hi?.y ?? 1e9) + margin;
+      const draw = (it: { facility: Facility; x: number; y: number }, text: string, cls: string, dx: number, dy: number) => {
+        const s = this.toScreen(it.x, it.y, 0);
+        if (s.z >= 1) return false;
+        const r = { x: s.x + dx, y: s.y + dy, w: text.length * 7.6 + 8, h: 16 };
+        if (placed.some((p) => intersects(p, r))) return false;
+        placed.push(r);
+        this.label(it.x, it.y, 0, text, cls, dx, dy);
+        used++;
+        return true;
+      };
+      if (selId) {
+        const it = layer.get(selId);
+        if (it) {
+          const px = this.pxAt(it.x, it.y);
+          const h = 15 * px, a = 6 * px;
+          for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
+            const cx = it.x + sx * h, cy = it.y + sy * h;
+            batch.seg(cx, cy, 0, cx - sx * a, cy, 0, C.hi, 0.95);
+            batch.seg(cx, cy, 0, cx, cy - sy * a, 0, C.hi, 0.95);
+          }
+          draw(it, facilityLabelText(it.facility), "tx-fac-label tx-fac-label--sel", 14, -8);
+        }
+      }
+      for (const it of layer.items) {
+        if (used >= cap) break;
+        if (it.tier > mt || it.facility.id === selId) continue;
+        if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1) continue;
+        draw(it, facilityLabelText(it.facility), "tx-fac-label", 13, -8);
+      }
+      if (close) {
+        for (const it of layer.items) {
+          if (used >= cap + 24) break;
+          if (it.x < x0 || it.x > x1 || it.y < y0 || it.y > y1 || !it.facility.runways?.length) continue;
+          for (const e of layer.runwayEnds(it.facility)) {
+            if (e.x < x0 || e.x > x1 || e.y < y0 || e.y > y1) continue;
+            draw({ facility: it.facility, x: e.x, y: e.y }, e.ident, "tx-fac-label tx-fac-label--end", -8, 6);
+          }
+        }
+      }
+    }
+    this.facilityLabelCount = used;
   }
 
   private ringLabel(x: number, y: number, text: string, friendly: boolean) {
@@ -1889,3 +2004,8 @@ function formatDeg(v: number, pos: string, neg: string, width: number): string {
 }
 
 export type PlotHandle = ReturnType<TacticalPlot["getHandle"]>;
+
+function facilityLabelText(f: Facility): string {
+  const n = f.name.toUpperCase();
+  return n.length > 26 ? n.slice(0, 25) + "." : n;
+}

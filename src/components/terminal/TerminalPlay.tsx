@@ -4,6 +4,8 @@ import "@/app/play/terminal.css";
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { DetailPanel } from "@/components/map/DetailPanel";
+import { FacilityPanel } from "@/components/map/FacilityPanel";
+import { getFacility } from "@/lib/facilities/facilities";
 import { ContactList } from "@/components/game/ContactList";
 import { OrderPanel } from "@/components/game/OrderPanel";
 import { useFireControls } from "@/components/game/useFireControls";
@@ -140,6 +142,8 @@ export function TerminalPlay() {
   } = useSimulation(demoScenarioConfig);
 
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
+  const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
+  const [facilityFocus, setFacilityFocus] = useState<{ n: number; facilityId: string } | null>(null);
   const [pinnedRingIds, setPinnedRingIds] = useState<Set<string>>(new Set());
   const [isPlacingWaypoint, setIsPlacingWaypoint] = useState(false);
   const [sidebarTab, setSidebarTab] = useState<Tab>("forces");
@@ -242,11 +246,12 @@ export function TerminalPlay() {
         else if (measureMode) toggleMeasure();
         else if (isPlacingWaypoint) setIsPlacingWaypoint(false);
         else if (selectedUnitId) setSelectedUnitId(null);
+        else if (selectedFacilityId) setSelectedFacilityId(null);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePause, setSpeed, toggleMeasure, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId]);
+  }, [togglePause, setSpeed, toggleMeasure, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, selectedFacilityId]);
 
   // The briefing card goes away on the first key or click anywhere, and when
   // the clock starts. It never swallows that input: the key or click still acts.
@@ -280,6 +285,16 @@ export function TerminalPlay() {
   const allUnits = useMemo(() => gameState.sides.flatMap((s) => s.units), [gameState.sides]);
   const playerSide = gameState.scenario.playerSide;
   const selectedUnit = selectedUnitId ? allUnits.find((u) => u.id === selectedUnitId) : null;
+  const selectedFacility = selectedFacilityId ? getFacility(selectedFacilityId) ?? null : null;
+  const baseUnits = useMemo(
+    () =>
+      selectedFacilityId
+        ? allUnits
+            .filter((u) => u.homeBase?.facilityId === selectedFacilityId && u.damageState !== "destroyed" && (godMode || u.side === playerSide))
+            .map((u) => ({ id: u.id, name: u.name, runwayEnd: u.homeBase?.runwayEnd }))
+        : [],
+    [allUnits, selectedFacilityId, godMode, playerSide],
+  );
   const selectedOrders = selectedUnitId ? gameState.orders.get(selectedUnitId) : undefined;
   const contactTag = useCallback((c: Contact) => `${c.platformName ?? `TN${trackNumber(c.id)}`} ${CLS_LABEL[c.classification]}`, []);
   const { fire, engageTarget, cycleTarget, setRoeFor } = useFireControls({
@@ -374,7 +389,18 @@ export function TerminalPlay() {
       });
     }
     setSelectedUnitId(unitId);
+    if (unitId) setSelectedFacilityId(null);
     setIsPlacingWaypoint(false);
+  }, []);
+
+  const handleFacilitySelect = useCallback((facilityId: string | null) => {
+    setSelectedFacilityId(facilityId);
+    if (facilityId) setSelectedUnitId(null);
+  }, []);
+
+  const showFacility = useCallback((facilityId: string) => {
+    setSelectedFacilityId(facilityId);
+    setFacilityFocus((f) => ({ n: (f?.n ?? 0) + 1, facilityId }));
   }, []);
 
   // The plot calls back between React renders, so read live values from a ref
@@ -419,10 +445,13 @@ export function TerminalPlay() {
       measureStart,
       measureEnd,
       simTime: gameState.simTime,
+      facilities: demoScenarioConfig.scenario.facilities,
+      selectedFacilityId,
       mode: measureMode ? "measure" : isPlacingWaypoint && selectedUnitId ? "waypoint" : "select",
     }),
     [allUnits, playerSide, gameState.contacts, gameState.orders, gameState.simTime, godMode, weaponsInFlight, combatLog,
-      selectedUnitId, pinnedRingIds, showSensorCoverage, measureStart, measureEnd, measureMode, isPlacingWaypoint]
+      selectedUnitId, pinnedRingIds, showSensorCoverage, measureStart, measureEnd, measureMode, isPlacingWaypoint,
+      selectedFacilityId]
   );
 
   // "-- MORE --" pager cue when the left panel has content below the fold
@@ -451,6 +480,8 @@ export function TerminalPlay() {
         insets={insets}
         readouts={readouts}
         focusRequest={focusRequest}
+        facilityFocusRequest={facilityFocus}
+        onFacilitySelect={handleFacilitySelect}
         onUnitSelect={handleUnitSelect}
         onMapClick={handleMapClick}
       />
@@ -615,7 +646,18 @@ export function TerminalPlay() {
           <DetailPanel
             unit={selectedUnit}
             onClose={() => setSelectedUnitId(null)}
+            onShowFacility={showFacility}
             className="tx-panel tx-detail"
+          />
+        </div>
+      )}
+      {selectedFacility && (
+        <div className="tx-right" data-plot-occluder>
+          <FacilityPanel
+            facility={selectedFacility}
+            baseUnits={baseUnits}
+            onClose={() => setSelectedFacilityId(null)}
+            className="tx-panel tx-detail tx-facility"
           />
         </div>
       )}

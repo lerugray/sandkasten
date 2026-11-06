@@ -12,6 +12,8 @@ export interface PlotViewProps {
   readouts: { cursor: React.RefObject<HTMLElement | null>; scaleLabel: React.RefObject<HTMLElement | null>; scaleBar: React.RefObject<HTMLElement | null> };
   zoomRequest?: { n: number; factor: number };
   focusRequest?: { n: number; unitId: string } | null;
+  facilityFocusRequest?: { n: number; facilityId: string } | null;
+  onFacilitySelect?: (facilityId: string | null) => void;
   onUnitSelect: (unitId: string | null, shiftKey?: boolean) => void;
   onMapClick: (p: GeoPoint) => boolean | void;
 }
@@ -19,18 +21,19 @@ export interface PlotViewProps {
 // Hosts the Three.js plot. The plot owns its canvas and animation loop; this
 // component only forwards React state into it, so React renders never tear
 // the scene down.
-export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, focusRequest, onUnitSelect, onMapClick }: PlotViewProps) {
+export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, focusRequest, facilityFocusRequest, onUnitSelect, onMapClick, onFacilitySelect }: PlotViewProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<TacticalPlot | null>(null);
-  const cbRef = useRef({ onUnitSelect, onMapClick });
-  cbRef.current = { onUnitSelect, onMapClick };
+  const cbRef = useRef({ onUnitSelect, onMapClick, onFacilitySelect });
+  cbRef.current = { onUnitSelect, onMapClick, onFacilitySelect };
 
   useEffect(() => {
     if (!hostRef.current || !overlayRef.current) return;
     const plot = new TacticalPlot(hostRef.current, overlayRef.current, origin, {
       onUnitSelect: (id, shift) => cbRef.current.onUnitSelect(id, shift),
       onMapClick: (p) => cbRef.current.onMapClick(p),
+      onFacilitySelect: (id) => cbRef.current.onFacilitySelect?.(id),
     });
     plotRef.current = plot;
     const host = hostRef.current as HTMLDivElement & { __plot?: unknown };
@@ -73,6 +76,10 @@ export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, f
   useEffect(() => {
     if (focusRequest) plotRef.current?.focusUnit(focusRequest.unitId);
   }, [focusRequest]);
+
+  useEffect(() => {
+    if (facilityFocusRequest) plotRef.current?.focusFacility(facilityFocusRequest.facilityId);
+  }, [facilityFocusRequest]);
 
   return (
     <div className="tx-plot" data-testid="tactical-plot-wrap">
