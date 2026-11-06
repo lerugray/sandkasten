@@ -16,8 +16,8 @@ It combines two open datasets. Everything is open data; no Google Earth or Googl
 |---|---|---|
 | Terrain (3D relief + hillshade) | AWS Terrain Tiles (Mapzen terrarium encoding), https://registry.opendata.aws/terrain-tiles/ . Composite of SRTM, GMTED2010, ETOPO1 and national datasets. | Open data on the AWS Open Data programme. Credit lines are listed at https://github.com/tilezen/joerd/blob/master/docs/attribution.md and shown in the map attribution control. |
 | Satellite toggle | EOX Sentinel-2 cloudless 2018 (`s2cloudless-2018_3857`), https://s2maps.eu/ | CC BY-NC-SA 4.0 (non-commercial). "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2018)". The CC BY 2017 mosaic (`SATELLITE_YEAR = 2017` in `src/lib/map/styles.ts`) has white no-data holes over the theater, so it is not the default. |
-| Default dark / light basemap | CARTO raster basemaps, (c) OpenStreetMap contributors, (c) CARTO | Unchanged from before SAND-MAP-1. CARTO now returns a watermark tile to keyless requests. |
-| Glyphs | fonts.openmaptiles.org (Open Sans Regular) | Open Font Licence |
+| Default dark / light basemap | OpenFreeMap vector tiles, https://openfreemap.org (`https://tiles.openfreemap.org/planet`). Map data (c) OpenStreetMap contributors; schema and design (c) OpenMapTiles. | No account, no API key, no usage cap; attribution is the only condition (https://openfreemap.org/tos/). Tile data ODbL 1.0 (OSM); OpenMapTiles schema CC BY 4.0. Credit line shown in the status bar and the map attribution control. Replaces the CARTO raster basemaps, which now return an "API KEY REQUIRED" watermark to keyless requests. |
+| Glyphs | OpenFreeMap font server (`https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf`), Noto Sans Regular | SIL Open Font Licence 1.1 |
 
 ## Data notes
 

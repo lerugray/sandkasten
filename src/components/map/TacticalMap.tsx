@@ -113,7 +113,7 @@ export function TacticalMap({
     );
     map.addControl(
       new maplibregl.AttributionControl({ compact: true }),
-      "bottom-right"
+      "bottom-left"
     );
 
     map.on("load", () => {
@@ -321,25 +321,25 @@ export function TacticalMap({
       )}
 
       {/* Status bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-9 bg-[var(--color-tactical-panel)] border-t border-[var(--color-tactical-border)] flex items-center px-4 text-base text-[var(--color-tactical-text-dim)] gap-6 z-10">
-        <span>SANDKASTEN v0.1</span>
-        {cursorPos && (
-          <span>
-            {cursorPos.lat.toFixed(4)}N {cursorPos.lng.toFixed(4)}E
+      <div className="absolute bottom-0 left-0 right-0 bg-[var(--color-tactical-panel)] border-t border-[var(--color-tactical-border)] text-[var(--color-tactical-text-dim)] z-10">
+        <div className="h-9 flex items-center px-4 text-base gap-6 whitespace-nowrap">
+          <span>SANDKASTEN v0.1</span>
+          {cursorPos && (
+            <span>
+              {cursorPos.lat.toFixed(4)}N {cursorPos.lng.toFixed(4)}E
+            </span>
+          )}
+          <span>Z{zoom.toFixed(1)}</span>
+          {contacts && <span>{contacts.length} contacts</span>}
+          <span className="ml-auto">{scenario.name}</span>
+        </div>
+        <div className="px-4 pb-1 text-xs leading-4 flex flex-wrap gap-x-6">
+          <span data-testid="map-attribution">
+            {BASEMAP_CREDIT_TEXT}
+            {hasFacilities ? `. ${FACILITY_ATTRIBUTION}` : ""}
           </span>
-        )}
-        <span>Z{zoom.toFixed(1)}</span>
-        {contacts && <span>{contacts.length} contacts</span>}
-        <span data-testid="map-attribution" className="text-sm truncate">
-          {BASEMAP_CREDIT_TEXT}
-          {hasFacilities ? `. ${FACILITY_ATTRIBUTION}` : ""}
-        </span>
-        {satelliteOn && (
-          <span data-testid="map-satellite-credit" className="text-sm truncate">
-            {SATELLITE_CREDIT_TEXT}
-          </span>
-        )}
-        <span className="ml-auto">{scenario.name}</span>
+          {satelliteOn && <span data-testid="map-satellite-credit">{SATELLITE_CREDIT_TEXT}</span>}
+        </div>
       </div>
     </div>
   );

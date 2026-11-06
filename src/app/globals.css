@@ -77,7 +77,7 @@ body {
 .maplibregl-ctrl-attrib {
   background: transparent !important;
   color: var(--color-tactical-text-dim) !important;
-  font-size: 10px !important;
+  font-size: 12px !important;
 }
 
 .maplibregl-ctrl-attrib a {
@@ -103,8 +103,8 @@ body {
   border-top-color: var(--color-tactical-border) !important;
 }
 
-/* Keep MapLibre's attribution control above the 36px status bar */
+/* Keep MapLibre's attribution control above the status bar (36px bar plus one or two 16px credit lines) */
 .maplibregl-ctrl-bottom-right,
 .maplibregl-ctrl-bottom-left {
-  margin-bottom: 36px;
+  bottom: 76px !important;
 }

@@ -19,7 +19,7 @@ const SATELLITE_LICENCE = SATELLITE_YEAR === 2017 ? "CC BY 4.0" : "CC BY-NC-SA 4
 export const SATELLITE_TILES = `https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-${SATELLITE_YEAR}_3857/default/g/{z}/{y}/{x}.jpg`;
 export const SATELLITE_ATTRIBUTION = `<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless ${SATELLITE_YEAR}</a> by <a href="https://eox.at" target="_blank" rel="noopener">EOX IT Services GmbH</a> (Contains modified Copernicus Sentinel data ${SATELLITE_YEAR}), ${SATELLITE_LICENCE}`;
 
-export const SATELLITE_CREDIT_TEXT = `Imagery: Sentinel-2 cloudless ${SATELLITE_YEAR} by EOX IT Services GmbH (contains modified Copernicus Sentinel data ${SATELLITE_YEAR}), ${SATELLITE_LICENCE}`;
+export const SATELLITE_CREDIT_TEXT = `Imagery: Sentinel-2 cloudless ${SATELLITE_YEAR} by EOX IT Services GmbH (modified Copernicus Sentinel data), ${SATELLITE_LICENCE}`;
 
 /** Globe when zoomed out, flat mercator from the tactical zoom (theater default is 7). */
 export const ADAPTIVE_PROJECTION: ProjectionSpecification = {
