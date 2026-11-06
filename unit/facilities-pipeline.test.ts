@@ -12,6 +12,8 @@ import {
   parseOsmRunways,
   parseOurAirports,
   normalizeSurface,
+  ARABIC_SCRIPT,
+  englishFallbackName,
 } from "../scripts/lib/facilities.mjs";
 
 const fx = (n: string) => readFileSync(join(__dirname, "fixtures", n), "utf8");
@@ -236,6 +238,63 @@ describe("facility pipeline", () => {
         osmRunways: parseOsmRunways([way(21, "09L/27R", [west, east]), way(22, "09R/27L", [off(west), off(east)])]),
       });
       expect(facilities[0].runways.map((r: { id: string }) => r.id).sort()).toEqual(["09L/27R", "09R/27L"]);
+    });
+  });
+
+  describe("B: labels are English", () => {
+    test("no committed facility name contains Arabic-script code points", () => {
+      const data = JSON.parse(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8"));
+      const bad = data.facilities.filter((f: { name: string }) => ARABIC_SCRIPT.test(f.name)).map((f: { id: string }) => f.id);
+      expect(bad).toEqual([]);
+      const kish = data.facilities.find((f: { id: string }) => f.id === "apt-node-8625983990");
+      expect(kish.name).toBe("Air base");
+      expect(kish.nameLocal).toBe("پایگاه هوایی");
+    });
+
+    test("an OSM element with only a Persian name gets an English type description; name:en wins when present", () => {
+      const el = (id: number, tags: Record<string, string>) => ({ type: "node", id, lat: 26.5, lon: 54.0, tags });
+      const out = parseOsmFacilities([
+        el(1, { aeroway: "aerodrome", name: "فرودگاه سمپاشی جره" }),
+        el(2, { aeroway: "aerodrome", name: "فرودگاه", "name:en": "Example Airport" }),
+        el(3, { military: "range", name: "بسیج سندرک" }),
+      ]);
+      expect(out.map((f: { name: string }) => f.name)).toEqual(["Crop-spraying airstrip", "Example Airport", "Basij post"]);
+      expect(out[0].nameLocal).toBe("فرودگاه سمپاشی جره");
+      expect(englishFallbackName("نامعلوم", "military_area", "range")).toBe("Military range");
+    });
+  });
+
+  describe("D1: an unlettered chart record joins at most one parallel strip", () => {
+    const west = { lat: 26.0, lon: 55.0 };
+    const east = { lat: 25.9981, lon: 55.0245 };
+    const off = (p: { lat: number; lon: number }, d: number) => ({ lat: p.lat + d, lon: p.lon });
+    const way = (id: number, ref: string, pts: { lat: number; lon: number }[]) => ({ type: "way", id, tags: { aeroway: "runway", ref }, geometry: pts });
+    const oaFor = (le: [number, number], he: [number, number]) =>
+      parseOurAirports(
+        fx("facilities-airports.csv").split("\n")[0] + "\n" + "1,OIXX,medium_airport,Test Field,25.999,55.012,10,AS,IR,IR-07,Test,yes,OIXX,,OIXX,,,\n",
+        "id,airport_ref,airport_ident,length_ft,width_ft,surface,lighted,closed,le_ident,le_latitude_deg,le_longitude_deg,le_elevation_ft,le_heading_degT,le_displaced_threshold_ft,he_ident,he_latitude_deg,he_longitude_deg,he_elevation_ft,he_heading_degT,he_displaced_threshold_ft\n" +
+          `9,1,OIXX,7800,148,ASP,1,0,09,${le[0]},${le[1]},,,,27,${he[0]},${he[1]},,,\n`,
+        BBOX,
+      );
+    const run = (osm: unknown[]) =>
+      mergeFacilities({ ourairports: oaFor([26.0 - 0.0014, 55.0005], [25.9981 - 0.0014, 55.0240]), osmFacilities: [], osmRunways: parseOsmRunways(osm as never) }).facilities.find(
+        (f: { icao?: string }) => f.icao === "OIXX",
+      )!.runways as { id: string; surface: string }[];
+
+    test("09/27 chart record between OSM 09L/27R and 09R/27L keeps both strips, in any input order", () => {
+      const l = way(21, "09L/27R", [off(west, 0.0035), off(east, 0.0035)]);
+      const r = way(22, "09R/27L", [west, east]);
+      const a = run([l, r]);
+      expect(a.map((x) => x.id).sort()).toEqual(["09L/27R", "09R/27L"]);
+      expect(run([r, l])).toEqual(a);
+      expect(a.filter((x) => x.surface === "asphalt")).toHaveLength(1);
+    });
+
+    test("committed data: Al Udeid keeps 16L/34R and 16R/34L, Sheik Isa keeps both runways, no duplicates", () => {
+      const data = JSON.parse(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8"));
+      const ids = (icao: string) => data.facilities.find((f: { id: string }) => f.id === `apt-${icao}`).runways.map((r: { id: string }) => r.id).sort();
+      expect(ids("otbh")).toEqual(["16L/34R", "16R/34L"]);
+      expect(ids("obbs")).toEqual(["15L/33R", "15R/33L"]);
     });
   });
 

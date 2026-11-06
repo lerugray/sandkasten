@@ -422,6 +422,36 @@ export function parseOsmRunways(elements) {
 
 const MIL_AREA_KINDS = new Set(["base", "range", "danger_area", "barracks", "training_area", "airfield", "naval_base"]);
 
+export const ARABIC_SCRIPT = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+// OSM names written only in Persian/Arabic script get a plain English description from their type words; the original
+// stays in nameLocal. Order matters: the first matching rule wins.
+const ENGLISH_BY_WORD = [
+  [/سمپاشی/, "Crop-spraying airstrip"],
+  [/پایگاه هوایی|هوافضا/, "Air base"],
+  [/فرودگاه|ميناء رأس|فرودگاه/, "Airfield"],
+  [/دریابانی/, "Coast guard base"],
+  [/اسکله صیادی/, "Fishing pier"],
+  [/ميناء|بندر/, "Port"],
+  [/بسیج/, "Basij post"],
+  [/پاسگاه انتظامی/, "Police post"],
+  [/مرزبانی/, "Border guard command"],
+  [/میدان تیر/, "Firing range"],
+  [/پدآفندی/, "Air defence base"],
+  [/مرکز آموزش|معهد/, "Training centre"],
+  [/پادگان|تیپ/, "Barracks"],
+  [/سپاه/, "IRGC facility"],
+  [/دادگستری/, "Government compound"],
+];
+
+export function englishFallbackName(name, kind, areaType) {
+  for (const [re, en] of ENGLISH_BY_WORD) if (re.test(name)) return en;
+  if (kind === "airbase") return "Airstrip";
+  if (kind === "naval_base") return "Naval base";
+  if (kind === "port") return "Port";
+  return areaType === "range" ? "Military range" : areaType === "barracks" ? "Barracks" : areaType === "training_area" ? "Training area" : "Military base";
+}
+
 export function parseOsmFacilities(elements) {
   const out = [];
   for (const el of elements) {
@@ -458,6 +488,12 @@ export function parseOsmFacilities(elements) {
       out.push({ ...common, key: `osm:${osmId(el)}`, kind: "port", isMilitary: false });
     } else if (MIL_AREA_KINDS.has(t.military)) {
       out.push({ ...common, key: `osm:${osmId(el)}`, kind: "military_area", areaType: t.military, isMilitary: true });
+    }
+  }
+  for (const f of out) {
+    if (f.name && ARABIC_SCRIPT.test(f.name)) {
+      f.nameLocal = f.nameLocal ?? f.name;
+      f.name = englishFallbackName(f.name, f.kind, f.areaType);
     }
   }
   return out;
@@ -585,12 +621,39 @@ function mergeStrip(members) {
   return rw;
 }
 
-/** One runway per physical strip, independent of input order (union-find over the collinear relation). */
+/** Two records name different physical strips when the same number carries different letters (16L against 16R). */
+function lettersConflict(o, rw) {
+  const x = o.ends.map((e) => parseDesignator(e.ident));
+  const y = rw.ends.map((e) => parseDesignator(e.ident));
+  for (let i = 0; i < 2; i++) if (x[i] && y[i] && x[i].n === y[i].n && x[i].letter && y[i].letter && x[i].letter !== y[i].letter) return true;
+  return false;
+}
+
+/**
+ * One runway per physical strip, independent of input order. Candidate pairs join nearest first; a join is refused when
+ * it would put two letter-conflicting records (16L, 16R) in one group, so an unlettered chart record attaches to one strip only.
+ */
 function reconcileRunways(list) {
   const parent = list.map((_, i) => i);
   const find = (i) => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+  const pairs = [];
   for (let i = 0; i < list.length; i++)
-    for (let j = i + 1; j < list.length; j++) if (sameStrip(list[i], list[j]) || sameStrip(list[j], list[i])) parent[find(j)] = find(i);
+    for (let j = i + 1; j < list.length; j++)
+      if (sameStrip(list[i], list[j]) || sameStrip(list[j], list[i])) {
+        const [a, b] = [sourceKey(list[i]), sourceKey(list[j])].sort();
+        pairs.push({ i, j, d: Math.round(haversineM(midpoint(list[i]), midpoint(list[j]))), k: `${a}|${b}` });
+      }
+  pairs.sort((p, q) => p.d - q.d || p.k.localeCompare(q.k));
+  const members = (root) => list.filter((_, i) => find(i) === root);
+  for (const { i, j } of pairs) {
+    const ri = find(i);
+    const rj = find(j);
+    if (ri === rj) continue;
+    const mi = members(ri);
+    const mj = members(rj);
+    if (mi.some((a) => mj.some((b) => lettersConflict(a, b)))) continue;
+    parent[rj] = ri;
+  }
   const groups = new Map();
   list.forEach((rw, i) => {
     const r = find(i);
