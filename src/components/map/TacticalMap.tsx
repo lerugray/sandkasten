@@ -116,12 +116,13 @@ export function TacticalMap({
       "bottom-left"
     );
 
+    // Exposed at construction: the editor placer reads it, and `load` waits on the remote tiles.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (map.getContainer() as any).__maplibreMap = map;
+
     map.on("load", () => {
       setMapReady(true);
       setZoom(map.getZoom());
-      const mapEl = containerRef.current?.querySelector(".maplibregl-canvas")?.closest(".maplibregl-map");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (mapEl) (mapEl as any).__maplibreMap = map;
       onMapReadyRef.current?.();
     });
 
