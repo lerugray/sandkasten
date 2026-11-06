@@ -1,0 +1,203 @@
+{
+  "slug": "kaman-class-combattante-ii",
+  "legacyIds": [
+    1088
+  ],
+  "engineName": "Kaman Class [Combattante II]",
+  "name": "Kaman-class (La Combattante IIa) fast attack craft",
+  "designation": "Kaman class (French La Combattante II type)",
+  "className": "Kaman class",
+  "nation": "Iran",
+  "side": "Iran",
+  "service": "Islamic Republic of Iran Navy (IRIN)",
+  "domain": "surface",
+  "dimension": "sea",
+  "functionId": "CL",
+  "role": "Missile-armed fast attack craft (anti-ship)",
+  "serviceWindow": {
+    "enteredService": 1977,
+    "retired": null,
+    "statusNotes": "Iran ordered 12 from France; nine were delivered in 1977 and 1978 and three, delayed by the 1979 revolution, by 1981. Paykan was sunk in Operation Morvarid (1980) and Joshan by USS Simpson in 1988. The boats are about 50 years old, so readiness is doubtful, and the International Institute for Strategic Studies listed 'up to 10' before the 2026 war. How many were sailing on 2026-03-15 is not reliably published. (Sources s1, s2, s3, s5.)"
+  },
+  "dimensions": {
+    "lengthM": 47,
+    "beamM": 7.1,
+    "draftM": 1.9,
+    "displacementFullTons": 275,
+    "crew": "About 31",
+    "sourceId": "s2",
+    "provenance": "verified"
+  },
+  "propulsionSummary": "Four diesel engines on four shafts; the Greek sister design (La Combattante IIa) uses four MTU 16V 538 TB90 diesels, and the Iranian boats' exact engine variant is not confirmed in the sources used (s4).",
+  "performance": {
+    "maxSpeedKts": 36,
+    "cruiseSpeedKts": 33.7,
+    "rangeNm": 700,
+    "sourceId": "s2",
+    "provenance": "verified"
+  },
+  "sensorRangeKm": 65,
+  "weaponRangeKm": 35,
+  "damagePoints": 180,
+  "missileDefense": 3,
+  "engineSourceId": "s2",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "C-802 Noor",
+      "type": "asm",
+      "rangeKm": 120,
+      "speedKts": 530,
+      "pkAir": 0,
+      "pkSurface": 90,
+      "quantity": 4,
+      "warheadDamage": 167,
+      "seekerType": "active-radar",
+      "mountSummary": "Two twin launchers (four missiles), refitted around 2000 to replace the original Harpoons; some sources list only one twin launcher",
+      "sourceId": "s2",
+      "provenance": "estimated"
+    },
+    {
+      "name": "76mm/50 OTO Melara",
+      "type": "gun",
+      "rangeKm": 10,
+      "speedKts": 0,
+      "pkAir": 10,
+      "pkSurface": 60,
+      "quantity": 80,
+      "warheadDamage": 15,
+      "mountSummary": "Single 76 mm dual-purpose gun forward, plus one 40 mm gun aft and two 12.7 mm machine guns",
+      "sourceId": "s2",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [
+    {
+      "name": "Chaff Launchers",
+      "type": "chaff",
+      "effectiveness": 0.2,
+      "quantity": 8,
+      "sourceId": "s4",
+      "provenance": "estimated"
+    }
+  ],
+  "sensors": [
+    {
+      "name": "Surface search radar (radome on mast)",
+      "type": "radar",
+      "role": "Finds ships and low aircraft; the Greek sister design carries a Thomson-CSF Triton G-band set, the Iranian fit is not confirmed",
+      "band": "G/I-band",
+      "rangeKm": 65,
+      "canTrack": true,
+      "sourceId": "s4",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Fire-control radar and optical director",
+      "type": "radar",
+      "role": "Aims the 76 mm and 40 mm guns; the sister design uses a Castor I/J-band radar",
+      "band": "I/J-band",
+      "rangeKm": 25,
+      "canTrack": true,
+      "sourceId": "s4",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Bridge lookouts",
+      "type": "visual",
+      "role": "Eye spotting by day",
+      "rangeKm": 15,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [],
+  "signatures": {
+    "radar": {
+      "grade": "low",
+      "note": "A 47 m, 275-ton boat; small, low hull with a compact superstructure."
+    },
+    "infrared": {
+      "grade": "medium",
+      "note": "Four diesels run hot at speed; small hull limits how far the heat shows."
+    },
+    "acoustic": {
+      "grade": "medium",
+      "note": "Four-shaft diesel boat that is loud at 30 plus knots."
+    },
+    "visual": {
+      "grade": "low",
+      "note": "Low grey hull that is hard to see at distance."
+    },
+    "sourceId": "s2",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The Kaman class is a set of 47 m missile boats that France built for Iran in the 1970s (the La Combattante II design). Iran swapped their original Harpoon missiles for Chinese-type C-802 (Noor) missiles around 2000. Each boat carries four missiles, a 76 mm gun forward and a 40 mm gun aft. They are small, fast and cheap, but old.",
+    "howItIsUsed": "A commander uses these boats as a coastal missile threat: with four C-802 missiles reaching about 120 km they can threaten a warship that is nowhere near the boat's own radar range, if someone else supplies the targeting. They work best in small groups that fire together from near the coast and break away at 35 knots. The 76 mm gun is a decent weapon against small boats, but the boats have almost no protection against missiles or aircraft: a few chaff launchers and a few light guns. They sink with one or two hits. Their age makes mechanical failures likely, so expect fewer boats to be ready than the roster says.",
+    "typicalMissions": [
+      "Anti-ship missile strike from the coast",
+      "Surface patrol and shipping surveillance",
+      "Escort of Iranian merchant or naval groups",
+      "Gunfire support against small craft"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/kaman-class-combattante-ii/main.jpg",
+      "caption": "Kaman-class (Combattante II) boat IRIS Gardouneh (P229) on patrol in the Persian Gulf, 6 October 2001.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:IRIS_Gardouneh_pictured_by_American_military_in_2001.jpg",
+      "author": "PH2 Andrew Meyers, US Navy",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military",
+      "attributionLine": "Photo: PH2 Andrew Meyers, US Navy (US Government work, public domain), via Wikimedia Commons / NARA"
+    },
+    {
+      "localPath": "/platforms/kaman-class-combattante-ii/second.jpg",
+      "caption": "Kaman-class boat P232 alongside a pier during a 2013 ceremony (Fars News file photo).",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:File_photo_of_IRIS_P232.jpg",
+      "author": "Azin Haghighi (Fars News Agency)",
+      "license": "CC BY",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attributionLine": "Photo: Azin Haghighi / Fars News Agency, CC BY 4.0, via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "La Combattante II type fast attack craft (Wikipedia)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/La_Combattante_II_type_fast_attack_craft"
+    },
+    {
+      "id": "s2",
+      "title": "Kaman/Sina Class - Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2019,
+      "url": "https://www.globalsecurity.org/military/world/iran/kaman-specs.htm"
+    },
+    {
+      "id": "s3",
+      "title": "Kaman/Sina Class (overview)",
+      "publisher": "GlobalSecurity.org",
+      "year": 2019,
+      "url": "https://www.globalsecurity.org/military/world/iran/kaman.htm"
+    },
+    {
+      "id": "s4",
+      "title": "La Combattante IIa-class fast attack craft (Greek sister design) (Wikipedia)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/La_Combattante_IIa-class_fast_attack_craft"
+    },
+    {
+      "id": "s5",
+      "title": "Islamic Republic of Iran Navy (Wikipedia)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Islamic_Republic_of_Iran_Navy"
+    }
+  ]
+}

@@ -29,7 +29,7 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 | | CMO | Sandkasten |
 |---|---|---|
 | **Cost** | $80+ | Free, open source |
-| **Platform database** | Proprietary (CWDB) | Community-maintained, or import from CMO if you own it |
+| **Platform database** | Proprietary (CWDB), no photos | Our own, sourced and open: real licensed photos, full specs, plain-English briefings |
 | **Scenario scripting** | Lua + complex editor | Visual trigger-condition-action system |
 | **UI** | Built for defense analysts | Built for players |
 | **Multiplayer** | TCP/IP real-time | WeGo simultaneous turns (planned) |
@@ -58,7 +58,7 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Measurement tools — click two points for distance/bearing (`M` key)
 - Dark/light theme (MapLibre pages; the terminal play view is dark only)
 - Scenario editor at `/editor` — place units, drag to reposition, set sides, save/load JSON
-- Platform database API with 60k+ extracted CMO records
+- Platform manual at `/database`: 16 Hormuz platforms (ships and aircraft) with real open-license photos and credits, sourced specs, plain-English "what it is / how it is used / typical missions", sensors, weapons, defenses and a numbered bibliography. Records live in `src/data/platforms/records/`; the simulation reads them through `src/lib/platforms/lookup.ts`. Estimation methods are in `src/data/platforms/METHODS.md`. Nothing is copied from CMO.
 
 ### Simulation
 - Real-time simulation at `/play`
@@ -128,15 +128,15 @@ To run E2E tests (auto-starts the dev server):
 npm test
 ```
 
-### Platform Database (Optional)
+### Platform Database
 
-The demo scenario includes a built-in platform set. For the full database (4,700 ships, 7,100 aircraft, 4,200 weapons, 7,200 sensors), install [Command: Modern Operations](https://store.steampowered.com/app/1076160/Command_Modern_Operations/) and run:
+Sandkasten ships its own platform database (`src/data/platforms/`); no CMO install is needed. Optional and local only: for CMO-derived reference data on your own machine (4,700 ships, 7,100 aircraft, 4,200 weapons, 7,200 sensors), install [Command: Modern Operations](https://store.steampowered.com/app/1076160/Command_Modern_Operations/) and run:
 
 ```bash
 python scripts/extract_cmo_db.py
 ```
 
-Reads CMO's SQLite database files, outputs JSON to `data/extraction/`. Gitignored — derived from proprietary game files.
+Reads CMO's SQLite database files, outputs JSON to `data/extraction/`. Gitignored, derived from proprietary game files. The game never reads or bundles it.
 
 ### InfoWar Feed (Optional)
 
@@ -204,6 +204,7 @@ sandkasten/
 | **InfoWar Feed** | Media coverage from game events via local LLM | Complete |
 | **Polish** | Autopause, god mode, sensors overlay, measurement, E2E tests | Complete |
 | **Look** | Three.js terminal play view, motion, 3D tilt | Built, awaiting Ray's in-game review |
+| **Platform database** | Own sourced records, photos and `/database` viewer for the Hormuz roster | Built, awaiting Ray's review; full roster is a later job |
 | **Remaining gaps** | Fuel consumption, aircraft altitude, game save/load | Next |
 | **WeGo Multiplayer** | WebSocket sync, turn system, lobby, server-side fog of war | Planned |
 | **Community** | Scenario sharing, Auftragstaktik OSINT import, campaign mode | Planned |

@@ -1,0 +1,370 @@
+{
+  "slug": "ticonderoga-baseline-3",
+  "legacyIds": [
+    598
+  ],
+  "engineName": "CG 52 Bunker Hill [Ticonderoga Baseline 3]",
+  "name": "Ticonderoga-class cruiser (Baseline 3)",
+  "designation": "CG 52 USS Bunker Hill",
+  "className": "Ticonderoga class (CG 47)",
+  "nation": "United States",
+  "side": "US Navy",
+  "service": "US Navy",
+  "domain": "surface",
+  "dimension": "sea",
+  "functionId": "CL",
+  "role": "Aegis guided-missile cruiser for air defence, surface warfare, anti-submarine warfare and land strike",
+  "serviceWindow": {
+    "enteredService": 1986,
+    "retired": null,
+    "statusNotes": "The example ship, USS Bunker Hill (CG 52), was commissioned on 20 September 1986 and decommissioned in September 2023 (s4). The class is not gone: the Navy is keeping USS Gettysburg (CG 64), USS Chosin (CG 65) and USS Cape St. George (CG 71) in service on extended service lives running through fiscal year 2029 (s5). A small number of other Ticonderoga hulls were still in service on 2026-03-15; this record does not state an exact count because no source fetched for it gives one. The class entry stays active for that reason."
+  },
+  "dimensions": {
+    "lengthM": 173,
+    "beamM": 16.8,
+    "draftM": 10.2,
+    "displacementFullTons": 9600,
+    "crew": "about 330 (30 officers and 300 enlisted)",
+    "sourceId": "s3",
+    "provenance": "verified"
+  },
+  "propulsionSummary": "Four General Electric LM2500 gas turbines drive two shafts for about 80,000 shaft horsepower.",
+  "performance": {
+    "maxSpeedKts": 30,
+    "cruiseSpeedKts": 20,
+    "rangeNm": 6000,
+    "sourceId": "s3",
+    "provenance": "estimated"
+  },
+  "sensorRangeKm": 370,
+  "weaponRangeKm": 167,
+  "damagePoints": 1360,
+  "missileDefense": 20,
+  "engineSourceId": "s1",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "RIM-66M SM-2MR",
+      "type": "sam",
+      "rangeKm": 93,
+      "speedKts": 2300,
+      "pkAir": 85,
+      "pkSurface": 90,
+      "quantity": 80,
+      "warheadDamage": 80,
+      "seekerType": "semi-active",
+      "mountSummary": "Fired from the Mk 41 vertical launch system (FAS notes vertical launchers from CG 52 on); missile count is the engine's typical mix, not a published load. The Navy fact file gives SM-2 Medium Range as up to 90 nautical miles (about 167 km), so the 93 km engine range is estimated.",
+      "sourceId": "s15",
+      "provenance": "estimated"
+    },
+    {
+      "name": "RGM-84 Harpoon",
+      "type": "asm",
+      "rangeKm": 139,
+      "speedKts": 530,
+      "pkAir": 0,
+      "pkSurface": 95,
+      "quantity": 8,
+      "warheadDamage": 167,
+      "seekerType": "active-radar",
+      "mountSummary": "Two quad launchers (8 missiles). The Navy fact file gives Harpoon range as over 67 nautical miles (about 124 km), so the 139 km engine range is estimated.",
+      "sourceId": "s14",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Mk 15 Phalanx CIWS",
+      "type": "gun",
+      "rangeKm": 1.8,
+      "speedKts": 0,
+      "pkAir": 50,
+      "pkSurface": 30,
+      "quantity": 1200,
+      "warheadDamage": 10,
+      "mountSummary": "20 mm six-barrel gun, the class carries two mounts, the engine models one. FAS lists Phalanx range as classified, so range and round count are estimated.",
+      "sourceId": "s13",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [
+    {
+      "name": "Mk 36 SRBOC Chaff",
+      "type": "chaff",
+      "effectiveness": 0.3,
+      "quantity": 24,
+      "sourceId": "s11",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-32(V)3 ECM",
+      "type": "ecm",
+      "effectiveness": 0.25,
+      "sourceId": "s10",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Mk 15 Phalanx",
+      "type": "ciws",
+      "effectiveness": 0.5,
+      "sourceId": "s13",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-25 Nixie",
+      "type": "decoy",
+      "effectiveness": 0.2,
+      "sourceId": "s12",
+      "provenance": "estimated"
+    }
+  ],
+  "sensors": [
+    {
+      "name": "AN/SPY-1A phased-array radar",
+      "type": "radar",
+      "role": "Aegis air search and track, four fixed arrays, FAS says it tracks air contacts beyond 200 miles",
+      "band": "S-band",
+      "rangeKm": 370,
+      "canTrack": true,
+      "sourceId": "s1",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SPS-49 air search radar",
+      "type": "radar",
+      "role": "Long-range 2D air search that backs up the SPY-1 on ships that keep it, picks out low-radar-cross-section targets in clutter and jamming",
+      "band": "L-band",
+      "rangeKm": 463,
+      "canTrack": true,
+      "sourceId": "s6",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SPS-55 surface search radar",
+      "type": "radar",
+      "role": "Surface search and navigation",
+      "band": "X-band",
+      "rangeKm": 40,
+      "canTrack": true,
+      "sourceId": "s16",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SPG-62 fire control radars",
+      "type": "radar",
+      "role": "Illuminates the target for semi-active SM-2 missiles in the last seconds of flight",
+      "band": "I/J-band",
+      "rangeKm": 100,
+      "canTrack": true,
+      "sourceId": "s7",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SQS-53 bow sonar",
+      "type": "sonar",
+      "role": "Hull-mounted active and passive search for submarines",
+      "rangeKm": 20,
+      "canTrack": true,
+      "sourceId": "s8",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SQR-19 towed array",
+      "type": "sonar",
+      "role": "Passive long-range listening for submarines on a cable towed behind the ship",
+      "rangeKm": 50,
+      "canTrack": true,
+      "sourceId": "s9",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/SLQ-32 electronic support",
+      "type": "esm",
+      "role": "Detects, identifies and bears on hostile radars",
+      "rangeKm": 150,
+      "canTrack": false,
+      "sourceId": "s10",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Bridge and lookout watch",
+      "type": "visual",
+      "role": "Eyes and binoculars from the bridge and weather decks",
+      "rangeKm": 18,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [],
+  "signatures": {
+    "radar": {
+      "grade": "high",
+      "note": "A 173 m hull with a tall, boxy superstructure and two large masts. It was built on the Spruance hull before radar cross-section shaping became a design goal."
+    },
+    "infrared": {
+      "grade": "medium",
+      "note": "Four gas turbines put out a strong exhaust plume, the same as on a destroyer."
+    },
+    "acoustic": {
+      "grade": "medium",
+      "note": "Gas turbine ship of about 9,600 tons. Active bow sonar adds a deliberate noise source when it pings."
+    },
+    "visual": {
+      "grade": "high",
+      "note": "A large grey ship with a tall deckhouse and two stacks is easy to spot."
+    },
+    "sourceId": "s1",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The Ticonderoga class is the US Navy's cruiser: a 173 m Aegis warship built on the Spruance destroyer hull with a larger missile battery and more command space than a destroyer. USS Bunker Hill (CG 52) was the first ship with vertical launchers. She was decommissioned in September 2023, but the class is not retired.",
+    "howItIsUsed": "A commander uses a cruiser as the air-defence coordinator for a carrier group or a surface action group. The SPY-1A radar and the older SPS-49 search radar build the air picture, and the Aegis system hands targets to Standard missiles. Tomahawk missiles give it strike reach on land, and the 5-inch guns and Phalanx cover small boats and leakers. The extra command space lets a flag officer run the air defence of the whole group from this ship. Its weak points are age and magazine depth. The hulls are close to 40 years old, so material readiness varies from ship to ship, and the missile cells cannot be reloaded quickly at sea. Treat the missile counts in this record as typical.",
+    "typicalMissions": [
+      "Air defence coordination for a carrier strike group",
+      "Tomahawk land strike",
+      "Surface action group flagship",
+      "Anti-submarine escort with towed array and helicopters",
+      "Naval gunfire with the 5-inch guns"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/ticonderoga-baseline-3/main.jpg",
+      "caption": "USS Bunker Hill (CG 52), a Ticonderoga-class Aegis cruiser.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:USS_Bunker_Hill.jpg",
+      "author": "Mass Communication Specialist Seaman Clarence McCloud, U.S. Navy",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy",
+      "attributionLine": "Photo: Mass Communication Specialist Seaman Clarence McCloud, U.S. Navy, US-Gov (public domain), via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/ticonderoga-baseline-3/second.jpg",
+      "caption": "USS Bunker Hill (CG 52) underway.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:USS_Bunker_Hill_(CG-52).jpg",
+      "author": "Tech. Sgt. Marvin Lynchard, U.S. Air Force",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Air_Force",
+      "attributionLine": "Photo: Tech. Sgt. Marvin Lynchard, U.S. Air Force, US-Gov (public domain), via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "CG-47 Ticonderoga",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/cg-47.htm"
+    },
+    {
+      "id": "s2",
+      "title": "Fact File: Cruisers - CG (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2015,
+      "url": "https://web.archive.org/web/20150402151358/http://www.navy.mil/navydata/fact_display.asp?cid=4200&tid=800&ct=4"
+    },
+    {
+      "id": "s3",
+      "title": "USS Bunker Hill (CG-52)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/USS_Bunker_Hill_(CG-52)"
+    },
+    {
+      "id": "s4",
+      "title": "USS Bunker Hill Decommissions (archived copy)",
+      "publisher": "Naval Surface Force, US Pacific Fleet via Internet Archive",
+      "year": 2023,
+      "url": "https://web.archive.org/web/2023/https://www.surfpac.navy.mil/Media/News/Article/3535436/uss-bunker-hill-decommissions/"
+    },
+    {
+      "id": "s5",
+      "title": "SECNAV Announces Service Life Extensions for 3 Cruisers (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2024,
+      "url": "https://web.archive.org/web/2024/https://www.navy.mil/Press-Office/Press-Releases/display-pressreleases/Article/3954899/secnav-announces-service-life-extensions-for-3-cruisers/"
+    },
+    {
+      "id": "s6",
+      "title": "AN/SPS-49 Very Long-Range Air Surveillance Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sps-49.htm"
+    },
+    {
+      "id": "s7",
+      "title": "AN/SPG-62 Fire Control Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-spg-62.htm"
+    },
+    {
+      "id": "s8",
+      "title": "AN/SQS-53C Sonar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sqs-53.htm"
+    },
+    {
+      "id": "s9",
+      "title": "AN/SQR-19 Tactical Towed Array Sonar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sqr-19.htm"
+    },
+    {
+      "id": "s10",
+      "title": "AN/SLQ-32 Electronic Warfare System",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-slq-32.htm"
+    },
+    {
+      "id": "s11",
+      "title": "Mk 36 Super Rapid Blooming Offboard Chaff",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/mk-36.htm"
+    },
+    {
+      "id": "s12",
+      "title": "AN/SLQ-25 Nixie Torpedo Countermeasure",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-slq-25.htm"
+    },
+    {
+      "id": "s13",
+      "title": "Mk 15 Phalanx Close-In Weapons System",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/mk-15.htm"
+    },
+    {
+      "id": "s14",
+      "title": "Fact File: Harpoon Missile (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2015,
+      "url": "https://web.archive.org/web/2015/http://www.navy.mil/navydata/fact_display.asp?cid=2200&tid=200&ct=2"
+    },
+    {
+      "id": "s15",
+      "title": "Fact File: Standard Missile (archived copy)",
+      "publisher": "US Navy, navy.mil via Internet Archive",
+      "year": 2015,
+      "url": "https://web.archive.org/web/2015/http://www.navy.mil/navydata/fact_display.asp?cid=2200&tid=1200&ct=2"
+    },
+    {
+      "id": "s16",
+      "title": "AN/SPS-55 Surface Search Radar",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://man.fas.org/dod-101/sys/ship/weaps/an-sps-55.htm"
+    },
+    {
+      "id": "s17",
+      "title": "Ticonderoga-class cruiser",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Ticonderoga-class_cruiser"
+    }
+  ]
+}

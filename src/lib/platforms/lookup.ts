@@ -1,4 +1,6 @@
 import type { BattleDimension } from "../symbols/milsymbolFactory";
+import { PLATFORM_RECORDS } from "@/data/platforms";
+import type { PlatformRecord } from "@/types/platformDb";
 
 // Lightweight platform info for rendering — full data stays in JSON files
 export interface PlatformInfo {
@@ -34,26 +36,58 @@ export interface PlatformDefense {
   quantity?: number; // expendable count, undefined = unlimited
 }
 
-// Starter platforms for the Persian Gulf MVP scenario
-// These reference DB3K IDs from the extraction
-const MVP_PLATFORMS: PlatformInfo[] = [
-  // US Navy
-  // Mahan DDG-72 is Flight II. Weapon counts below are simulation abstractions (unverified model assumptions).
-  {
-    id: 111, name: "DDG 72 Mahan [Arleigh Burke Flight II]", dimension: "sea", functionId: "CL",
-    sensorRangeKm: 324, weaponRangeKm: 167, damagePoints: 1190, missileDefense: 16,
-    weapons: [
-      { name: "RIM-66M SM-2MR", type: "sam", rangeKm: 93, speedKts: 2300, pkAir: 85, pkSurface: 90, quantity: 50, warheadDamage: 80, seekerType: "semi-active" },
-      { name: "RGM-84 Harpoon", type: "asm", rangeKm: 139, speedKts: 530, pkAir: 0, pkSurface: 95, quantity: 8, warheadDamage: 167, seekerType: "active-radar" },
-      { name: "Mk 15 Phalanx CIWS", type: "gun", rangeKm: 1.8, speedKts: 0, pkAir: 50, pkSurface: 30, quantity: 1200, warheadDamage: 10 },
-    ],
-    defenses: [
-      { name: "Mk 36 SRBOC Chaff", type: "chaff", effectiveness: 0.3, quantity: 24 },
-      { name: "AN/SLQ-32(V)3 ECM", type: "ecm", effectiveness: 0.25 },
-      { name: "Mk 15 Phalanx", type: "ciws", effectiveness: 0.5 },
-      { name: "AN/SLQ-25 Nixie", type: "decoy", effectiveness: 0.2 },
-    ],
-  },
+// PlatformInfo is derived from the first-party records in src/data/platforms/.
+// Aircraft keep the engine's historical shape: no missileDefense, and weapons or
+// defenses stay undefined when the record carries none.
+export function toPlatformInfo(record: PlatformRecord): PlatformInfo {
+  const isAir = record.dimension === "air";
+  const id = record.legacyIds[0] ?? record.engineId;
+  if (id === undefined) throw new Error(`Platform record ${record.slug} has no engine id`);
+  return {
+    id,
+    name: record.engineName,
+    dimension: record.dimension,
+    functionId: record.functionId,
+    sensorRangeKm: record.sensorRangeKm,
+    weaponRangeKm: record.weaponRangeKm > 0 ? record.weaponRangeKm : undefined,
+    damagePoints: record.damagePoints,
+    missileDefense: isAir ? undefined : record.missileDefense,
+    weapons: record.weapons.length > 0 ? record.weapons.map(toEngineWeapon) : undefined,
+    defenses:
+      record.defenses.length > 0 || !isAir ? record.defenses.map(toEngineDefense) : undefined,
+  };
+}
+
+function toEngineWeapon(w: PlatformRecord["weapons"][number]): PlatformWeapon {
+  return {
+    name: w.name,
+    type: w.type,
+    rangeKm: w.rangeKm,
+    speedKts: w.speedKts,
+    pkAir: w.pkAir,
+    pkSurface: w.pkSurface,
+    quantity: w.quantity,
+    warheadDamage: w.warheadDamage,
+    ...(w.seekerType ? { seekerType: w.seekerType } : {}),
+  };
+}
+
+function toEngineDefense(d: PlatformRecord["defenses"][number]): PlatformDefense {
+  return {
+    name: d.name,
+    type: d.type,
+    effectiveness: d.effectiveness,
+    ...(d.quantity !== undefined ? { quantity: d.quantity } : {}),
+  };
+}
+
+const RECORD_PLATFORMS: PlatformInfo[] = PLATFORM_RECORDS.map(toPlatformInfo);
+
+// Engine profiles from the sim-fix lane (s402) that the records do not carry yet: the retired-ship
+// swaps (Chosin 9001, Nitze 9002, Cole 9003), the Boghammar craft (9004), and corrected weapon
+// names/counts on 2740, 342, 2106, 1652, 1088. A profile replaces the record-derived entry with the
+// same id. Folding these into src/data/platforms/records/ is a follow-up.
+const SIMFIX_PROFILES: PlatformInfo[] = [
   // USS Cole DDG-67 is an Arleigh Burke Flight I destroyer, in active service, homeport Norfolk (90 Mk 41 VLS cells,
   // 1x Mk 45 5"/54, 2x Phalanx). Sources: https://www.history.navy.mil/browse-by-topic/ships/modern-ships/uss-cole.html
   // and https://en.wikipedia.org/wiki/USS_Cole_(DDG-67). Weapon counts/ranges/Pk/damage are COPIED from the Mahan profile (111)
@@ -135,7 +169,6 @@ const MVP_PLATFORMS: PlatformInfo[] = [
       { name: "AN/SLQ-25 Nixie", type: "decoy", effectiveness: 0.2 },
     ],
   },
-  // Aircraft
   {
     id: 342, name: "F/A-18E Super Hornet", dimension: "air", functionId: "MF",
     sensorRangeKm: 180, weaponRangeKm: 100, damagePoints: 4,
@@ -152,19 +185,6 @@ const MVP_PLATFORMS: PlatformInfo[] = [
       { name: "AN/ALQ-214 IDECM", type: "ecm", effectiveness: 0.3 },
     ],
   },
-  { id: 896, name: "F-14D Tomcat", dimension: "air", functionId: "MF", sensorRangeKm: 250, weaponRangeKm: 190, damagePoints: 5,
-    weapons: [
-      { name: "AIM-54C Phoenix", type: "aam", rangeKm: 190, speedKts: 3000, pkAir: 75, pkSurface: 0, quantity: 4, warheadDamage: 40, seekerType: "active-radar" },
-      { name: "AIM-120C AMRAAM", type: "aam", rangeKm: 100, speedKts: 2700, pkAir: 85, pkSurface: 0, quantity: 2, warheadDamage: 30, seekerType: "active-radar" },
-    ],
-    defenses: [
-      { name: "Chaff/Flare", type: "chaff", effectiveness: 0.3, quantity: 60 },
-    ],
-  },
-  { id: 2471, name: "E-2C Hawkeye 2000", dimension: "air", functionId: "MF", sensorRangeKm: 556, damagePoints: 3 },
-  { id: 466, name: "P-3C Orion Update III", dimension: "air", functionId: "MF", sensorRangeKm: 280, damagePoints: 5 },
-  { id: 84, name: "SH-60B Seahawk", dimension: "air", functionId: "MH", sensorRangeKm: 120, damagePoints: 2 },
-  // Iran Navy
   // Sina class: Iranian-built missile boat derived from the La Combattante II / Kaman design (NOT the same as Houdong/Thondor).
   // Sources: https://en.wikipedia.org/wiki/Sina-class_fast_attack_craft ,
   // IISS https://www.iiss.org/globalassets/media-library---content--migration/files/research-papers/2023/04/watching-iran-the-isr-gulf.pdf ,
@@ -227,39 +247,25 @@ const MVP_PLATFORMS: PlatformInfo[] = [
       { name: "Chaff Launchers", type: "chaff", effectiveness: 0.2, quantity: 8 },
     ],
   },
-  // Iran Air
-  {
-    id: 265, name: "F-4E Phantom II", dimension: "air", functionId: "MF",
-    sensorRangeKm: 130, weaponRangeKm: 45, damagePoints: 5,
-    weapons: [
-      { name: "AIM-7E Sparrow", type: "aam", rangeKm: 45, speedKts: 2500, pkAir: 50, pkSurface: 0, quantity: 4, warheadDamage: 30, seekerType: "semi-active" },
-      { name: "AIM-9P Sidewinder", type: "aam", rangeKm: 18, speedKts: 1800, pkAir: 60, pkSurface: 0, quantity: 4, warheadDamage: 20, seekerType: "ir" },
-    ],
-    defenses: [
-      { name: "Chaff/Flare", type: "chaff", effectiveness: 0.25, quantity: 30 },
-    ],
-  },
-  {
-    id: 264, name: "F-14A Tomcat", dimension: "air", functionId: "MF",
-    sensorRangeKm: 220, weaponRangeKm: 150, damagePoints: 5,
-    weapons: [
-      { name: "AIM-54A Phoenix", type: "aam", rangeKm: 150, speedKts: 3000, pkAir: 60, pkSurface: 0, quantity: 4, warheadDamage: 40, seekerType: "active-radar" },
-      { name: "AIM-7E Sparrow", type: "aam", rangeKm: 45, speedKts: 2500, pkAir: 50, pkSurface: 0, quantity: 2, warheadDamage: 30, seekerType: "semi-active" },
-      { name: "AIM-9P Sidewinder", type: "aam", rangeKm: 18, speedKts: 1800, pkAir: 60, pkSurface: 0, quantity: 2, warheadDamage: 20, seekerType: "ir" },
-    ],
-    defenses: [
-      { name: "Chaff/Flare", type: "chaff", effectiveness: 0.25, quantity: 30 },
-    ],
-  },
+];
+
+const simfixById = new Map(SIMFIX_PROFILES.map((p) => [p.id, p]));
+const recordIds = new Set(RECORD_PLATFORMS.map((p) => p.id));
+const PLATFORMS: PlatformInfo[] = [
+  ...RECORD_PLATFORMS.map((p) => simfixById.get(p.id) ?? p),
+  ...SIMFIX_PROFILES.filter((p) => !recordIds.has(p.id)),
 ];
 
 const platformMap = new Map<number, PlatformInfo>();
-MVP_PLATFORMS.forEach((p) => platformMap.set(p.id, p));
+PLATFORMS.forEach((p) => platformMap.set(p.id, p));
+PLATFORM_RECORDS.forEach((r, i) =>
+  r.legacyIds.forEach((id) => platformMap.set(id, platformMap.get(RECORD_PLATFORMS[i].id)!)),
+);
 
 export function getPlatform(id: number): PlatformInfo | undefined {
   return platformMap.get(id);
 }
 
 export function getAllPlatforms(): PlatformInfo[] {
-  return MVP_PLATFORMS;
+  return PLATFORMS;
 }

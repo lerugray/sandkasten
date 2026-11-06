@@ -1,0 +1,159 @@
+{
+  "slug": "e-2c-hawkeye-2000",
+  "legacyIds": [2471],
+  "engineName": "E-2C Hawkeye 2000",
+  "name": "E-2C Hawkeye 2000",
+  "designation": "E-2C Hawkeye 2000",
+  "className": "Northrop Grumman E-2 Hawkeye, E-2C Hawkeye 2000 version",
+  "nation": "United States",
+  "side": "US Navy",
+  "service": "US Navy",
+  "domain": "fixed-wing",
+  "dimension": "air",
+  "functionId": "MF",
+  "role": "Carrier-based airborne early warning and command-and-control aircraft",
+  "serviceWindow": {
+    "enteredService": 2003,
+    "retired": null,
+    "statusNotes": "The Hawkeye 2000 configuration first deployed in 2003 with VAW-117 aboard USS Nimitz. The US Navy has largely replaced its E-2Cs with the E-2D Advanced Hawkeye, so the Navy's own front line is now E-2D. The E-2C still serves with other nations, including Egypt, France, Japan, Taiwan and Mexico. The retired field is left open because the E-2C family as a whole remains in service."
+  },
+  "dimensions": {
+    "sourceId": "s1",
+    "provenance": "verified",
+    "lengthM": 17.6,
+    "wingspanM": 24.56,
+    "heightM": 5.58,
+    "weightEmptyKg": 18364,
+    "weightMaxKg": 24689,
+    "crew": "5 (pilot, copilot, combat information center officer, air control officer, radar operator)"
+  },
+  "propulsionSummary": "Two Allison T56-A-427 turboprops of 5,100 equivalent shaft horsepower each turn eight-blade NP2000 propellers.",
+  "performance": {
+    "sourceId": "s1",
+    "provenance": "verified",
+    "maxSpeedKts": 338,
+    "cruiseSpeedKts": 259,
+    "maxAltitudeFt": 37000,
+    "rangeNm": 1541,
+    "enduranceHours": 6
+  },
+  "sensorRangeKm": 556,
+  "weaponRangeKm": 0,
+  "damagePoints": 3,
+  "missileDefense": 0,
+  "engineSourceId": "s4",
+  "engineProvenance": "estimated",
+  "weapons": [],
+  "defenses": [],
+  "sensors": [
+    {
+      "name": "AN/APS-145 radar (in rotodome)",
+      "type": "radar",
+      "role": "360 degree airborne early warning radar in the rotating dome, tracking air and surface targets and passing them to the fleet. Wikipedia quotes about 640 km against large targets; the engine keeps a shorter figure.",
+      "band": "UHF",
+      "rangeKm": 556,
+      "canTrack": true,
+      "sourceId": "s4",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/ALR-73 passive detection system",
+      "type": "esm",
+      "role": "Passive receiver that detects and locates enemy radar emissions without transmitting. No public detection range found, so this is an open estimate.",
+      "rangeKm": 450,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [
+    {
+      "name": "Airborne early warning station",
+      "role": "Fly an orbit about 175 nautical miles from the carrier and watch the air picture; the aircraft carries no weapons. The Northrop Grumman sheet gives about 4 hours 24 minutes on station at that distance.",
+      "combatRadiusNm": 175,
+      "stores": [],
+      "sourceId": "s1",
+      "provenance": "estimated"
+    }
+  ],
+  "signatures": {
+    "radar": {
+      "grade": "high",
+      "note": "A large twin turboprop with a 7 m rotodome and no stealth shaping gives a big radar return."
+    },
+    "infrared": {
+      "grade": "medium",
+      "note": "Two turboprops give a modest heat signature compared with a jet fighter."
+    },
+    "acoustic": {
+      "grade": "high",
+      "note": "Large propellers make it loud and easy to hear from the ground or the sea surface."
+    },
+    "visual": {
+      "grade": "high",
+      "note": "A 24.5 m wingspan and the large rotodome make it easy to see."
+    },
+    "sourceId": "s1",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The E-2C Hawkeye 2000 is a twin-engine turboprop that takes off from an aircraft carrier carrying a large rotating radar dome on its back. It sees much farther than a ship's radar because it flies high. The crew of five direct fighters and warn the fleet of incoming aircraft and missiles.",
+    "howItIsUsed": "A commander sends the Hawkeye up ahead of the carrier group to cover the likely approach direction. It stays on a long orbit, tracks everything in the air and over the sea, and hands targets to fighters and ships through data links. Link its picture to the ships so their missiles can engage targets beyond their own radar. The aircraft is unarmed and slow, so it needs fighter cover and must be kept away from enemy long-range air-to-air missiles. Its radar and its radio links are strong signals the enemy can detect, which is the trade-off for its range. If it is lost, the group loses most of its early warning.",
+    "typicalMissions": [
+      "Airborne early warning for a carrier strike group",
+      "Directing fighter patrols and strikes",
+      "Surface surveillance of ships",
+      "Communications relay for the fleet"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/e-2c-hawkeye-2000/main.jpg",
+      "caption": "An E-2C Hawkeye of VAW-117 (the Wallbangers) during a practice air show, 17 October 2003.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_031017-N-9319H-001_An_E-2C_Hawkeye_assigned_to_the_Wallbangers_of_Carrier_Airborne_Early_Warning_Squadron_One_One_Seven_(VAW-117).jpg",
+      "author": "Airman Angel G. Hilbrands, US Navy",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: Airman Angel G. Hilbrands, US Navy, Public Domain, via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/e-2c-hawkeye-2000/second.jpg",
+      "caption": "An E-2C Hawkeye with the new eight-blade NP2000 propellers making its first carrier arrested landing, 21 November 2003.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_031121-N-4190W-001_An_E-2C_Hawkeye_equipped_with_two_NP2000_eight-bladed,_digitally_controlled_propellers_makes_its_first_carrier_arrested_landing.jpg",
+      "author": "Photographer's Mate 3rd Class Christian Weibull, US Navy",
+      "license": "US-Gov",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/Template:PD-USGov",
+      "attributionLine": "Photo: PH3 Christian Weibull, US Navy, Public Domain, via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "E-2C Hawkeye 2000 Data Sheet (archived copy)",
+      "publisher": "Northrop Grumman via the Internet Archive",
+      "year": 2014,
+      "url": "https://web.archive.org/web/2014/https://www.northropgrumman.com/Capabilities/E2CHawkeye2000/Documents/pageDocuments/E-2C_Hawkeye_2000_Data_Sheet.pdf"
+    },
+    {
+      "id": "s2",
+      "title": "E-2 Hawkeye early warning and control aircraft (US Navy fact file, archived copy)",
+      "publisher": "US Navy via the Internet Archive",
+      "year": 2016,
+      "url": "https://web.archive.org/web/20161019025728/http://www.navy.mil/navydata/fact_display.asp?cid=1100&tid=700&ct=1"
+    },
+    {
+      "id": "s3",
+      "title": "E-2C Hawkeye",
+      "publisher": "Federation of American Scientists",
+      "year": 2026,
+      "url": "https://man.fas.org/dod-101/sys/ac/e-2.htm"
+    },
+    {
+      "id": "s4",
+      "title": "Northrop Grumman E-2 Hawkeye",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Northrop_Grumman_E-2_Hawkeye"
+    }
+  ]
+}
