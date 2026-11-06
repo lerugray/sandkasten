@@ -1,4 +1,4 @@
-SAND-OSINT-1 READY head=PENDING ad_sites=9 radars=3 snapshot_units=137 unit=173/173 e2e=71/71
+SAND-OSINT-1 READY head=7a3e56c ad_sites=9 radars=3 snapshot_units=137 unit=173/173 e2e=71/71
 
 # SAND-OSINT-1 (s403): Hormuz OSINT layers and ADS-B snapshot seed
 
