@@ -62,3 +62,16 @@ test("a scene that cannot hold full scale settles instead of flip-flopping", () 
   for (let i = 1; i < ups.length; i++) expect(ups[i].t - ups[i - 1].t).toBeGreaterThanOrEqual(10_000);
   expect(r.changes.filter((c) => c.t > r.t - 5_000)).toEqual([]);
 });
+
+test("sustained 25 ms load keeps the scale dropped for the whole run", () => {
+  const r = newRun();
+  feed(r, 16.67, 3);
+  feed(r, 25, 60);
+  const ups = r.changes.filter((c) => c.to > c.from);
+  expect(ups.length).toBeLessThanOrEqual(3);
+  for (let t = 0; t < 30; t++) {
+    feed(r, 25, 1);
+    expect(r.scale).toBeLessThan(1);
+  }
+  expect(r.scale).toBeLessThanOrEqual(0.6);
+});

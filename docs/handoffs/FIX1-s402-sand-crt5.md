@@ -27,3 +27,13 @@ Branch `sand/crt5-fix1-s402` off `41b32291` (carrier jules-carrier/sand-crt5-s40
 - SwiftShader lane GPU cannot prove smoothness; nothing here claims it does.
 
 Note: the card says "do not commit or push"; the s402 brief overrides that (commit and push the branch, never main).
+
+## Round 2 (seat review, S2): sustained load must not climb to full scale
+
+**Verdict: FIX READY.** Defect confirmed: with `REFRESH_MAX = 34`, a steady 25 ms load pulled `refreshMs` toward 25, `dropAbove` rose past 25, and a slow machine ended at full resolution.
+
+- `REFRESH_MAX` is now 17.5 ms (nothing slower than about 57 Hz is treated as the display's own rate). At constant 25 ms: `dropAbove` = max(20, 21.9) = 21.9 so it drops; the calm bar is 20.1 so it never recovers. 60 Hz and 120 Hz behaviour is unchanged.
+- New test 5, "sustained 25 ms load keeps the scale dropped for the whole run": 60 s of 25 ms after a smooth start, at most 3 upgrades, then each second of the final 30 s must be below scale 1, ending at <= 0.6.
+- Red -> green: with `REFRESH_MAX = 34` the suite is 6 pass / 1 fail (new test 5); with 17.5 it is 7 pass / 0 fail. The 60 Hz and 120 Hz recovery tests stay green. `npm run build` passes.
+- Known trade-off: a genuine 30-40 Hz display is now treated as a slow machine and will sit at reduced scale under any frame time above about 22 ms.
+- Still for the seat elsewhere: real Playwright runner, existing e2e, hand repro on the 60 Hz Mac.
