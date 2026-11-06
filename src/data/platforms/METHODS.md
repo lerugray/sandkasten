@@ -12,6 +12,17 @@ a range. Real-world facts are the shared starting point; the engine values below
 - SOURCES label per source: VERIFIED only when no citing row is estimated; MIXED when verified and estimated rows both cite
   it (both counts shown); ESTIMATED when only estimated rows cite it; REFERENCE when no row cites it.
 
+## Variant-specific figures
+A figure is `verified` only when a cited source states it for this variant. A table for a different variant (F-14D, F-14B)
+does not verify the same figure for another model.
+- F-14A performance (`iriaf-f-14a-tomcat`): the cited tables (s3 Wikipedia, s1 and s8 F-14 pages) describe the F-14D or F-14B
+  (F110 engines) or the F-14 in general. The Iranian F-14A has TF30 engines, so max speed, cruise speed, ceiling, combat
+  radius and range are those published F-14 figures applied to the A model and are tagged `estimated`. Airframe dimensions
+  (length, wingspan, height) are shared by all variants and stay verified.
+- Nimitz draft (`nimitz-cvn-68`): FAS s1 gives no draft. s13 (Wikipedia) states the ship was "initially designed with a
+  full-load displacement of 87,000 long tons and a draft of 37 ft" (11.3 m). The record's displacement is the 97,000 t
+  full-load figure from s1, so the 11.3 m design draft is tagged `estimated` rather than read as the draft at that load.
+
 ## Carry-over rule for the 14 original Hormuz platforms
 The demo scenario and its tests were tuned against the numbers `lookup.ts` held before this database. Those engine-read
 numbers (`sensorRangeKm`, `weaponRangeKm`, `damagePoints`, `missileDefense`, and every weapon and defense row's

@@ -26,7 +26,10 @@
     "displacementFullTons": 97000,
     "crew": "about 3,200 ship's company plus about 2,480 air wing",
     "sourceId": "s1",
-    "provenance": "verified"
+    "provenance": "verified",
+    "fieldCitations": {
+      "draftM": { "sourceId": "s13", "provenance": "estimated" }
+    }
   },
   "propulsionSummary": "Two A4W nuclear reactors drive four shafts through steam turbines, which gives the ship unlimited range and about 20 to 25 years between refuelings.",
   "performance": {
