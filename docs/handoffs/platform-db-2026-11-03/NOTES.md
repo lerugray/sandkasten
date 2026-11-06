@@ -12,7 +12,7 @@ Lane sand-db012-s387, 2026-11-03. Working tree only, nothing committed.
 ## Tests
 - Before: 36 tests (35 existing + 1 from the base commit run), 36 passed on this host.
 - After: 40 tests, 40 passed (`tests/platform-database.spec.ts` adds 4: data/engine-field/license check, API check, full viewer sweep over all 16 platforms, id/slug/keyboard/filter check). Also: `next build` passes; `npx tsc --noEmit` shows only the three pre-existing `sand-001-unit-placement.spec.ts` errors; `next lint` is not configured in this repo.
-- Run on port 3301 with a lane-local config outside the repo (real-GPU flags `--use-gl=angle --use-angle=gl-egl --ignore-gpu-blocklist` with GALLIUM_DRIVER=d3d12, `--mute-audio --no-sandbox`); no GPU fallback was needed. `docs/handoffs/platform-db-2026-11-03/capture.mjs` takes host flags from env vars.
+- Run on port 3301 with a lane-local config outside the repo (real-GPU flags `--use-gl=angle --use-angle=gl-egl --ignore-gpu-blocklist` with GALLIUM_DRIVER=d3d12, `--mute-audio --no-sandbox`); no GPU fallback was needed.
 
 ## Coverage and photos (all 16 have real open-license photos; no placeholders)
 | slug | photo | author | license | source URL | sources |
@@ -58,6 +58,3 @@ The viewer's placeholder frame (technical silhouette plus the search reason) exi
 - Platform status: the demo's retired ships (Bunker Hill, Taylor, Tomcat F-14D) are documented honestly in each record; the Flight IIA and Boghammar records are ready for the sim-fix swap. If sim-fix introduces a new `platformId`, add one record (or a `legacyIds` alias) and run `npx playwright test tests/platform-database.spec.ts`.
 - Estimated values: many sensor ranges, combat radii, and all `damagePoints`, `missileDefense`, `pk*`, `effectiveness` and signature grades are estimates; each row says so.
 - `AGENTS.md` named in the brief does not exist in this repo; I followed CARD.md, CLAUDE.md and STEER.md.
-
-## Frames (1440x900, DPR 2)
-`frames/db-uss-mahan.png`, `db-fa18e.png`, `db-iran-sina.png`, `db-sources-scroll.png`; `console-errors.txt` records none.
