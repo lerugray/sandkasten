@@ -80,6 +80,10 @@ body {
   font-size: 10px !important;
 }
 
+.maplibregl-ctrl-attrib a {
+  color: inherit !important;
+}
+
 /* Hide the compass button */
 .maplibregl-ctrl-compass {
   display: none !important;

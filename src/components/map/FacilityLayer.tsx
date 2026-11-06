@@ -221,6 +221,10 @@ function build(map: maplibregl.Map, facilities: Facility[]) {
         "icon-size": ["interpolate", ["linear"], ["zoom"], 4, 0.5, 8, 0.75, 12, 1],
         "icon-allow-overlap": ["step", ["zoom"], false, 9, true],
       },
+      paint: {
+        // fade at runway-scale zoom so the symbol does not hide the runway it marks
+        "icon-opacity": ["interpolate", ["linear"], ["zoom"], 11.5, 1, 13.5, 0.4],
+      },
     });
     map.addLayer({
       id: labelLayerId(tier),

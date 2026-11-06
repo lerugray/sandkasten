@@ -15,7 +15,7 @@ It combines two open datasets. Everything is open data; no Google Earth or Googl
 | Layer | Source | Licence / terms |
 |---|---|---|
 | Terrain (3D relief + hillshade) | AWS Terrain Tiles (Mapzen terrarium encoding), https://registry.opendata.aws/terrain-tiles/ . Composite of SRTM, GMTED2010, ETOPO1 and national datasets. | Open data on the AWS Open Data programme. Credit lines are listed at https://github.com/tilezen/joerd/blob/master/docs/attribution.md and shown in the map attribution control. |
-| Satellite toggle | EOX Sentinel-2 cloudless 2017 (`s2cloudless-2017_3857`), https://s2maps.eu/ | CC BY 4.0. "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2017)". Later years (2018 onward) are CC BY-NC-SA and are not used. |
+| Satellite toggle | EOX Sentinel-2 cloudless 2018 (`s2cloudless-2018_3857`), https://s2maps.eu/ | CC BY-NC-SA 4.0 (non-commercial). "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2018)". The CC BY 2017 mosaic (`SATELLITE_YEAR = 2017` in `src/lib/map/styles.ts`) has white no-data holes over the theater, so it is not the default. |
 | Default dark / light basemap | CARTO raster basemaps, (c) OpenStreetMap contributors, (c) CARTO | Unchanged from before SAND-MAP-1. CARTO now returns a watermark tile to keyless requests. |
 | Glyphs | fonts.openmaptiles.org (Open Sans Regular) | Open Font Licence |
 

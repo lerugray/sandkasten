@@ -60,6 +60,13 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Scenario editor at `/editor` — place units, drag to reposition, set sides, save/load JSON
 - Platform manual at `/database`: 16 Hormuz platforms (ships and aircraft) with real open-license photos and credits, sourced specs, plain-English "what it is / how it is used / typical missions", sensors, weapons, defenses and a numbered bibliography. Records live in `src/data/platforms/records/`; the simulation reads them through `src/lib/platforms/lookup.ts`. Estimation methods are in `src/data/platforms/METHODS.md`. Nothing is copied from CMO.
 
+### Real-world map (MapLibre views: `/`, `/editor`, `/play?map=legacy`)
+- Real geotagged facilities for the Hormuz theater: 869 sites (192 airfields, 347 heliports, 12 naval bases, 44 ports, 274 military areas) and 207 runways drawn to scale (real length and width). Built by `scripts/build-facilities.mjs` from OurAirports (public domain) and OpenStreetMap (ODbL) into `data/facilities/hormuz.json`; credits in `data/facilities/ATTRIBUTION.md` and on the map
+- Distinct symbols per kind (airfield, heliport, naval base, port), military in amber and civil in grey; click one for a terminal-style detail panel (codes, elevation, runways with headings, surface and lighting, units based there)
+- Units can carry a `homeBase` (facility and runway end). The simulation has no takeoff or landing model, so a unit based on a runway simply starts on its threshold (the alert F-4 at Havadarya)
+- Map toggles top-left: FACILITIES, GLOBE (globe when zoomed out, flat at tactical zoom), TERRAIN (AWS Terrain Tiles relief and hillshade), SAT (EOX Sentinel-2 cloudless, 2018, CC BY-NC-SA). The dark basemap stays the default
+- The default `/play` Three.js terminal plot does not draw the facility layer yet
+
 ### Simulation
 - Real-time simulation at `/play`
 - Waypoint-based movement with a STOP and four throttle settings; a unit that finishes its route holds position
