@@ -1,0 +1,190 @@
+{
+  "slug": "sina-class-houdong",
+  "legacyIds": [
+    2106
+  ],
+  "engineName": "Sina Class [Houdong]",
+  "name": "Sina-class fast attack craft",
+  "designation": "Sina class (Iranian-built Combattante II derivative)",
+  "className": "Sina class",
+  "nation": "Iran",
+  "side": "Iran",
+  "service": "Islamic Republic of Iran Navy (IRIN)",
+  "domain": "surface",
+  "dimension": "sea",
+  "functionId": "CL",
+  "role": "Missile-armed fast attack craft (anti-ship)",
+  "serviceWindow": {
+    "enteredService": 2003,
+    "retired": null,
+    "statusNotes": "First boat (Paykan) commissioned September 2003; Iran planned about ten, and only five to six had been completed by the mid-2020s. Most hulls were built and based in the Caspian Sea (Bandar Anzali), with Zereh at Bandar Abbas from 2021, so only a few are Gulf-based. Wikipedia reports Sina-class boats were destroyed in strikes during the 2026 war, including two Caspian boats on 18 March 2026, which is three days after the scenario date of 2026-03-15; how many were still afloat and fit on 2026-03-15 is not reliably published. (Sources s1, s5.)"
+  },
+  "dimensions": {
+    "lengthM": 47,
+    "beamM": 7.1,
+    "draftM": 1.9,
+    "displacementFullTons": 300,
+    "crew": "About 31",
+    "sourceId": "s2",
+    "provenance": "estimated"
+  },
+  "propulsionSummary": "Diesel engines driving propeller shafts for about 35 knots; GlobalSecurity says the Sina uses Chinese diesels, and the exact engine model and power are not published in the sources used.",
+  "performance": {
+    "maxSpeedKts": 35,
+    "cruiseSpeedKts": null,
+    "sourceId": "s2",
+    "provenance": "verified"
+  },
+  "sensorRangeKm": 46,
+  "weaponRangeKm": 120,
+  "damagePoints": 120,
+  "missileDefense": 2,
+  "engineSourceId": "s4",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "C-802 Noor",
+      "type": "asm",
+      "rangeKm": 120,
+      "speedKts": 530,
+      "pkAir": 0,
+      "pkSurface": 90,
+      "quantity": 4,
+      "warheadDamage": 167,
+      "seekerType": "active-radar",
+      "mountSummary": "Four missiles in box launchers amidships; Iran's Noor is a copy of the Chinese C-802 (about 120 km range for the base C-802, 165 kg warhead)",
+      "sourceId": "s4",
+      "provenance": "estimated"
+    },
+    {
+      "name": "23mm ZU-23-2",
+      "type": "gun",
+      "rangeKm": 2.5,
+      "speedKts": 0,
+      "pkAir": 15,
+      "pkSurface": 20,
+      "quantity": 200,
+      "warheadDamage": 3,
+      "mountSummary": "Legacy engine row for the boat's light guns. Published Sina fits list a 76 mm gun, a 40 mm gun and two 12.7 mm machine guns; twin 23 mm guns belong to the Chinese-built Tondar (Houdong) boats the old label refers to",
+      "sourceId": "s6",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [],
+  "sensors": [
+    {
+      "name": "Surface search radar (masthead radome)",
+      "type": "radar",
+      "role": "Detects ships and low aircraft for the gun and missile targeting",
+      "band": "I/J-band (assumed, model not published)",
+      "rangeKm": 46,
+      "canTrack": true,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Fire-control radar and optical director",
+      "type": "radar",
+      "role": "Aims the 76 mm gun",
+      "rangeKm": 20,
+      "canTrack": true,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Bridge lookouts and binoculars",
+      "type": "visual",
+      "role": "Spotting small craft and surface contacts by eye",
+      "rangeKm": 15,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [],
+  "signatures": {
+    "radar": {
+      "grade": "low",
+      "note": "A 47 m hull of about 300 tons with a compact low superstructure; much smaller than any frigate."
+    },
+    "infrared": {
+      "grade": "medium",
+      "note": "Diesel exhausts at high speed are hot, though a small boat is hard to pick out at long range."
+    },
+    "acoustic": {
+      "grade": "medium",
+      "note": "Fast diesel boat with high-speed propeller noise; not built for quiet running."
+    },
+    "visual": {
+      "grade": "low",
+      "note": "Low, grey hull that sits close to the water."
+    },
+    "sourceId": "s2",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The Sina class is a 47 m missile boat that Iran built at home. It is an updated copy of the French Combattante II design that Iran bought for the Shah's navy (the Kaman class), and the first boat entered service in 2003. Each carries four C-802 type anti-ship missiles (Iran calls its copy Noor) and a 76 mm gun. Older Sandkasten data labels this entry [Houdong], which is wrong: the Houdong is a separate Chinese-built boat that Iran's Revolutionary Guard Navy calls the Tondar class.",
+    "howItIsUsed": "A commander uses this boat as a carrier for four long-range missiles: the 120 km reach of the C-802 lets it hit a ship from well outside its gun range. The boat's own radar sees only a few dozen kilometres, so the best results come when a coastal radar, drone or helicopter feeds it a target. The usual play is to launch from behind an island or from coastal clutter and then run for port. It has no anti-air missiles, only a 76 mm gun and light cannon, so a couple of hits from any warship will sink it. Keep it in port or in a protected group until the strike moment, and do not leave it in open water where helicopters and strike aircraft can find it.",
+    "typicalMissions": [
+      "Anti-ship missile strike from the coast",
+      "Coastal and chokepoint patrol",
+      "Escort and screening for Iranian convoys",
+      "Show-of-force presence in Caspian and Gulf waters"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/sina-class-houdong/main.jpg",
+      "caption": "Sina-class boat IRIS Paykan (P224) in the July 2017 Caspian naval parade.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Iranian_Caspian_naval_exercise_2017_(42).jpg",
+      "author": "Mohammad Ranjbar (Tasnim News Agency)",
+      "license": "CC BY",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "attributionLine": "Photo: Mohammad Ranjbar / Tasnim News Agency, CC BY 4.0, via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Sina-class fast attack craft (Wikipedia)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Sina-class_fast_attack_craft"
+    },
+    {
+      "id": "s2",
+      "title": "Kaman/Sina Class - Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2019,
+      "url": "https://www.globalsecurity.org/military/world/iran/kaman-specs.htm"
+    },
+    {
+      "id": "s3",
+      "title": "Kaman/Sina Class (overview)",
+      "publisher": "GlobalSecurity.org",
+      "year": 2019,
+      "url": "https://www.globalsecurity.org/military/world/iran/kaman.htm"
+    },
+    {
+      "id": "s4",
+      "title": "YJ-83 / C-802 anti-ship missile (Wikipedia)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/YJ-83"
+    },
+    {
+      "id": "s5",
+      "title": "Tondar-class fast attack craft (Houdong) (Wikipedia)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Tondar-class_fast_attack_craft"
+    },
+    {
+      "id": "s6",
+      "title": "ZU-23-2 anti-aircraft gun (Wikipedia)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/ZU-23-2"
+    }
+  ]
+}

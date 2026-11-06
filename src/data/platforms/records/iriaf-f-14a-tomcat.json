@@ -1,0 +1,259 @@
+{
+  "slug": "iriaf-f-14a-tomcat",
+  "legacyIds": [264],
+  "engineName": "F-14A Tomcat",
+  "name": "IRIAF F-14A Tomcat",
+  "designation": "F-14A",
+  "className": "F-14 Tomcat",
+  "nation": "Iran",
+  "side": "Iran",
+  "service": "Islamic Republic of Iran Air Force (IRIAF)",
+  "domain": "fixed-wing",
+  "dimension": "air",
+  "functionId": "MF",
+  "role": "Two-seat long-range interceptor and air defence fighter",
+  "serviceWindow": {
+    "enteredService": 1976,
+    "retired": null,
+    "statusNotes": "Iran is the only export customer of the Tomcat. About 79 of 80 ordered aircraft arrived, with deliveries starting in January 1976. The fleet is ageing and short of spares, and open sources disagree on how many fly: 7 combat-ready in 2008, 19 operational in 2013, and about 10 operational before the 2026 war by one analyst's count. Reports describe destroyed parked aircraft at Isfahan in March 2026, and some of those may have been decoys. Treat the number of flight-worthy aircraft as unknown."
+  },
+  "dimensions": {
+    "lengthM": 19.13,
+    "wingspanM": 19.5,
+    "heightM": 4.9,
+    "weightEmptyKg": 18191,
+    "weightMaxKg": 33720,
+    "crew": "2 (pilot and radar intercept officer)",
+    "sourceId": "s3",
+    "provenance": "estimated"
+  },
+  "propulsionSummary": "Two Pratt & Whitney TF30-P-414 afterburning turbofans, each rated at about 20,900 lbf (93 kN) with afterburner.",
+  "performance": {
+    "maxSpeedKts": 1342,
+    "cruiseSpeedKts": 420,
+    "maxAltitudeFt": 53000,
+    "combatRadiusNm": 503,
+    "rangeNm": 1600,
+    "sourceId": "s3",
+    "provenance": "estimated"
+  },
+  "sensorRangeKm": 220,
+  "weaponRangeKm": 150,
+  "damagePoints": 5,
+  "missileDefense": 0,
+  "engineSourceId": "s4",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "AIM-54A Phoenix",
+      "type": "aam",
+      "rangeKm": 150,
+      "speedKts": 3000,
+      "pkAir": 60,
+      "pkSurface": 0,
+      "quantity": 4,
+      "warheadDamage": 40,
+      "seekerType": "active-radar",
+      "mountSummary": "Carried on the fuselage tunnel stations and under the glove pylons. Iran has no new Phoenix supply, so remaining missiles are old stock of uncertain condition.",
+      "sourceId": "s5",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AIM-7E Sparrow",
+      "type": "aam",
+      "rangeKm": 45,
+      "speedKts": 2500,
+      "pkAir": 50,
+      "pkSurface": 0,
+      "quantity": 2,
+      "warheadDamage": 30,
+      "seekerType": "semi-active",
+      "mountSummary": "Fuselage stations. Iran has also fielded the Fakour-90 (a domestic AIM-7 style missile) as a replacement, so the real mix of missiles is unclear.",
+      "sourceId": "s6",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AIM-9P Sidewinder",
+      "type": "aam",
+      "rangeKm": 18,
+      "speedKts": 1800,
+      "pkAir": 60,
+      "pkSurface": 0,
+      "quantity": 2,
+      "warheadDamage": 20,
+      "seekerType": "ir",
+      "mountSummary": "Glove pylon stations. Iranian stocks and the exact variant in use are not confirmed.",
+      "sourceId": "s7",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [
+    {
+      "name": "Chaff/Flare",
+      "type": "chaff",
+      "effectiveness": 0.25,
+      "quantity": 30,
+      "sourceId": "s8",
+      "provenance": "estimated"
+    }
+  ],
+  "sensors": [
+    {
+      "name": "AN/AWG-9 radar",
+      "type": "radar",
+      "role": "Long-range air search and track-while-scan, able to track 24 targets and guide up to 6 Phoenix missiles at once",
+      "band": "X (pulse-Doppler)",
+      "rangeKm": 220,
+      "canTrack": true,
+      "sourceId": "s4",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AAX-1 Television Camera Set (original US fit)",
+      "type": "ir",
+      "role": "Long-range optical identification. Whether Iranian aircraft still carry a working unit is unconfirmed.",
+      "band": "Visible light",
+      "rangeKm": 97,
+      "canTrack": true,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/ALR-45 / ALR-50 radar warning receiver (as supplied)",
+      "type": "esm",
+      "role": "Passive detection of hostile radar emissions. The condition of Iranian units is unknown.",
+      "band": "Multiple radar bands",
+      "rangeKm": 100,
+      "canTrack": false,
+      "sourceId": "s2",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Crew visual lookout",
+      "type": "visual",
+      "role": "Visual identification of aircraft and ships in clear weather",
+      "rangeKm": 10,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [
+    {
+      "name": "Air defence, long-range Phoenix fit",
+      "role": "Intercept of strike aircraft and cruise missile carriers",
+      "combatRadiusNm": 503,
+      "stores": [
+        { "weaponName": "AIM-54A Phoenix", "count": 4 },
+        { "weaponName": "AIM-7E Sparrow", "count": 2 },
+        { "weaponName": "AIM-9P Sidewinder", "count": 2 }
+      ],
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "signatures": {
+    "radar": {
+      "grade": "high",
+      "note": "A large twin-engine swing-wing fighter with no radar-reducing shaping, so it gives a strong return from most angles."
+    },
+    "infrared": {
+      "grade": "high",
+      "note": "Two TF30 afterburning turbofans are strong heat sources, especially from behind, and the TF30 leaves a visible smoke trail at some power settings."
+    },
+    "visual": {
+      "grade": "high",
+      "note": "A large airframe about 19 m long with a wide span when unswept, easy to see against the sky."
+    },
+    "sourceId": "s3",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The F-14A Tomcat is a large two-seat American swing-wing fighter built to shoot down bombers at long range with the AIM-54 Phoenix missile. Iran is the only country besides the United States to have flown it. Iran received about 79 aircraft before 1979 and has kept some flying for decades with improvised repairs and parts from outside the usual supply chain.",
+    "howItIsUsed": "A commander in this scenario would treat the Iranian Tomcat as a high-value but fragile asset. In good condition the AWG-9 radar can detect large aircraft far out and a Phoenix can reach beyond 100 nautical miles, so a single pair can force an opponent to respect a long barrier line. In practice, spare parts are scarce, Phoenix stocks are short, and radar and engine reliability is poor. Iranian pilots are more likely to fly short defensive patrols close to ground radars than long deep strikes. A US fighter with an AESA radar can usually detect and engage a Tomcat first, so the Iranian side gains most when it keeps aircraft hidden and uses them for a surprise shot. The number available on any given day is small and uncertain.",
+    "typicalMissions": [
+      "Long-range interception of strike aircraft and patrol aircraft",
+      "Combat air patrol near friendly territory",
+      "Escort of other IRIAF aircraft",
+      "Showing force during regional tension"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/iriaf-f-14a-tomcat/main.jpg",
+      "caption": "An Iranian F-14A Tomcat (serial 3-6042) on landing approach.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Iranian_Air_Force_Grumman_F-14A_Tomcat_(remix).jpg",
+      "author": "Shahram Sharifi",
+      "license": "CC BY-SA",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "attributionLine": "Photo: Shahram Sharifi, CC BY-SA 4.0, via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/iriaf-f-14a-tomcat/second.jpg",
+      "caption": "A formation of three Iranian F-14A Tomcats in flight with wings swept, near Tehran.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_formation_of_Iranian_Tomcats_in_flight.jpg",
+      "author": "Shahram Sharifi",
+      "license": "CC BY-SA",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "attributionLine": "Photo: Shahram Sharifi, CC BY-SA 4.0, via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Fact File: F-14 Tomcat (archived copy of the navy.mil page)",
+      "publisher": "US Navy (navy.mil), archived by the Internet Archive",
+      "year": 2006,
+      "url": "https://web.archive.org/web/20060402215910/https://www.navy.mil/navydata/fact_display.asp?cid=1100&tid=1100&ct=1"
+    },
+    {
+      "id": "s2",
+      "title": "F-14 Tomcat",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://www.fas.org/man/dod-101/sys/ac/f-14.htm"
+    },
+    {
+      "id": "s3",
+      "title": "Grumman F-14 Tomcat (Iranian service, readiness reports, F-14 specification table; airframe dimensions shared with the F-14D)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Grumman_F-14_Tomcat"
+    },
+    {
+      "id": "s4",
+      "title": "AN/AWG-9",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/AN/AWG-9"
+    },
+    {
+      "id": "s5",
+      "title": "AIM-54 Phoenix Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2017,
+      "url": "https://www.globalsecurity.org/military/systems/munitions/aim-54-specs.htm"
+    },
+    {
+      "id": "s6",
+      "title": "AIM-7 Sparrow Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2017,
+      "url": "https://www.globalsecurity.org/military/systems/munitions/aim-7-specs.htm"
+    },
+    {
+      "id": "s7",
+      "title": "AIM-9 Sidewinder Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2017,
+      "url": "https://www.globalsecurity.org/military/systems/munitions/aim-9-specs.htm"
+    },
+    {
+      "id": "s8",
+      "title": "F-14 Tomcat Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2011,
+      "url": "https://www.globalsecurity.org/military/systems/aircraft/f-14-specs.htm"
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "slug": "iriaf-f-4e-phantom-ii",
+  "legacyIds": [265],
+  "engineName": "F-4E Phantom II",
+  "name": "IRIAF F-4E Phantom II",
+  "designation": "F-4E",
+  "className": "F-4 Phantom II",
+  "nation": "Iran",
+  "side": "Iran",
+  "service": "Islamic Republic of Iran Air Force (IRIAF)",
+  "domain": "fixed-wing",
+  "dimension": "air",
+  "functionId": "MF",
+  "role": "Two-seat twin-engine multirole fighter-bomber",
+  "serviceWindow": {
+    "enteredService": 1971,
+    "retired": null,
+    "statusNotes": "Iran received its first F-4Es in 1971 and ordered 177 in total. The fleet is old and short of spares. Open sources put about 60 F-4D, F-4E and RF-4E aircraft in service as of 2021, but how many can fly today is not publicly known. Reports describe a crash on 19 February 2026 and a strike at Tabriz on 1 March 2026. Treat the numbers, equipment fit and readiness as uncertain."
+  },
+  "dimensions": {
+    "lengthM": 19.2,
+    "wingspanM": 11.7,
+    "heightM": 5.0,
+    "weightEmptyKg": 13757,
+    "weightMaxKg": 28030,
+    "crew": "2 (pilot and weapon systems officer)",
+    "sourceId": "s2",
+    "provenance": "verified"
+  },
+  "propulsionSummary": "Two General Electric J79-GE-17A afterburning turbojets, each rated at 17,845 lbf (about 79 kN) with afterburner.",
+  "performance": {
+    "maxSpeedKts": 1280,
+    "cruiseSpeedKts": 510,
+    "maxAltitudeFt": 60000,
+    "combatRadiusNm": 370,
+    "rangeNm": 1457,
+    "sourceId": "s2",
+    "provenance": "verified"
+  },
+  "sensorRangeKm": 130,
+  "weaponRangeKm": 45,
+  "damagePoints": 5,
+  "missileDefense": 0,
+  "engineSourceId": "s4",
+  "engineProvenance": "estimated",
+  "weapons": [
+    {
+      "name": "AIM-7E Sparrow",
+      "type": "aam",
+      "rangeKm": 45,
+      "speedKts": 2500,
+      "pkAir": 50,
+      "pkSurface": 0,
+      "quantity": 4,
+      "warheadDamage": 30,
+      "seekerType": "semi-active",
+      "mountSummary": "Four missiles in semi-recessed bays under the fuselage. Iranian stocks and the exact Sparrow variant in use are not confirmed.",
+      "sourceId": "s5",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AIM-9P Sidewinder",
+      "type": "aam",
+      "rangeKm": 18,
+      "speedKts": 1800,
+      "pkAir": 60,
+      "pkSurface": 0,
+      "quantity": 4,
+      "warheadDamage": 20,
+      "seekerType": "ir",
+      "mountSummary": "Carried on inboard wing pylons. Iranian stocks and the exact Sidewinder variant in use are not confirmed.",
+      "sourceId": "s6",
+      "provenance": "estimated"
+    }
+  ],
+  "defenses": [
+    {
+      "name": "Chaff/Flare",
+      "type": "chaff",
+      "effectiveness": 0.25,
+      "quantity": 30,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "sensors": [
+    {
+      "name": "AN/APQ-120 radar",
+      "type": "radar",
+      "role": "Air search and fire control for Sparrow missiles, with air-to-ground ranging",
+      "band": "X",
+      "rangeKm": 130,
+      "canTrack": true,
+      "sourceId": "s4",
+      "provenance": "estimated"
+    },
+    {
+      "name": "AN/APR-36 radar warning receiver (original US fit)",
+      "type": "esm",
+      "role": "Passive detection of hostile radar emissions. The Iranian aircraft's current fit is unconfirmed.",
+      "band": "Multiple radar bands",
+      "rangeKm": 100,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Crew visual lookout",
+      "type": "visual",
+      "role": "Visual identification of aircraft and ships in clear weather",
+      "rangeKm": 10,
+      "canTrack": false,
+      "sourceId": "s3",
+      "provenance": "estimated"
+    }
+  ],
+  "loadouts": [
+    {
+      "name": "Air defence fit",
+      "role": "Intercept and combat air patrol with radar and infrared missiles",
+      "combatRadiusNm": 370,
+      "stores": [
+        { "weaponName": "AIM-7E Sparrow", "count": 4 },
+        { "weaponName": "AIM-9P Sidewinder", "count": 4 }
+      ],
+      "sourceId": "s2",
+      "provenance": "estimated"
+    },
+    {
+      "name": "Anti-armour or anti-ship strike with Maverick",
+      "role": "Close air support or attack on small boats using TV-guided missiles",
+      "combatRadiusNm": 250,
+      "stores": [
+        { "weaponName": "AGM-65 Maverick", "count": 4 },
+        { "weaponName": "AIM-9P Sidewinder", "count": 2 },
+        { "weaponName": "Drop tank", "count": 3 }
+      ],
+      "sourceId": "s2",
+      "provenance": "estimated"
+    }
+  ],
+  "signatures": {
+    "radar": {
+      "grade": "high",
+      "note": "A large twin-engine 1950s-design airframe with an unshaped intake and many external stores, which gives a strong radar return."
+    },
+    "infrared": {
+      "grade": "high",
+      "note": "Two J79 afterburning turbojets are strong heat sources, especially from behind."
+    },
+    "visual": {
+      "grade": "high",
+      "note": "A large airframe. The later smokeless J79-17C and -17E engines removed the dark smoke trail, but the Iranian engine fit is unconfirmed."
+    },
+    "sourceId": "s2",
+    "provenance": "estimated"
+  },
+  "brief": {
+    "whatItIs": "The F-4E Phantom II is a big twin-engine American jet from the 1960s that served as both a fighter and a bomber. It carries a pilot and a weapons officer, an internal 20 mm cannon, and a heavy load of missiles and bombs. Iran bought a large fleet in the 1970s and still flies a shrinking number of them today.",
+    "howItIsUsed": "A commander in this scenario would use Iranian Phantoms as a low-end strike and patrol force, not as a front-line air defence fighter. Their radar is old and range is limited, so they work best near friendly ground radars and against targets that cannot shoot back well. They can fly low over water to attack ships and boats with Maverick missiles or unguided weapons. Against a modern US Navy fighter with an AESA radar and AMRAAM missiles, a Phantom is outranged and easy to detect. Spare parts are scarce, so sortie rates are low and a commander should expect many aircraft to be unavailable on any given day.",
+    "typicalMissions": [
+      "Low-level strike on ships and small craft",
+      "Close air support for ground forces",
+      "Combat air patrol near friendly territory",
+      "Reconnaissance (RF-4E variant)",
+      "Showing force during regional tension"
+    ]
+  },
+  "photos": [
+    {
+      "localPath": "/platforms/iriaf-f-4e-phantom-ii/main.jpg",
+      "caption": "An Iranian F-4E (serial 3-6549) at Bushehr Air Base, September 2009. The nose has a shark-mouth marking.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:An_IRIAF_F-4E_in_Bushehr_Airbase.jpg",
+      "author": "Shahram Sharifi",
+      "license": "CC BY-SA",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "attributionLine": "Photo: Shahram Sharifi, CC BY-SA 4.0, via Wikimedia Commons"
+    },
+    {
+      "localPath": "/platforms/iriaf-f-4e-phantom-ii/second.jpg",
+      "caption": "An Iranian F-4E taking off.",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:An_IRIAF_F-4E_takeoffs.jpg",
+      "author": "Shahram Sharifi",
+      "license": "CC BY-SA",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "attributionLine": "Photo: Shahram Sharifi, CC BY-SA 4.0, via Wikimedia Commons"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "F-4 Phantom II",
+      "publisher": "Federation of American Scientists",
+      "year": 2000,
+      "url": "https://www.fas.org/man/dod-101/sys/ac/f-4.htm"
+    },
+    {
+      "id": "s2",
+      "title": "McDonnell Douglas F-4 Phantom II (F-4E specification table; cross-checked against s3)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/McDonnell_Douglas_F-4_Phantom_II"
+    },
+    {
+      "id": "s3",
+      "title": "F-4 Phantom II Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2011,
+      "url": "https://www.globalsecurity.org/military/systems/aircraft/f-4-specs.htm"
+    },
+    {
+      "id": "s4",
+      "title": "AN/APQ-120",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/AN/APQ-120"
+    },
+    {
+      "id": "s5",
+      "title": "AIM-7 Sparrow Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2017,
+      "url": "https://www.globalsecurity.org/military/systems/munitions/aim-7-specs.htm"
+    },
+    {
+      "id": "s6",
+      "title": "AIM-9 Sidewinder Specifications",
+      "publisher": "GlobalSecurity.org",
+      "year": 2017,
+      "url": "https://www.globalsecurity.org/military/systems/munitions/aim-9-specs.htm"
+    },
+    {
+      "id": "s7",
+      "title": "McDonnell Douglas F-4 Phantom II non-U.S. operators (Iran section)",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/McDonnell_Douglas_F-4_Phantom_II_non-U.S._operators"
+    },
+    {
+      "id": "s8",
+      "title": "Islamic Republic of Iran Air Force",
+      "publisher": "Wikipedia",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Islamic_Republic_of_Iran_Air_Force"
+    }
+  ]
+}
