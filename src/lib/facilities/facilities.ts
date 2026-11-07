@@ -20,6 +20,8 @@ export interface Runway {
   surface: string;
   lighted: boolean | null;
   closed: boolean;
+  /** Unfinished strip (OSM construction=yes): closed, carries no designator, never a spawn point. */
+  construction?: boolean;
   ends: [RunwayEnd, RunwayEnd];
   derivedEnds: boolean;
   source: { source: string; id: string };
@@ -86,12 +88,16 @@ export function getFacility(id: string, list: Facility[] = hormuzFacilities): Fa
   return list === hormuzFacilities ? byId.get(id) : list.find((f) => f.id === id);
 }
 
+/** One unambiguous end: an open, finished strip beats a closed one; ties go to the longer strip, then the lower id. */
 export function findRunwayEnd(facility: Facility, ident: string): { runway: Runway; end: RunwayEnd } | undefined {
+  const hits: { runway: Runway; end: RunwayEnd }[] = [];
   for (const runway of facility.runways ?? []) {
+    if (runway.construction) continue;
     const end = runway.ends.find((e) => e.ident === ident);
-    if (end) return { runway, end };
+    if (end) hits.push({ runway, end });
   }
-  return undefined;
+  hits.sort((x, y) => Number(x.runway.closed) - Number(y.runway.closed) || y.runway.lengthM - x.runway.lengthM || x.runway.id.localeCompare(y.runway.id));
+  return hits[0];
 }
 
 /** Spawn point and heading for an aircraft sitting on a runway threshold. */

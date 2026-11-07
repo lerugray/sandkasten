@@ -15,6 +15,7 @@ import {
   ARABIC_SCRIPT,
   englishFallbackName,
 } from "../scripts/lib/facilities.mjs";
+import { runwayThreshold } from "../src/lib/facilities/facilities";
 
 const fx = (n: string) => readFileSync(join(__dirname, "fixtures", n), "utf8");
 const BBOX = { south: 22.5, west: 50, north: 30, east: 61 };
@@ -156,6 +157,11 @@ describe("facility pipeline", () => {
         const rws = f.runways ?? [];
         for (const r of rws) {
           n++;
+          if (r.construction) {
+            expect(r.closed, `${f.id} ${r.id}`).toBe(true);
+            for (const e of r.ends) expect(e.ident, `${f.id} ${r.id}`).toBe("");
+            continue;
+          }
           for (const e of r.ends) {
             expect(e.ident, `${f.id} ${r.id}`).toMatch(/^\d{2}[LRC]?$/);
             expect(cd(Number(e.ident.slice(0, 2)) * 10, e.headingTrue), `${f.id} ${r.id} ${e.ident}`).toBeLessThanOrEqual(15);
@@ -164,7 +170,7 @@ describe("facility pipeline", () => {
         for (let i = 0; i < rws.length; i++)
           for (let j = i + 1; j < rws.length; j++) {
             const mid = (r: { ends: { lat: number; lng: number }[] }) => ({ lat: (r.ends[0].lat + r.ends[1].lat) / 2, lng: (r.ends[0].lng + r.ends[1].lng) / 2 });
-            const sameName = rws[i].id === rws[j].id;
+            const sameName = rws[i].id === rws[j].id && !rws[i].construction;
             const a = rws[i].ends[0], b = rws[i].ends[1], m = mid(rws[j]);
             const kx = 111320 * Math.cos((a.lat * Math.PI) / 180), ky = 110540;
             const [bx, by, mx, my] = [(b.lng - a.lng) * kx, (b.lat - a.lat) * ky, (m.lng - a.lng) * kx, (m.lat - a.lat) * ky];
@@ -295,12 +301,54 @@ describe("facility pipeline", () => {
       expect(a.filter((x) => x.surface === "asphalt")).toHaveLength(1);
     });
 
-    test("an unlettered chart record more than a strip width from a parallel strip stays a separate strip", () => {
+    test("OA-between-L/R fixture: no third runway; the chart record attaches to the strip with the nearer centreline", () => {
+      const l = way(21, "09L/27R", [off(west, 0.0035), off(east, 0.0035)]);
       const r = way(22, "09R/27L", [west, east]);
-      const out = mergeFacilities({ ourairports: oaFor([26.0 - 0.0014, 55.0005], [25.9981 - 0.0014, 55.0240]), osmFacilities: [], osmRunways: parseOsmRunways([r] as never) }).facilities.find(
-        (f: { icao?: string }) => f.icao === "OIXX",
-      )!.runways as { id: string }[];
-      expect(out).toHaveLength(2);
+      const at = (d: number) =>
+        mergeFacilities({ ourairports: oaFor([26.0 + d, 55.0005], [25.9981 + d, 55.0240]), osmFacilities: [], osmRunways: parseOsmRunways([l, r] as never) }).facilities.find(
+          (f: { icao?: string }) => f.icao === "OIXX",
+        )!.runways as { id: string; surface: string; sources?: unknown[] }[];
+      for (const d of [-0.0003, 0.0015, 0.0032, 0.0017]) {
+        const out = at(d);
+        expect(out, `chart offset ${d}`).toHaveLength(2);
+        const charted = out.filter((x) => x.sources?.length === 2);
+        expect(charted).toHaveLength(1);
+        expect(charted[0].id).toBe(d < 0.00175 ? "09R/27L" : "09L/27R");
+      }
+    });
+
+    test("a displaced chart record attaches to the one surveyed strip it matches instead of creating another", () => {
+      const r = way(22, "09R/27L", [west, east]);
+      for (const d of [-0.0003, -0.0014, -0.0045]) {
+        const out = mergeFacilities({ ourairports: oaFor([26.0 + d, 55.0005], [25.9981 + d, 55.0240]), osmFacilities: [], osmRunways: parseOsmRunways([r] as never) }).facilities.find(
+          (f: { icao?: string }) => f.icao === "OIXX",
+        )!.runways as { id: string; source: { id: string }; surface: string }[];
+        expect(out, `chart offset ${d}`).toHaveLength(1);
+        expect(out[0].source.id).toBe("way/22");
+        expect(out[0].surface).toBe("asphalt");
+      }
+    });
+
+    test("an OSM construction strip beside an active strip keeps construction/closed, takes no designator or chart metadata, and the chart record joins the active strip", () => {
+      const active = way(31, "11/29", [west, east]);
+      const build = { ...way(32, "", [off(west, 0.0012), off(east, 0.0012)]), tags: { aeroway: "runway", construction: "yes" } };
+      for (const order of [[active, build], [build, active]]) {
+        const out = mergeFacilities({ ourairports: oaFor([26.0 + 0.0004, 55.0005], [25.9981 + 0.0004, 55.0240]), osmFacilities: [], osmRunways: parseOsmRunways(order as never) }).facilities.find(
+          (f: { icao?: string }) => f.icao === "OIXX",
+        )!.runways as { id: string; closed: boolean; construction?: boolean; surface: string; source: { id: string }; sources?: unknown[]; ends: { ident: string }[] }[];
+        expect(out).toHaveLength(2);
+        const c = out.find((x) => x.source.id === "way/32")!;
+        const a = out.find((x) => x.source.id === "way/31")!;
+        expect(c.construction).toBe(true);
+        expect(c.closed).toBe(true);
+        expect(c.ends.map((e) => e.ident)).toEqual(["", ""]);
+        expect(c.surface).toBe("unknown");
+        expect(c.sources).toBeUndefined();
+        expect(a.construction).toBeUndefined();
+        expect(a.closed).toBe(false);
+        expect(a.sources).toHaveLength(2);
+        expect(a.ends[0].ident).toBe("11");
+      }
     });
 
     test("committed data: Fujairah keeps its active strip and the offset construction strip apart", () => {
@@ -323,10 +371,61 @@ describe("facility pipeline", () => {
       expect(by("nav-node-5759688563")).toBe("Kangan Coast Guard Base");
     });
 
-    test("committed data: Chabahar keeps 09L/27R and 09R/27L", () => {
+    test("committed data: Chabahar Konarak Intl keeps 09L/27R and 09R/27L", () => {
       const data = JSON.parse(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8"));
       const ids = data.facilities.find((f: { id: string }) => f.id === "apt-oizc").runways.map((r: { id: string }) => r.id).sort();
       expect(ids).toEqual(["09L/27R", "09R/27L"]);
+    });
+
+    test("committed data: the unlettered construction strips at the airfield near Chabahar Konarak stay two separate closed strips with no designators", () => {
+      const data = JSON.parse(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8"));
+      const f = data.facilities.find((x: { id: string }) => x.id === "apt-node-8503286429");
+      expect(f.name).toMatch(/Chabahar Konarak/);
+      expect(f.runways).toHaveLength(2);
+      expect(f.runways.map((r: { source: { id: string } }) => r.source.id).sort()).toEqual(["way/903590322", "way/903590323"]);
+      for (const r of f.runways) {
+        expect(r.construction).toBe(true);
+        expect(r.closed).toBe(true);
+        expect(r.ends.map((e: { ident: string }) => e.ident)).toEqual(["", ""]);
+      }
+    });
+
+    const committed = () => JSON.parse(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8")).facilities as { id: string; runways: { id: string; lengthM: number; closed: boolean; construction?: boolean; source: { id: string }; sources?: { id: string }[]; ends: { ident: string; lat: number; lng: number }[] }[] }[];
+
+    test("committed data: Kish has exactly 2 runways, no duplicate 09R/27L, and the 09R threshold is the OSM threshold (< 10 m)", () => {
+      const f = committed().find((x) => x.id === "apt-oibk")!;
+      expect(f.runways.map((r) => r.id).sort()).toEqual(["09L/27R", "09R/27L"]);
+      const t = runwayThreshold("apt-oibk", "09R");
+      // OSM way/4498211, west end
+      expect(haversineM({ lat: 26.5268461, lng: 53.9625704 }, { lat: t.position.lat, lng: t.position.lng })).toBeLessThan(10);
+      expect(f.runways.find((r) => r.id === "09R/27L")!.source.id).toBe("way/4498211");
+    });
+
+    test("committed data: Suweihan and Al Saqr list their strip once", () => {
+      for (const id of ["apt-omaw", "apt-omrs"]) {
+        const f = committed().find((x) => x.id === id)!;
+        expect(f.runways, id).toHaveLength(1);
+        expect(f.runways[0].source.id.startsWith("way/")).toBe(true);
+        expect(f.runways[0].sources!.length).toBeGreaterThan(1);
+      }
+      // a chart length describing a different extent than the drawn strip does not replace it (Suweihan: 2158 m charted, 3808 m drawn)
+      expect(committed().find((x) => x.id === "apt-omaw")!.runways[0].lengthM).toBeGreaterThan(3700);
+    });
+
+    test("committed data: Fujairah construction strip stays construction/closed with no designator; the selected 11/29 threshold is on the active GCAA strip", () => {
+      const f = committed().find((x) => x.id === "apt-omfj")!;
+      expect(f.runways).toHaveLength(2);
+      const c = f.runways.find((r) => r.source.id === "way/1035327859")!;
+      expect(c.construction).toBe(true);
+      expect(c.closed).toBe(true);
+      expect(c.ends.map((e) => e.ident)).toEqual(["", ""]);
+      expect(c.sources).toBeUndefined();
+      const a = f.runways.find((r) => r.source.id === "way/194888622")!;
+      expect(a.closed).toBe(false);
+      expect(a.id).toBe("11/29");
+      // OSM way/194888622, 29 end
+      expect(haversineM({ lat: 25.1056547, lng: 56.3414003 }, runwayThreshold("apt-omfj", "29").position)).toBeLessThan(10);
+      expect(haversineM({ lat: a.ends[0].lat, lng: a.ends[0].lng }, runwayThreshold("apt-omfj", "11").position)).toBeLessThan(1);
     });
 
     test("committed data: Al Udeid keeps 16L/34R and 16R/34L, Sheik Isa keeps both runways, no duplicates", () => {

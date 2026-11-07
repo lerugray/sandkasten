@@ -28,6 +28,7 @@ function Row({ label, value, testId }: { label: string; value: React.ReactNode; 
 }
 
 function runwayLabel(r: Runway) {
+  if (r.construction) return `${Math.round(r.headingTrue)}° strip`;
   return r.id || `${Math.round(r.headingTrue)}° strip`;
 }
 
@@ -103,7 +104,7 @@ export function FacilityPanel({ facility: f, baseUnits = [], onClose, className 
               <div className="text-[var(--color-tactical-text-dim)]">
                 HDG {String(r.ends[0].headingTrue).padStart(3, "0")}/{String(r.ends[1].headingTrue).padStart(3, "0")} T · {r.surface}
                 {r.lighted ? " · lit" : ""}
-                {r.closed ? " · CLOSED" : ""}
+                {r.construction ? " · UNDER CONSTRUCTION" : r.closed ? " · CLOSED" : ""}
                 {r.derivedEnds ? " · ends estimated" : ""}
               </div>
             </div>

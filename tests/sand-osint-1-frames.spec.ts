@@ -59,6 +59,10 @@ for (const vp of VIEWPORTS) {
     await page.getByTestId("facility-panel-close").click({ timeout: 3000 }).catch(() => {});
     await focusFac(page, "apt-ir-0069");
     await plotFrame("sand-osint-1-s403/04-play-gahkom-dar-SZ.png");
+    await focusFac(page, "apt-oibk");
+    await plotFrame("sand-osint-1-s403/06-play-kish-two-runways-SZ.png");
+    await focusFac(page, "apt-omfj");
+    await plotFrame("sand-osint-1-s403/07-play-fujairah-construction-strip-SZ.png");
     await page.evaluate(() => (window as unknown as W).__sandPlot!.focusOsint("ad-ir-s300-bandar-abbas", 700));
     await page.waitForTimeout(4500);
     const o = await page.evaluate(() => (window as unknown as W).__sandPlot!.osintScreen("ad-ir-s300-bandar-abbas"));

@@ -160,7 +160,7 @@ function runwayFromEnds(id, a, b, props) {
     const straight = circDist(p.n * 10, hdgAB) + circDist(q.n * 10, hdgBA);
     const swapped = circDist(q.n * 10, hdgAB) + circDist(p.n * 10, hdgBA);
     [identA, identB] = straight <= swapped ? [p.text, q.text] : [q.text, p.text];
-  } else if (!identA && !identB) {
+  } else if (!identA && !identB && !props.construction) {
     identA = designatorFor(hdgAB).text;
     identB = designatorFor(hdgBA).text;
   }
@@ -179,6 +179,7 @@ function runwayFromEnds(id, a, b, props) {
     surface: props.surface ?? "unknown",
     lighted: props.lighted ?? null,
     closed: props.closed ?? false,
+    ...(props.construction ? { construction: true } : {}),
     ends,
     derivedEnds: props.derivedEnds ?? false,
     source: props.source,
@@ -403,14 +404,17 @@ export function parseOsmRunways(elements) {
     const b = pts[pts.length - 1];
     const [identA, identB] = String(t.ref ?? "").split("/").map((s) => s.trim());
     const width = num(String(t.width ?? "").replace(/[^0-9.]/g, ""));
+    // construction=yes: an unfinished strip. It stays closed, takes no designator it was not given, and no chart record attaches to it.
+    const construction = !!t.construction && t.construction !== "no";
     out.push({
       osmId: osmId(el),
       center: { lat: (a.lat + b.lat) / 2, lng: (a.lng + b.lng) / 2 },
-      runway: runwayFromEnds(t.ref || "", a, b, {
+      runway: runwayFromEnds(t.ref || osmId(el), a, b, {
+        construction,
         widthM: width,
         surface: normalizeSurface(t.surface),
         lighted: t.lit === "yes" ? true : t.lit === "no" ? false : null,
-        closed: !!(t.access === "no" || t.disused === "yes"),
+        closed: construction || !!(t.access === "no" || t.disused === "yes"),
         identA: identA || "",
         identB: identB || "",
         source: { source: "osm", id: osmId(el) },
@@ -570,8 +574,8 @@ function midpoint(o) {
   return { lat: (o.ends[0].lat + o.ends[1].lat) / 2, lng: (o.ends[0].lng + o.ends[1].lng) / 2 };
 }
 
-/** Charted and surveyed copies of one strip rarely line up exactly: same designators (letters not in conflict) and close midpoints. */
-function samePair(o, rw) {
+/** Same designators (letters not in conflict), same heading, midpoints within 1.5 km: two records that name one runway, wherever the centrelines lie. */
+function samePairLoose(o, rw) {
   const key = (r) => r.ends.map((e) => parseDesignator(e.ident)).filter(Boolean);
   const x = key(o);
   const y = key(rw);
@@ -580,9 +584,12 @@ function samePair(o, rw) {
     if (x[i].n !== y[i].n) return false;
     if (x[i].letter && y[i].letter && x[i].letter !== y[i].letter) return false;
   }
-  if (circDist(o.ends[0].headingTrue, rw.ends[0].headingTrue) > 12 || haversineM(midpoint(o), midpoint(rw)) > 1500) return false;
-  // matching numbers is not enough: a centreline more than a strip width away is another strip (an unlettered chart 11/29 beside a parallel 11R/29L)
-  return frame(o).across(frame(o).P(midpoint(rw))) <= STRIP_ACROSS_M;
+  return circDist(o.ends[0].headingTrue, rw.ends[0].headingTrue) <= 12 && haversineM(midpoint(o), midpoint(rw)) <= 1500;
+}
+
+/** Two surveyed records are one strip only when their centrelines are within a strip width: parallel strips with the same number stay two (Fujairah, Chabahar). */
+function samePair(o, rw) {
+  return samePairLoose(o, rw) && frame(o).across(frame(o).P(midpoint(rw))) <= STRIP_ACROSS_M;
 }
 
 /** Same physical strip: collinear with it and overlapping or within a short gap (segments, displaced thresholds). */
@@ -634,7 +641,9 @@ function mergeStrip(members) {
     surface: first("surface", "unknown") ?? "unknown",
     lighted: first("lighted"),
     closed: members.some((m) => m.closed),
-    lengthM: oa.length ? oa[0].lengthM ?? undefined : undefined,
+    construction: members.some((m) => m.construction),
+    // the charted length stands unless it describes a different extent from the surveyed strip it is attached to (Suweihan: 2158 m charted, 3808 m drawn)
+    lengthM: oa.length && !(osm.length && Math.abs((oa[0].lengthM ?? 0) - haversineM(a, b)) > 0.1 * haversineM(a, b)) ? oa[0].lengthM ?? undefined : undefined,
     derivedEnds: !osm.length && oa[0].derivedEnds,
     source: primary.source,
   });
@@ -650,11 +659,8 @@ function lettersConflict(o, rw) {
   return false;
 }
 
-/**
- * One runway per physical strip, independent of input order. Candidate pairs join nearest first; a join is refused when
- * it would put two letter-conflicting records (16L, 16R) in one group, so an unlettered chart record attaches to one strip only.
- */
-function reconcileRunways(list) {
+/** Union-find over `sameStrip`, nearest pair first; a join that would put two letter-conflicting records (16L, 16R) in one group is refused. */
+function groupStrips(list) {
   const parent = list.map((_, i) => i);
   const find = (i) => (parent[i] === i ? i : (parent[i] = find(parent[i])));
   const pairs = [];
@@ -681,7 +687,50 @@ function reconcileRunways(list) {
     if (!groups.has(r)) groups.set(r, []);
     groups.get(r).push(rw);
   });
-  return [...groups.values()].map(mergeStrip).sort((x, y) => y.lengthM - x.lengthM || x.id.localeCompare(y.id) || x.ends[0].lat - y.ends[0].lat);
+  return [...groups.values()];
+}
+
+/** How far the chart record's midpoint lies from the strip's centreline (longest surveyed member), in whole metres. */
+function acrossStrip(strip, oa) {
+  const longest = [...strip].sort((x, y) => y.lengthM - x.lengthM || sourceKey(x).localeCompare(sourceKey(y)))[0];
+  const f = frame(longest);
+  return Math.round(f.across(f.P(midpoint(oa))));
+}
+
+/**
+ * One runway per physical strip, independent of input order, in two steps.
+ *  1. PHYSICAL STRIPS come from surveyed (OSM) geometry alone: segments of one strip join, parallel strips stay apart, an
+ *     unfinished (construction) strip is its own strip and nothing joins it.
+ *  2. CHART RECORDS (OurAirports) are then ATTACHED to the best-matching physical strip and never create one while a
+ *     surveyed strip matches them (same numbers, letters not in conflict, same heading, within 1.5 km, however far the
+ *     chart is displaced across). Several matches: the strip whose designators are identical, then the nearest centreline
+ *     (so an unlettered 09/27 between 09L/27R and 09R/27L joins the nearer one), then the longer strip, then the lower id.
+ *     A chart record that matches no surveyed strip, or conflicts with the chart records already on it, is a strip of its own.
+ */
+function reconcileRunways(list) {
+  const surveyed = list.filter((r) => r.source.source === "osm");
+  const charted = list
+    .filter((r) => r.source.source !== "osm")
+    .sort((x, y) => Number(!!(parseDesignator(y.ends[0].ident)?.letter || parseDesignator(y.ends[1].ident)?.letter)) - Number(!!(parseDesignator(x.ends[0].ident)?.letter || parseDesignator(x.ends[1].ident)?.letter)) || sourceKey(x).localeCompare(sourceKey(y)));
+  const strips = [...groupStrips(surveyed.filter((r) => !r.construction)), ...groupStrips(surveyed.filter((r) => r.construction))];
+  const open = strips.filter((g) => !g.some((m) => m.construction));
+  const orphans = [];
+  for (const oa of charted) {
+    const fits = open
+      .filter((g) => !g.some((m) => lettersConflict(m, oa)) && g.some((m) => samePairLoose(oa, m) || sameStrip(m, oa) || sameStrip(oa, m)))
+      .map((g) => ({
+        g,
+        exact: g.some((m) => m.ends.every((e, i) => e.ident === oa.ends[i].ident)) ? 0 : 1,
+        across: acrossStrip(g, oa),
+        len: Math.max(...g.map((m) => m.lengthM)),
+        id: g.map(sourceKey).sort()[0],
+      }))
+      .sort((p, q) => p.exact - q.exact || p.across - q.across || q.len - p.len || p.id.localeCompare(q.id));
+    if (fits.length) fits[0].g.push(oa);
+    else orphans.push(oa);
+  }
+  const all = [...strips, ...groupStrips(orphans)];
+  return all.map(mergeStrip).sort((x, y) => y.lengthM - x.lengthM || x.id.localeCompare(y.id) || x.ends[0].lat - y.ends[0].lat);
 }
 
 function slug(s) {
