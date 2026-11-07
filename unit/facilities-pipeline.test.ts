@@ -165,7 +165,12 @@ describe("facility pipeline", () => {
           for (let j = i + 1; j < rws.length; j++) {
             const mid = (r: { ends: { lat: number; lng: number }[] }) => ({ lat: (r.ends[0].lat + r.ends[1].lat) / 2, lng: (r.ends[0].lng + r.ends[1].lng) / 2 });
             const sameName = rws[i].id === rws[j].id;
-            expect(sameName && haversineM(mid(rws[i]), mid(rws[j])) < 1500, `${f.id} duplicate ${rws[i].id}`).toBe(false);
+            const a = rws[i].ends[0], b = rws[i].ends[1], m = mid(rws[j]);
+            const kx = 111320 * Math.cos((a.lat * Math.PI) / 180), ky = 110540;
+            const [bx, by, mx, my] = [(b.lng - a.lng) * kx, (b.lat - a.lat) * ky, (m.lng - a.lng) * kx, (m.lat - a.lat) * ky];
+            const across = Math.abs(bx * my - by * mx) / Math.hypot(bx, by);
+            // two same-numbered strips more than a strip width apart are two strips (Fujairah, 13/31 dirt strips), not one listed twice
+            expect(sameName && haversineM(mid(rws[i]), mid(rws[j])) < 1500 && across <= 60, `${f.id} duplicate ${rws[i].id}`).toBe(false);
           }
       }
       expect(n).toBeGreaterThan(150);
@@ -247,7 +252,7 @@ describe("facility pipeline", () => {
       const bad = data.facilities.filter((f: { name: string }) => ARABIC_SCRIPT.test(f.name)).map((f: { id: string }) => f.id);
       expect(bad).toEqual([]);
       const kish = data.facilities.find((f: { id: string }) => f.id === "apt-node-8625983990");
-      expect(kish.name).toBe("Air base");
+      expect(kish.name).toBe("Kish Island Air Base");
       expect(kish.nameLocal).toBe("پایگاه هوایی");
     });
 
@@ -277,7 +282,7 @@ describe("facility pipeline", () => {
         BBOX,
       );
     const run = (osm: unknown[]) =>
-      mergeFacilities({ ourairports: oaFor([26.0 - 0.0014, 55.0005], [25.9981 - 0.0014, 55.0240]), osmFacilities: [], osmRunways: parseOsmRunways(osm as never) }).facilities.find(
+      mergeFacilities({ ourairports: oaFor([26.0 - 0.0003, 55.0005], [25.9981 - 0.0003, 55.0240]), osmFacilities: [], osmRunways: parseOsmRunways(osm as never) }).facilities.find(
         (f: { icao?: string }) => f.icao === "OIXX",
       )!.runways as { id: string; surface: string }[];
 
@@ -288,6 +293,40 @@ describe("facility pipeline", () => {
       expect(a.map((x) => x.id).sort()).toEqual(["09L/27R", "09R/27L"]);
       expect(run([r, l])).toEqual(a);
       expect(a.filter((x) => x.surface === "asphalt")).toHaveLength(1);
+    });
+
+    test("an unlettered chart record more than a strip width from a parallel strip stays a separate strip", () => {
+      const r = way(22, "09R/27L", [west, east]);
+      const out = mergeFacilities({ ourairports: oaFor([26.0 - 0.0014, 55.0005], [25.9981 - 0.0014, 55.0240]), osmFacilities: [], osmRunways: parseOsmRunways([r] as never) }).facilities.find(
+        (f: { icao?: string }) => f.icao === "OIXX",
+      )!.runways as { id: string }[];
+      expect(out).toHaveLength(2);
+    });
+
+    test("committed data: Fujairah keeps its active strip and the offset construction strip apart", () => {
+      const data = JSON.parse(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8"));
+      const rw = data.facilities.find((f: { id: string }) => f.id === "apt-omfj").runways as { ends: { lat: number; lng: number }[] }[];
+      expect(rw).toHaveLength(2);
+      const [a, b] = [rw[0].ends, rw[1].ends];
+      const ky = 110540, kx = 111320 * Math.cos((a[0].lat * Math.PI) / 180);
+      const [bx, by, mx, my] = [(a[1].lng - a[0].lng) * kx, (a[1].lat - a[0].lat) * ky, (b[0].lng - a[0].lng) * kx, (b[0].lat - a[0].lat) * ky];
+      expect(Math.abs(bx * my - by * mx) / Math.hypot(bx, by)).toBeGreaterThan(100);
+    });
+
+    test("committed data: no airfield, base or port is named by a bare type word", () => {
+      const data = JSON.parse(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8"));
+      const bare = /^(air base|airfield|coast guard base|naval base|military helipad|air defence base|border guard command)$/i;
+      const names = data.facilities.filter((f: { kind: string; name: string }) => ["airbase", "naval_base", "port", "heliport"].includes(f.kind) && bare.test(f.name)).map((f: { name: string }) => f.name);
+      expect(names).toEqual([]);
+      const by = (id: string) => data.facilities.find((f: { id: string }) => f.id === id).name;
+      expect(by("apt-node-8625983990")).toBe("Kish Island Air Base");
+      expect(by("nav-node-5759688563")).toBe("Kangan Coast Guard Base");
+    });
+
+    test("committed data: Chabahar keeps 09L/27R and 09R/27L", () => {
+      const data = JSON.parse(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8"));
+      const ids = data.facilities.find((f: { id: string }) => f.id === "apt-oizc").runways.map((r: { id: string }) => r.id).sort();
+      expect(ids).toEqual(["09L/27R", "09R/27L"]);
     });
 
     test("committed data: Al Udeid keeps 16L/34R and 16R/34L, Sheik Isa keeps both runways, no duplicates", () => {

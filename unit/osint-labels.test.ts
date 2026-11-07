@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { expression } from "@maplibre/maplibre-gl-style-spec";
 import { layoutLabels, siteSlots, slotPx, labelRect, ICON_RADIUS, UNIT_HALF } from "../src/lib/osint/labelLayout";
 import { osintSites, siteLabel } from "../src/lib/osint/sites";
@@ -98,15 +99,21 @@ describe("base map label expression", () => {
   });
 });
 
-describe("dedupeSamePlace", () => {
-  const f = (id: string, extra: object = {}) => ({ id, kind: "port", name: "Ahmed Bin Rashid Port", position: { lat: 25.6, lng: 55.9 }, ...extra });
-  it("keeps one record per kind+name within 1.5 km, the richer one", () => {
-    const out = dedupeSamePlace([f("a"), f("b", { polygon: [[0, 0]] }), f("c", { position: { lat: 26.5, lng: 55.9 } })]);
+describe("dedupeSamePlace: identity proof only", () => {
+  const f = (id: string, src: string, extra: object = {}) => ({ id, kind: "heliport", name: "Offshore Helipad", position: { lat: 24.9, lng: 53.72 }, sources: [{ source: "ourairports", id: src }], ...extra });
+  it("keeps separately catalogued same-name places, however close (AE-0215 and AE-0217, 739 m apart)", () => {
+    const out = dedupeSamePlace([f("apt-ae-0215", "355394"), f("apt-ae-0217", "355396", { position: { lat: 24.9029, lng: 53.7183 } })]);
+    expect(out.map((x: { id: string }) => x.id)).toEqual(["apt-ae-0215", "apt-ae-0217"]);
+  });
+  it("drops a record only when it carries the same source record, keeping the richer one", () => {
+    const out = dedupeSamePlace([f("a", "1"), f("b", "1", { polygon: [[0, 0]] }), f("c", "2")]);
     expect(out.map((x: { id: string }) => x.id)).toEqual(["b", "c"]);
   });
-  it("never merges areas or different names", () => {
-    const out = dedupeSamePlace([f("a", { kind: "military_area" }), f("b", { kind: "military_area" }), f("c", { name: "Other" })]);
-    expect(out).toHaveLength(3);
+  it("committed data: both Offshore Helipads AE-0215 and AE-0217 exist", () => {
+    const data = JSON.parse(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8"));
+    const ids = data.facilities.map((x: { id: string }) => x.id);
+    expect(ids).toContain("apt-ae-0215");
+    expect(ids).toContain("apt-ae-0217");
   });
 });
 

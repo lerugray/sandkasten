@@ -447,6 +447,17 @@ const ENGLISH_BY_WORD = [
 // OSM objects whose only name is a bare type word ("Naval base"): the real, public name of the place.
 const CURATED_NAMES = { "way/176976419": "Qeshm Naval Base" };
 
+// Applied after the merge so a place name cannot pull an unrelated aerodrome (here Kish Island's military field, 2.4 km from Kish Intl) into another record.
+const LOCATED_NAMES = {
+  "node/8625983990": "Kish Island Air Base",
+  "way/1368796748": "Larestan IRGC Aerospace Base",
+  "node/5759688563": "Kangan Coast Guard Base",
+  "node/5854812099": "Kangan Coast Guard Base",
+};
+
+// A bare type word is not a name: whatever still carries one gets the nearest named airfield, base or port as a locator.
+const GENERIC_NAMES = new Set(["Air base", "Airfield", "Coast guard base", "Naval base", "Military Helipad", "Air defence base", "Border guard command"]);
+
 export function englishFallbackName(name, kind, areaType) {
   for (const [re, en] of ENGLISH_BY_WORD) if (re.test(name)) return en;
   if (kind === "airbase") return "Airstrip";
@@ -569,7 +580,9 @@ function samePair(o, rw) {
     if (x[i].n !== y[i].n) return false;
     if (x[i].letter && y[i].letter && x[i].letter !== y[i].letter) return false;
   }
-  return circDist(o.ends[0].headingTrue, rw.ends[0].headingTrue) <= 12 && haversineM(midpoint(o), midpoint(rw)) <= 1500;
+  if (circDist(o.ends[0].headingTrue, rw.ends[0].headingTrue) > 12 || haversineM(midpoint(o), midpoint(rw)) > 1500) return false;
+  // matching numbers is not enough: a centreline more than a strip width away is another strip (an unlettered chart 11/29 beside a parallel 11R/29L)
+  return frame(o).across(frame(o).P(midpoint(rw))) <= STRIP_ACROSS_M;
 }
 
 /** Same physical strip: collinear with it and overlapping or within a short gap (segments, displaced thresholds). */
@@ -675,24 +688,23 @@ function slug(s) {
   return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-const normName = (n) => String(n ?? "").trim().toLowerCase().replace(/\s+/g, " ");
-
 /**
- * Drops a second record with the same kind and name within 1.5 km (areas excluded). The richer one stays.
+ * Drops a second record only on identity proof: both carry the same source record (the same OSM element or OurAirports id).
+ * Separately catalogued places with the same name and kind stay, however close (Offshore Helipad AE-0215 and AE-0217).
+ * The richer record stays.
  * @param {any[]} list
  * @returns {any[]}
  */
-export function dedupeSamePlace(list, maxM = 1500) {
+export function dedupeSamePlace(list) {
   const score = (f) => (f.runways?.length ? 4 : 0) + (f.polygon ? 2 : 0) + (f.osint ? 1 : 0);
+  const ids = (f) => (f.sources ?? []).map((s) => `${s.source}:${s.id}`);
   const drop = new Set();
   for (let i = 0; i < list.length; i++) {
-    const a = list[i];
-    if (a.kind === "military_area" || !a.name || drop.has(i)) continue;
+    if (drop.has(i)) continue;
+    const mine = new Set(ids(list[i]));
     for (let j = i + 1; j < list.length; j++) {
-      const b = list[j];
-      if (drop.has(j) || b.kind !== a.kind || normName(b.name) !== normName(a.name)) continue;
-      if (haversineM(a.position, b.position) > maxM) continue;
-      if (score(b) > score(a)) { drop.add(i); break; }
+      if (drop.has(j) || !ids(list[j]).some((k) => mine.has(k))) continue;
+      if (score(list[j]) > score(list[i])) { drop.add(i); break; }
       drop.add(j);
     }
   }
@@ -783,7 +795,7 @@ export function mergeFacilities({ ourairports, osmFacilities, osmRunways, runway
     if (heliOnly) f.kind = "heliport";
   }
 
-  // One record per real place: OSM often maps a port or helipad as several same-named pieces
+  // One record per real place, on identity proof only (a shared source record)
   final = dedupeSamePlace(final);
 
   // Stable ids
@@ -800,6 +812,23 @@ export function mergeFacilities({ ourairports, osmFacilities, osmRunways, runway
     delete f.key;
     delete f.ident;
     if (f.kind !== "airbase") delete f.runways;
+  }
+
+  for (const f of final) {
+    const located = LOCATED_NAMES[f.sources[0]?.id];
+    if (located && GENERIC_NAMES.has(f.name)) {
+      f.name = located;
+    }
+  }
+  const named = final.filter((f) => !GENERIC_NAMES.has(f.name) && !/^Unnamed /.test(f.name) && ["airbase", "naval_base", "port"].includes(f.kind));
+  for (const f of final) {
+    if (!GENERIC_NAMES.has(f.name)) continue;
+    let best = null;
+    for (const n of named) {
+      const d = haversineM(f.position, n.position);
+      if (d <= 80000 && (!best || d < best.d)) best = { n, d };
+    }
+    if (best) f.name = `${f.name} near ${best.n.name}`;
   }
 
   final.sort((a, b) => a.kind.localeCompare(b.kind) || a.id.localeCompare(b.id));
