@@ -1,4 +1,4 @@
-SAND-OSINT-1 READY head=b5ad2f6 ad_sites=9 radars=3 snapshot_units=137 unit=185/185 e2e=75/75
+SAND-OSINT-1 READY head=5b87417 ad_sites=9 radars=3 snapshot_units=137 unit=191/191 e2e=75/75
 
 # SAND-OSINT-1 (s403): Hormuz OSINT layers and ADS-B snapshot seed
 
@@ -67,6 +67,31 @@ Frames: DPR 2, 1440x900 and 1920x1080, same names as before, in `docs/verificati
 | S3 clipped row under "-- MORE --" | The FORCES list ends on a whole row above the MORE bar | `02b-snapshot-traffic` |
 
 Round 3 test results: unit 185/185 (18 files); E2E 75 passed, 2 skipped, 0 failed (full suite, GPU recipe, `--workers=1`; the first serial run of this round had 3 failures, the three tests below, now fixed). Three older tests needed a change because the new behaviour broke an assumption in the test, not the feature: `sand-005` expected the first data block in the DOM to be visible (a crowded group of ships now hides the lowest-priority block, so it waits for any visible block); `sand-osint-1-rings` clicked the briefing, which is now on screen at first view and detaches when clicked (it presses a key and waits for it to hide); `sand-001` dragged a unit to x=1312 in a 1280 px window, so MapLibre never saw the mouse-up and left the marker unclickable (the drag now ends inside the window; I could not run the old commit to compare because its dev server would not start in a second checkout).
+
+## Round 4 (FIX3 after Dot #ask-dot-s406-2: REJECT, 0 S1 / 1 S2)
+
+Root cause: the 60 m across-offset guard was applied to OurAirports chart records as well, so a displaced chart copy of a strip counted as a second physical strip; and OSM `construction=yes` was never read, so an unfinished strip inherited the active strip's designator, chart metadata and open status.
+
+Fix (`scripts/lib/facilities.mjs`, `reconcileRunways`), in two steps:
+1. **Physical strips** come from surveyed OSM geometry alone (segments of one strip join; parallel strips stay apart). A `construction=yes` way is its own strip: `construction: true`, `closed: true`, no designator unless OSM gave it a `ref`, and nothing joins it or attaches to it.
+2. **Chart records** (OurAirports) attach to the best-matching physical strip and never create a strip while one matches (same numbers, letters not in conflict, heading within 12 deg, midpoint within 1.5 km, however far the chart is displaced). Several matches: identical designators first, then the nearest centreline, then the longer strip, then the lower id. A chart record with no match is its own strip, as before.
+
+Also: a charted length is used only if within 10% of the drawn strip (Suweihan: 2158 m charted against 3808 m drawn); `findRunwayEnd` skips construction strips and prefers an open strip, then the longer one, then the lower id; the facility panel says UNDER CONSTRUCTION.
+
+| Item | Result | Test / frame |
+|---|---|---|
+| Kish: exactly 2 runways, no duplicate 09R/27L, 09R threshold = OSM | FIXED: 3 -> 2 runways; 09R threshold within 10 m of OSM way/4498211 | unit "Kish has exactly 2 runways..."; frame SO `06-play-kish-two-runways` |
+| Suweihan and Al Saqr: no duplicated strip | FIXED: 2 -> 1 runway each, OSM geometry with chart metadata | unit "Suweihan and Al Saqr list their strip once" |
+| Fujairah: construction strip stays construction/closed, threshold on the active GCAA strip | FIXED: way/1035327859 is closed, construction, no designator, no chart sources; 11 and 29 thresholds are on way/194888622 | unit "Fujairah construction strip..."; frame SO `07-play-fujairah-construction-strip` |
+| OA record between L and R: no phantom strip | FIXED: 2 runways at every chart offset; the record attaches to the strip with the nearer centreline | unit "OA-between-L/R fixture..."; "09/27 chart record between OSM 09L/27R and 09R/27L..." |
+| A displaced chart record never adds a strip beside one surveyed strip | FIXED (replaces the old test that expected two strips) | unit "a displaced chart record attaches to the one surveyed strip..." |
+| Construction strip beside an active strip, either input order | FIXED | unit "an OSM construction strip beside an active strip..." |
+| Chabahar: unlettered strips still separate, on the actual prior field | KEPT: apt-node-8503286429 keeps two separate construction strips (they were wrongly labelled 13/31 and open before); Chabahar Konarak Intl keeps 09L/27R and 09R/27L | unit "...airfield near Chabahar Konarak..." and "Chabahar Konarak Intl keeps..." |
+| AE-0215 / AE-0217 stay distinct; Fujairah/Chabahar geometries stay separate; 750 m same-name pad | KEPT | `unit/osint-labels.test.ts`; Fujairah and 750 m tests in `unit/facilities-pipeline.test.ts` |
+
+Data (offline rebuild, byte-for-byte test green): `data/facilities/hormuz.json` changed, `data/osint/hormuz.json` unchanged. Runways 205 -> 202; 12 facilities changed: Kish 3 -> 2, Suweihan 2 -> 1, Al Saqr 2 -> 1, Fujairah and the airfield near Chabahar Konarak now carry construction strips (3 construction strips in total, closed strips 2 -> 5), and 7 single-strip fields (Lavan, Jiroft, Arzanah, Zirku, Sir Bani Yas, Khasab, Umm Al-Shokhot) now show the drawn length where the chart length differed by more than 10%.
+
+Proof: unit 191/191 (185 before, 6 net new), e2e 75 passed with 2 skipped (capture-only), `tsc` only the known sand-001 errors. The slot check (`clog-doctor-check.py --slot-check`) exited 0, so browser work ran: the frame spec re-ran the zero-overlap check at both sizes on every frame (0 overlaps), every frame in the spec recaptured under the same names at DPR 2, 1440x900 and 1920x1080, plus two new frames (Kish, Fujairah). No existing frame showed a changed runway.
 
 ## Sources, licences and terms
 
@@ -144,6 +169,7 @@ The SAND-MAP-1 frames 05 to 07 in `docs/verification/sand-map-1-s403/` were reca
 - Round 3: on /map, facility icons stack on each other by design from zoom 9 up (`icon-allow-overlap`, for example Abu Dhabi's airfields and Doha's heliports). The overlap spec exempts facility-icon pairs only in the three dense views (qeshm, dhafra, udeid), which are not review frames.
 - Round 3: the coast line and land fill are hidden at close zoom, so a facility outline there sits over plain dark ground, not the simplified coast.
 - Round 3: the plot never centres on Bushehr, so the Bushehr frame is /map only.
+- Round 4: the plot draws a construction strip like any other strip (dimmer, no designator); there is no dashed style for it. Kish's short unlettered OSM way/930137023 (294 m) is still dropped as a stopway, as before.
 
 ## Steer entries acted on
 
@@ -151,3 +177,4 @@ The SAND-MAP-1 frames 05 to 07 in `docs/verification/sand-map-1-s403/` were reca
 - `20261106T183238Z` (data fixes): already committed before this lane (runway designators from bearing, one runway per strip, `/play` credits, committed raw cache); the Havadarya 08 threshold spawn (heading 79) was re-checked and is fine. The OSINT import reuses the committed raw-cache approach so it regenerates offline.
 - Round 2: both entries were re-read at every checkpoint; no newer entries appeared.
 - Round 3: STEER.md re-read at every checkpoint; it still holds only 20261106T182116Z and 20261106T183238Z, so no newer entry was acted on.
+- Round 4: STEER.md re-read at every checkpoint; it still holds only 20261106T182116Z and 20261106T183238Z, so no newer entry was acted on. The instruction acted on is the GS seat's `say.md` (co-seat 3 steer: SAND-OSINT-1 FIX3).
