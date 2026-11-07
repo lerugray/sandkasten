@@ -131,7 +131,7 @@
   letter-spacing: 0.02em;
   padding: 1px 3px;
   color: var(--tx-phosphor);
-  background: rgba(2, 6, 4, 0.55);
+  background: rgba(2, 6, 4, 0.9);
   will-change: transform;
 }
 .tx-block--hostile {
@@ -159,19 +159,22 @@
   font-size: 12px;
   line-height: 1;
   will-change: transform;
+  /* opaque backing: a ring or a runway under the text never cuts it */
+  background: #020604;
 }
 .tx-grid-label {
   color: var(--tx-rule-hi);
   text-shadow: none;
+  padding: 1px 3px;
 }
 .tx-ring-label {
   color: var(--tx-phosphor);
-  background: rgba(2, 6, 4, 0.7);
+  background: #020604;
   padding: 1px 3px;
 }
 .tx-fac-label {
   color: var(--tx-phosphor, #3ddc84);
-  background: rgba(2, 6, 4, 0.72);
+  background: #020604;
   padding: 1px 3px;
   font-size: 12px;
   letter-spacing: 0.04em;
@@ -181,7 +184,6 @@
   color: var(--tx-hi);
 }
 .tx-fac-label--end {
-  background: none;
   color: var(--tx-hi);
 }
 .tx-ring-label--alarm {
@@ -189,10 +191,11 @@
 }
 .tx-wp-label {
   color: var(--tx-phosphor);
+  padding: 1px 3px;
 }
 .tx-measure-label {
   color: var(--tx-hi);
-  background: rgba(2, 6, 4, 0.8);
+  background: #020604;
   border: 1px solid var(--tx-rule-hi);
   padding: 3px 6px;
   font-size: 13px;
@@ -504,11 +507,8 @@
   text-shadow: none;
   white-space: nowrap;
 }
+/* the scale bar lives in the teletype header (opaque chrome), never over the map */
 .tx-scale {
-  position: absolute;
-  left: 368px;
-  bottom: 252px;
-  z-index: 5;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -743,6 +743,10 @@
 }
 .tx-leader--unknown {
   stroke: var(--tx-dim);
+}
+.tx-leader--site {
+  stroke: var(--tx-phosphor);
+  opacity: 0.55;
 }
 
 /* opening briefing: the mission objective in full, gone on the first key or click */

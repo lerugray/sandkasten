@@ -154,7 +154,8 @@ export function facilityPointsGeoJSON(list: Facility[] = hormuzFacilities): Feat
       properties: {
         id: f.id,
         name: f.name,
-        label: shortFacilityName(f.name),
+        // "Unnamed airfield" and friends are import placeholders, not names: the symbol stays, the map text does not
+        label: /^Unnamed /i.test(f.name) ? "" : shortFacilityName(f.name),
         kind: f.kind,
         use: f.use ?? (f.kind === "naval_base" ? "military" : "civil"),
         tier: facilityTier(f),

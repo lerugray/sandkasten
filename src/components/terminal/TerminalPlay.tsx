@@ -493,6 +493,31 @@ export function TerminalPlay() {
   useEffect(() => {
     updateMore();
   });
+  // when the list overflows, end it on a whole row above the cue: no half row under "-- MORE --"
+  const snapPanelBody = useCallback(() => {
+    const el = panelBodyRef.current;
+    if (!el) return;
+    el.style.maxHeight = "";
+    const panel = el.parentElement;
+    if (!panel || el.scrollHeight <= el.clientHeight + 1) return;
+    const cueH = 28;
+    const avail = el.clientHeight - cueH;
+    let bottom = 0;
+    const top = el.getBoundingClientRect().top;
+    el.querySelectorAll<HTMLElement>(".tx-row").forEach((row) => {
+      const b = row.getBoundingClientRect().bottom - top;
+      if (b <= avail && b > bottom) bottom = b;
+    });
+    if (bottom > 0) el.style.maxHeight = `${Math.round(bottom)}px`;
+  }, []);
+  useEffect(() => {
+    snapPanelBody();
+    const panel = panelBodyRef.current?.parentElement;
+    if (!panel || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => snapPanelBody());
+    ro.observe(panel);
+    return () => ro.disconnect();
+  }, [snapPanelBody, sidebarTab, friendlyUnits.length]);
 
   const clock = new Date(gameState.simTime).toISOString().replace("T", " ").slice(0, 19) + "Z";
   const prefs = autopausePrefsRef.current;
@@ -711,12 +736,6 @@ export function TerminalPlay() {
         </div>
       )}
 
-      {/* Scale */}
-      <div className="tx-scale" aria-hidden="true" data-plot-occluder>
-        <span ref={scaleBarRef} className="tx-scale-bar" />
-        <span ref={scaleLabelRef} className="tx-scale-label" />
-      </div>
-
       <div className="tx-credit" data-testid="plot-attribution" data-plot-occluder>
         Facilities © OpenStreetMap contributors (ODbL), OurAirports (public domain). Land, coast, depth: Natural Earth, NOAA ETOPO1 (public domain). {OSINT_ATTRIBUTION}
       </div>
@@ -738,7 +757,15 @@ export function TerminalPlay() {
         </div>
       ) : null}
 
-      <Teletype lines={ttyLines} />
+      <Teletype
+        lines={ttyLines}
+        scale={
+          <div className="tx-scale" data-testid="plot-scale" aria-hidden="true">
+            <span ref={scaleBarRef} className="tx-scale-bar" />
+            <span ref={scaleLabelRef} className="tx-scale-label" />
+          </div>
+        }
+      />
 
       {/* Command bar */}
       <nav className="tx-cmd" data-testid="command-bar" data-plot-occluder>

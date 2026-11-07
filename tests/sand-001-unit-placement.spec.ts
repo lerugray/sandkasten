@@ -84,7 +84,8 @@ test.describe("sand-001 — Unit placement + selection (editor)", () => {
       await dragged.scrollIntoViewIfNeeded();
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.mouse.down();
-      await page.mouse.move(box.x + box.width / 2 + 360, box.y + box.height / 2 + 220, {
+      // end the drag inside the window: a mouse-up outside it never reaches MapLibre, which then leaves the marker unclickable
+      await page.mouse.move(box.x + box.width / 2 + 200, box.y + box.height / 2 + 100, {
         steps: 25,
       });
       await page.mouse.up();

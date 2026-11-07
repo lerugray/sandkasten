@@ -22,6 +22,8 @@ import { FACILITY_ATTRIBUTION, getFacility } from "@/lib/facilities/facilities";
 import type { Scenario } from "@/types/game";
 import type { Contact, UnitOrders } from "@/lib/simulation/gameState";
 import { UnitLayer } from "./UnitLayer";
+import { LayoutController } from "./LayoutController";
+import type { MapLayout } from "@/lib/map/mapLayout";
 import { RangeRingLayer } from "./RangeRingLayer";
 import { ContactLayer } from "./ContactLayer";
 import { WaypointLayer } from "./WaypointLayer";
@@ -67,6 +69,7 @@ export function TacticalMap({
   onUnitDrag,
 }: TacticalMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const attribSlotRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const styleReadyRef = useRef(false);
   const onUnitSelectRef = useRef(onUnitSelect);
@@ -82,6 +85,7 @@ export function TacticalMap({
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
   const [osintLayers, setOsintLayers] = useState<OsintLayerState>(OSINT_LAYERS_ON);
   const [selectedOsintId, setSelectedOsintId] = useState<string | null>(null);
+  const [layout, setLayout] = useState<MapLayout | null>(null);
   const hasFacilities = !!scenario.facilities?.length;
   const hasOsint = !!scenario.osint?.length;
   const hasOsintRef = useRef(hasOsint);
@@ -119,16 +123,14 @@ export function TacticalMap({
       attributionControl: false,
     });
 
-    // bottom-right, collapsed to its info icon: the full credit line is always shown in the status bar, and the
-    // bottom-left corner belongs to the unit/facility panel.
+    // The zoom buttons and the collapsed attribution icon live in the toolbar strip above the map (not over it): no
+    // marker, label or symbol can sit under them. The full credit line is always shown in the status bar below.
     const attrib = new maplibregl.AttributionControl({ compact: true });
-    map.addControl(attrib, "bottom-right");
-    // added after the attribution so it stacks above the info icon instead of covering it
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+    const attribEl = attrib.onAdd(map);
+    attribSlotRef.current?.appendChild(attribEl);
     const closeAttrib = () => {
-      const el = map.getContainer().querySelector(".maplibregl-ctrl-attrib");
-      el?.classList.remove("maplibregl-compact-show");
-      el?.removeAttribute("open");
+      attribEl.classList.remove("maplibregl-compact-show");
+      attribEl.removeAttribute("open");
     };
     closeAttrib();
     map.once("load", closeAttrib);
@@ -175,6 +177,7 @@ export function TacticalMap({
     (window as unknown as { __sandMap?: maplibregl.Map }).__sandMap = map;
 
     return () => {
+      attrib.onRemove();
       map.remove();
       mapRef.current = null;
     };
@@ -234,9 +237,78 @@ export function TacticalMap({
     ? allUnits.filter((u) => u.side === scenario.playerSide)
     : allUnits;
 
+  // Unit symbols are DOM markers the map canvas cannot see: its text keeps off the spots the layout drew them at.
+  const obstaclePositions = useMemo<[number, number][]>(
+    () =>
+      layout
+        ? layout.unitObstacles
+        : visibleUnits
+            .filter((u) => u.damageState !== "destroyed")
+            .map((u) => [Math.round(u.position.lng * 200) / 200, Math.round(u.position.lat * 200) / 200] as [number, number]),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [layout, fogOfWar, scenario],
+  );
+
   return (
-    <div className="relative w-full h-full">
-      <div ref={containerRef} className="w-full h-full" />
+    <div className="relative w-full h-full flex flex-col">
+      {/* Toolbar strip: map look toggles on the left, zoom and credit icon on the right. Nothing here covers the map. */}
+      <div
+        data-testid="map-controls"
+        className="shrink-0 h-11 flex items-center gap-1 px-2 text-sm tracking-wider bg-[var(--color-tactical-panel)] border-b border-[var(--color-tactical-border)] z-10"
+      >
+        {([
+          ["facilities", "FACILITIES", showFacilities, setShowFacilities, hasFacilities],
+          ...OSINT_LAYERS.map(
+            (l) => [`osint-${l.id}`, l.short, osintLayers[l.id], (v: boolean) => setOsintLayers((p) => ({ ...p, [l.id]: v })), hasOsint] as const,
+          ),
+          ["globe", "GLOBE", globeOn, setGlobeOn, true],
+          ["terrain", "TERRAIN", terrainOn, setTerrainOn, true],
+          ["satellite", "SAT", satelliteOn, setSatelliteOn, true],
+        ] as const)
+          .filter(([, , , , enabled]) => enabled)
+          .map(([key, label, on, set]) => (
+            <button
+              key={key}
+              type="button"
+              data-testid={`map-toggle-${key}`}
+              aria-pressed={on}
+              onClick={() => set(!on)}
+              className={`px-2.5 py-1 rounded border cursor-pointer bg-[var(--color-tactical-panel)] ${
+                on
+                  ? "border-[var(--color-terminal-amber)] text-[var(--color-terminal-amber)]"
+                  : "border-[var(--color-tactical-border)] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)]"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        <div className="ml-auto flex items-center gap-1">
+          {(
+            [
+              ["zoom-in", "+", "Zoom in", () => mapRef.current?.zoomIn()],
+              ["zoom-out", "\u2212", "Zoom out", () => mapRef.current?.zoomOut()],
+            ] as const
+          ).map(([key, glyph, aria, fn]) => (
+            <button
+              key={key}
+              type="button"
+              data-testid={`map-${key}`}
+              aria-label={aria}
+              onClick={fn}
+              className="w-8 py-0.5 rounded border cursor-pointer text-base leading-6 bg-[var(--color-tactical-panel)] border-[var(--color-tactical-border)] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)]"
+            >
+              {glyph}
+            </button>
+          ))}
+          <div ref={attribSlotRef} className="map-attrib-slot relative" />
+        </div>
+      </div>
+
+      <div className="relative flex-1 min-h-0">
+        <div className="absolute inset-0">
+          <div ref={containerRef} className="w-full h-full" />
+        </div>
+      </div>
 
       {mapReady && mapRef.current && (
         <>
@@ -246,11 +318,10 @@ export function TacticalMap({
               facilities={scenario.facilities!}
               visible={showFacilities}
               selectedId={selectedFacilityId}
-              unitPositions={visibleUnits
-                .filter((u) => u.damageState !== "destroyed")
-                .map((u) => [Math.round(u.position.lng * 200) / 200, Math.round(u.position.lat * 200) / 200] as [number, number])}
+              unitPositions={obstaclePositions}
             />
           )}
+          <LayoutController map={mapRef.current} units={visibleUnits} playerSide={scenario.playerSide} sites={hasOsint ? osintVisible : []} onLayout={setLayout} />
           {hasOsint && (
             <OsintLayer
               map={mapRef.current}
@@ -260,9 +331,8 @@ export function TacticalMap({
                 setSelectedOsintId(id);
                 setSelectedFacilityId(null);
               }}
-              unitPositions={visibleUnits
-                .filter((u) => u.damageState !== "destroyed")
-                .map((u) => [Math.round(u.position.lng * 200) / 200, Math.round(u.position.lat * 200) / 200] as [number, number])}
+              unitPositions={obstaclePositions}
+              layout={layout}
             />
           )}
           <UnitLayer
@@ -272,6 +342,7 @@ export function TacticalMap({
             selectedUnitId={selectedUnitId}
             onUnitSelect={onUnitSelect}
             onUnitDrag={onUnitDrag}
+            layout={layout}
           />
           {showSensorCoverage && orders && (
             <SensorCoverageLayer
@@ -322,39 +393,6 @@ export function TacticalMap({
         </>
       )}
 
-      {/* Map look toggles */}
-      <div
-        data-testid="map-controls"
-        className="absolute top-2 left-2 z-10 flex gap-1 text-sm tracking-wider"
-      >
-        {([
-          ["facilities", "FACILITIES", showFacilities, setShowFacilities, hasFacilities],
-          ...OSINT_LAYERS.map(
-            (l) => [`osint-${l.id}`, l.short, osintLayers[l.id], (v: boolean) => setOsintLayers((p) => ({ ...p, [l.id]: v })), hasOsint] as const,
-          ),
-          ["globe", "GLOBE", globeOn, setGlobeOn, true],
-          ["terrain", "TERRAIN", terrainOn, setTerrainOn, true],
-          ["satellite", "SAT", satelliteOn, setSatelliteOn, true],
-        ] as const)
-          .filter(([, , , , enabled]) => enabled)
-          .map(([key, label, on, set]) => (
-            <button
-              key={key}
-              type="button"
-              data-testid={`map-toggle-${key}`}
-              aria-pressed={on}
-              onClick={() => set(!on)}
-              className={`px-2.5 py-1 rounded border cursor-pointer bg-[var(--color-tactical-panel)] ${
-                on
-                  ? "border-[var(--color-terminal-amber)] text-[var(--color-terminal-amber)]"
-                  : "border-[var(--color-tactical-border)] text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)]"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-      </div>
-
       {selectedOsint && <OsintPanel site={selectedOsint} onClose={() => setSelectedOsintId(null)} />}
 
       {selectedFacility && (
@@ -368,7 +406,7 @@ export function TacticalMap({
       )}
 
       {/* Status bar */}
-      <div className="absolute bottom-0 left-0 right-0 bg-[var(--color-tactical-panel)] border-t border-[var(--color-tactical-border)] text-[var(--color-tactical-text-dim)] z-10">
+      <div data-testid="map-statusbar" className="shrink-0 bg-[var(--color-tactical-panel)] border-t border-[var(--color-tactical-border)] text-[var(--color-tactical-text-dim)] z-10">
         <div className="h-9 flex items-center px-4 text-base gap-6 whitespace-nowrap">
           <span>SANDKASTEN v0.1</span>
           {cursorPos && (
@@ -384,7 +422,7 @@ export function TacticalMap({
           <span data-testid="map-attribution">
             {BASEMAP_CREDIT_TEXT}
             {hasFacilities ? `. ${FACILITY_ATTRIBUTION}` : ""}
-            {hasOsint ? ` ${OSINT_ATTRIBUTION}` : ""}
+            {hasOsint ? `. ${OSINT_ATTRIBUTION}` : ""}
           </span>
           {satelliteOn && <span data-testid="map-satellite-credit">{SATELLITE_CREDIT_TEXT}</span>}
         </div>

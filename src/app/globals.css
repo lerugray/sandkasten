@@ -107,3 +107,17 @@ body {
 .maplibregl-ctrl-bottom-left {
   bottom: 76px !important;
 }
+
+/* The attribution control sits in the map toolbar (above the map, not over it); when opened it drops over the map. */
+.map-attrib-slot .maplibregl-ctrl {
+  margin: 0 !important;
+  float: none;
+}
+.map-attrib-slot .maplibregl-ctrl-attrib.maplibregl-compact-show {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 30;
+  width: max-content;
+  max-width: min(520px, 90vw);
+}

@@ -14,6 +14,7 @@ import {
   type BBox,
   dateInWords,
   playerSideFor,
+  snapshotIntro,
 } from "@/lib/snapshot/seed";
 import { ADSB_BASE, USER_AGENT, aircraftFromRequests, adsbSources, fetchAdsb, tilePoints, type RecordedRequest } from "@/lib/snapshot/adsb";
 import { exampleSnapshotRaw, exampleSnapshotScenario } from "@/lib/snapshot/example";
@@ -407,3 +408,16 @@ describe("the committed example is a normal player view of its own traffic", () 
   });
 });
 
+
+describe("snapshot briefing wording", () => {
+  const u = (side: string) => ({ side, mission: "civil" }) as never;
+  it("claims every aircraft only when one side holds them all", () => {
+    expect(snapshotIntro([u("Neutral"), u("Neutral")], "2026-11-06T19:02:40Z")).toMatch(/every aircraft is listed under FORCES/);
+    const mixed = snapshotIntro([u("Neutral"), u("Neutral"), u("Iran")], "2026-11-06T19:02:40Z");
+    expect(mixed).not.toMatch(/every aircraft/);
+    expect(mixed).toMatch(/the 1 Iran aircraft are listed.*other 2 belong to other sides.*GOD mode/);
+  });
+  it("the committed example's briefing makes the claim and it holds", () => {
+    expect(exampleSnapshotScenario.briefing).toMatch(/every aircraft is listed under FORCES/);
+  });
+});

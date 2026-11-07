@@ -23,7 +23,8 @@ test.describe("sand-005 — Fog-of-war vs god-mode toggle", () => {
     await expect(page.locator("canvas").first()).toBeVisible({ timeout: 10_000 });
 
     const markers = page.locator('[data-testid="plot-track"]');
-    await expect(markers.first()).toBeVisible({ timeout: 10_000 });
+    // the plot hides data blocks that would overlap another, so any one visible block proves the layer drew
+    await expect(markers.locator("visible=true").first()).toBeVisible({ timeout: 10_000 });
 
     // Run until fog-of-war contacts with drawn uncertainty circles exist, so
     // the god-mode check below has something to remove.

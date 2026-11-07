@@ -1,4 +1,4 @@
-SAND-OSINT-1 READY head=7a3e56c ad_sites=9 radars=3 snapshot_units=137 unit=173/173 e2e=71/71
+SAND-OSINT-1 READY head=HEADSHA ad_sites=9 radars=3 snapshot_units=137 unit=185/185 e2e=75/75
 
 # SAND-OSINT-1 (s403): Hormuz OSINT layers and ADS-B snapshot seed
 
@@ -39,6 +39,34 @@ Root cause of the label-over-runway defects: the plot's runway obstacle rects we
 Also: a unit data block outranks site labels (it may displace one); the always-keep rule applies to the selected unit only, so a crowd of 137 aircraft thins out instead of stacking.
 
 Tests now: unit 173/173; e2e 71/71 with the GPU recipe (the globe test can time out under 3 parallel workers and passes alone).
+
+## Round 3 (FIX2 after FAIL-PULL on 13a989d: two S2 from the Dot, Look items, S2 (a)-(e))
+
+Frames: DPR 2, 1440x900 and 1920x1080, same names as before, in `docs/verification/sand-osint-1-s403/` (OSINT, snapshot, Bushehr) and `docs/verification/sand-map-1-s403/` (map and cold-boot frames). Every frame is captured by `tests/sand-osint-1-frames.spec.ts` (`SAND_CAPTURE=1`), which runs the overlap check on the page before saving the PNG: 15 frames per size, 0 overlaps each. The check (`tests/helpers/overlap.ts`) measures real DOM rects and symbol sizes for labels, data blocks, unit symbols, site icons and the scale bar, and fails on any pair that touches (1 px tolerance).
+
+| Item | Result | Frame |
+|---|---|---|
+| Dot S2-1: never merge strips whose centrelines are more than a strip width apart | Fixed in `samePair` (60 m across-offset limit, lettered or not). Tests: Fujairah keeps its active strip and the offset construction strip apart; Chabahar keeps 09L/27R and 09R/27L; synthetic 156 m offset stays two strips, 33 m merges | `06-play-facilities` |
+| Dot S2-2: de-duplicate only on identity proof | `dedupeSamePlace` drops a record only if it shares a `sources` entry with an earlier one. AE-0215 and AE-0217 (739 m apart, both "Offshore Helipad") both stay; unit and committed-data tests | `01-map-tactical` |
+| Dot S3: mixed-side "every aircraft" claim | `snapshotIntro` says "every aircraft is listed under FORCES" only when all units are on the played side; otherwise it names the count and says the rest show in GOD mode. Unit tests for both; e2e checks the wording on first view | `02-snapshot-scenario` |
+| Dot S3: globe e2e failure is a timeout | The globe tests pass alone in 27.7 s (toggle test 9.4 s): `docs/verification/sand-osint-1-s403/globe-isolated-run.log`. They only time out when run beside other workers; the final full run used `--workers=1` | log |
+| Unit symbols never touch site icons on /map | Layout controller (`src/components/map/LayoutController.tsx`, `src/lib/map/declutter.ts`) moves unit symbols off site icons; overlap spec covers every map view | `01-map-tactical`, `03-map-osint` |
+| Snapshot shows the briefing on first view | Briefing opens on load for the snapshot; e2e asserts it is visible with its text | `02-snapshot-scenario` |
+| Scale bar never covered | Scale bar sits in the TRAFFIC header; the overlap check includes it as a box | `02b-snapshot-traffic`, `05-play-cold-boot` |
+| Facility outlines sit on land | Coast line and land fill fade out at close zoom, where the simplified coast is off by up to 1.3 km; /map outlines are checked for water share (Havadarya, Bandar Abbas) | `04-play-gahkom-dar`, `07-play-havadarya-panel`, `02-map-zoomed-bandar-abbas` |
+| No generic labels | "Air base", "Coast guard base" become "<name> near <nearest named place within 80 km>" or a located name: "Kish Island Air Base", "Kangan Coast Guard Base" | `04-map-satellite-credit`, `02-snapshot-scenario` |
+| A Bushehr frame | Bushehr NPP, S-300PMU-2 and Tor-M1 with rings and plates on /map; the plot cannot centre there (outside its camera clamp) | `05-map-bushehr` |
+| S2 (a) GFA546 block vs AL AIN INTL | Data blocks are placed against every label and icon; one that cannot fit is hidden. Overlap check, snapshot views | `02b-snapshot-traffic`, `02-snapshot-scenario` |
+| S2 (b) blocks never touch each other or any symbol | Same solver; the plot overlap spec checks block-block, block-symbol and block-icon at both sizes | `02b-snapshot-traffic`, `02c-snapshot-qeshm` |
+| S2 (c) HORNET 102 block over an airport icon | Blocks now treat site icons as obstacles | `05-play-cold-boot`, `06-play-facilities` |
+| S2 (d) displaced label keeps a leader and stays near its icon | A moved label always gets a leader and is limited to a ring around its icon; unit test "boxed-in label moves out along a ring" | `05-play-cold-boot`, `02b-snapshot-traffic` |
+| S2 (e) TONB-E BOZORG next to the wrong icon | Label is placed next to its own icon with a leader line. The overlap check proves no collision; which icon a plot label belongs to is judged by eye in the frame (no dedicated plot test) | `02b-snapshot-traffic` |
+| S3 red label contrast on satellite | Site labels sit on an opaque plate; the map spec computes contrast >= 4.5:1 on the satellite views | `04-map-satellite-credit`, `05-map-bushehr` |
+| S3 red ring cuts "KISH INTL" and "25 NM" | Ring labels and the scale bar are collision boxes; labels move off rings | `05-play-cold-boot`, `02b-snapshot-traffic` |
+| S3 missing period before "OSINT sites:" | Credit text now reads "(public domain). OSINT sites: ..." on /map and /play | `04-map-satellite-credit`, `02b-snapshot-traffic` |
+| S3 clipped row under "-- MORE --" | The FORCES list ends on a whole row above the MORE bar | `02b-snapshot-traffic` |
+
+Round 3 test results: unit 185/185 (18 files); E2E 75 passed, 2 skipped, 0 failed (full suite, GPU recipe, `--workers=1`; the first serial run of this round had 3 failures, the three tests below, now fixed). Three older tests needed a change because the new behaviour broke an assumption in the test, not the feature: `sand-005` expected the first data block in the DOM to be visible (a crowded group of ships now hides the lowest-priority block, so it waits for any visible block); `sand-osint-1-rings` clicked the briefing, which is now on screen at first view and detaches when clicked (it presses a key and waits for it to hide); `sand-001` dragged a unit to x=1312 in a 1280 px window, so MapLibre never saw the mouse-up and left the marker unclickable (the drag now ends inside the window; I could not run the old commit to compare because its dev server would not start in a second checkout).
 
 ## Sources, licences and terms
 
@@ -90,6 +118,8 @@ Scenario wiring: the demo scenario carries `osint` so both MapLibre views and th
 - Unit: `unit/osint-import.test.ts` (dedupe, ranges, citations, platform matcher, facility overlay), `unit/snapshot-seed.test.ts` (fixture based, no network), `unit/facilities-pipeline.test.ts` (build, import, byte compare). Full suite: 156/156 (16 files).
 - E2E with the GPU recipe: `tests/sand-osint-1-rings.spec.ts` covers plot rings and toggles, the S-300 panel with the ESTIMATED range, the credit line, the MapLibre ring and symbol layers with the AD toggle, the snapshot scenario opening offline and running with no calls to adsb.lol or aisstream, and the editor SNAPSHOT button. Full suite: 68/68 on the GPU recipe (the rings spec was re-run after a type-only cleanup: 7/7).
 
+- Round 3: new `unit/declutter.test.ts`, extra cases in `unit/facilities-pipeline.test.ts`, `unit/osint-labels.test.ts`, `unit/snapshot-seed.test.ts`; new e2e `tests/sand-osint-1-overlap-plot.spec.ts`, `tests/sand-osint-1-overlap-map.spec.ts` and the frame-capture spec `tests/sand-osint-1-frames.spec.ts`. Totals: unit 185/185, E2E 75 passed + 2 skipped.
+
 ## Fix found while verifying
 
 On the MapLibre map the OSINT layer never built: `map.isStyleLoaded()` is false while tiles stream in and `style.load` had already fired. `OsintLayer.tsx` now also builds on the next `idle`, and a browser test asserts the layers exist. Also moved the plot scale bar above the credit line, which had grown to two lines.
@@ -108,11 +138,16 @@ The SAND-MAP-1 frames 05 to 07 in `docs/verification/sand-map-1-s403/` were reca
 
 - Bushehr (about 50.9E) sits outside the plot camera clamp, so the plot cannot centre on it; the Bandar Abbas sites are the test targets. On /map Bushehr labels are checked by the nearest-icon test.
 - In the densest part of the snapshot (Dubai area) some aircraft data blocks are dropped rather than stacked; the full list is under FORCES.
-- Where the coarse Natural Earth coastline meets facility outlines, the land fill edge still shows faintly at 1 NM.
 - All AD placements are scenario assumptions anchored to real facilities, not surveyed positions.
+
+- Round 3: where a view is too dense, lower-priority data blocks and site labels are hidden instead of overlapping (16 of 69 blocks show at 1440x900 in the snapshot view); the full list stays under FORCES.
+- Round 3: on /map, facility icons stack on each other by design from zoom 9 up (`icon-allow-overlap`, for example Abu Dhabi's airfields and Doha's heliports). The overlap spec exempts facility-icon pairs only in the three dense views (qeshm, dhafra, udeid), which are not review frames.
+- Round 3: the coast line and land fill are hidden at close zoom, so a facility outline there sits over plain dark ground, not the simplified coast.
+- Round 3: the plot never centres on Bushehr, so the Bushehr frame is /map only.
 
 ## Steer entries acted on
 
 - `20261106T182116Z` (visual fixes): all frames recaptured at DPR 2 at both sizes including cold-boot `/play`; OSINT labels use the same collision rules (obstacles, halos, 12 px minimum); readable credit line; EOX licence needed no action.
 - `20261106T183238Z` (data fixes): already committed before this lane (runway designators from bearing, one runway per strip, `/play` credits, committed raw cache); the Havadarya 08 threshold spawn (heading 79) was re-checked and is fine. The OSINT import reuses the committed raw-cache approach so it regenerates offline.
 - Round 2: both entries were re-read at every checkpoint; no newer entries appeared.
+- Round 3: STEER.md re-read at every checkpoint; it still holds only 20261106T182116Z and 20261106T183238Z, so no newer entry was acted on.

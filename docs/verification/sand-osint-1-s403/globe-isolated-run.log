@@ -1,0 +1,12 @@
+# isolated run of the two globe tests, workers=1, nothing else running (GPU recipe)
+# command: SAND_E2E_GPU=1 SAND_E2E_PORT=3461 npx playwright test tests/sand-map-1-facilities.spec.ts -g globe --reporter=list --workers=1
+
+Running 5 tests using 1 worker
+
+  ✓  1 [chromium] › tests/sand-map-1-facilities.spec.ts:49:7 › SAND-MAP-1 facilities + globe/terrain › facility layer builds with tiered symbol layers and OSM attribution (4.5s)
+  ✓  2 [chromium] › tests/sand-map-1-facilities.spec.ts:62:7 › SAND-MAP-1 facilities + globe/terrain › clicking Oghab 44 opens the panel with runways and based units (5.5s)
+  ✓  3 [chromium] › tests/sand-map-1-facilities.spec.ts:87:7 › SAND-MAP-1 facilities + globe/terrain › facilities toggle hides and shows the layer (3.3s)
+  ✓  4 [chromium] › tests/sand-map-1-facilities.spec.ts:98:7 › SAND-MAP-1 facilities + globe/terrain › globe projection toggles; terrain and satellite switch on (9.4s)
+  ✓  5 [chromium] › tests/sand-map-1-facilities.spec.ts:118:7 › SAND-MAP-1 facilities + globe/terrain › projection is flat at tactical zoom and globe when zoomed out (3.8s)
+
+  5 passed (27.7s)

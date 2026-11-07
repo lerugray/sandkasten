@@ -15,13 +15,15 @@ function hhmmss(t: number) {
 }
 
 // Message traffic as teletype: the newest line prints in character by
-// character (a CSS steps() reveal that runs once when the line mounts).
-export function Teletype({ lines }: { lines: TtyLine[] }) {
+// character (a CSS steps() reveal that runs once when the line mounts). The
+// map scale bar rides in the header: opaque chrome, so no map content is ever under it.
+export function Teletype({ lines, scale }: { lines: TtyLine[]; scale?: React.ReactNode }) {
   const shown = lines.slice(-VISIBLE);
   return (
     <section className="tx-panel tx-tty" data-testid="teletype" data-plot-occluder aria-live="polite">
       <div className="tx-tty-head">
         <span>[ TRAFFIC ]</span>
+        {scale}
         <span className="tx-dim">{lines.length ? `${lines.length} MSG` : "NO TRAFFIC"}</span>
       </div>
       <div className="tx-tty-body">

@@ -280,10 +280,16 @@ export function playerSideFor(units: Unit[]): string {
 /** The plain-language opening of the briefing: what this is and what the player can do. */
 export function snapshotIntro(units: Unit[], fetchedAt: string): string {
   const civil = units.filter((u) => u.mission === CIVIL_MISSION).length;
+  const played = playerSideFor(units);
+  const mine = units.filter((u) => u.side === played).length;
+  // With aircraft on several sides the observer only sees their own side's; GOD mode shows the rest.
+  const listed = mine === units.length
+    ? "every aircraft is listed under FORCES"
+    : `the ${mine} ${played} aircraft are listed under FORCES (the other ${units.length - mine} belong to other sides and show with GOD mode, key G)`;
   return (
     `A real snapshot of the air over the Strait of Hormuz, as the public ADS-B network saw it on ${dateInWords(fetchedAt)}. ` +
     `${units.length} aircraft are on the map${civil ? `, ${civil} of them civil airliners and cargo flights` : ""}. ` +
-    `You are the observer: every aircraft is listed under FORCES, click one to see its call sign, type, heading and altitude, ` +
+    `You are the observer: ${listed}, click one to see its call sign, type, heading and altitude, ` +
     `and speed up time to watch the traffic move. The AD, RADAR and NUC buttons show the air-defence and radar sites around the strait. ` +
     `Nothing here shoots: all sides start weapons-hold and there is nothing to win or lose. `
   );

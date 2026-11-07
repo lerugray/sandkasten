@@ -165,7 +165,12 @@ test.describe("SAND-OSINT-1 snapshot scenario", () => {
     });
     await page.goto("/play?scenario=snapshot");
     await page.waitForFunction(() => !!(window as unknown as W).__sandPlot, null, { timeout: 60_000 });
-    await page.getByTestId("briefing").click({ timeout: 10_000 }).catch(() => {});
+    // the briefing is on screen on first view, in plain words, and keeps its claim honest
+    await expect(page.getByTestId("briefing")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("briefing")).toContainText(/real snapshot of the air over the Strait of Hormuz/i);
+    await expect(page.getByTestId("briefing")).toContainText(/every aircraft is listed under FORCES/);
+    await page.keyboard.press("Shift");
+    await expect(page.getByTestId("briefing")).toBeHidden({ timeout: 10_000 });
     await expect(page.getByTestId("terminal-root")).toContainText(/ADS-B|SNAPSHOT/i);
     // normal player view: no G (god mode) pressed
     await expect.poll(() => page.evaluate(() => (window as unknown as W).__sandPlot!.drawnTracks().units), { timeout: 20_000 }).toBeGreaterThan(20);

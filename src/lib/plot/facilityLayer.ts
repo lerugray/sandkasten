@@ -22,7 +22,8 @@ const TIER_LABEL_MINZOOM = [6.5, 8.2, 9, 10.5];
 const AREA_MAX_KM_PER_PX = 0.35;
 const RUNWAY_MAX_KM_PER_PX = 1.4;
 const DEFAULT_RUNWAY_WIDTH_M = 30;
-const SYMBOL_PX = 20;
+export const FACILITY_SYMBOL_PX = 20;
+const SYMBOL_PX = FACILITY_SYMBOL_PX;
 
 export interface FacilityItem {
   facility: Facility;
@@ -34,8 +35,12 @@ export interface FacilityItem {
   slot?: number;
   /** Longest runway in km; 0 when none. */
   rwKm?: number;
-  /** True while the symbol is withdrawn because its runways are drawn big enough to say it. */
+  /** True while the symbol is not drawn: withdrawn for its runways, or decluttered. */
   hidden?: boolean;
+  /** Withdrawn because its runways are drawn big enough to say it. */
+  withdrawn?: boolean;
+  /** Decluttered: another symbol, or an OSINT icon, would sit on top of this one. */
+  decl?: boolean;
 }
 
 export interface RunwayGeom {
@@ -316,13 +321,75 @@ export class FacilityPlotLayer {
     for (const it of this.items) {
       if (!it.rwKm || it.slot === undefined) continue;
       const hide = it.rwKm / kmPerPx > RUNWAY_REPLACES_SYMBOL_PX && kmPerPx < RUNWAY_MAX_KM_PER_PX;
-      if (hide === !!it.hidden) continue;
-      it.hidden = hide;
-      const g = this.groups[it.group];
-      const attr = g.points.geometry.getAttribute("position") as THREE.BufferAttribute;
-      attr.setXYZ(it.slot, hide ? 1e9 : it.x, hide ? 1e9 : it.y, 0);
-      attr.needsUpdate = true;
+      if (hide === !!it.withdrawn) continue;
+      it.withdrawn = hide;
+      this.applyHidden(it);
     }
+  }
+
+  private applyHidden(it: FacilityItem) {
+    const hide = !!(it.withdrawn || it.decl);
+    if (hide === !!it.hidden || it.slot === undefined) return;
+    it.hidden = hide;
+    const g = this.groups[it.group];
+    const attr = g.points.geometry.getAttribute("position") as THREE.BufferAttribute;
+    attr.setXYZ(it.slot, hide ? 1e9 : it.x, hide ? 1e9 : it.y, 0);
+    attr.needsUpdate = true;
+  }
+
+  /**
+   * Hide the lower-priority symbol of any two that would overlap on screen (the selected one first, then the higher
+   * tier, then the longer runway), and any symbol that would sit under an OSINT icon. `minGap` is the centre spacing
+   * in px for two facility symbols; `osint` are the OSINT icon centres, kept at `osintGap`.
+   */
+  declutter(
+    kmPerPx: number,
+    selectedId: string | null,
+    toScreen: (x: number, y: number) => { x: number; y: number; z: number },
+    osint: { cx: number; cy: number }[],
+    bounds: { w: number; h: number },
+    minGap = SYMBOL_PX + 1,
+    osintGap = SYMBOL_PX / 2 + 11 + 1,
+  ) {
+    const mt = this.maxTier(kmPerPx);
+    const cand: { it: FacilityItem; x: number; y: number }[] = [];
+    for (const it of this.items) {
+      if (it.slot === undefined) continue;
+      if (mt < 0 || it.tier > mt || it.withdrawn) { this.setDecl(it, false); continue; }
+      const s = toScreen(it.x, it.y);
+      if (s.z >= 1 || s.x < -30 || s.y < -30 || s.x > bounds.w + 30 || s.y > bounds.h + 30) { this.setDecl(it, false); continue; }
+      cand.push({ it, x: s.x, y: s.y });
+    }
+    cand.sort((a, b) =>
+      (a.it.facility.id === selectedId ? -1 : 0) - (b.it.facility.id === selectedId ? -1 : 0) ||
+      a.it.tier - b.it.tier || (b.it.rwKm ?? 0) - (a.it.rwKm ?? 0) || (a.it.facility.id < b.it.facility.id ? -1 : 1));
+    const cell = 24;
+    const keep = new Map<string, { x: number; y: number }[]>();
+    const key = (cx: number, cy: number) => `${cx},${cy}`;
+    const near = (x: number, y: number, gap: number) => {
+      for (let gx = Math.floor((x - gap) / cell); gx <= Math.floor((x + gap) / cell); gx++) {
+        for (let gy = Math.floor((y - gap) / cell); gy <= Math.floor((y + gap) / cell); gy++) {
+          for (const k of keep.get(key(gx, gy)) ?? []) if (Math.abs(k.x - x) < gap && Math.abs(k.y - y) < gap) return true;
+        }
+      }
+      return false;
+    };
+    for (const c of cand) {
+      let bad = c.it.facility.id !== selectedId && osint.some((o) => Math.abs(o.cx - c.x) < osintGap && Math.abs(o.cy - c.y) < osintGap);
+      if (!bad && c.it.facility.id !== selectedId) bad = near(c.x, c.y, minGap);
+      this.setDecl(c.it, bad);
+      if (!bad) {
+        const k = key(Math.floor(c.x / cell), Math.floor(c.y / cell));
+        const arr = keep.get(k);
+        if (arr) arr.push({ x: c.x, y: c.y }); else keep.set(k, [{ x: c.x, y: c.y }]);
+      }
+    }
+  }
+
+  private setDecl(it: FacilityItem, v: boolean) {
+    if (!!it.decl === v) return;
+    it.decl = v;
+    this.applyHidden(it);
   }
 
   get drawnSymbols() {

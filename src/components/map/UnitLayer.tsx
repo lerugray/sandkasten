@@ -2,170 +2,125 @@
 
 import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
-import { createSymbolSVG, getSymbolAnchor } from "@/lib/symbols/milsymbolFactory";
-import { getPlatform } from "@/lib/platforms/lookup";
-import { getAffiliation } from "@/types/game";
-import type { Unit, Affiliation } from "@/types/game";
-import type { BattleDimension } from "@/lib/symbols/milsymbolFactory";
+import { unitSymbolSpec } from "@/lib/map/unitSymbol";
+import type { MapLayout } from "@/lib/map/mapLayout";
+import type { Unit } from "@/types/game";
 
 interface UnitLayerProps {
   map: maplibregl.Map;
   units: Unit[];
   playerSide: string;
-  selectedUnitId: string | null;
+  selectedUnitId?: string | null;
   onUnitSelect: (unitId: string | null, shiftKey?: boolean) => void;
   onUnitDrag?: (unitId: string, position: { lat: number; lng: number }) => void;
+  /** where the layout controller put each symbol relative to its true position (units not listed sit on it) */
+  layout?: MapLayout | null;
 }
 
-const CLUSTER_PX = 24;
-
-/** Fan out markers that sit within CLUSTER_PX of each other on a ring, with a count badge at the true spot. */
 /** The heading leader makes a symbol's SVG taller than the symbol: this shifts the SVG so the symbol sits on its position. */
-function baseOffset(m: maplibregl.Marker): [number, number] {
-  const d = m.getElement().dataset;
-  return [Number(d.baseDx ?? 0), Number(d.baseDy ?? 0)];
+function baseOffset(el: HTMLElement): [number, number] {
+  return [Number(el.dataset.baseDx ?? 0), Number(el.dataset.baseDy ?? 0)];
 }
 
-function declutter(map: maplibregl.Map, markers: Map<string, maplibregl.Marker>, badges: maplibregl.Marker[]) {
-  badges.forEach((b) => b.remove());
-  badges.length = 0;
-  const items = [...markers.entries()].map(([id, m]) => {
-    const ll = m.getLngLat();
-    return { id, m, ll, pt: map.project(ll), group: -1 };
-  });
-  const groups: typeof items[] = [];
-  for (const it of items) {
-    const g = groups.find((grp) => grp.some((o) => Math.hypot(o.pt.x - it.pt.x, o.pt.y - it.pt.y) < CLUSTER_PX));
-    if (g) g.push(it);
-    else groups.push([it]);
-  }
-  for (const g of groups) {
-    if (g.length < 2) {
-      g[0].m.setOffset(baseOffset(g[0].m));
-      continue;
-    }
-    const cx = g.reduce((a, o) => a + o.pt.x, 0) / g.length;
-    const cy = g.reduce((a, o) => a + o.pt.y, 0) / g.length;
-    const r = 24 + g.length * 3;
-    g.sort((a, b) => a.id.localeCompare(b.id));
-    g.forEach((o, i) => {
-      const ang = -Math.PI / 2 + (i * 2 * Math.PI) / g.length;
-      const [bx, by] = baseOffset(o.m);
-      o.m.setOffset([cx + Math.cos(ang) * r - o.pt.x + bx, cy + Math.sin(ang) * r - o.pt.y + by]);
-    });
-    const el = document.createElement("div");
-    el.className = "unit-cluster-badge";
-    el.setAttribute("data-testid", "unit-cluster-badge");
-    el.textContent = String(g.length);
-    el.style.cssText =
-      "pointer-events:none;min-width:18px;height:18px;border-radius:9px;background:#0f172a;color:#f1f5f9;border:1px solid #94a3b8;font:600 12px/16px sans-serif;text-align:center;padding:0 3px;box-sizing:border-box";
-    const center = map.unproject([cx, cy]);
-    badges.push(new maplibregl.Marker({ element: el, anchor: "center" }).setLngLat(center).addTo(map));
-  }
-}
-
-export function UnitLayer({
-  map,
-  units,
-  playerSide,
-  selectedUnitId,
-  onUnitSelect,
-  onUnitDrag,
-}: UnitLayerProps) {
+export function UnitLayer({ map, units, playerSide, onUnitSelect, onUnitDrag, layout }: UnitLayerProps) {
   const markersRef = useRef<Map<string, maplibregl.Marker>>(new Map());
-  const badgesRef = useRef<maplibregl.Marker[]>([]);
+  const selectRef = useRef(onUnitSelect);
+  selectRef.current = onUnitSelect;
+  const dragRef = useRef(onUnitDrag);
+  dragRef.current = onUnitDrag;
+  const layoutRef = useRef(layout);
+  layoutRef.current = layout;
+
+  const place = (id: string, m: maplibregl.Marker) => {
+    const [bx, by] = baseOffset(m.getElement());
+    const [dx, dy] = layoutRef.current?.units.get(id) ?? [0, 0];
+    m.setOffset([bx + dx, by + dy]);
+  };
 
   useEffect(() => {
-    const existingMarkers = markersRef.current;
-    const currentIds = new Set(units.map((u) => u.id));
+    const markers = markersRef.current;
+    const currentIds = new Set(units.filter((u) => u.damageState !== "destroyed").map((u) => u.id));
 
-    // Remove markers for units no longer present
-    existingMarkers.forEach((marker, id) => {
+    markers.forEach((marker, id) => {
       if (!currentIds.has(id)) {
         marker.remove();
-        existingMarkers.delete(id);
+        markers.delete(id);
       }
     });
 
-    // Add or update markers
     units.forEach((unit) => {
-      if (unit.damageState === "destroyed") {
-        const existing = existingMarkers.get(unit.id);
-        if (existing) {
-          existing.remove();
-          existingMarkers.delete(unit.id);
+      if (unit.damageState === "destroyed") return;
+      const existing = markers.get(unit.id);
+      if (existing) {
+        existing.setLngLat([unit.position.lng, unit.position.lat]);
+        const el = existing.getElement();
+        // the symbol only changes when the heading does
+        const hdg = String(unit.heading ?? "");
+        if (el.dataset.heading !== hdg) {
+          const spec = unitSymbolSpec(unit, playerSide);
+          el.innerHTML = spec.svg;
+          el.dataset.heading = hdg;
+          el.dataset.baseDx = String(spec.anchor.width / 2 - spec.anchor.x);
+          el.dataset.baseDy = String(spec.anchor.height / 2 - spec.anchor.y);
+          el.dataset.anchorX = String(spec.anchor.x);
+          el.dataset.anchorY = String(spec.anchor.y);
+          place(unit.id, existing);
         }
         return;
       }
 
-      const platform = getPlatform(unit.platformId);
-      const affiliation = getAffiliation(unit, playerSide);
-      const dimension: BattleDimension = platform?.dimension ?? "sea";
-      const functionId = platform?.functionId ?? "CL";
-
-      const symbolOptions = {
-        affiliation,
-        dimension,
-        functionId,
-        size: 25,
-        heading: unit.heading,
-      };
-
-      const svg = createSymbolSVG(symbolOptions);
-      const symbolAnchor = getSymbolAnchor(symbolOptions);
-
-      const existing = existingMarkers.get(unit.id);
-      if (existing) {
-        existing.setLngLat([unit.position.lng, unit.position.lat]);
-        return;
-      }
-
+      const spec = unitSymbolSpec(unit, playerSide);
       const el = document.createElement("div");
       el.className = "unit-marker";
       el.setAttribute("data-testid", "unit-marker");
       el.dataset.unitId = unit.id;
-      el.innerHTML = svg;
+      el.dataset.heading = String(unit.heading ?? "");
+      el.dataset.baseDx = String(spec.anchor.width / 2 - spec.anchor.x);
+      el.dataset.baseDy = String(spec.anchor.height / 2 - spec.anchor.y);
+      // the symbol frame inside the svg (the svg also holds the heading leader): the overlap check measures this
+      el.dataset.anchorX = String(spec.anchor.x);
+      el.dataset.anchorY = String(spec.anchor.y);
+      el.dataset.frameW = String(spec.frame.w);
+      el.dataset.frameH = String(spec.frame.h);
+      el.innerHTML = spec.svg;
       el.style.cursor = "pointer";
       el.title = unit.name;
-
       el.addEventListener("click", (e) => {
         e.stopPropagation();
-        onUnitSelect(unit.id, e.shiftKey);
+        selectRef.current(unit.id, e.shiftKey);
       });
 
-      el.dataset.baseDx = String(symbolAnchor.width / 2 - symbolAnchor.x);
-      el.dataset.baseDy = String(symbolAnchor.height / 2 - symbolAnchor.y);
       const marker = new maplibregl.Marker({
         element: el,
         anchor: "center",
-        offset: [symbolAnchor.width / 2 - symbolAnchor.x, symbolAnchor.height / 2 - symbolAnchor.y],
-        draggable: !!onUnitDrag,
+        offset: [spec.anchor.width / 2 - spec.anchor.x, spec.anchor.height / 2 - spec.anchor.y],
+        draggable: !!dragRef.current,
       })
         .setLngLat([unit.position.lng, unit.position.lat])
         .addTo(map);
-
-      if (onUnitDrag) {
-        marker.on("dragend", () => {
-          const lngLat = marker.getLngLat();
-          onUnitDrag(unit.id, { lat: lngLat.lat, lng: lngLat.lng });
-        });
-      }
-
-      existingMarkers.set(unit.id, marker);
+      marker.on("dragend", () => {
+        const lngLat = marker.getLngLat();
+        dragRef.current?.(unit.id, { lat: lngLat.lat, lng: lngLat.lng });
+      });
+      markers.set(unit.id, marker);
+      place(unit.id, marker);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, units, playerSide]);
 
-    const badges = badgesRef.current;
-    const run = () => declutter(map, existingMarkers, badges);
-    run();
-    map.on("zoomend", run);
+  // Layout changed: move the symbols to their solved spots.
+  useEffect(() => {
+    markersRef.current.forEach((m, id) => place(id, m));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [layout]);
+
+  useEffect(() => {
+    const markers = markersRef.current;
     return () => {
-      map.off("zoomend", run);
-      badges.forEach((b) => b.remove());
-      badges.length = 0;
-      existingMarkers.forEach((marker) => marker.remove());
-      existingMarkers.clear();
+      markers.forEach((m) => m.remove());
+      markers.clear();
     };
-  }, [map, units, playerSide, selectedUnitId, onUnitSelect, onUnitDrag]);
+  }, [map]);
 
   return null;
 }

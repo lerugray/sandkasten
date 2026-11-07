@@ -44,7 +44,9 @@ describe("OSINT map labels", () => {
         };
         const nearest = [...items].sort((a, b) => dist(a) - dist(b))[0];
         // labels may be far from every icon only when they are far from all; compare against icons within reach
-        if (dist(nearest) < 120 && nearest.id !== p.id) {
+        // a label that had to leave its symbol (p.leader) is tied back with a leader line and stays within reach of it
+        if (p.leader) expect(dist(own)).toBeLessThan(170);
+        if (!p.leader && dist(nearest) < 120 && nearest.id !== p.id) {
           // another symbol is closer: only allowed when the two sit on the same spot (co-located, same coordinates)
           expect(dist(own) - dist(nearest)).toBeLessThan(0.5);
         }
@@ -73,6 +75,16 @@ describe("OSINT map labels", () => {
       expect(hit).toBe(false);
     }
     expect(labelRect("left", 10, 10, 50).x).toBe(10);
+  });
+
+  it("a boxed-in label moves out along a ring, keeps near its symbol and gets a leader line", () => {
+    // icon at (500,500) with every adjacent spot taken by blockers
+    const blockers = [{ x: 440, y: 440, w: 220, h: 120 }];
+    const [p] = layoutLabels([{ id: "a", label: "Bushehr NPP", slot: -1, x: 500, y: 500 }], [], textW, { blockers });
+    expect(p.leader).toBe(true);
+    const hit = p.rect.x < 660 && p.rect.x + p.rect.w > 440 && p.rect.y < 560 && p.rect.y + p.rect.h > 440;
+    expect(hit).toBe(false);
+    expect(Math.hypot(p.rect.x + p.rect.w / 2 - 500, p.rect.y + p.rect.h / 2 - 500)).toBeLessThan(170);
   });
 
   it("the unit symbol names the English label only: no OSINT label or site name holds Arabic script", () => {

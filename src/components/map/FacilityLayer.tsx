@@ -11,6 +11,7 @@ import {
 import type { Facility } from "@/lib/facilities/facilities";
 
 import { MAP_FONT } from "@/lib/map/styles";
+import { raiseFacilityPoints } from "@/lib/map/mapLayout";
 const POINT_TIERS = [
   { tier: 0, minzoom: 3, labelMinzoom: 7 },
   { tier: 1, minzoom: 5.5, labelMinzoom: 8 },
@@ -277,6 +278,7 @@ function build(map: maplibregl.Map, facilities: Facility[], unitPositions: [numb
     layout: { "icon-image": "fac-blank", "icon-allow-overlap": true, "icon-padding": 2 },
     paint: { "icon-opacity": 0 },
   });
+  raiseFacilityPoints(map);
 }
 
 function teardown(map: maplibregl.Map) {
