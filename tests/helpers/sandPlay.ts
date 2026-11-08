@@ -175,7 +175,8 @@ export async function assertFrozen(page: Page, opts: { selected?: boolean } = { 
   expect(after.result).toBe(before.result);
   expect(after.flight).toBe(before.flight);
   expect(after.log).toBe(before.log);
-  await expect(page.getByTestId("sim-state")).toContainText(/HOLD/);
+  await expect(page.getByTestId("sim-state")).toContainText(/ENDED/);
+  await expect(page.getByTestId("sim-state")).not.toContainText(/HOLD/);
 }
 
 
@@ -185,4 +186,28 @@ export async function areaBox(page: Page, id: string) {
   if (!pts) return null;
   const xs = pts.map((p) => p.x), ys = pts.map((p) => p.y);
   return { x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys), w: Math.max(...xs) - Math.min(...xs) };
+}
+
+/** The WeGo turn state, read from the live session (needs the E2E handle). */
+export async function wegoState(page: Page) {
+  return page.evaluate(() => {
+    const s = (window as unknown as W).__sandSession as unknown as { snapshot(): any };
+    const snap = s.snapshot();
+    const w = snap.wego;
+    return w
+      ? {
+          mode: snap.mode as string,
+          phase: w.phase as string,
+          turnNumber: snap.gameState.turnNumber as number,
+          turnsCommitted: w.turnsCommitted as number,
+          turnStart: w.turnStart as number,
+          turnEnd: w.turnEnd as number,
+          simTime: snap.gameState.simTime as number,
+          intents: w.intents.length as number,
+          paused: snap.gameState.isPaused as boolean,
+          speed: snap.gameState.speed as number,
+          contacts: snap.gameState.contacts.map((c: any) => ({ id: c.id, cls: c.classification })) as { id: string; cls: string }[],
+        }
+      : { mode: snap.mode as string, phase: null, turnNumber: 0, turnsCommitted: 0, turnStart: 0, turnEnd: 0, simTime: snap.gameState.simTime as number, intents: 0, paused: true, speed: 1, contacts: [] };
+  });
 }

@@ -90,12 +90,14 @@ export interface WeGoSnapshot {
   report: TurnReport | null;
   /** Simulated ms left in the committed interval while resolving, else 0. */
   remainingMs: number;
-  /** The mode can still be changed (nothing has started). */
-  configurable: boolean;
 }
 
 export interface SessionSnapshot {
   mode: PlayMode;
+  /** Nothing has started yet, so the mode may still be chosen. */
+  modeLocked: boolean;
+  /** Tactical orders are open right now (not resolving, reviewing or ended). */
+  ordersOpen: boolean;
   wego: WeGoSnapshot | null;
   gameState: GameState;
   eventState: EventState | undefined;
@@ -209,13 +211,14 @@ export class SimulationSession {
       intents: this.intents,
       report: this.report,
       remainingMs: this.phase === "resolving" ? Math.max(0, this.turnEnd - this.gameState.simTime) : 0,
-      configurable: !this.started,
     };
   }
 
   snapshot(): SessionSnapshot {
     return {
       mode: this.mode,
+      modeLocked: this.started,
+      ordersOpen: this.orderLock() === null,
       wego: this.wegoSnapshot(),
       gameState: this.gameState,
       eventState: this.eventState,

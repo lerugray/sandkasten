@@ -1,0 +1,66 @@
+
+Running 3 tests using 1 worker
+
+[1A[2K[1/3] [chromium] › tests/sand-wego-1-flow.spec.ts:169:7 › SAND-WEGO-1: the turn loop and the command lock › mode choice, planning, a queued ENGAGE that waits, commit, resolution lock, review, next turn
+[1A[2K  1) [chromium] › tests/sand-wego-1-flow.spec.ts:169:7 › SAND-WEGO-1: the turn loop and the command lock › mode choice, planning, a queued ENGAGE that waits, commit, resolution lock, review, next turn 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"[[\"us-cvn-1\",{\"unitId\":\"us-cvn-1\",\"waypoints\":[{\"position\":{\"lng\":56.4499998592957,\"lat\":26.650000039326162}}],\"throttle\":4,\"radarActive\":true}],[\"us-cg-1\",{\"unitId\":\"us-cg-1\",\"waypoints\":[{\"position\":{\"lng\":56.500000166513544,\"lat\":26.600000041559}}],\"throttle\":3,\"radarActive\":true}],[\"us-ddg-1\",{\"unitId\":\"us-ddg-1\",\"waypoints\":[],\"throttle\":2,\"speedKts\":20,\"radarActive\":true}],[\"us-ddg-2\",{\"unitId\":\"us-ddg-2\",\"waypoints\":[],\"throttle\":2,\"speedKts\":20,\"radarActive\":true}],[\"us-ffg-1\",{\"unitId\":\"us-ffg-1\",\"waypoints\":[],\"throttle\":2,\"speedKts\":18,\"radarActive\":true}],[\"us-fa18-1\",{\"unitId\":\"us-fa18-1\",\"waypoints\":[],\"throttle\":2,\"speedKts\":450,\"radarActive\":true}],[\"us-fa18-2\",{\"unitId\":\"us-fa18-2\",\"waypoints\":[],\"throttle\":2,\"speedKts\":450,\"radarActive\":true}],[\"us-e2c-1\",{\"unitId\":\"us-e2c-1\",\"waypoints\":[],\"throttle\":2,\"speedKts\":280,\"radarActive\":true}],[\"ir-fac-1\",{\"unitId\":\"ir-fac-1\",\"waypoints\":[{\"position\":{\"lng\":56.3,\"lat\":27}},{\"position\":{\"lng\":56.5,\"lat\":26.6}},{\"position\":{\"lng\":56.2,\"lat\":26.2}},{\"position\":{\"lng\":55.8,\"lat\":26.5}}],\"throttle\":2,\"radarActive\":true}],[\"ir-fac-2\",{\"unitId\":\"ir-fac-2\",\"waypoints\":[{\"position\":{\"lng\":56.3,\"lat\":27}},{\"position\":{\"lng\":56.5,\"lat\":26.6}},{\"position\":{\"lng\":56.2,\"lat\":26.2}},{\"position\":{\"lng\":55.8,\"lat\":26.5}}],\"throttle\":2,\"radarActive\":true}],[\"ir-fac-3\",{\"unitId\":\"ir-fac-3\",\"waypoints\":[{\"position\":{\"lng\":56.3,\"lat\":27}},{\"position\":{\"lng\":56.5,\"lat\":26.6}},{\"position\":{\"lng\":56.2,\"lat\":26.2}},{\"position\":{\"lng\":55.8,\"lat\":26.5}}],\"throttle\":2,\"radarActive\":true}],[\"ir-pc-1\",{\"unitId\":\"ir-pc-1\",\"waypoints\":[{\"position\":{\"lng\":[7m55.8,\"lat\":26.6}},{\"position\":{\"lng\":[27m56.4,\"lat\":26.3}},{\"position\":{\"lng\":56,\"lat\":26}}],\"throttle\":2,\"radarActive\":true}],[\"ir-pc-2\",{\"unitId\":\"ir-pc-2\",\"waypoints\":[{\"position\":{\"lng\":55.8,\"lat\":26.6}},{\"position\":{\"lng\":56.4,\"lat\":26.3}},{\"position\":{\"lng\":56,\"lat\":26}}],\"throttle\":2,\"radarActive\":true}],[\"ir-ff-1\",{\"unitId\":\"ir-ff-1\",\"waypoints\":[{\"position\":{\"lat\":26.868148343189795,\"lng\":56.26428375752027}}],\"throttle\":2,\"radarActive\":true}],[\"ir-f4-1\",{\"unitId\":\"ir-f4-1\",\"waypoints\":[{\"position\":{\"lng\":55.5,\"lat\":27.2}},{\"position\":{\"lng\":56,\"lat\":27}}],\"throttle\":2,\"radarActive\":true}],[\"ir-f14-1\",{\"unitId\":\"ir-f14-1\",\"waypoints\":[{\"position\":{\"lng\":55.5,\"lat\":27.2}},{\"position\":{\"lng\":56,\"lat\":27}}],\"throttle\":2,\"radarActive\":true}],[\"ir-f4-2\",{\"unitId\":\"ir-f4-2\",\"waypoints\":[],\"throttle\":2,\"speedKts\":0,\"radarActive\":true}]]"[39m
+    Received: [31m"[[\"us-cvn-1\",{\"unitId\":\"us-cvn-1\",\"waypoints\":[{\"position\":{\"lng\":56.4499998592957,\"lat\":26.650000039326162}}],\"throttle\":4,\"radarActive\":true}],[\"us-cg-1\",{\"unitId\":\"us-cg-1\",\"waypoints\":[{\"position\":{\"lng\":56.500000166513544,\"lat\":26.600000041559}}],\"throttle\":3,\"radarActive\":true}],[\"us-ddg-1\",{\"unitId\":\"us-ddg-1\",\"waypoints\":[],\"throttle\":2,\"speedKts\":20,\"radarActive\":true}],[\"us-ddg-2\",{\"unitId\":\"us-ddg-2\",\"waypoints\":[],\"throttle\":2,\"speedKts\":20,\"radarActive\":true}],[\"us-ffg-1\",{\"unitId\":\"us-ffg-1\",\"waypoints\":[],\"throttle\":2,\"speedKts\":18,\"radarActive\":true}],[\"us-fa18-1\",{\"unitId\":\"us-fa18-1\",\"waypoints\":[],\"throttle\":2,\"speedKts\":450,\"radarActive\":true}],[\"us-fa18-2\",{\"unitId\":\"us-fa18-2\",\"waypoints\":[],\"throttle\":2,\"speedKts\":450,\"radarActive\":true}],[\"us-e2c-1\",{\"unitId\":\"us-e2c-1\",\"waypoints\":[],\"throttle\":2,\"speedKts\":280,\"radarActive\":true}],[\"ir-fac-1\",{\"unitId\":\"ir-fac-1\",\"waypoints\":[{\"position\":{\"lng\":56.3,\"lat\":27}},{\"position\":{\"lng\":56.5,\"lat\":26.6}},{\"position\":{\"lng\":56.2,\"lat\":26.2}},{\"position\":{\"lng\":55.8,\"lat\":26.5}}],\"throttle\":2,\"radarActive\":true}],[\"ir-fac-2\",{\"unitId\":\"ir-fac-2\",\"waypoints\":[{\"position\":{\"lng\":56.3,\"lat\":27}},{\"position\":{\"lng\":56.5,\"lat\":26.6}},{\"position\":{\"lng\":56.2,\"lat\":26.2}},{\"position\":{\"lng\":55.8,\"lat\":26.5}}],\"throttle\":2,\"radarActive\":true}],[\"ir-fac-3\",{\"unitId\":\"ir-fac-3\",\"waypoints\":[{\"position\":{\"lng\":56.3,\"lat\":27}},{\"position\":{\"lng\":56.5,\"lat\":26.6}},{\"position\":{\"lng\":56.2,\"lat\":26.2}},{\"position\":{\"lng\":55.8,\"lat\":26.5}}],\"throttle\":2,\"radarActive\":true}],[\"ir-pc-1\",{\"unitId\":\"ir-pc-1\",\"waypoints\":[{\"position\":{\"lng\":56.4,\"lat\":26.3}},{\"position\":{\"lng\":56,\"lat\":26}}],\"throttle\":2,\"radarActive\":true}],[\"ir-pc-2\",{\"unitId\":\"ir-pc-2\",\"waypoints\":[{\"position\":{\"lng\":55.8,\"lat\":26.6}},{\"position\":{\"lng\":56.4,\"lat\":26.3}},{\"position\":{\"lng\":56,\"lat\":26}}],\"throttle\":2,\"radarActive\":true}],[\"ir-ff-1\",{\"unitId\":\"ir-ff-1\",\"waypoints\":[{\"position\":{\"lat\":26.868148343189795,\"lng\":56.26428375752027}}],\"throttle\":2,\"radarActive\":true}],[\"ir-f4-1\",{\"unitId\":\"ir-f4-1\",\"waypoints\":[{\"position\":{\"lng\":55.5,\"lat\":27.2}},{\"position\":{\"lng\":56,\"lat\":27}}],\"throttle\":2,\"radarActive\":true}],[\"ir-f14-1\",{\"unitId\":\"ir-f14-1\",\"waypoints\":[{\"position\":{\"lng\":55.5,\"lat\":27.2}},{\"position\":{\"lng\":56,\"lat\":27}}],\"throttle\":2,\"radarActive\":true}],[\"ir-f4-2\",{\"unitId\":\"ir-f4-2\",\"waypoints\":[],\"throttle\":2,\"speedKts\":0,\"radarActive\":true}]]"[39m
+
+      92 |   await expect(page.getByTestId("order-panel")).toHaveCount(0);
+      93 |   const after = await sessionState(page);
+    > 94 |   expect(after.orders).toBe(before.orders);
+         |                        ^
+      95 |   expect(after.flight >= 0).toBe(true);
+      96 |   const wAfter = await wegoState(page);
+      97 |   expect(wAfter.intents).toBe(wBefore.intents);
+        at assertCommandLock (/home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:94:24)
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:202:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-wego-1-flow-SAND-WEGO-ea404-ution-lock-review-next-turn-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-wego-1-flow-SAND-WEGO-ea404-ution-lock-review-next-turn-chromium/error-context.md
+
+
+[1A[2K[2/3] [chromium] › tests/sand-wego-1-flow.spec.ts:255:7 › SAND-WEGO-1: the turn loop and the command lock › both sides stay in fog: the review lists only what the player's side saw
+[1A[2K[3/3] [chromium] › tests/sand-wego-1-flow.spec.ts:433:7 › SAND-WEGO-1: the continuous and snapshot routes stay continuous › demo, then the real snapshot, then the demo again, and legacy: no WeGo controls or state leak
+[1A[2K  2) [chromium] › tests/sand-wego-1-flow.spec.ts:433:7 › SAND-WEGO-1: the continuous and snapshot routes stay continuous › demo, then the real snapshot, then the demo again, and legacy: no WeGo controls or state leak 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByTestId('sim-state')
+    Expected pattern: [32m/RUN/[39m
+    Received string:  [31m"[HOLD]"[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 5000ms[22m
+    [2m  - waiting for getByTestId('sim-state')[22m
+    [2m    9 × locator resolved to <span data-testid="sim-state" class="tx-state is-hold">[HOLD]</span>[22m
+    [2m      - unexpected value "[HOLD]"[22m
+
+
+      448 |     expect(await wegoState(page)).toMatchObject({ mode: "continuous", phase: null });
+      449 |     await expect(page.getByTestId("sim-state")).toContainText(/HOLD/);
+    > 450 |     await setSpeed(page, "10x");
+          |                                 ^
+      451 |     await page.getByTestId("sim-toggle-pause").click();
+      452 |     await expect(page.getByTestId("sim-state")).toContainText(/RUN/);
+      453 |     const t0 = (await sessionState(page)).simTime;
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:450:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-wego-1-flow-SAND-WEGO-04d8f-WeGo-controls-or-state-leak-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-wego-1-flow-SAND-WEGO-04d8f-WeGo-controls-or-state-leak-chromium/error-context.md
+
+
+[1A[2K  2 failed
+    [chromium] › tests/sand-wego-1-flow.spec.ts:169:7 › SAND-WEGO-1: the turn loop and the command lock › mode choice, planning, a queued ENGAGE that waits, commit, resolution lock, review, next turn 
+    [chromium] › tests/sand-wego-1-flow.spec.ts:433:7 › SAND-WEGO-1: the continuous and snapshot routes stay continuous › demo, then the real snapshot, then the demo again, and legacy: no WeGo controls or state leak 
+  1 passed (44.7s)

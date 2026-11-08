@@ -21,7 +21,7 @@ type W = { __sandPlot?: OsintPlot };
 async function openPlot(page: Page) {
   await page.goto("/play");
   await page.waitForFunction(() => !!(window as unknown as W).__sandPlot, null, { timeout: 60_000 });
-  await page.getByTestId("briefing").click({ timeout: 10_000 }).catch(() => {});
+  await page.getByTestId("briefing-close").click({ timeout: 10_000 }).catch(() => {});
   await page.waitForFunction(() => ((window as unknown as W).__sandPlot?.drawnOsint().sites ?? 0) > 0, null, { timeout: 15_000 });
 }
 

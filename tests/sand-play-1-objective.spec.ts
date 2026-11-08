@@ -36,6 +36,8 @@ test.describe("SAND-PLAY-1 CP1: the objective is legible before and during play"
     // reading the briefing never starts the clock or issues an order
     await expect(page.getByTestId("sim-state")).toContainText(/HOLD/);
     await brief.click();
+    await expect(brief).toBeVisible(); // a stray click on the card no longer dismisses it
+    await page.getByTestId("briefing-close").click();
     await expect(brief).toBeHidden();
     await expect(page.getByTestId("sim-state")).toContainText(/HOLD/);
     await expect(page.getByTestId("order-panel")).toHaveCount(0);

@@ -25,6 +25,7 @@ export default defineConfig({
   ],
   webServer: {
     command: `npx next dev --port ${PORT}`,
+    env: { NEXT_PUBLIC_SAND_E2E: "1" },
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

@@ -887,9 +887,6 @@
   margin-top: 6px;
 }
 
-.tx-briefing {
-  cursor: pointer;
-}
 .tx-briefing-mission {
   margin: 0 18px 10px;
   padding: 8px 0 2px;
@@ -946,4 +943,56 @@
 }
 .tx-result-strip-bad {
   color: var(--tx-alarm);
+}
+
+/* SAND-WEGO-1: mode choice, turn panel and turn review */
+.tx-briefing-mode {
+  margin: 0 18px 10px;
+  padding-top: 6px;
+}
+.tx-briefing-mode-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+.tx-briefing-mode-len {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+}
+.tx-briefing-mode-text {
+  color: var(--tx-text);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.tx-turn-tag {
+  color: var(--tx-hi);
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+.tx-turn .tx-staged {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 3px;
+}
+.tx-review {
+  top: 76px;
+  max-height: calc(100vh - 76px - 330px);
+  overflow-y: auto;
+}
+.tx-review-body {
+  padding: 8px 18px 6px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.tx-review-body b {
+  display: inline-block;
+  min-width: 12ch;
+  color: var(--tx-phosphor);
+  letter-spacing: 0.08em;
 }

@@ -92,7 +92,8 @@ function ControlsTab({ terminal }: { terminal: boolean }) {
     <>
       <SectionTitle>Keyboard</SectionTitle>
       <div className="space-y-1">
-        <div><KeyLabel>Space</KeyLabel> Pause / resume the simulation</div>
+        <div><KeyLabel>Space</KeyLabel> Pause / resume the simulation (WeGo: only while a turn resolves)</div>
+        {terminal && <div><KeyLabel>Enter</KeyLabel> WeGo: commit orders, then start the next turn after the review</div>}
         {terminal && <div><KeyLabel>1</KeyLabel>-<KeyLabel>6</KeyLabel> Time speed 1x, 2x, 5x, 10x, 30x, 60x</div>}
         {terminal && <div><KeyLabel>S</KeyLabel> Sensor coverage <KeyLabel>M</KeyLabel> Measure <KeyLabel>G</KeyLabel> God mode</div>}
         {terminal && <div><KeyLabel>T</KeyLabel> Tilt the plot into the 3D theater and back</div>}

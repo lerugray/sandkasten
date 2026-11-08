@@ -2,10 +2,10 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import type { Doctrine } from "@/lib/ai/doctrine";
-import { SimulationSession, type ScenarioConfig, type SessionSnapshot } from "./session";
+import { SimulationSession, type ScenarioConfig, type SessionOptions, type SessionSnapshot } from "./session";
 import { type AutopausePreferences, loadAutopausePrefs, saveAutopausePrefs } from "./autopause";
 
-export type { ScenarioConfig } from "./session";
+export type { ScenarioConfig, SessionOptions, PlayMode, WeGoPhase, WeGoSnapshot, FireIntent, TurnReport } from "./session";
 
 const TICK_INTERVAL_MS = 50; // 20 fps simulation
 const PUBLISH_INTERVAL_MS = 250; // React renders at ~4 fps to avoid UI jitter
@@ -19,8 +19,10 @@ export function useSimulation(config: ScenarioConfig) {
   if (!sessionRef.current) sessionRef.current = new SimulationSession(config);
   const session = sessionRef.current;
 
-  // Opt-in E2E handle: only a page that sets window.__SAND_E2E__ before load gets the live session.
+  // Test-build-only handle: the explicit NEXT_PUBLIC_SAND_E2E=1 build flag (set by the Playwright web server)
+  // AND a page that sets window.__SAND_E2E__ before load. An ordinary build contains neither.
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_SAND_E2E !== "1") return;
     const w = window as unknown as { __SAND_E2E__?: boolean; __sandSession?: SimulationSession };
     if (w.__SAND_E2E__) w.__sandSession = session;
   }, [session]);
@@ -84,7 +86,11 @@ export function useSimulation(config: ScenarioConfig) {
     [command, session]
   );
   const markMessageRead = useCallback((messageId: string) => command(() => session.markMessageRead(messageId))(), [command, session]);
-  const resetSimulation = useCallback(() => command(() => session.reset())(), [command, session]);
+  const resetSimulation = useCallback((options?: SessionOptions) => command(() => session.reset(options))(), [command, session]);
+  const configureMode = useCallback((options: SessionOptions) => command(() => session.configure(options))(), [command, session]);
+  const commitOrders = useCallback(() => command(() => session.commit())(), [command, session]);
+  const nextTurn = useCallback(() => command(() => session.nextTurn())(), [command, session]);
+  const cancelIntent = useCallback((intentId: string) => command(() => session.cancelIntent(intentId))(), [command, session]);
 
   const setAutopausePrefs = useCallback(
     (prefs: AutopausePreferences) => {
@@ -101,6 +107,14 @@ export function useSimulation(config: ScenarioConfig) {
     combatState: snapshot.combatState,
     autopauseEvent: snapshot.autopauseEvent,
     orderFeedback: snapshot.orderFeedback,
+    mode: snapshot.mode,
+    wego: snapshot.wego,
+    modeLocked: snapshot.modeLocked,
+    ordersOpen: snapshot.ordersOpen,
+    configureMode,
+    commitOrders,
+    nextTurn,
+    cancelIntent,
     autopausePrefsRef,
     pause,
     togglePause,

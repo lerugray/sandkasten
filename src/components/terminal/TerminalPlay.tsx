@@ -140,7 +140,20 @@ export function TerminalPlay() {
     markMessageRead,
     resetSimulation,
     setAutopausePrefs,
+    mode,
+    wego,
+    modeLocked,
+    ordersOpen,
+    configureMode,
+    commitOrders,
+    nextTurn,
+    cancelIntent,
   } = useSimulation(demoScenarioConfig);
+
+  const isWeGo = mode === "wego" && !!wego;
+  const phase = wego?.phase ?? null;
+  // The real-world snapshot route plays continuous only: it says so instead of offering an inert control.
+  const modeChoice = !demoScenarioConfig.scenario.snapshot;
 
   const scenarioResult = eventState?.scenarioResult;
   const ended = !!scenarioResult;
@@ -177,6 +190,7 @@ export function TerminalPlay() {
   const [homeRequest, setHomeRequest] = useState(0);
   const [moreBelow, setMoreBelow] = useState(false);
   const panelBodyRef = useRef<HTMLDivElement>(null);
+  const turnKeyAtRef = useRef(0);
 
   const cursorRef = useRef<HTMLSpanElement>(null);
   const scaleLabelRef = useRef<HTMLSpanElement>(null);
@@ -245,7 +259,7 @@ export function TerminalPlay() {
         // a focused button takes Space itself; only the bare page toggles time
         if (el === document.body) {
           e.preventDefault();
-          if (!ended) togglePause();
+          if (!ended && !e.repeat && (!isWeGo || phase === "resolving")) togglePause();
         }
         return;
       }
@@ -256,6 +270,15 @@ export function TerminalPlay() {
         e.preventDefault();
         // a double-tapped PLAY AGAIN must not also dismiss the fresh briefing
         if (!e.repeat && performance.now() - resetAtRef.current > 600) setShowBriefing(false);
+      } else if (e.key === "Enter" && isWeGo && !ended && el === document.body) {
+        // ENTER commits the plan or opens the next one; a held key or rapid repeats cannot double-fire
+        e.preventDefault();
+        const now = performance.now();
+        if (!e.repeat && now - turnKeyAtRef.current > 400) {
+          turnKeyAtRef.current = now;
+          if (phase === "planning") commitOrders();
+          else if (phase === "review") nextTurn();
+        }
       } else if (k === "b" && objective && !ended) {
         e.preventDefault();
         if (showBriefing) setShowBriefing(false);
@@ -293,7 +316,7 @@ export function TerminalPlay() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePause, setSpeed, toggleMeasure, ended, showBriefing, objective, openBriefing, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, selectedFacilityId, selectedOsintId]);
+  }, [togglePause, setSpeed, toggleMeasure, ended, isWeGo, phase, commitOrders, nextTurn, showBriefing, objective, openBriefing, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, selectedFacilityId, selectedOsintId]);
 
   // The briefing closes only on a deliberate act (its own card or buttons, Enter, Esc, B) or when the clock starts.
   useEffect(() => {
@@ -329,7 +352,7 @@ export function TerminalPlay() {
   const selectedOrders = selectedUnitId ? gameState.orders.get(selectedUnitId) : undefined;
   const contactTag = useCallback((c: Contact) => `${c.platformName ?? `TN${trackNumber(c.id)}`} ${CLS_LABEL[c.classification]}`, []);
   const { fire, engageTarget, cycleTarget, setRoeFor, clearTarget } = useFireControls({
-    unit: !ended && selectedUnit && selectedUnit.side === gameState.scenario.playerSide ? selectedUnit : null,
+    unit: ordersOpen && selectedUnit && selectedUnit.side === gameState.scenario.playerSide ? selectedUnit : null,
     gameState,
     config: demoScenarioConfig,
     orderFeedback,
@@ -372,7 +395,12 @@ export function TerminalPlay() {
     if (!frameOpening()) setHomeRequest((n) => n + 1);
   }, [resetSimulation, resetInfoWar, clearTarget, frameOpening]);
 
-  // A result ends order entry: drop any half-made order mode.
+  // A result or a turn lock ends order entry: drop any half-made order mode and any armed target.
+  useEffect(() => {
+    if (ordersOpen) return;
+    setIsPlacingWaypoint(false);
+    clearTarget();
+  }, [ordersOpen, clearTarget]);
   useEffect(() => {
     if (!ended) return;
     setIsPlacingWaypoint(false);
@@ -444,14 +472,14 @@ export function TerminalPlay() {
     for (const m of messages) {
       lines.push({ id: m.id, time: m.time, tag: "INTL", text: `${m.title ? m.title.toUpperCase() + "  " : ""}${m.text.toUpperCase()}`, alarm: false });
     }
-    lines.push(...holds);
+    if (!ended) lines.push(...holds);
     const snap = demoScenarioConfig.scenario.snapshot;
     if (snap) {
       const n = snap.counts.units;
       lines.push({ id: "snapshot", time: 0, tag: "ADSB", text: `SNAPSHOT ${snap.fetchedAt.slice(0, 16).replace("T", " ")}Z: ${n} AIRCRAFT IN VIEW, ALL LISTED UNDER FORCES`, alarm: false });
     }
     return lines.sort((a, b) => a.time - b.time).slice(-40);
-  }, [combatLog, messages, holds, playerSide, fog]);
+  }, [combatLog, messages, holds, playerSide, fog, ended]);
 
   // Only the player's own objective geometry is drawn; no enemy mission areas, no detection implied.
   const plotAreas = useMemo<PlotArea[] | undefined>(
@@ -483,7 +511,7 @@ export function TerminalPlay() {
     let deciding: string;
     if (objective && progress) {
       if (scenarioResult.result === "victory") {
-        deciding = `${objective.unitShort} entered the ${objective.gateLabel.toLowerCase()} afloat (${UNIT_STATE_LABEL[progress.unitState].toLowerCase()}).`;
+        deciding = `${objective.unitShort} entered the ${objective.gateLabel.toLowerCase()} (${UNIT_STATE_LABEL[progress.unitState].toLowerCase()}).`;
       } else if (scenarioResult.result === "defeat") {
         const loss = [...combatLog].reverse().find((e) => e.type === "destroyed" && e.targetId === objective.unitId);
         const by = loss?.unitId ? ` by ${unitName(loss.unitId)}` : "";
@@ -497,6 +525,31 @@ export function TerminalPlay() {
     const record = ttyLines.filter((l) => l.tag !== "HOLD" && l.tag !== "ADSB").slice(-8);
     return { deciding, clock, kills, friendlyLosses, record };
   }, [scenarioResult, gameState.scenario.startTime, gameState.simTime, combatLog, playerSide, friendlyUnits, objective, progress, unitName, ttyLines]);
+
+  const clockOf = (ms: number) => {
+    const pad = (n: number) => String(Math.floor(n)).padStart(2, "0");
+    return `${pad(ms / 60000)}:${pad((ms / 1000) % 60)}`;
+  };
+
+  // WeGo review: only what the player's own picture supports. Hostile text is fogged by the same contact-name rule as the
+  // teletype; hostile-only traffic (events that involve none of the player's units or fire) is left out.
+  const review = useMemo(() => {
+    const report = wego?.report;
+    if (!report) return null;
+    const own = new Set(friendlyUnits.map((u) => u.id));
+    const events = report.events.filter((e) => e.side === playerSide || (e.targetId && own.has(e.targetId)) || (e.unitId && own.has(e.unitId)));
+    const lines = events.map((e) => ({
+      id: e.id,
+      time: e.time,
+      tag: (COMBAT_TAG[e.type] ?? e.type.toUpperCase()).trim(),
+      text: fog(e.description).toUpperCase(),
+      alarm: e.side !== playerSide && (e.type === "launch" || e.type === "hit" || e.type === "destroyed" || e.type === "damaged"),
+    }));
+    const intel = messages.filter((m) => report.messageIds.includes(m.id)).map((m) => ({ id: m.id, time: m.time, tag: "INTL", text: `${m.title ? m.title.toUpperCase() + "  " : ""}${m.text.toUpperCase()}`, alarm: false }));
+    const record = [...lines, ...intel].sort((a, b) => a.time - b.time);
+    const kills = events.filter((e) => e.type === "destroyed" && e.side === playerSide).length;
+    return { report, record, kills };
+  }, [wego?.report, friendlyUnits, playerSide, fog, messages]);
 
   const handleUnitSelect = useCallback((unitId: string | null, shiftKey?: boolean) => {
     if (unitId && shiftKey) {
@@ -660,10 +713,31 @@ export function TerminalPlay() {
         <span className="tx-dim tx-truncate">{gameState.scenario.name.toUpperCase()}</span>
         <span className="tx-rule-v" />
         <span data-testid="sim-clock" className="tx-clock">{clock}</span>
-        <span className={`tx-state${gameState.isPaused ? " is-hold" : ""}`} data-testid="sim-state">
-          {gameState.isPaused ? "[HOLD]" : `[RUN ${gameState.speed}X]`}
+        {isWeGo && wego && (
+          <span className="tx-turn-tag" data-testid="turn-tag">
+            TURN {gameState.turnNumber}  //  {wego.turnMinutes} MIN
+          </span>
+        )}
+        <span
+          className={`tx-state${ended || (!isWeGo && gameState.isPaused) || (isWeGo && phase !== "resolving") ? " is-hold" : ""}`}
+          data-testid="sim-state"
+          data-phase={isWeGo ? phase : undefined}
+        >
+          {ended
+            ? "[ENDED]"
+            : isWeGo && wego
+              ? phase === "resolving"
+                ? gameState.isPaused
+                  ? `[RESOLVING PAUSED ${clockOf(wego.remainingMs)} LEFT]`
+                  : `[RESOLVING ${gameState.speed}X ${clockOf(wego.remainingMs)} LEFT]`
+                : phase === "review"
+                  ? "[REVIEW]"
+                  : "[PLANNING]"
+              : gameState.isPaused
+                ? "[HOLD]"
+                : `[RUN ${gameState.speed}X]`}
         </span>
-        {autopauseEvent?.reason && gameState.isPaused && (
+        {autopauseEvent?.reason && gameState.isPaused && !ended && (
           <span data-testid="autopause-reason" className="tx-alarm tx-bold">
             {autopauseEvent.reason.toUpperCase()}
           </span>
@@ -706,6 +780,44 @@ export function TerminalPlay() {
               <Cmd onClick={focusProtected} testId="mission-focus-unit" ariaLabel={`Select and focus ${objective.unitShort}`}>{objective.unitShort.split(" ").pop()!.toUpperCase()}</Cmd>
               <Cmd cap="B" onClick={() => (showBriefing ? closeBriefing() : openBriefing())} testId="mission-briefing" active={showBriefing} disabled={ended} ariaLabel="Show or hide the briefing">BRIEFING</Cmd>
             </div>
+          </section>
+        )}
+        {isWeGo && wego && !ended && (
+          <section className="tx-mission tx-turn" data-testid="turn-panel" data-phase={phase} aria-label="Turn">
+            <div className="tx-mission-head">
+              <span>[ TURN {gameState.turnNumber} ]</span>
+              <span className="tx-mission-status" data-testid="turn-phase">
+                {phase === "planning" ? "PLANNING" : phase === "resolving" ? "RESOLVING" : "REVIEW"}
+              </span>
+            </div>
+            {phase === "planning" && (
+              <>
+                <div className="tx-mission-line">Time is held. Give orders, then commit: both sides move together for {wego.turnMinutes} min.</div>
+                <div className="tx-mission-line tx-dim" data-testid="staged-count">
+                  FIRE ORDERS STAGED {wego.intents.length}
+                </div>
+                {wego.intents.map((i) => (
+                  <div key={i.id} className="tx-mission-line tx-staged" data-testid="staged-fire">
+                    <span className="tx-truncate">{i.shooterName.toUpperCase()} {"->"} {i.contactLabel}</span>
+                    <button type="button" className="tx-btn" data-testid="staged-cancel" onClick={() => cancelIntent(i.id)} onMouseDown={(e) => e.preventDefault()} aria-label={`Cancel fire order from ${i.shooterName}`}>
+                      CANCEL
+                    </button>
+                  </div>
+                ))}
+                <div className="tx-mission-actions">
+                  <Cmd cap="ENT" onClick={commitOrders} testId="cmd-commit-panel" ariaLabel="Commit orders and resolve the turn">COMMIT ORDERS</Cmd>
+                </div>
+              </>
+            )}
+            {phase === "resolving" && (
+              <>
+                <div className="tx-mission-line" data-testid="turn-remaining">
+                  {clockOf(wego.remainingMs)} OF {wego.turnMinutes}:00 LEFT{gameState.isPaused ? "  //  PAUSED" : ""}
+                </div>
+                <div className="tx-mission-line tx-dim">Orders are locked until the turn resolves. You can still look around.</div>
+              </>
+            )}
+            {phase === "review" && <div className="tx-mission-line">Turn resolved. Review it, then plan the next one.</div>}
           </section>
         )}
         <div data-testid="sidebar-tabs" className="tx-tabs">
@@ -769,7 +881,12 @@ export function TerminalPlay() {
                   ORDERS LOCKED: THE MISSION HAS ENDED. PLAY AGAIN FOR A NEW RUN.
                 </section>
               )}
-              {!ended && selectedUnit && selectedOrders && selectedUnit.side === playerSide && (
+              {isWeGo && !ended && !ordersOpen && selectedUnit && selectedUnit.side === playerSide && (
+                <section className="tx-section tx-dim" data-testid="orders-locked">
+                  ORDERS LOCKED: {phase === "resolving" ? "THE TURN IS RESOLVING." : "REVIEW THE TURN, THEN PRESS NEXT TURN TO PLAN."}
+                </section>
+              )}
+              {ordersOpen && selectedUnit && selectedOrders && selectedUnit.side === playerSide && (
                 <section className="tx-section">
                   <OrderPanel
                     unit={selectedUnit}
@@ -834,7 +951,6 @@ export function TerminalPlay() {
           data-plot-occluder
           role="dialog"
           aria-label="Briefing"
-          onClick={closeBriefing}
         >
           <div className="tx-briefing-head">
             <span>[ BRIEFING ]</span>
@@ -850,9 +966,71 @@ export function TerminalPlay() {
               <div className="tx-dim">{missionLines(objective).notes}</div>
             </div>
           )}
+          <div className="tx-briefing-mode" data-testid="briefing-mode">
+            <div className="tx-mission-head"><span>[ MODE ]</span></div>
+            {modeChoice ? (
+              <>
+                <div className="tx-briefing-mode-row">
+                  <button
+                    type="button"
+                    className={`tx-btn${!isWeGo ? " is-on" : ""}`}
+                    data-testid="mode-continuous"
+                    onMouseDown={(e) => e.preventDefault()}
+                    aria-pressed={!isWeGo}
+                    disabled={modeLocked}
+                    onClick={() => configureMode({ mode: "continuous" })}
+                  >
+                    CONTINUOUS
+                  </button>
+                  <button
+                    type="button"
+                    className={`tx-btn${isWeGo ? " is-on" : ""}`}
+                    data-testid="mode-wego"
+                    onMouseDown={(e) => e.preventDefault()}
+                    aria-pressed={isWeGo}
+                    disabled={modeLocked}
+                    onClick={() => configureMode({ mode: "wego" })}
+                  >
+                    WEGO
+                  </button>
+                  {isWeGo && wego && (
+                    <span className="tx-briefing-mode-len" data-testid="turn-length">
+                      <span className="tx-dim">TURN</span>
+                      {[1, 5, 15].map((m) => (
+                        <button
+                          key={m}
+                          type="button"
+                          className={`tx-btn${wego.turnMinutes === m ? " is-on" : ""}`}
+                          data-testid={`turn-length-${m}`}
+                          onMouseDown={(e) => e.preventDefault()}
+                          aria-pressed={wego.turnMinutes === m}
+                          disabled={modeLocked}
+                          onClick={() => configureMode({ mode: "wego", turnMinutes: m })}
+                        >
+                          {m} MIN
+                        </button>
+                      ))}
+                    </span>
+                  )}
+                </div>
+                <div className="tx-briefing-mode-text" data-testid="mode-explain">
+                  {isWeGo
+                    ? "WeGo vs AI. Give orders, resolve together, review."
+                    : "Continuous: real-time play. You can pause, and orders take effect at once."}
+                  {modeLocked ? "  The mode is locked once the run starts; RESET restarts it." : ""}
+                </div>
+              </>
+            ) : (
+              <div className="tx-briefing-mode-text" data-testid="mode-continuous-only">CONTINUOUS ONLY on this real-world snapshot route.</div>
+            )}
+          </div>
           <div className="tx-briefing-foot">
-            <span>ESC OR ENTER TO TAKE COMMAND  //  SPC STARTS THE CLOCK  //  B RECALLS THIS BRIEFING</span>
-            <span className="tx-briefing-actions" onClick={(e) => e.stopPropagation()}>
+            <span>
+              {isWeGo
+                ? "ESC OR ENTER TO TAKE COMMAND  //  COMMIT ORDERS (ENTER) STARTS TURN 1  //  B RECALLS THIS BRIEFING"
+                : "ESC OR ENTER TO TAKE COMMAND  //  SPC STARTS THE CLOCK  //  B RECALLS THIS BRIEFING"}
+            </span>
+            <span className="tx-briefing-actions">
               {objective && (
                 <button
                   type="button"
@@ -902,6 +1080,48 @@ export function TerminalPlay() {
         </div>
       )}
 
+      {isWeGo && wego && phase === "review" && review && !ended && (
+        <section className="tx-panel tx-briefing tx-review" data-testid="turn-review" data-plot-occluder role="region" aria-label="Turn review">
+          <div className="tx-briefing-head">
+            <span>[ REVIEW ] TURN {review.report.turn}</span>
+            <span className="tx-dim">ELAPSED {clockOf(review.report.elapsedMs)}  //  {new Date(review.report.endTime).toISOString().slice(11, 19)}Z</span>
+          </div>
+          <div className="tx-review-body">
+            <div data-testid="review-losses">
+              <b>YOUR LOSSES</b>{" "}
+              {review.report.ownLosses.length === 0
+                ? "NONE"
+                : review.report.ownLosses.map((l) => `${l.name.toUpperCase()} ${l.to === "destroyed" ? "LOST" : l.to.replace("-", " ").toUpperCase()}`).join("  //  ")}
+            </div>
+            {review.report.outcomes.length > 0 && (
+              <div data-testid="review-fire">
+                <b>FIRE ORDERS</b>{" "}
+                {review.report.outcomes.map((o) => `${o.intent.shooterName.toUpperCase()}: ${o.ok ? "LAUNCHED" : "REFUSED, " + o.message.toUpperCase()}`).join("  //  ")}
+              </div>
+            )}
+            {review.report.alerts.length > 0 && (
+              <div className="tx-alarm" data-testid="review-alerts"><b>ALERTS</b> {review.report.alerts.map((a) => a.toUpperCase()).join("  //  ")}</div>
+            )}
+            <div className="tx-section-head">Record</div>
+            {review.record.length === 0 && <div className="tx-dim">NOTHING OBSERVED THIS TURN</div>}
+            {review.record.slice(-8).map((l) => (
+              <div key={l.id} className={`tx-result-line${l.alarm ? " is-alarm" : ""}`}>
+                {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag} {l.text}
+              </div>
+            ))}
+            <div className="tx-dim" data-testid="review-contacts">CONTACTS HELD {gameState.contacts.length}  //  HOSTILE KILLS CONFIRMED {review.kills}</div>
+          </div>
+          <div className="tx-briefing-foot">
+            <span>ENTER OR NEXT TURN OPENS PLANNING AT THIS EXACT STATE</span>
+            <span className="tx-briefing-actions">
+              <button type="button" className="tx-btn is-on" data-testid="review-next-turn" onClick={nextTurn} onMouseDown={(e) => e.preventDefault()}>
+                NEXT TURN
+              </button>
+            </span>
+          </div>
+        </section>
+      )}
+
       {/* Mode banners */}
       {isPlacingWaypoint && <div className="tx-banner" data-plot-occluder>CLICK MAP TO PLACE WAYPOINT</div>}
       {measureMode && (
@@ -947,9 +1167,21 @@ export function TerminalPlay() {
 
       {/* Command bar */}
       <nav className="tx-cmd" data-testid="command-bar" data-plot-occluder>
-        <Cmd cap="SPC" onClick={togglePause} testId="sim-toggle-pause" active={!gameState.isPaused} disabled={ended}>
-          {gameState.isPaused ? "PLAY" : "PAUSE"}
-        </Cmd>
+        {isWeGo && phase === "planning" && !ended && (
+          <Cmd cap="ENT" onClick={commitOrders} testId="cmd-commit" alarm ariaLabel="Commit orders and resolve the turn">
+            COMMIT ORDERS
+          </Cmd>
+        )}
+        {isWeGo && phase === "review" && !ended && (
+          <Cmd cap="ENT" onClick={nextTurn} testId="cmd-next-turn" alarm ariaLabel="Open the next planning phase">
+            NEXT TURN
+          </Cmd>
+        )}
+        {(!isWeGo || phase === "resolving") && (
+          <Cmd cap="SPC" onClick={togglePause} testId="sim-toggle-pause" active={!gameState.isPaused} disabled={ended}>
+            {gameState.isPaused ? (isWeGo ? "RESUME" : "PLAY") : "PAUSE"}
+          </Cmd>
+        )}
         <span className="tx-rule-v" />
         <span className="tx-group-label">TIME</span>
         {SPEED_OPTIONS.map((s, i) => (
@@ -971,8 +1203,8 @@ export function TerminalPlay() {
           TILT
         </Cmd>
         <span className="tx-rule-v" />
-        <Cmd cap="E" onClick={engageTarget} testId="cmd-engage" disabled={ended} ariaLabel="Engage selected contact">ENGAGE</Cmd>
-        <Cmd cap="R" onClick={cycleRoe} testId="cmd-roe" disabled={ended} active={fire?.roe === "weapons-free"} alarm={fire?.roe === "weapons-free"} ariaLabel="Cycle rules of engagement">
+        <Cmd cap="E" onClick={engageTarget} testId="cmd-engage" disabled={!ordersOpen} ariaLabel={isWeGo ? "Stage a fire order on the selected contact" : "Engage selected contact"}>ENGAGE</Cmd>
+        <Cmd cap="R" onClick={cycleRoe} testId="cmd-roe" disabled={!ordersOpen} active={fire?.roe === "weapons-free"} alarm={fire?.roe === "weapons-free"} ariaLabel="Cycle rules of engagement">
           {fire ? ROE_SHORT[fire.roe] : "ROE"}
         </Cmd>
         <span className="tx-anchor">
@@ -1028,6 +1260,9 @@ export function TerminalPlay() {
             <div className="tx-result-facts" data-testid="result-debrief">
               <div data-testid="result-deciding"><b>DECIDED BY</b> {debrief.deciding}</div>
               <div><b>MISSION CLOCK</b> {debrief.clock}</div>
+              {isWeGo && wego && (
+                <div data-testid="result-turns"><b>TURNS</b> {wego.turnsCommitted} COMMITTED  //  {wego.turnMinutes} MIN EACH  //  WEGO</div>
+              )}
               <div><b>YOUR LOSSES</b> {debrief.friendlyLosses}  //  <b>HOSTILE KILLS CONFIRMED</b> {debrief.kills}</div>
             </div>
             <div className="tx-result-record" data-testid="result-record">

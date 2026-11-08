@@ -1,0 +1,38 @@
+
+Running 1 test using 1 worker
+
+[1A[2K[1/1] [chromium] › tests/sand-wego-1-flow.spec.ts:172:7 › SAND-WEGO-1: the turn loop and the command lock › mode choice, planning, a queued ENGAGE that waits, commit, resolution lock, review, next turn
+[1A[2K  1) [chromium] › tests/sand-wego-1-flow.spec.ts:172:7 › SAND-WEGO-1: the turn loop and the command lock › mode choice, planning, a queued ENGAGE that waits, commit, resolution lock, review, next turn 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByTestId('order-panel')
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for getByTestId('order-panel')[22m
+    [2m    9 × locator resolved to 1 element[22m
+    [2m      - unexpected value "1"[22m
+
+
+      220 |     await waitPhase(page, "planning", 10_000);
+      221 |     expect(await wegoState(page)).toMatchObject({ phase: "planning", turnNumber: 2, turnsCommitted: 1 });
+    > 222 |     await expect(page.getByTestId("order-panel")).toHaveCount(0);
+          |                                                   ^
+      223 |
+      224 |     // run more one-minute turns until a held contact lets a manual ENGAGE be staged; it must wait for the commit
+      225 |     let staged: string | null = null;
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:222:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-wego-1-flow-SAND-WEGO-ea404-ution-lock-review-next-turn-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-wego-1-flow-SAND-WEGO-ea404-ution-lock-review-next-turn-chromium/error-context.md
+
+
+[1A[2K  1 failed
+    [chromium] › tests/sand-wego-1-flow.spec.ts:172:7 › SAND-WEGO-1: the turn loop and the command lock › mode choice, planning, a queued ENGAGE that waits, commit, resolution lock, review, next turn 

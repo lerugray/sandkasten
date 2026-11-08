@@ -1,0 +1,40 @@
+
+Running 3 tests using 1 worker
+
+[1A[2K[1/3] [chromium] › tests/sand-wego-1-flow.spec.ts:171:7 › SAND-WEGO-1: the turn loop and the command lock › mode choice, planning, a queued ENGAGE that waits, commit, resolution lock, review, next turn
+[1A[2K  1) [chromium] › tests/sand-wego-1-flow.spec.ts:171:7 › SAND-WEGO-1: the turn loop and the command lock › mode choice, planning, a queued ENGAGE that waits, commit, resolution lock, review, next turn 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByTestId('orders-locked')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByTestId('orders-locked')[22m
+
+
+      81 |   const before = await sessionState(page);
+      82 |   const wBefore = await wegoState(page);
+    > 83 |   await expect(page.getByTestId("orders-locked")).toBeVisible();
+         |                                                   ^
+      84 |   await expect(page.getByTestId("order-panel")).toHaveCount(0);
+      85 |   await expect(page.getByTestId("cmd-engage")).toBeDisabled();
+      86 |   await expect(page.getByTestId("cmd-roe")).toBeDisabled();
+        at assertCommandLock (/home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:83:51)
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:215:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-wego-1-flow-SAND-WEGO-ea404-ution-lock-review-next-turn-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-wego-1-flow-SAND-WEGO-ea404-ution-lock-review-next-turn-chromium/error-context.md
+
+
+[1A[2K[2/3] [chromium] › tests/sand-wego-1-flow.spec.ts:283:7 › SAND-WEGO-1: two real victories through the ordinary UI (GOD off) › plan A: the carrier alone, flank, straight at the gate (with a queued ENGAGE)
+[1A[2K[3/3] [chromium] › tests/sand-wego-1-flow.spec.ts:435:7 › SAND-WEGO-1: the continuous and snapshot routes stay continuous › demo, then the real snapshot, then the demo again, and legacy: no WeGo controls or state leak
+[1A[2K  1 failed
+    [chromium] › tests/sand-wego-1-flow.spec.ts:171:7 › SAND-WEGO-1: the turn loop and the command lock › mode choice, planning, a queued ENGAGE that waits, commit, resolution lock, review, next turn 
+  2 passed (4.0m)
