@@ -1,0 +1,63 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.1.0 /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten
+
+stdout | unit/red-base-legacy.test.ts > RED on base b0aa2893: legacy combat record behaviour (observed, not inferred) > event 51 and older are inaccessible in the COMBAT tab (CombatLog silently keeps 50)
+OBSERVED legacy rows for 60 own events: 50
+
+stdout | unit/red-base-legacy.test.ts > RED on base b0aa2893: legacy combat record behaviour (observed, not inferred) > an unrelated hostile-only exchange is printed by the COMBAT tab component (no own-involvement filter)
+OBSERVED legacy rows for 1 hostile-only event: 1
+
+ ❯ unit/red-base-legacy.test.ts (2 tests | 2 failed) 20ms
+   ❯ RED on base b0aa2893: legacy combat record behaviour (observed, not inferred) (2)
+     × event 51 and older are inaccessible in the COMBAT tab (CombatLog silently keeps 50) 17ms
+     × an unrelated hostile-only exchange is printed by the COMBAT tab component (no own-involvement filter) 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  unit/red-base-legacy.test.ts > RED on base b0aa2893: legacy combat record behaviour (observed, not inferred) > event 51 and older are inaccessible in the COMBAT tab (CombatLog silently keeps 50)
+AssertionError: expected 50 to be 60 // Object.is equality
+
+- Expected
++ Received
+
+- 60
++ 50
+
+ ❯ unit/red-base-legacy.test.ts:15:25
+     13|     const html = renderToString(createElement(CombatLog, { events, sim…
+     14|     console.log("OBSERVED legacy rows for 60 own events:", count(html)…
+     15|     expect(count(html)).toBe(60); // fails on base: 50
+       |                         ^
+     16|     expect(html).toContain("ce-0".length ? "shot 0" : "");
+     17|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  unit/red-base-legacy.test.ts > RED on base b0aa2893: legacy combat record behaviour (observed, not inferred) > an unrelated hostile-only exchange is printed by the COMBAT tab component (no own-involvement filter)
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ unit/red-base-legacy.test.ts:22:25
+     20|     const html = renderToString(createElement(CombatLog, { events, sim…
+     21|     console.log("OBSERVED legacy rows for 1 hostile-only event:", coun…
+     22|     expect(count(html)).toBe(0); // fails on base: 1
+       |                         ^
+     23|   });
+     24| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  03:03:10
+   Duration  278ms (transform 40%, import 38%, tests 17%, worker 5%)
+

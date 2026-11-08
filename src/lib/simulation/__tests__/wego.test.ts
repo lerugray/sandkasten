@@ -4,7 +4,8 @@ import { demoScenarioConfig } from "@/lib/scenarios/demoConfig";
 import { demoScenario } from "@/lib/scenarios/demo";
 import { DEFAULT_AUTOPAUSE } from "../autopause";
 import * as aiMod from "@/lib/ai/aiController";
-import { unit, START, KM_LAT } from "./fixtures";
+import { unit, START, KM_LAT, wif } from "./fixtures";
+import { getPlatform } from "@/lib/platforms/lookup";
 import type { Scenario } from "@/types/game";
 import type { ScenarioConfig } from "../session";
 
@@ -488,5 +489,103 @@ describe("WeGo and the real scenario", () => {
     expect(snap(s).gameState.simTime).toBe(snap(s).wego.turnEnd);
     expect(s.autopausePrefs.enabled).toBe(true);
     expect(snap(s).wego.report!.alerts.length).toBeGreaterThan(0);
+  });
+});
+
+describe("SAND-COMBAT-1 turn ownership and own damage", () => {
+  type Priv = { combatState: ReturnType<typeof snap>["combatState"]; eventState: NonNullable<ReturnType<typeof snap>["eventState"]>; gameState: ReturnType<typeof snap>["gameState"] };
+  const reportOf = (s: SimulationSession) => (snap(s).wego as unknown as { report: { events: { id: string; type: string; unitId?: string; time: number }[]; messageIds: string[]; ownLosses: { name: string; from: string; to: string }[]; ended: boolean } }).report;
+
+  it("an event stamped at the previous turn's end stays with that turn; a launch committed at the same timestamp belongs to the new one", () => {
+    const s = duelWithContact();
+    const priv = s as unknown as Priv;
+    const t = snap(s).gameState.simTime;
+    priv.combatState = {
+      ...priv.combatState,
+      combatLog: [...priv.combatState.combatLog, { id: "prev-end", time: t, type: "miss", description: "boundary", side: "Iran" }],
+    };
+    const contact = snap(s).gameState.contacts.find((c) => c.classification !== "unknown")!;
+    expect((s.engage("mahan", contact.id) as { ok: boolean }).ok).toBe(true);
+    call(s, "commit");
+    resolve(s);
+    const ids = reportOf(s).events.map((e) => e.id);
+    expect(ids).not.toContain("prev-end");
+    const launch = reportOf(s).events.filter((e) => e.type === "launch" && e.unitId === "mahan");
+    expect(launch).toHaveLength(1);
+    expect(launch[0].time).toBe(t);
+  });
+
+  it("messages already listed at the previous end are not re-assigned to the next turn", () => {
+    const s = wego({ turnMinutes: 5 });
+    call(s, "commit");
+    resolve(s);
+    const first = reportOf(s).messageIds;
+    expect(first.length).toBeGreaterThan(0); // the opening INTEL belongs to turn 1
+    call(s, "nextTurn");
+    call(s, "commit");
+    resolve(s);
+    const second = reportOf(s).messageIds;
+    for (const id of first) expect(second).not.toContain(id);
+    const all = snap(s).eventState!.messages.map((m) => m.id);
+    expect([...first, ...second].every((id) => all.includes(id))).toBe(true);
+  });
+
+  it("reports undamaged→damaged, damaged→mission-kill and destruction, and nothing for an unchanged state", () => {
+    const patchMahan = (s: SimulationSession, damageState: string) => {
+      const priv = s as unknown as Priv;
+      priv.gameState = { ...priv.gameState, sides: priv.gameState.sides.map((sd) => ({ ...sd, units: sd.units.map((u) => (u.id === "mahan" ? { ...u, damageState: damageState as "damaged" } : u)) })) };
+    };
+    const run = (before: string | null, after: string) => {
+      const s = wego({ turnMinutes: 1 }, duelConfig());
+      if (before) patchMahan(s, before);
+      call(s, "commit");
+      patchMahan(s, after);
+      resolve(s);
+      return reportOf(s).ownLosses.map((l) => `${l.from}>${l.to}`);
+    };
+    expect(run(null, "damaged")).toEqual(["undamaged>damaged"]);
+    expect(run("damaged", "mission-kill")).toEqual(["damaged>mission-kill"]);
+    expect(run(null, "destroyed")).toEqual(["undamaged>destroyed"]);
+    expect(run("damaged", "damaged")).toEqual([]);
+    expect(run(null, "undamaged")).toEqual([]);
+  });
+
+  it("a carrier destroyed on the tick it reaches the gate is a defeat, and the record stops at the result", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.55);
+    const gate = demoScenarioConfig.scenario.referencePoints.find((r) => r.id === "transit-gate")!;
+    const inGate = { lng: (gate.points[0].lng + gate.points[2].lng) / 2, lat: (gate.points[0].lat + gate.points[2].lat) / 2 };
+    const scenario = {
+      ...demoScenario,
+      sides: demoScenario.sides.map((sd) => ({ ...sd, units: sd.units.map((u) => (u.id === "us-cvn-1" ? { ...u, position: inGate, platformId: MAHAN } : u)) })),
+    };
+    const s = wego({ turnMinutes: 15 }, { ...demoScenarioConfig, scenario, events: demoScenarioConfig.events });
+    const priv = s as unknown as Priv;
+    const units = priv.gameState.sides.flatMap((sd) => sd.units);
+    const carrier = units.find((u) => u.id === "us-cvn-1")!;
+    const shooter = units.find((u) => u.side !== "US Navy" && (getPlatform(u.platformId)?.weapons ?? []).some((w) => w.name === "C-802 Noor"))!;
+    priv.combatState = { ...priv.combatState, weaponsInFlight: Array.from({ length: 20 }, () => wif(shooter, carrier, "C-802 Noor")) };
+    call(s, "commit");
+    resolve(s);
+    expect(snap(s).eventState!.scenarioResult?.result).toBe("defeat");
+    const r = reportOf(s);
+    expect(r.ended).toBe(true);
+    expect(r.ownLosses.some((l) => l.to === "destroyed")).toBe(true);
+    const lastEvent = Math.max(...r.events.map((e) => e.time));
+    expect(lastEvent).toBeLessThanOrEqual(snap(s).gameState.simTime);
+    const frozen = snap(s).combatState.combatLog.length;
+    s.tick(2000);
+    expect(snap(s).combatState.combatLog.length).toBe(frozen);
+  });
+
+  it("two sessions keep separate reports and cursors", () => {
+    const a = wego({ turnMinutes: 1 }, duelConfig());
+    const b = wego({ turnMinutes: 1 }, duelConfig());
+    call(a, "commit");
+    resolve(a);
+    expect(snap(b).wego.report).toBeNull();
+    call(b, "commit");
+    resolve(b);
+    const ids = new Set(reportOf(a).events.map((e) => e.id));
+    for (const e of reportOf(b).events) expect(ids.has(e.id) && e.id.startsWith("prev")).toBe(false);
   });
 });

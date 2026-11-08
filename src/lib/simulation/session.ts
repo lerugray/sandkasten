@@ -1,4 +1,4 @@
-import type { Scenario } from "@/types/game";
+import type { Scenario, Unit } from "@/types/game";
 import { createInitialGameState, SPEED_OPTIONS, type GameState } from "./gameState";
 import { simulationTick, simulationStep } from "./engine";
 import { runAIUpdate } from "@/lib/ai/aiController";
@@ -70,7 +70,7 @@ export interface TurnReport {
   /** The scenario produced a result inside this turn (the interval may be shorter than the turn length). */
   ended: boolean;
   /** Own platforms lost or damaged during the turn (the player's own side is always known to them). */
-  ownLosses: { unitId: string; name: string; from: string; to: string }[];
+  ownLosses: { unitId: string; name: string; from: Unit["damageState"]; to: Unit["damageState"] }[];
   /** Raw combat events from this turn; the UI fog-filters their text from the player's contacts. */
   events: CombatEvent[];
   messageIds: string[];
@@ -144,7 +144,10 @@ export class SimulationSession {
   private resolveBudgetMs = 0;
   private turnAlerts: string[] = [];
   private turnOutcomes: IntentOutcome[] = [];
-  private turnLossBaseline = new Map<string, string>();
+  private turnLossBaseline = new Map<string, Unit["damageState"]>();
+  /** Lengths of the combat log and message list when the turn was committed: this turn owns what is appended after them. */
+  private turnEventCursor = 0;
+  private turnMessageCursor = 0;
 
   constructor(config: ScenarioConfig, options: SessionOptions = {}) {
     this.config = config;
@@ -178,6 +181,8 @@ export class SimulationSession {
     this.turnAlerts = [];
     this.turnOutcomes = [];
     this.turnLossBaseline = new Map();
+    this.turnEventCursor = 0;
+    this.turnMessageCursor = 0;
     if (this.mode === "wego") {
       this.gameState = { ...this.gameState, isPaused: true, speed: WEGO_DEFAULT_SPEED, turnNumber: 1 };
     }
@@ -443,6 +448,10 @@ export class SimulationSession {
     const sealed = this.intents;
     this.intents = [];
 
+    // Cursors first: the staged fire below belongs to this turn, a record already at the previous end does not
+    this.turnEventCursor = this.combatState.combatLog.length;
+    this.turnMessageCursor = this.eventState?.messages.length ?? 0;
+
     // OPFOR plans from its own contact store at the committed turn-start state (orders stay hidden from the player)
     const orders = runAIUpdate(this.gameState, this.ai);
     this.gameState = { ...this.gameState, orders };
@@ -525,13 +534,13 @@ export class SimulationSession {
   private finishTurn(): void {
     const g = this.gameState;
     const playerSide = g.scenario.playerSide;
-    const rank: Record<string, number> = { undamaged: 0, "minor-damage": 1, "major-damage": 2, "mission-kill": 3, destroyed: 4 };
+    const rank: Record<Unit["damageState"], number> = { undamaged: 0, damaged: 1, "mission-kill": 2, destroyed: 3 };
     const ownLosses = g.sides
       .flatMap((sd) => sd.units)
-      .filter((u) => u.side === playerSide && (rank[u.damageState] ?? 0) > (rank[this.turnLossBaseline.get(u.id) ?? "undamaged"] ?? 0))
+      .filter((u) => u.side === playerSide && rank[u.damageState] > rank[this.turnLossBaseline.get(u.id) ?? "undamaged"])
       .map((u) => ({ unitId: u.id, name: u.name, from: this.turnLossBaseline.get(u.id) ?? "undamaged", to: u.damageState }));
-    const events = this.combatState.combatLog.filter((e) => e.time >= this.turnStart);
-    const messages = (this.eventState?.messages ?? []).filter((m) => m.time >= this.turnStart).map((m) => m.id);
+    const events = this.combatState.combatLog.slice(this.turnEventCursor);
+    const messages = (this.eventState?.messages ?? []).slice(this.turnMessageCursor).map((m) => m.id);
     this.report = {
       turn: g.turnNumber,
       startTime: this.turnStart,

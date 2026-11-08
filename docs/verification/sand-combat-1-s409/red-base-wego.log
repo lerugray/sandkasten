@@ -1,0 +1,52 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.1.0 /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten
+
+ ❯ src/lib/simulation/__tests__/wego.test.ts (28 tests | 2 failed) 604ms
+   ❯ SAND-COMBAT-1 turn ownership and own damage (5)
+     × an event stamped at the previous turn's end stays with that turn; a launch committed at the same timestamp belongs to the new one 8ms
+     × reports undamaged→damaged, damaged→mission-kill and destruction, and nothing for an unchanged state 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/simulation/__tests__/wego.test.ts > SAND-COMBAT-1 turn ownership and own damage > an event stamped at the previous turn's end stays with that turn; a launch committed at the same timestamp belongs to the new one
+AssertionError: expected [ Array(9) ] to not include 'prev-end'
+ ❯ src/lib/simulation/__tests__/wego.test.ts:512:21
+    510|     resolve(s);
+    511|     const ids = reportOf(s).events.map((e) => e.id);
+    512|     expect(ids).not.toContain("prev-end");
+       |                     ^
+    513|     const launch = reportOf(s).events.filter((e) => e.type === "launch…
+    514|     expect(launch).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/lib/simulation/__tests__/wego.test.ts > SAND-COMBAT-1 turn ownership and own damage > reports undamaged→damaged, damaged→mission-kill and destruction, and nothing for an unchanged state
+AssertionError: expected [] to deeply equal [ 'undamaged>damaged' ]
+
+- Expected
++ Received
+
+- [
+-   "undamaged>damaged",
+- ]
++ []
+
+ ❯ src/lib/simulation/__tests__/wego.test.ts:546:34
+    544|       return reportOf(s).ownLosses.map((l) => `${l.from}>${l.to}`);
+    545|     };
+    546|     expect(run(null, "damaged")).toEqual(["undamaged>damaged"]);
+       |                                  ^
+    547|     expect(run("damaged", "mission-kill")).toEqual(["damaged>mission-k…
+    548|     expect(run(null, "destroyed")).toEqual(["undamaged>destroyed"]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 26 passed (28)
+   Start at  03:01:52
+   Duration  1.13s (tests 64%, transform 20%, import 15%)
+
