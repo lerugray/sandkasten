@@ -76,6 +76,9 @@ test.describe("SAND-MAP-2 default /play facilities", () => {
   test("a unit based at a facility lists its home base in the unit panel (god mode)", async ({ page }) => {
     await openPlot(page);
     await page.keyboard.press("g");
+    // the opening view is framed on the transit gate and the carrier, so bring the airbase into view first
+    await page.evaluate(() => window.__sandPlot!.focusFacility("apt-oikp"));
+    await page.waitForTimeout(2500);
     const block = page.locator('[data-testid="plot-track"][data-unit-id="ir-f4-2"]');
     await expect(block).toBeVisible({ timeout: 10_000 });
     const host = (await page.getByTestId("tactical-plot").boundingBox())!;

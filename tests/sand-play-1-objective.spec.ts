@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { openPlay, areaBox, type W } from "./helpers/sandPlay";
+import { openPlay, areaBox, autopauseOff, type W } from "./helpers/sandPlay";
 
 test.describe("SAND-PLAY-1 CP1: the objective is legible before and during play", () => {
   test("fresh /play shows the mission, the real gate, and a focus action; nothing is ordered by reading it", async ({ page }) => {
@@ -67,6 +67,7 @@ test.describe("SAND-PLAY-1 CP1: the objective is legible before and during play"
     await expect(brief).toBeHidden();
 
     // reopening while running pauses the clock rather than hiding a live game behind a card
+    await autopauseOff(page);
     await page.getByTestId("sim-toggle-pause").click();
     await expect(page.getByTestId("sim-state")).toContainText(/RUN/);
     await page.keyboard.press("b");

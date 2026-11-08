@@ -250,7 +250,7 @@ export function TerminalPlay() {
         return;
       }
       const k = e.key.toLowerCase();
-      if (e.key === "Escape" && showBriefing) {
+      if (e.key === "Escape" && showBriefing && !showHelp && !showAutopauseSettings) {
         setShowBriefing(false);
       } else if (e.key === "Enter" && showBriefing && el === document.body) {
         e.preventDefault();
