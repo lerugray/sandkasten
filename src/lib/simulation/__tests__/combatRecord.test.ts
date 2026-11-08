@@ -69,6 +69,12 @@ describe("combat record: eligibility and player view", () => {
     expect(kill[0].tag).toBe("KILL");
   });
 
+  it("lists an own unit once when it is both the actor and the target of an event", () => {
+    const self = ev("damaged", T0 + 7000, "US Navy", "cole", "cole", "USS Cole is now damaged");
+    const rows = projectRecord(input({ combatLog: [self] }));
+    expect(rows[0].ownUnitIds).toEqual(["cole"]);
+  });
+
   it("offers inspection only for own units", () => {
     const rows = projectRecord(input({ combatLog: log }));
     for (const r of rows) for (const id of r.ownUnitIds) expect(["nimitz", "cole"]).toContain(id);
