@@ -1,0 +1,247 @@
+
+Running 4 tests using 1 worker
+
+[1A[2K[1/4] [chromium] › tests/sand-combat-1-record.spec.ts:238:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan A (direct flank), WeGo: staged ENGAGE, CANCEL, commit, review, inspection, record, debrief
+[1A[2K[chromium] › tests/sand-combat-1-record.spec.ts:238:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan A (direct flank), WeGo: staged ENGAGE, CANCEL, commit, review, inspection, record, debrief
+STEP A pick
+
+[1A[2KSTEP A command
+
+[1A[2KSTEP A turn [33m1[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773554404000,"sp":60,"pa":false}
+
+[1A[2KSTEP A in record SHOWING 1-9 OF 9
+
+[1A[2KSTEP A turnRows [33m9[39m
+
+[1A[2KSTEP A turn [33m2[39m ["tracked","tracked","tracked","detected","detected","tracked","detected","detected"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773554703000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m3[39m ["tracked","tracked","tracked","detected","detected","detected"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773555004000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m4[39m ["tracked","tracked","tracked","detected"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773555304000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m5[39m ["tracked","tracked","tracked","detected"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773555604000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m6[39m ["tracked","tracked","tracked","detected"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773555903000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m7[39m ["tracked","tracked","tracked","detected"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773556203000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m8[39m ["tracked","tracked","tracked","detected"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773556503000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m9[39m ["tracked","tracked","tracked","detected"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773556804000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m10[39m ["tracked","detected"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773557100000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m11[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773557404000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m12[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773557704000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m13[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773558006000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m14[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773558306000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m15[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773558604000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m16[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773558904000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m17[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773559204000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m18[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773559504000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m19[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773559804000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m20[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773560104000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m21[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773560404000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m22[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773560704000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m23[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773561003000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m24[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773561306000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m25[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773561606000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m26[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773561903000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m27[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773562203000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m28[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773562503000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m29[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773562804000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m30[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773563103000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m31[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773563406000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m32[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773563703000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m33[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773564003000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m34[39m []
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773564304000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m35[39m ["unknown"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773564603000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m36[39m ["unknown"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773564904000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m37[39m ["unknown"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773565206000,"sp":60,"pa":false}
+
+[1A[2KSTEP A turn [33m38[39m ["unknown","tracked","tracked"]
+
+[1A[2KSTEP commit click [33m1[39m [33mfalse[39m
+
+[1A[2KSTEP committed {"p":"resolving","t":1773565504000,"sp":60,"pa":false}
+
+[1A[2K[2/4] [chromium] › tests/sand-combat-1-record.spec.ts:388:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan B (escorted dog-leg), continuous: record, debrief, record flow, clean replay
+[1A[2K[3/4] [chromium] › tests/sand-combat-1-record.spec.ts:434:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › fog, GOD, paging, place-keeping, empty filters, reset (own fixtures, continuous)
+[1A[2K[4/4] [chromium] › tests/sand-combat-1-record.spec.ts:543:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › demo, snapshot, demo, legacy: the record belongs to the run it was read from
+[1A[2K  Slow test file: [chromium] › tests/sand-combat-1-record.spec.ts (8.8m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  4 passed (8.9m)

@@ -1,0 +1,30 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.1.0 /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten
+
+ ❯ unit/snapshot-seed.test.ts (26 tests | 1 failed) 606ms
+   ❯ fetcher (no network: fetch is injected) (3)
+     × one request per second, descriptive User-Agent, mil + one request per tile, no key header 168ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  unit/snapshot-seed.test.ts > fetcher (no network: fetch is injected) > one request per second, descriptive User-Agent, mil + one request per tile, no key header
+AssertionError: expected 876 to be greater than 900
+ ❯ unit/snapshot-seed.test.ts:281:41
+    279|     // every request after the first waited out (almost) the full seco…
+    280|     expect(sleeps.length).toBe(log.length - 1);
+    281|     for (const ms of sleeps) expect(ms).toBeGreaterThan(900);
+       |                                         ^
+    282|     expect(res.failed).toBe(false);
+    283|     expect(res.aircraft).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 21 passed (22)
+      Tests  1 failed | 257 passed (258)
+   Start at  04:46:53
+   Duration  17.25s (tests 64%, import 19%, transform 16%, worker 1%)
+
