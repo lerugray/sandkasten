@@ -1,0 +1,358 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+ RUN  v5.1.0 /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten
+ ❯ src/lib/simulation/__tests__/wego.test.ts (0 test)
+ ❯ src/lib/simulation/__tests__/terminal.test.ts (13 tests | 4 failed) 151ms
+   ❯ SAND-VICTORY-1 final result, provenance and score (5)
+     × a mixed transit plus score ending: the transit arrival with the score line also met is attributed to the event the engine chose 19ms
+     × the arrival tick's own ChangeScore lands once, in the final state, and the score never moves afterwards 2ms
+     × a score threshold ends the run exactly when the score reaches it (SideScore, actual side and comparison) 2ms
+     × the shipped transit tick carries the transit event as its source 1ms
+ ❯ src/lib/ai/__tests__/events.test.ts (12 tests | 4 failed) 30ms
+   ❯ SAND-VICTORY-1 result provenance (4)
+     × a result names the event whose EndScenario action decided it 12ms
+     × defeat outranks draw outranks victory and takes its own provenance; first of equals stands 1ms
+     × a forced ending carries the forced event and who forced it 1ms
+     × deferred results keep provenance in pendingResult, and a finished run ignores later events 1ms
+ ❯ src/lib/scenarios/__tests__/endings.test.ts (15 tests | 15 failed) 24ms
+   ❯ SAND-VICTORY-1 Hormuz keeps its rule (3)
+     × states the transit pair and the no-time-limit note only because every ending is declared 9ms
+     × attributes a Nimitz arrival and a Nimitz loss to the transit pair, by provenance 1ms
+     × never claims a transit cause from the result word alone 2ms
+   ❯ SAND-VICTORY-1 mixed endings are not described as transit (3)
+     × a score ending beside the transit pair drops the no-time-limit claim and is listed with its real threshold 1ms
+     × a time ending beside the transit pair is stated with the real clock 1ms
+     × an extra trigger on the same event as the transit arrival is not hidden behind the transit text 0ms
+   ❯ SAND-VICTORY-1 synthetic ending rules (labelled fixtures) (9)
+     × named-target destruction: an own unit is named, a hostile one stays unsaid before the run and generic after 2ms
+     × a side-wide loss means a qualifying loss, never 'destroy every enemy' 1ms
+     × time with a surviving-unit-count condition: triggers ANY, conditions ALL 1ms
+     × SideScore threshold and draw use the actual side, comparison and threshold 0ms
+     × an event dependency, a random chance and a hostile area are not stated, and nothing about them leaks 3ms
+     × an unrelated hidden event neither appears nor changes the stated endings 1ms
+     × no end events: no declared conditions, and not an automatic win or loss 0ms
+     × a forced event is not described by its own triggers 0ms
+     × a mixed limited scenario never says time or score cannot end it 0ms
+ ❯ src/lib/scenarios/__tests__/objective.test.ts (6 tests | 1 failed) 10ms
+   ❯ SAND-PLAY-1 shared transit objective (6)
+     × says in plain words what wins and what loses, and that time or escorts cannot 3ms
+ ❯ src/lib/simulation/__tests__/trackNumber.test.ts (0 test)
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/lib/simulation/__tests__/trackNumber.test.ts [ src/lib/simulation/__tests__/trackNumber.test.ts ]
+Error: Cannot find module '../trackNumber' imported from /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/src/lib/simulation/__tests__/trackNumber.test.ts
+ ❯ src/lib/simulation/__tests__/trackNumber.test.ts:2:1
+      1| import { describe, it, expect } from "vitest";
+      2| import { trackNumber } from "../trackNumber";
+       | ^
+      3| import { trackNumber as plotTrackNumber } from "@/lib/plot/TacticalPlo…
+      4|
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/26]⎯
+ FAIL  src/lib/simulation/__tests__/wego.test.ts [ src/lib/simulation/__tests__/wego.test.ts ]
+Error: Cannot find module '../trackNumber' imported from /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/src/lib/simulation/__tests__/wego.test.ts
+ ❯ src/lib/simulation/__tests__/wego.test.ts:8:1
+      6| import * as aiMod from "@/lib/ai/aiController";
+      7| import { unit, START, KM_LAT, wif } from "./fixtures";
+      8| import { trackNumber } from "../trackNumber";
+       | ^
+      9| import { getPlatform } from "@/lib/platforms/lookup";
+     10| import type { Scenario } from "@/types/game";
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/26]⎯
+⎯⎯⎯⎯⎯⎯ Failed Tests 24 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/lib/ai/__tests__/events.test.ts > SAND-VICTORY-1 result provenance > a result names the event whose EndScenario action decided it
+AssertionError: expected { result: 'victory', …(1) } to match object { result: 'victory', …(2) }
+- Expected
++ Received
+  {
+    "message": "m-Plain",
+    "result": "victory",
+-   "source": {
+-     "event": "Plain",
+-   },
+  }
+ ❯ src/lib/ai/__tests__/events.test.ts:121:41
+    119|   it("a result names the event whose EndScenario action decided it", (…
+    120|     const r = evaluateEvents(es([end("Plain", "victory")]), state(), […
+    121|     expect(r.eventState.scenarioResult).toMatchObject({ result: "victo…
+       |                                         ^
+    122|     expect(r.eventState.scenarioResult?.source?.forcedBy).toBeUndefine…
+    123|   });
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/26]⎯
+ FAIL  src/lib/ai/__tests__/events.test.ts > SAND-VICTORY-1 result provenance > defeat outranks draw outranks victory and takes its own provenance; first of equals stands
+AssertionError: expected undefined to be 'L' // Object.is equality
+- Expected:
+"L"
++ Received:
+undefined
+ ❯ src/lib/ai/__tests__/events.test.ts:128:56
+    126|     const r = evaluateEvents(es([end("V", "victory"), end("D", "draw")…
+    127|     expect(r.eventState.scenarioResult?.result).toBe("defeat");
+    128|     expect(r.eventState.scenarioResult?.source?.event).toBe("L");
+       |                                                        ^
+    129|     const draw = evaluateEvents(es([end("V", "victory"), end("D", "dra…
+    130|     expect(draw.eventState.scenarioResult?.source?.event).toBe("D");
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/26]⎯
+ FAIL  src/lib/ai/__tests__/events.test.ts > SAND-VICTORY-1 result provenance > a forced ending carries the forced event and who forced it
+AssertionError: expected undefined to deeply equal { event: 'Forced', forcedBy: 'Forcer' }
+- Expected:
+{
+  "event": "Forced",
+  "forcedBy": "Forcer",
+}
++ Received:
+undefined
+ ❯ src/lib/ai/__tests__/events.test.ts:137:49
+    135|     const forcer: ScenarioEvent = { name: "Forcer", repeatable: false,…
+    136|     const r = evaluateEvents(es([forcer, forced]), state(), []);
+    137|     expect(r.eventState.scenarioResult?.source).toEqual({ event: "Forc…
+       |                                                 ^
+    138|   });
+    139|
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/26]⎯
+ FAIL  src/lib/ai/__tests__/events.test.ts > SAND-VICTORY-1 result provenance > deferred results keep provenance in pendingResult, and a finished run ignores later events
+AssertionError: expected undefined to be 'Held' // Object.is equality
+- Expected:
+"Held"
++ Received:
+undefined
+ ❯ src/lib/ai/__tests__/events.test.ts:143:51
+    141|     const deferred = evaluateEvents(es([end("Held", "victory")]), stat…
+    142|     expect(deferred.eventState.scenarioResult).toBeUndefined();
+    143|     expect(deferred.pendingResult?.source?.event).toBe("Held");
+       |                                                   ^
+    144|     const done = evaluateEvents(es([end("Held", "victory")]), state(),…
+    145|     const again = evaluateEvents({ ...done.eventState, events: [end("L…
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 Hormuz keeps its rule > states the transit pair and the no-time-limit note only because every ending is declared
+TypeError: describeEndings is not a function
+ ❯ demoEndings src/lib/scenarios/__tests__/endings.test.ts:42:27
+     40| const SIDE = "US Navy";
+     41|
+     42| const demoEndings = () => describeEndings(demoScenarioConfig, SIDE);
+       |                           ^
+     43|
+     44| describe("SAND-VICTORY-1 Hormuz keeps its rule", () => {
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:46:15
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 Hormuz keeps its rule > attributes a Nimitz arrival and a Nimitz loss to the transit pair, by provenance
+TypeError: explainResult is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:55:12
+     53|     const win: ScenarioResult = { result: "victory", message: "m", sou…
+     54|     const lose: ScenarioResult = { result: "defeat", message: "m", sou…
+     55|     expect(explainResult(demoScenarioConfig, SIDE, win).kind).toBe("tr…
+       |            ^
+     56|     expect(explainResult(demoScenarioConfig, SIDE, lose).kind).toBe("t…
+     57|   });
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 Hormuz keeps its rule > never claims a transit cause from the result word alone
+TypeError: explainResult is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:60:12
+     58|
+     59|   it("never claims a transit cause from the result word alone", () => {
+     60|     expect(explainResult(demoScenarioConfig, SIDE, { result: "victory"…
+       |            ^
+     61|     // a victory decided by some other event is not the transit victory
+     62|     expect(explainResult(demoScenarioConfig, SIDE, { result: "victory"…
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 mixed endings are not described as transit > a score ending beside the transit pair drops the no-time-limit claim and is listed with its real threshold
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:73:15
+     71|   it("a score ending beside the transit pair drops the no-time-limit c…
+     72|     const c = withExtra(end("Score Win", "victory", [{ type: "SideScor…
+     73|     const e = describeEndings(c, SIDE);
+       |               ^
+     74|     const extra = e.rules.filter((r) => !r.transit);
+     75|     expect(extra).toHaveLength(1);
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 mixed endings are not described as transit > a time ending beside the transit pair is stated with the real clock
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:86:19
+     84|   it("a time ending beside the transit pair is stated with the real cl…
+     85|     const c = withExtra(end("Time Out", "draw", [{ type: "Time", time:…
+     86|     const extra = describeEndings(c, SIDE).rules.filter((r) => !r.tran…
+       |                   ^
+     87|     expect(extra[0]).toMatchObject({ result: "draw", text: "the missio…
+     88|   });
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 mixed endings are not described as transit > an extra trigger on the same event as the transit arrival is not hidden behind the transit text
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:95:15
+     93|     );
+     94|     const c = { scenario: demoScenarioConfig.scenario, events: { event…
+     95|     const e = describeEndings(c, SIDE);
+       |               ^
+     96|     expect(e.rules.find((r) => r.event === "Transit Complete")!.transi…
+     97|     const cause = explainResult(c, SIDE, { result: "victory", message:…
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 synthetic ending rules (labelled fixtures) > named-target destruction: an own unit is named, a hostile one stays unsaid before the run and generic after
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:109:20
+    107|       end("Kill Secret", "victory", [{ type: "UnitDestroyed", unitId: …
+    108|     ]);
+    109|     const before = describeEndings(c, SIDE);
+       |                    ^
+    110|     expect(before.rules.map((r) => r.text)).toEqual(["USS Alpha is des…
+    111|     expect(before.limited).toBe(true);
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 synthetic ending rules (labelled fixtures) > a side-wide loss means a qualifying loss, never 'destroy every enemy'
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:120:15
+    118|
+    119|   it("a side-wide loss means a qualifying loss, never 'destroy every e…
+    120|     const e = describeEndings(cfg([end("Any Iran Loss", "victory", [{ …
+       |               ^
+    121|     expect(e.rules[0].text).toBe("any Iran unit is destroyed");
+    122|     expect(e.rules[0].text).not.toMatch(/every|all/i);
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 synthetic ending rules (labelled fixtures) > time with a surviving-unit-count condition: triggers ANY, conditions ALL
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:129:15
+    127|       end("Hold Out", "victory", [{ type: "Time", time: T0 + 30 * 6000…
+    128|     ]);
+    129|     const e = describeEndings(c, SIDE);
+       |               ^
+    130|     expect(e.rules[0].text).toBe("the mission clock reaches T+00:30:00…
+    131|     expect(e.rules[0].usesClock).toBe(true);
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 synthetic ending rules (labelled fixtures) > SideScore threshold and draw use the actual side, comparison and threshold
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:138:15
+    136|
+    137|   it("SideScore threshold and draw use the actual side, comparison and…
+    138|     const e = describeEndings(cfg([
+       |               ^
+    139|       end("Score Win", "victory", [{ type: "SideScore", side: "US Navy…
+    140|       end("Score Draw", "draw", [{ type: "SideScore", side: "Iran", th…
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 synthetic ending rules (labelled fixtures) > an event dependency, a random chance and a hostile area are not stated, and nothing about them leaks
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:155:15
+    153|       end("Mines Count", "defeat", [{ type: "Time", time: T0 + 1000 }]…
+    154|     ]);
+    155|     const e = describeEndings(c, SIDE);
+       |               ^
+    156|     expect(e.rules).toHaveLength(0);
+    157|     expect(e.limited).toBe(true);
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 synthetic ending rules (labelled fixtures) > an unrelated hidden event neither appears nor changes the stated endings
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:171:21
+    169|     };
+    170|     const base = [end("Score Win", "victory", [{ type: "SideScore", si…
+    171|     const without = describeEndings(cfg(base), SIDE);
+       |                     ^
+    172|     const withHidden = describeEndings(cfg([hidden, ...base]), SIDE);
+    173|     expect(withHidden).toEqual(without);
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 synthetic ending rules (labelled fixtures) > no end events: no declared conditions, and not an automatic win or loss
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:178:15
+    176|
+    177|   it("no end events: no declared conditions, and not an automatic win …
+    178|     const e = describeEndings(cfg([]), SIDE);
+       |               ^
+    179|     expect(e).toEqual({ rules: [], limited: false });
+    180|     expect(endingNotes(e, false)).toMatch(/No victory conditions are d…
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 synthetic ending rules (labelled fixtures) > a forced event is not described by its own triggers
+TypeError: explainResult is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:187:12
+    185|   it("a forced event is not described by its own triggers", () => {
+    186|     const c = cfg([end("Forced End", "victory", [{ type: "SideScore", …
+    187|     expect(explainResult(c, SIDE, { result: "victory", message: "m", s…
+       |            ^
+    188|   });
+    189|
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/26]⎯
+ FAIL  src/lib/scenarios/__tests__/endings.test.ts > SAND-VICTORY-1 synthetic ending rules (labelled fixtures) > a mixed limited scenario never says time or score cannot end it
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/endings.test.ts:191:15
+    189|
+    190|   it("a mixed limited scenario never says time or score cannot end it"…
+    191|     const e = describeEndings(cfg([end("Hidden", "victory", [{ type: "…
+       |               ^
+    192|     expect(endingNotes(e, true)).not.toMatch(/No time limit|cannot com…
+    193|     expect(endingNotes(e, true)).toMatch(/Do not assume time or score …
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/26]⎯
+ FAIL  src/lib/scenarios/__tests__/objective.test.ts > SAND-PLAY-1 shared transit objective > says in plain words what wins and what loses, and that time or escorts cannot
+TypeError: describeEndings is not a function
+ ❯ src/lib/scenarios/__tests__/objective.test.ts:29:35
+     27|
+     28|   it("says in plain words what wins and what loses, and that time or e…
+     29|     const l = missionLines(obj(), describeEndings(demoScenarioConfig, …
+       |                                   ^
+     30|     expect(l.win).toMatch(/USS Nimitz enters the transit gate/);
+     31|     expect(l.lose).toMatch(/USS Nimitz is destroyed/);
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/26]⎯
+ FAIL  src/lib/simulation/__tests__/terminal.test.ts > SAND-VICTORY-1 final result, provenance and score > a mixed transit plus score ending: the transit arrival with the score line also met is attributed to the event the engine chose
+AssertionError: expected { result: 'draw', …(1) } to match object { result: 'draw', …(1) }
+(1 matching property omitted from actual)
+- Expected
++ Received
+  {
+    "result": "draw",
+-   "source": {
+-     "event": "Score Draw",
+-   },
+  }
+ ❯ src/lib/simulation/__tests__/terminal.test.ts:201:43
+    199|     const t1 = simulationTick(withScore, 1000, undefined, mixed, comba…
+    200|     // draw (2) outranks the same-tick victory (1), and the result say…
+    201|     expect(t1.eventState!.scenarioResult).toMatchObject({ result: "dra…
+       |                                           ^
+    202|   });
+    203|
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/26]⎯
+ FAIL  src/lib/simulation/__tests__/terminal.test.ts > SAND-VICTORY-1 final result, provenance and score > the arrival tick's own ChangeScore lands once, in the final state, and the score never moves afterwards
+AssertionError: expected undefined to be 'Transit Complete' // Object.is equality
+- Expected:
+"Transit Complete"
++ Received:
+undefined
+ ❯ src/lib/simulation/__tests__/terminal.test.ts:209:58
+    207|     const win = finish("Transit Complete", "victory", { type: "UnitEnt…
+    208|     const t1 = simulationTick(state, 1000, undefined, events([win]), c…
+    209|     expect(t1.eventState!.scenarioResult?.source?.event).toBe("Transit…
+       |                                                          ^
+    210|     expect(t1.gameState.score["US Navy"]).toBe(25);
+    211|     const t2 = simulationTick(t1.gameState, 5000, undefined, t1.eventS…
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/26]⎯
+ FAIL  src/lib/simulation/__tests__/terminal.test.ts > SAND-VICTORY-1 final result, provenance and score > a score threshold ends the run exactly when the score reaches it (SideScore, actual side and comparison)
+AssertionError: expected { result: 'victory', …(1) } to match object { result: 'victory', …(1) }
+(1 matching property omitted from actual)
+- Expected
++ Received
+  {
+    "result": "victory",
+-   "source": {
+-     "event": "Score Win",
+-   },
+  }
+ ❯ src/lib/simulation/__tests__/terminal.test.ts:231:43
+    229|     expect(t1.eventState!.scenarioResult).toBeUndefined();
+    230|     const t2 = simulationTick({ ...state, score: { ...state.score, "US…
+    231|     expect(t2.eventState!.scenarioResult).toMatchObject({ result: "vic…
+       |                                           ^
+    232|   });
+    233|
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/26]⎯
+ FAIL  src/lib/simulation/__tests__/terminal.test.ts > SAND-VICTORY-1 final result, provenance and score > the shipped transit tick carries the transit event as its source
+AssertionError: expected undefined to deeply equal { event: 'Transit Complete' }
+- Expected:
+{
+  "event": "Transit Complete",
+}
++ Received:
+undefined
+ ❯ src/lib/simulation/__tests__/terminal.test.ts:238:51
+    236|     const { state, combat } = scene(0);
+    237|     const t1 = simulationTick(state, 1000, undefined, events(), combat…
+    238|     expect(t1.eventState!.scenarioResult?.source).toEqual({ event: "Tr…
+       |                                                   ^
+    239|     const lost = scene(20);
+    240|     const t2 = simulationTick(lost.state, 1000, undefined, events(), l…
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/26]⎯
+ Test Files  6 failed | 18 passed (24)
+      Tests  24 failed | 232 passed (256)
+   Start at  09:16:29
+   Duration  10.35s (tests 68%, transform 16%, import 15%, worker 1%)

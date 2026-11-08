@@ -181,3 +181,63 @@ describe("SAND-PLAY-1 transit result on the real carrier and the real gate", () 
     }
   });
 });
+
+describe("SAND-VICTORY-1 final result, provenance and score", () => {
+  const score = (side: string, amount: number) => ({ type: "ChangeScore" as const, side, amount });
+  const finish = (name: string, result: "victory" | "defeat" | "draw", trigger: ScenarioEvent["triggers"][number], extra: ScenarioEvent["actions"] = [], conditions: ScenarioEvent["conditions"] = []): ScenarioEvent => ({
+    name, repeatable: false, triggers: [trigger], conditions, actions: [...extra, { type: "EndScenario", result, message: `m-${name}` }],
+  });
+
+  it("a mixed transit plus score ending: the transit arrival with the score line also met is attributed to the event the engine chose", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.55);
+    const { state, combat } = scene(0);
+    const mixed = events([
+      finish("Score Draw", "draw", { type: "SideScore", side: "US Navy", threshold: 5, comparison: "gte" }),
+      ...demoEndEvents(),
+    ]);
+    const withScore = { ...state, score: { ...state.score, "US Navy": 5 } };
+    const t1 = simulationTick(withScore, 1000, undefined, mixed, combat);
+    // draw (2) outranks the same-tick victory (1), and the result says which event decided it
+    expect(t1.eventState!.scenarioResult).toMatchObject({ result: "draw", source: { event: "Score Draw" } });
+  });
+
+  it("the arrival tick's own ChangeScore lands once, in the final state, and the score never moves afterwards", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.55);
+    const { state, combat } = scene(0);
+    const win = finish("Transit Complete", "victory", { type: "UnitEntersArea", side: "US Navy", areaId: "transit-gate", unitId: "us-cvn-1" }, [score("US Navy", 25)]);
+    const t1 = simulationTick(state, 1000, undefined, events([win]), combat);
+    expect(t1.eventState!.scenarioResult?.source?.event).toBe("Transit Complete");
+    expect(t1.gameState.score["US Navy"]).toBe(25);
+    const t2 = simulationTick(t1.gameState, 5000, undefined, t1.eventState, t1.combatState);
+    expect(t2.gameState.score["US Navy"]).toBe(25);
+    expect(t2.eventState!.scenarioResult).toBe(t1.eventState!.scenarioResult);
+  });
+
+  it("zero and negative scores are real values", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.55);
+    const { state, combat } = scene(0);
+    const lose = finish("Transit Complete", "victory", { type: "UnitEntersArea", side: "US Navy", areaId: "transit-gate", unitId: "us-cvn-1" }, [score("Iran", -15)]);
+    const t1 = simulationTick(state, 1000, undefined, events([lose]), combat);
+    expect(t1.gameState.score).toMatchObject({ "US Navy": 0, Iran: -15 });
+  });
+
+  it("a score threshold ends the run exactly when the score reaches it (SideScore, actual side and comparison)", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.55);
+    const { state, combat } = scene(0);
+    const ev = events([finish("Score Win", "victory", { type: "SideScore", side: "US Navy", threshold: 30, comparison: "gte" })]);
+    const t1 = simulationTick({ ...state, score: { ...state.score, "US Navy": 29 } }, 1000, undefined, ev, combat);
+    expect(t1.eventState!.scenarioResult).toBeUndefined();
+    const t2 = simulationTick({ ...state, score: { ...state.score, "US Navy": 30 } }, 1000, undefined, ev, combat);
+    expect(t2.eventState!.scenarioResult).toMatchObject({ result: "victory", source: { event: "Score Win" } });
+  });
+
+  it("the shipped transit tick carries the transit event as its source", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.55);
+    const { state, combat } = scene(0);
+    const t1 = simulationTick(state, 1000, undefined, events(), combat);
+    expect(t1.eventState!.scenarioResult?.source).toEqual({ event: "Transit Complete" });
+    const lost = scene(20);
+    const t2 = simulationTick(lost.state, 1000, undefined, events(), lost.combat);
+    expect(t2.eventState!.scenarioResult?.source).toEqual({ event: "Carrier Lost" });
+  });
+});

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { demoScenarioConfig } from "../demoConfig";
 import { demoScenario } from "../demo";
 import { snapshotScenarioConfig } from "@/lib/snapshot/playConfig";
-import { distanceToAreaNm, missionLines, missionProgress, openingBriefing, transitObjective } from "../objective";
+import { describeEndings, distanceToAreaNm, missionLines, missionProgress, openingBriefing, transitObjective } from "../objective";
 import { isPointInPolygon } from "@/lib/ai/events";
 
 const obj = () => transitObjective(demoScenarioConfig)!;
@@ -26,7 +26,7 @@ describe("SAND-PLAY-1 shared transit objective", () => {
   });
 
   it("says in plain words what wins and what loses, and that time or escorts cannot", () => {
-    const l = missionLines(obj());
+    const l = missionLines(obj(), describeEndings(demoScenarioConfig, "US Navy"));
     expect(l.win).toMatch(/USS Nimitz enters the transit gate/);
     expect(l.lose).toMatch(/USS Nimitz is destroyed/);
     expect(l.notes).toMatch(/No time limit/);

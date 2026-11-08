@@ -5,6 +5,7 @@ import { demoScenario } from "@/lib/scenarios/demo";
 import { DEFAULT_AUTOPAUSE } from "../autopause";
 import * as aiMod from "@/lib/ai/aiController";
 import { unit, START, KM_LAT, wif } from "./fixtures";
+import { trackNumber } from "../trackNumber";
 import { getPlatform } from "@/lib/platforms/lookup";
 import type { Scenario } from "@/types/game";
 import type { ScenarioConfig } from "../session";
@@ -587,5 +588,20 @@ describe("SAND-COMBAT-1 turn ownership and own damage", () => {
     resolve(b);
     const ids = new Set(reportOf(a).events.map((e) => e.id));
     for (const e of reportOf(b).events) expect(ids.has(e.id) && e.id.startsWith("prev")).toBe(false);
+  });
+});
+
+describe("SAND-VICTORY-1 staged target identity", () => {
+  it("the staged fire order carries the same track number the plot and the selector show, across cancel and restage", () => {
+    const s = duelWithContact();
+    const contact = snap(s).gameState.contacts.find((c) => c.classification !== "unknown")!;
+    const intent = () => snap(s).wego.intents[0] as unknown as { contactId: string; contactLabel: string };
+    expect((s.engage("mahan", contact.id) as { ok: boolean }).ok).toBe(true);
+    expect(intent().contactId).toBe(contact.id);
+    expect(intent().contactLabel).toContain(trackNumber(contact.id));
+    const label = intent().contactLabel;
+    expect(call(s, "cancelIntent", snap(s).wego.intents[0].id)).toBe(true);
+    s.engage("mahan", contact.id);
+    expect(intent().contactLabel).toBe(label);
   });
 });

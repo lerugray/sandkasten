@@ -17,6 +17,7 @@ import type { Contact, UnitOrders } from "@/lib/simulation/gameState";
 import type { WeaponInFlight, CombatEvent } from "@/lib/simulation/combat";
 import { getPlatform } from "@/lib/platforms/lookup";
 import { formatMeasurement } from "@/lib/map/measure";
+import { trackNumber } from "@/lib/simulation/trackNumber";
 import { PlotProjection, type GeoPoint, FT_TO_KM, KM_PER_NM } from "./projection";
 import { LineBatch } from "./lineBatch";
 import { PALETTE } from "./palette";
@@ -205,11 +206,7 @@ const CLS_LABEL: Record<Contact["classification"], string> = {
   tracked: "TRK",
 };
 
-export function trackNumber(id: string): string {
-  let h = 2166136261;
-  for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 16777619);
-  return String(1000 + (Math.abs(h) % 9000));
-}
+export { trackNumber };
 
 function pad3(n: number): string {
   const v = ((Math.round(n) % 360) + 360) % 360;

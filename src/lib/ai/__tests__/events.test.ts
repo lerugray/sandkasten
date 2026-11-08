@@ -109,3 +109,41 @@ describe("S2-15 the demo is won by transiting, not by waiting", () => {
     expect(later.eventState.scenarioResult?.result).toBe("defeat");
   });
 });
+
+describe("SAND-VICTORY-1 result provenance", () => {
+  const end = (name: string, result: "victory" | "defeat" | "draw", extra: Partial<ScenarioEvent> = {}): ScenarioEvent => ({
+    name, repeatable: false, triggers: [{ type: "ScenarioLoaded" }], conditions: [], actions: [{ type: "EndScenario", result, message: `m-${name}` }], ...extra,
+  });
+  const state = () => makeState([unit("a", "Iran", SINA, 56, 26)]);
+
+  it("a result names the event whose EndScenario action decided it", () => {
+    const r = evaluateEvents(es([end("Plain", "victory")]), state(), []);
+    expect(r.eventState.scenarioResult).toMatchObject({ result: "victory", message: "m-Plain", source: { event: "Plain" } });
+    expect(r.eventState.scenarioResult?.source?.forcedBy).toBeUndefined();
+  });
+
+  it("defeat outranks draw outranks victory and takes its own provenance; first of equals stands", () => {
+    const r = evaluateEvents(es([end("V", "victory"), end("D", "draw"), end("L", "defeat"), end("L2", "defeat")]), state(), []);
+    expect(r.eventState.scenarioResult?.result).toBe("defeat");
+    expect(r.eventState.scenarioResult?.source?.event).toBe("L");
+    const draw = evaluateEvents(es([end("V", "victory"), end("D", "draw")]), state(), []);
+    expect(draw.eventState.scenarioResult?.source?.event).toBe("D");
+  });
+
+  it("a forced ending carries the forced event and who forced it", () => {
+    const forced: ScenarioEvent = { name: "Forced", repeatable: false, triggers: [{ type: "Time", time: 9e15 }], conditions: [], actions: [{ type: "EndScenario", result: "draw", message: "m" }] };
+    const forcer: ScenarioEvent = { name: "Forcer", repeatable: false, triggers: [{ type: "ScenarioLoaded" }], conditions: [], actions: [{ type: "TriggerEvent", eventName: "Forced" }] };
+    const r = evaluateEvents(es([forcer, forced]), state(), []);
+    expect(r.eventState.scenarioResult?.source).toEqual({ event: "Forced", forcedBy: "Forcer" });
+  });
+
+  it("deferred results keep provenance in pendingResult, and a finished run ignores later events", () => {
+    const deferred = evaluateEvents(es([end("Held", "victory")]), state(), [], { deferResult: true });
+    expect(deferred.eventState.scenarioResult).toBeUndefined();
+    expect(deferred.pendingResult?.source?.event).toBe("Held");
+    const done = evaluateEvents(es([end("Held", "victory")]), state(), []);
+    const again = evaluateEvents({ ...done.eventState, events: [end("Late", "defeat", { repeatable: true })] }, state(), []);
+    expect(again.eventState.scenarioResult?.source?.event).toBe("Held");
+    expect(again.stateChanges).toEqual([]);
+  });
+});

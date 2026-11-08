@@ -8,6 +8,7 @@ import type { Mission } from "@/lib/ai/missions";
 import type { Doctrine } from "@/lib/ai/doctrine";
 import { createCombatState, engageContact, validateEngagement, type CombatEvent, type CombatState, type EngageResult } from "./combat";
 import { contactDisplayName } from "./combatRecord";
+import { trackNumber } from "./trackNumber";
 import { contactsFor } from "./gameState";
 import type { InfoWarConfig } from "@/lib/infowar/types";
 import {
@@ -418,7 +419,7 @@ export class SimulationSession {
       contactId,
       contactLabel: contactDisplayName(
         contact,
-        (id) => id.replace(/\D/g, "") || id.slice(-4),
+        trackNumber,
         state.sides.flatMap((s) => s.units).find((u) => u.id === contact.actualUnitId)?.name,
       ),
       weaponName,

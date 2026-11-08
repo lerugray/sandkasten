@@ -18,11 +18,13 @@ import { MediaFeed } from "@/components/game/infowar/MediaFeed";
 import { HelpPanel } from "@/components/game/help/HelpPanel";
 import { demoScenarioConfig } from "@/lib/scenarios/demoConfig";
 import { useSimulation } from "@/lib/simulation/useSimulation";
+import type { FireIntent } from "@/lib/simulation/session";
 import { useInfoWar } from "@/lib/infowar/useInfoWar";
 import { SPEED_OPTIONS } from "@/lib/simulation/gameState";
 import { formatMeasurement } from "@/lib/map/measure";
-import { trackNumber, type PlotArea, type PlotInput, type PlotInsets } from "@/lib/plot/TacticalPlot";
-import { UNIT_STATE_LABEL, missionLines, missionProgress, openingBriefing, transitObjective } from "@/lib/scenarios/objective";
+import type { PlotArea, PlotInput, PlotInsets } from "@/lib/plot/TacticalPlot";
+import { trackNumber } from "@/lib/simulation/trackNumber";
+import { UNIT_STATE_LABEL, describeEndings, endingNotes, explainResult, missionLines, missionProgress, openingBriefing, resultWord, transitObjective } from "@/lib/scenarios/objective";
 import type { GeoPoint } from "@/lib/plot/projection";
 import type { Contact } from "@/lib/simulation/gameState";
 import { buildFog, contactDisplayName, ownForce, projectRecord, stateWord, visibleWeapons } from "@/lib/simulation/combatRecord";
@@ -155,6 +157,16 @@ export function TerminalPlay() {
   const cfgEvents = demoScenarioConfig.events;
   const objective = useMemo(() => transitObjective({ scenario: cfgScenario, events: cfgEvents }), [cfgScenario, cfgEvents]);
   const opening = useMemo(() => openingBriefing({ scenario: cfgScenario, events: cfgEvents }), [cfgScenario, cfgEvents]);
+  // The endings the running session evaluates (its own event list), stated only as far as the briefing may state them.
+  const runEvents = eventState?.events;
+  const endings = useMemo(
+    () => describeEndings({ scenario: cfgScenario, events: runEvents ? { events: runEvents, firedEvents: new Set(), messages: [] } : cfgEvents }, cfgScenario.playerSide),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [cfgScenario, cfgEvents, runEvents, runEvents?.length],
+  );
+  const rules = useMemo(() => (objective ? missionLines(objective, endings) : null), [objective, endings]);
+  const extraRules = useMemo(() => endings.rules.filter((r) => !r.transit), [endings]);
+  const endingNote = useMemo(() => endingNotes(endings, !!objective), [endings, objective]);
 
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
@@ -265,8 +277,10 @@ export function TerminalPlay() {
         // a double-tapped PLAY AGAIN must not also dismiss the fresh briefing
         if (!e.repeat && performance.now() - resetAtRef.current > 600) setShowBriefing(false);
       } else if (e.key === "Enter" && isWeGo && !ended && el === document.body) {
-        // ENTER commits the plan or opens the next one; a held key or rapid repeats cannot double-fire
+        // ENTER commits the plan or opens the next one; a held key or rapid repeats cannot double-fire.
+        // While the record is held open over a review it only reads: BACK TO REVIEW is the way out.
         e.preventDefault();
+        if (recordHold === "review") return;
         const now = performance.now();
         if (!e.repeat && now - turnKeyAtRef.current > 400) {
           turnKeyAtRef.current = now;
@@ -310,7 +324,7 @@ export function TerminalPlay() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePause, setSpeed, toggleMeasure, ended, isWeGo, phase, commitOrders, nextTurn, showBriefing, objective, openBriefing, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, selectedFacilityId, selectedOsintId]);
+  }, [togglePause, setSpeed, toggleMeasure, ended, isWeGo, phase, commitOrders, nextTurn, showBriefing, objective, openBriefing, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, selectedFacilityId, selectedOsintId, recordHold]);
 
   // The briefing closes only on a deliberate act (its own card or buttons, Enter, Esc, B) or when the clock starts.
   useEffect(() => {
@@ -347,7 +361,15 @@ export function TerminalPlay() {
   const contactTag = useCallback((c: Contact) => {
     const trueName = allUnits.find((u) => u.id === c.actualUnitId)?.name;
     return contactDisplayName(c, trackNumber, trueName);
-  }, [allUnits, trackNumber]);
+  }, [allUnits]);
+  // A staged or resolved fire order is shown under the same track number the selector and plot use, looked up by contact id.
+  const intentTarget = useCallback(
+    (i: FireIntent) => {
+      const c = gameState.contacts.find((x) => x.id === i.contactId);
+      return c ? contactTag(c) : i.contactLabel;
+    },
+    [gameState.contacts, contactTag],
+  );
   const { fire, engageTarget, cycleTarget, setRoeFor, clearTarget } = useFireControls({
     unit: ordersOpen && selectedUnit && selectedUnit.side === gameState.scenario.playerSide ? selectedUnit : null,
     gameState,
@@ -499,31 +521,40 @@ export function TerminalPlay() {
     setFocusRequest((prev) => ({ n: (prev?.n ?? 0) + 1, unitId: objective.unitId }));
   }, [objective]);
 
-  // What happened, from the player's own picture: the deciding condition, the clock, and the fogged traffic record.
+  // What happened, from the player's own picture: the deciding rule, the score, the clock, and the fogged traffic record.
+  const cause = useMemo(
+    () => (scenarioResult ? explainResult({ scenario: cfgScenario, events: runEvents ? { events: runEvents, firedEvents: new Set(), messages: [] } : cfgEvents }, playerSide, scenarioResult) : null),
+    [scenarioResult, cfgScenario, cfgEvents, runEvents, playerSide],
+  );
   const debrief = useMemo(() => {
-    if (!scenarioResult) return null;
+    if (!scenarioResult || !cause) return null;
     const t0 = new Date(gameState.scenario.startTime).getTime();
     const el = Math.max(0, gameState.simTime - t0);
     const pad = (n: number) => String(Math.floor(n)).padStart(2, "0");
     const clock = `T+${pad(el / 3600000)}:${pad((el / 60000) % 60)}:${pad((el / 1000) % 60)}`;
     const kills = combatLog.filter((e) => e.type === "destroyed" && e.side === playerSide).length;
     let deciding: string;
-    if (objective && progress) {
-      if (scenarioResult.result === "victory") {
-        deciding = `${objective.unitShort} entered the ${objective.gateLabel.toLowerCase()} (${UNIT_STATE_LABEL[progress.unitState].toLowerCase()}).`;
-      } else if (scenarioResult.result === "defeat") {
-        const loss = [...combatLog].reverse().find((e) => e.type === "destroyed" && e.targetId === objective.unitId);
-        const by = loss?.unitId ? ` by ${unitName(loss.unitId)}` : "";
-        deciding = `${objective.unitShort} was destroyed${by}; the mission cannot be completed.`;
-      } else {
-        deciding = scenarioResult.message;
-      }
+    if (cause.kind === "transit-win" && objective && progress) {
+      deciding = `${objective.unitShort} entered the ${objective.gateLabel.toLowerCase()} (${UNIT_STATE_LABEL[progress.unitState].toLowerCase()}).`;
+    } else if (cause.kind === "transit-loss" && objective && progress) {
+      const loss = [...combatLog].reverse().find((e) => e.type === "destroyed" && e.targetId === objective.unitId);
+      const by = loss?.unitId ? ` by ${unitName(loss.unitId)}` : "";
+      deciding = `${objective.unitShort} was destroyed${by}; the mission cannot be completed.`;
+    } else if (cause.kind === "rule") {
+      deciding = `Ending rule met: ${cause.rule.text}.`;
     } else {
-      deciding = scenarioResult.message;
+      deciding = "A scenario-defined ending. Its conditions are not part of your briefing.";
     }
+    const scoreNote =
+      cause.kind === "rule" && cause.rule.usesScore
+        ? "THE SCORE DECIDED THIS ENDING."
+        : cause.kind === "unstated"
+          ? null
+          : "SCORE IS A TALLY. IT DID NOT DECIDE THIS ENDING.";
+    const score = Object.entries(gameState.score).map(([side, value]) => ({ side, value }));
     const preview = ordinaryRecord.slice(-8);
-    return { deciding, clock, kills, friendlyLosses: force.lost, record: preview, total: ordinaryRecord.length };
-  }, [scenarioResult, gameState.scenario.startTime, gameState.simTime, combatLog, playerSide, objective, progress, unitName, ordinaryRecord, force.lost]);
+    return { deciding, scoreNote, score, clock, kills, friendlyLosses: force.lost, record: preview, total: ordinaryRecord.length };
+  }, [scenarioResult, cause, gameState.scenario.startTime, gameState.simTime, gameState.score, combatLog, playerSide, objective, progress, unitName, ordinaryRecord, force.lost]);
 
   const clockOf = (ms: number) => {
     const pad = (n: number) => String(Math.floor(n)).padStart(2, "0");
@@ -550,6 +581,12 @@ export function TerminalPlay() {
       setReviewing(true);
       setRecordView({ ...INITIAL_RECORD_VIEW });
     }
+  }, []);
+
+  // Leaving the held record by keyboard must not let the same keystroke (or its immediate repeat) also open the next turn.
+  const leaveHeldRecord = useCallback(() => {
+    turnKeyAtRef.current = performance.now();
+    setRecordHold(null);
   }, []);
 
   const handleUnitSelect = useCallback((unitId: string | null, shiftKey?: boolean) => {
@@ -773,8 +810,12 @@ export function TerminalPlay() {
                 {progress.status === "pending" ? "PENDING" : progress.status === "complete" ? "COMPLETE" : progress.status === "failed" ? "FAILED" : "ENDED"}
               </span>
             </div>
-            <div className="tx-mission-line" data-testid="mission-win"><b>WIN</b> {missionLines(objective).win}</div>
-            <div className="tx-mission-line" data-testid="mission-lose"><b>LOSE</b> {missionLines(objective).lose}</div>
+            <div className="tx-mission-line" data-testid="mission-win"><b>WIN</b> {rules?.win}</div>
+            <div className="tx-mission-line" data-testid="mission-lose"><b>LOSE</b> {rules?.lose}</div>
+            {extraRules.map((r) => (
+              <div key={r.event} className="tx-mission-line" data-testid="mission-extra"><b>{resultWord(r.result)}</b> {r.text}</div>
+            ))}
+            {endings.limited && <div className="tx-mission-line tx-dim" data-testid="mission-limited">OTHER ENDINGS NOT BRIEFED</div>}
             <div className="tx-mission-line tx-dim" data-testid="mission-progress">
               {objective.unitShort.toUpperCase()} {UNIT_STATE_LABEL[progress.unitState]}
               {progress.distanceNm !== null && progress.unitState !== "destroyed" && (
@@ -786,6 +827,15 @@ export function TerminalPlay() {
               <Cmd onClick={focusProtected} testId="mission-focus-unit" ariaLabel={`Select and focus ${objective.unitShort}`}>{objective.unitShort.split(" ").pop()!.toUpperCase()}</Cmd>
               <Cmd cap="B" onClick={() => (showBriefing ? closeBriefing() : openBriefing())} testId="mission-briefing" active={showBriefing} disabled={ended} ariaLabel="Show or hide the briefing">BRIEFING</Cmd>
             </div>
+          </section>
+        )}
+        {!objective && (extraRules.length > 0 || endings.limited) && (
+          <section className="tx-mission" data-testid="rules-panel" aria-label="Endings">
+            <div className="tx-mission-head"><span>[ ENDINGS ]</span></div>
+            {extraRules.map((r) => (
+              <div key={r.event} className="tx-mission-line" data-testid="mission-extra"><b>{resultWord(r.result)}</b> {r.text}</div>
+            ))}
+            {endings.limited && <div className="tx-mission-line tx-dim" data-testid="mission-limited">OTHER ENDINGS NOT BRIEFED</div>}
           </section>
         )}
         {isWeGo && wego && !ended && (
@@ -804,7 +854,7 @@ export function TerminalPlay() {
                 </div>
                 {wego.intents.map((i) => (
                   <div key={i.id} className="tx-mission-line tx-staged" data-testid="staged-fire">
-                    <span className="tx-truncate">{i.shooterName.toUpperCase()} {"->"} {i.contactLabel}</span>
+                    <span className="tx-truncate" data-contact-id={i.contactId} data-shooter-id={i.shooterId}>{i.shooterName.toUpperCase()} {"->"} {intentTarget(i)}</span>
                     <button type="button" className="tx-btn" data-testid="staged-cancel" onClick={() => cancelIntent(i.id)} onMouseDown={(e) => e.preventDefault()} aria-label={`Cancel fire order from ${i.shooterName}`}>
                       CANCEL
                     </button>
@@ -946,7 +996,7 @@ export function TerminalPlay() {
                 autoFocus={recordFocusN > 0}
                 key={recordFocusN}
                 returnLabel={recordHold === "review" ? "BACK TO REVIEW" : reviewing ? "BACK TO DEBRIEF" : undefined}
-                onReturn={recordHold === "review" ? () => setRecordHold(null) : reviewing ? () => setReviewing(false) : undefined}
+                onReturn={recordHold === "review" ? leaveHeldRecord : reviewing ? () => setReviewing(false) : undefined}
               />
             </section>
           )}
@@ -979,10 +1029,22 @@ export function TerminalPlay() {
           <p className="tx-briefing-text">{opening.text}</p>
           {objective && (
             <div className="tx-briefing-mission" data-testid="briefing-mission">
-              <div><b>PROTECT</b> {missionLines(objective).protect}</div>
-              <div><b>WIN</b> {missionLines(objective).win}</div>
-              <div><b>LOSE</b> {missionLines(objective).lose}</div>
-              <div className="tx-dim">{missionLines(objective).notes}</div>
+              <div><b>PROTECT</b> {rules?.protect}</div>
+              <div><b>WIN</b> {rules?.win}</div>
+              <div><b>LOSE</b> {rules?.lose}</div>
+              {extraRules.map((r) => (
+                <div key={r.event} data-testid="briefing-extra"><b>{resultWord(r.result)}</b> {r.text}</div>
+              ))}
+              <div className="tx-dim" data-testid="briefing-rule-note">{rules?.notes}</div>
+            </div>
+          )}
+          {!objective && (
+            <div className="tx-briefing-mission" data-testid="briefing-rules">
+              <div className="tx-mission-head"><span>[ ENDINGS ]</span></div>
+              {extraRules.map((r) => (
+                <div key={r.event} data-testid="briefing-extra"><b>{resultWord(r.result)}</b> {r.text}</div>
+              ))}
+              <div className="tx-dim" data-testid="briefing-rule-note">{endingNote}</div>
             </div>
           )}
           <div className="tx-briefing-mode" data-testid="briefing-mode">
@@ -1102,7 +1164,7 @@ export function TerminalPlay() {
       {isWeGo && wego && phase === "review" && review && !ended && recordHold === "review" && (
         <div className="tx-banner tx-result-strip" data-testid="review-hold-strip" data-plot-occluder>
           <span>[ REVIEW ] TURN {review.report.turn} HELD</span>
-          <button type="button" className="tx-btn is-on" data-testid="review-back" onClick={() => setRecordHold(null)} onMouseDown={(e) => e.preventDefault()}>
+          <button type="button" className="tx-btn is-on" data-testid="review-back" onClick={leaveHeldRecord} onMouseDown={(e) => e.preventDefault()}>
             BACK TO REVIEW
           </button>
         </div>
@@ -1131,7 +1193,18 @@ export function TerminalPlay() {
             {review.report.outcomes.length > 0 && (
               <div data-testid="review-fire">
                 <b>FIRE ORDERS</b>{" "}
-                {review.report.outcomes.map((o) => `${o.intent.shooterName.toUpperCase()}: ${o.ok ? "LAUNCHED" : "REFUSED, " + o.message.toUpperCase()}`).join("  //  ")}
+                {review.report.outcomes.map((o, n) => (
+                  <span
+                    key={o.intent.id}
+                    data-testid="review-fire-item"
+                    data-shooter-id={o.intent.shooterId}
+                    data-contact-id={o.intent.contactId}
+                    data-status={o.ok ? "launched" : "refused"}
+                  >
+                    {n > 0 ? "  //  " : ""}
+                    {o.intent.shooterName.toUpperCase()} {"->"} {intentTarget(o.intent)}: {o.ok ? "LAUNCHED" : "REFUSED, " + o.message.toUpperCase()}
+                  </span>
+                ))}
               </div>
             )}
             {review.report.alerts.length > 0 && (
@@ -1302,6 +1375,13 @@ export function TerminalPlay() {
             <p data-testid="result-message">{scenarioResult.message}</p>
             <div className="tx-result-facts" data-testid="result-debrief">
               <div data-testid="result-deciding"><b>DECIDED BY</b> {debrief.deciding}</div>
+              <div data-testid="result-score">
+                <b>FINAL SCORE</b>{" "}
+                {debrief.score.map((e, i) => (
+                  <span key={e.side}>{i > 0 ? "  //  " : ""}{e.side.toUpperCase()} {e.value}</span>
+                ))}
+                {debrief.scoreNote && <span className="tx-dim" data-testid="result-score-note">  {debrief.scoreNote}</span>}
+              </div>
               <div><b>MISSION CLOCK</b> {debrief.clock}</div>
               {isWeGo && wego && (
                 <div data-testid="result-turns"><b>TURNS</b> {wego.turnsCommitted} COMMITTED  //  {wego.turnMinutes} MIN EACH  //  WEGO</div>

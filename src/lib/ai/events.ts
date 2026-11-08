@@ -73,7 +73,7 @@ export interface EventState {
   events: ScenarioEvent[];
   firedEvents: Set<string>; // names of events that have fired
   messages: EventMessage[]; // messages displayed to the player
-  scenarioResult?: { result: "victory" | "defeat" | "draw"; message: string };
+  scenarioResult?: ScenarioResult;
   /** Sim time each TimeInterval trigger last fired, keyed "event name#trigger index". */
   lastFired?: Record<string, number>;
 }
@@ -87,9 +87,20 @@ export interface EventMessage {
   read: boolean;
 }
 
-const RESULT_PRIORITY = { defeat: 3, draw: 2, victory: 1 } as const;
+/** Internal provenance of a result: the event whose EndScenario action decided it. Never shown to the player as text. */
+export interface ResultSource {
+  event: string;
+  /** Set when the deciding event was forced by another event's TriggerEvent action, not by its own triggers. */
+  forcedBy?: string;
+}
 
-type ScenarioResult = NonNullable<EventState["scenarioResult"]>;
+export interface ScenarioResult {
+  result: "victory" | "defeat" | "draw";
+  message: string;
+  source?: ResultSource;
+}
+
+const RESULT_PRIORITY = { defeat: 3, draw: 2, victory: 1 } as const;
 
 /** Defeat beats draw beats victory. */
 export function mergeResults(a: ScenarioResult | undefined, b: ScenarioResult | undefined): ScenarioResult | undefined {
@@ -129,7 +140,7 @@ export function evaluateEvents(
   const running = new Set<string>();
   const ran: string[] = [];
 
-  const run = (event: ScenarioEvent) => {
+  const run = (event: ScenarioEvent, forcedBy?: string) => {
     running.add(event.name);
     for (const action of event.actions) {
       switch (action.type) {
@@ -161,7 +172,11 @@ export function evaluateEvents(
           break;
 
         case "EndScenario":
-          pendingResult = mergeResults(pendingResult, { result: action.result, message: action.message });
+          pendingResult = mergeResults(pendingResult, {
+            result: action.result,
+            message: action.message,
+            source: forcedBy ? { event: event.name, forcedBy } : { event: event.name },
+          });
           break;
 
         case "TriggerEvent": {
@@ -169,7 +184,7 @@ export function evaluateEvents(
           const target = eventState.events.find((e) => e.name === action.eventName);
           if (!target || running.has(target.name) || opts.skip?.has(target.name)) break;
           if (newFired.has(target.name) && !target.repeatable) break;
-          run(target);
+          run(target, event.name);
           break;
         }
       }

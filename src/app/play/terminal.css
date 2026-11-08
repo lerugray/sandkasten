@@ -933,6 +933,10 @@
   color: var(--tx-alarm);
 }
 .tx-result-strip {
+  /* anchored beside the left column, clear of the right-hand detail column and its title */
+  left: 360px;
+  transform: none;
+  max-width: calc(100vw - 360px - 408px - 8px);
   display: flex;
   align-items: center;
   gap: 10px;
