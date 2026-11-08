@@ -31,10 +31,28 @@ export async function autopauseOff(page: Page) {
   await page.keyboard.press("Escape");
 }
 
-/** A real mouse click at a geographic position, through the page's own pointer handling. */
+/** True when the plot itself (not a panel or HUD element) is under the projected point. */
+async function plotHitAt(page: Page, lng: number, lat: number) {
+  return page.evaluate(([a, b]) => {
+    const h = document.querySelector('[data-testid="tactical-plot"]') as HTMLElement;
+    const r = h.getBoundingClientRect();
+    const p = (window as unknown as W).__sandPlot!.project(a, b);
+    const x = r.left + p.x, y = r.top + p.y;
+    if (p.x < 8 || p.y < 8 || p.x > r.width - 8 || p.y > r.height - 8) return false;
+    const el = document.elementFromPoint(x, y);
+    return !!el && h.contains(el) && !el.closest("[data-plot-occluder]");
+  }, [lng, lat] as const);
+}
+
+/** A real mouse click at a geographic position. The map is zoomed out with the wheel, as a player would, until the spot is clickable. */
 export async function clickGeo(page: Page, lng: number, lat: number) {
   const box = await page.getByTestId("tactical-plot").boundingBox();
   if (!box) throw new Error("plot host not found");
+  for (let i = 0; i < 8 && !(await plotHitAt(page, lng, lat)); i++) {
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.wheel(0, 300);
+    await page.waitForTimeout(900);
+  }
   const p = await page.evaluate(([a, b]) => (window as unknown as W).__sandPlot!.project(a, b), [lng, lat] as const);
   await page.mouse.click(box.x + p.x, box.y + p.y);
 }

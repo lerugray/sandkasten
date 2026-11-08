@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import path from "node:path";
 import { mkdirSync } from "node:fs";
-import { openPlay, areaBox, injectKillOnCarrier, restoreDice, GATE, type W } from "./helpers/sandPlay";
+import { openPlay, areaBox, runUntilResult, injectKillOnCarrier, restoreDice, GATE, type W } from "./helpers/sandPlay";
 
 const OUT = path.join(process.cwd(), "docs", "verification", "sand-play-1-s409");
 const SIZES = [{ width: 1440, height: 900 }, { width: 1920, height: 1080 }];
@@ -94,7 +94,7 @@ for (const size of SIZES) {
         const u = s.gameState.sides.flatMap((x: any) => x.units).find((x: any) => x.id === "us-cvn-1");
         u.position = { lng: c.lng, lat: c.lat };
       }, GATE.centre);
-      await expect(page.getByTestId("result-overlay")).toBeVisible({ timeout: 20_000 });
+      await runUntilResult(page, 40_000);
       await expect(page.getByTestId("result-title")).toContainText(/VICTORY|COMPLETE/i);
       await page.waitForTimeout(600);
       await fits(page, "result-overlay");
@@ -115,7 +115,7 @@ for (const size of SIZES) {
       await page.keyboard.press("Escape");
       await page.getByTestId("sim-toggle-pause").click();
       await injectKillOnCarrier(page);
-      await expect(page.getByTestId("result-overlay")).toBeVisible({ timeout: 20_000 });
+      await runUntilResult(page, 40_000);
       await restoreDice(page);
       await expect(page.getByTestId("result-title")).toContainText(/DEFEAT|LOST|FAILED/i);
       await page.waitForTimeout(600);
