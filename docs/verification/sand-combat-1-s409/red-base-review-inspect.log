@@ -1,0 +1,31 @@
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › tests/zz-red-base.spec.ts:4:5 › RED on base: own-platform inspection during WeGo REVIEW
+[chromium] › tests/zz-red-base.spec.ts:4:5 › RED on base: own-platform inspection during WeGo REVIEW
+OBSERVED detail-panel count in REVIEW after selecting an own unit: 0
+
+  1) [chromium] › tests/zz-red-base.spec.ts:4:5 › RED on base: own-platform inspection during WeGo REVIEW 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: 0
+
+      13 |   const n = await page.getByTestId("detail-panel").count();
+      14 |   console.log("OBSERVED detail-panel count in REVIEW after selecting an own unit:", n);
+    > 15 |   expect(n).toBe(1);
+         |             ^
+      16 | });
+      17 |
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/zz-red-base.spec.ts:15:13
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/zz-red-base-RED-on-base-ow-de88d-spection-during-WeGo-REVIEW-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/zz-red-base-RED-on-base-ow-de88d-spection-during-WeGo-REVIEW-chromium/error-context.md
+
+
+  1 failed
+    [chromium] › tests/zz-red-base.spec.ts:4:5 › RED on base: own-platform inspection during WeGo REVIEW 

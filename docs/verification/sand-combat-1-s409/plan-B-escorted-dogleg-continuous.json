@@ -1,0 +1,66 @@
+{
+  "plan": "B escorts + dog-leg, continuous",
+  "renderer": "ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)",
+  "result": "[ VICTORY ]",
+  "deciding": "DECIDED BY USS Nimitz entered the transit gate (afloat, undamaged).",
+  "debrief": {
+    "previewText": "SHOWING LATEST 8 OF 420 // 412 EARLIER NOT SHOWN HERE",
+    "total": 420,
+    "firstWindow": "SHOWING 1-20 OF 420 // PAGE 1/21",
+    "filtered": 353,
+    "filterUnit": "us-ddg-2",
+    "firstRows": [
+      {
+        "id": "msg-1773554403120-0-j6mq",
+        "type": "intel",
+        "tag": "INTEL",
+        "text": "06:00:03Z\nINTEL\nCONTACT REPORT RADAR CONTACT DETECTED. POSSIBLE IRANIAN NAVAL VESSEL. MAINTAIN COURSE AND SPEED. CONTINUE TO MONITOR."
+      },
+      {
+        "id": "msg-1773554403120-1-8fh3",
+        "type": "intel",
+        "tag": "INTEL",
+        "text": "06:00:03Z\nINTEL\nINTELLIGENCE UPDATE SIGINT INTERCEPTS INDICATE IRANIAN NAVAL COMMAND HAS ORDERED PATROL BOATS TO INCREASE READINESS. IRGCN UNITS ARE GOING WEAPONS-FREE."
+      },
+      {
+        "id": "ce-3",
+        "type": "launch",
+        "tag": "LAUNCH",
+        "text": "06:03:56Z\nLAUNCH\nTN2103 TRK LAUNCHED 2× AIM-54A PHOENIX AT HORNET 102\nINSPECT HORNET 102"
+      }
+    ],
+    "lastRows": [
+      {
+        "id": "ce-632",
+        "type": "destroyed",
+        "tag": "KILL",
+        "text": "09:15:15Z\nKILL\nUNKNOWN TRACK HAS BEEN DESTROYED!\nINSPECT USS CHOSIN (CG-65)"
+      },
+      {
+        "id": "ce-633",
+        "type": "hit",
+        "tag": "HIT",
+        "text": "09:15:15Z\nHIT\nRIM-66M SM-2MR HIT UNKNOWN TRACK!\nINSPECT USS CHOSIN (CG-65)"
+      },
+      {
+        "id": "ce-634",
+        "type": "miss",
+        "tag": "MISS",
+        "text": "09:15:15Z\nMISS\nRIM-66M SM-2MR MISSED UNKNOWN TRACK\nINSPECT USS CHOSIN (CG-65)"
+      }
+    ],
+    "facts": {
+      "total": 8,
+      "lost": [
+        "USS Cole (DDG-67)",
+        "Hornet 101",
+        "Hornet 102"
+      ],
+      "mk": [],
+      "dmg": [],
+      "condition": "OWN FORCE 5 UNDAMAGED // 0 DAMAGED // 0 MISSION KILL // 3 LOST",
+      "affected": "USS COLE (DDG-67) LOST // HORNET 101 LOST // HORNET 102 LOST",
+      "losses": "YOUR LOSSES 3 // HOSTILE KILLS CONFIRMED 8"
+    }
+  }
+}

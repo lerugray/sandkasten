@@ -113,7 +113,7 @@ export function projectRecord(input: RecordInput): RecordRow[] {
       tag: lost ? "LOST" : EVENT_NAME[e.type] ?? e.type.toUpperCase(),
       text: text.toUpperCase(),
       alarm: e.side !== playerSide && (e.type === "launch" || e.type === "hit" || e.type === "destroyed" || e.type === "damaged"),
-      ownUnitIds: [e.unitId, e.targetId].filter((id): id is string => !!id && own.has(id)),
+      ownUnitIds: [...new Set([e.unitId, e.targetId].filter((id): id is string => !!id && own.has(id)))],
       debug: !involved,
       seq: i,
     });

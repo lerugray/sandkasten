@@ -107,6 +107,7 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Damage: undamaged → damaged → mission-kill → destroyed
 - Countermeasures: chaff, ECM, decoys
 - Combat log with full event history
+- **Combat record (SAND-COMBAT-1)** — the COMBAT tab on `/play` holds the whole record of what involved your side: ALL ACTIVITY / COMBAT / INTEL, one own unit, and in WeGo ALL RUN or LAST RESOLVED TURN. Rows carry scenario-clock times and readable names (LAUNCH, DEFENDED, HIT, MISS, DAMAGED, LOST), stable source ids, explicit paging (`SHOWING X-Y OF Z`) and a CLEAR FILTERS action when a filter matches nothing. Enemies appear only as your contacts identify them (classified name, else track label, else UNKNOWN TRACK); incoming weapons read INCOMING WEAPON; GOD view adds visibly separate rows and they vanish when GOD goes off. A turn review and the debrief keep a short preview with the total and a VIEW RECORD button that returns to the held review or result; own units, lost ones included, can be inspected during REVIEW (orders stay locked). Turn membership uses event cursors taken at commit, and own damage uses the real undamaged / damaged / mission-kill / destroyed states, shown distinctly
 
 ### InfoWar Feed
 - Game events produce simulated media coverage via local LLM ([Ollama](https://ollama.com))

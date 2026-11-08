@@ -199,15 +199,22 @@ function SidebarTab() {
 
       <SectionTitle>Combat Tab</SectionTitle>
       <p>
-        Weapons currently in flight and a log of combat events. The log uses
-        shorthand:
+        Weapons in flight, your force condition and the full combat record. The
+        record lists every retained event that involves your side, in order,
+        with scenario clock times and names LAUNCH, DEFENDED, HIT, MISS,
+        DAMAGED and LOST. Filter by ALL ACTIVITY, COMBAT or INTEL, by one of
+        your units, and in WeGo by ALL RUN or LAST RESOLVED TURN. Pages show
+        SHOWING X-Y OF Z; LATEST returns to the newest. Enemy units are named
+        only as far as your own contacts identify them; an incoming weapon is
+        shown as INCOMING WEAPON. Reading the record never changes the clock,
+        your orders or the turn.
       </p>
-      <div className="space-y-1">
-        <div><span className="text-[var(--color-terminal-amber)]">{">>"}</span> — Weapon launched</div>
-        <div><span className="text-[var(--color-terminal-red)]">{"**"}</span> — Weapon hit target</div>
-        <div><span className="text-[var(--color-terminal-green)]">{"[]"}</span> — Defenses intercepted the weapon</div>
-        <div><span className="text-[var(--color-terminal-red)]">XX</span> — Unit destroyed</div>
-      </div>
+      <p>
+        VIEW RECORD on a turn review or the mission debrief opens the full
+        record; BACK TO REVIEW or BACK TO DEBRIEF returns to exactly that
+        summary. In a turn review you can still inspect your own units, lost
+        ones included, but orders stay locked until you plan the next turn.
+      </p>
 
       <SectionTitle>Media Tab</SectionTitle>
       <p>

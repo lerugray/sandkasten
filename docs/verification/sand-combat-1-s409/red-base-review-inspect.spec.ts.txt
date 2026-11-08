@@ -1,0 +1,16 @@
+import { test, expect } from "@playwright/test";
+import { openPlay } from "./helpers/sandPlay";
+
+test("RED on base: own-platform inspection during WeGo REVIEW", async ({ page }) => {
+  test.setTimeout(240_000);
+  await openPlay(page, "/play", { e2eHandle: true });
+  await page.getByTestId("mode-wego").click();
+  await page.getByTestId("turn-length-1").click();
+  await page.getByTestId("briefing-close").click();
+  await page.getByTestId("cmd-commit").click();
+  await expect(page.getByTestId("turn-panel")).toHaveAttribute("data-phase", "review", { timeout: 200_000 });
+  await page.getByTestId("force-row").first().click();
+  const n = await page.getByTestId("detail-panel").count();
+  console.log("OBSERVED detail-panel count in REVIEW after selecting an own unit:", n);
+  expect(n).toBe(1);
+});

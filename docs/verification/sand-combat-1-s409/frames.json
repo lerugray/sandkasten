@@ -1,0 +1,158 @@
+{
+  "1440x900-A-review-omitted-preview-and-record-access.png": {
+    "sha256": "0082b999fefcf9b0a0d7f2ce58528bb5e07e083a653dd4d9e3f522e8fdfa91b1",
+    "bytes": 1248332,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-A-review-omitted-preview-and-record-access.png": {
+    "sha256": "99f4dcbf74350a5b5eabf96fd1074507c3009e9a810d59e15ed4b438ad397646",
+    "bytes": 1549010,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-A-review-inspect-own-platform.png": {
+    "sha256": "9417481b9a7a93fdb2c64b7f12b86757db3322703c26909ab5d069adda52cd5d",
+    "bytes": 1206528,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-A-review-inspect-own-platform.png": {
+    "sha256": "e218bdac4e8dc220fe1041bc579de9b638c1b96a014c708d76cf54e273990f29",
+    "bytes": 1432868,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-A-record-last-turn.png": {
+    "sha256": "d323228e1608a713a61cde4eb8717eda0afa139a15d44668d9380cdab7b4cd18",
+    "bytes": 1372006,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-A-record-last-turn.png": {
+    "sha256": "07ac5599e6c19a8b0c210ed868400195d3fe55d986a5fd1956cac2e2d3e49ff7",
+    "bytes": 1694936,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-A-staged-engage.png": {
+    "sha256": "dd45e0c6bf29a0484b6c7f048dc59f7e99f363513e8cca65baf82bb93465ee17",
+    "bytes": 1175882,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-A-staged-engage.png": {
+    "sha256": "e34183a67da02e8fc46e04ffdb8a52e0da7a505eae7be41c6417dbc9e47d9e65",
+    "bytes": 1457076,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-A-staged-engage-cancelled.png": {
+    "sha256": "72e63c7ea0aa6364c114ac7da9ef7c5046c0db68627feabe6c88da3f051a5379",
+    "bytes": 1199181,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-A-staged-engage-cancelled.png": {
+    "sha256": "9064b52f2c8a288303bec8bf6dab1a0ab3ac35d4aaa5b1b625fb13e65bc74b66",
+    "bytes": 1429959,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-A-real-debrief.png": {
+    "sha256": "87aa2c162f03504782e5a41823e9f2af2e9e91a95c735f3a2695c0842180b4df",
+    "bytes": 1017785,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-A-real-debrief.png": {
+    "sha256": "289022cef5302cc28231314fc4f98d8cf28261f55396145f85b32a5329f932ea",
+    "bytes": 1201924,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-A-record-older-activity.png": {
+    "sha256": "5d7b969665b66fed9c516a924b14346ae7ec25e1dd1344dc3b44fe10ffcbf262",
+    "bytes": 1298082,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-A-record-older-activity.png": {
+    "sha256": "d25fc77b8b76971bdd677bd7ba9221b251c24a746308a2f43f6cb4fad38fb0bd",
+    "bytes": 1582232,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-A-record-own-unit-filter.png": {
+    "sha256": "ece1e5732cb766c3e468a89f1390dfa099d3c5721c60e85aca560e8db83a71c8",
+    "bytes": 1213056,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-A-record-own-unit-filter.png": {
+    "sha256": "6a2bac8b74b8be2009c6aa64f154ce85f30841a6f9c2540db2c3fa665d662b43",
+    "bytes": 1477243,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-A-replay-clean.png": {
+    "sha256": "48d500300b47abc173c84fb19682bfb88a0a85613a6ca7d6e078f0af7448acff",
+    "bytes": 1611699,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-A-replay-clean.png": {
+    "sha256": "33749938f01aec3deb139fee9cce69ab2a8088016b0cf72e64a796181fc1089c",
+    "bytes": 2246122,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-B-real-debrief.png": {
+    "sha256": "ddac817edef01fdadc03feb7abc2a1a8fc2f7200d5fde86a30eccd9261bc4430",
+    "bytes": 1063160,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-B-real-debrief.png": {
+    "sha256": "195f30ef2a27ed4bad8b05b4bfb6976ddc97eab1afc4febf78ef979c13083760",
+    "bytes": 1537627,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-B-record-older-activity.png": {
+    "sha256": "d7285748e4fa1f98d4cdaaadfaaf41b99250a3b547de1e9a62fb38685132fe4d",
+    "bytes": 1691318,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-B-record-older-activity.png": {
+    "sha256": "b7a0fc94bffd0552025d902cc5977bcb9c6f95842021ebfe7b0c40fe3d2c5089",
+    "bytes": 2307729,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-B-record-own-unit-filter.png": {
+    "sha256": "5ce758f4c653240ecc5d934e993a68e1e69e3a88de1d6f493c13c374a8ae239e",
+    "bytes": 1659608,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-B-record-own-unit-filter.png": {
+    "sha256": "48fd29aac20ef0b02993434c96f2646821e158ab2c12e42a60cb7d2f7f6b0b35",
+    "bytes": 2284369,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-B-replay-clean.png": {
+    "sha256": "41c07cbb3adf50f829495926b3600de5250789a41841611b2779e794f1167f13",
+    "bytes": 1521643,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-B-replay-clean.png": {
+    "sha256": "81cbd19a35b4108400150da3986f237244104fa8fa253b26968470db437de7ca",
+    "bytes": 2185654,
+    "viewport": "1920x1080",
+    "dpr": 2
+  }
+}

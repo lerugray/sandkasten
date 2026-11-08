@@ -13,7 +13,7 @@ import { ContactList } from "@/components/game/ContactList";
 import { OrderPanel } from "@/components/game/OrderPanel";
 import { useFireControls } from "@/components/game/useFireControls";
 import { MessageLog } from "@/components/game/MessageLog";
-import { CombatLog } from "@/components/game/CombatLog";
+import { CombatRecord, INITIAL_RECORD_VIEW, type RecordView } from "@/components/game/CombatRecord";
 import { MediaFeed } from "@/components/game/infowar/MediaFeed";
 import { HelpPanel } from "@/components/game/help/HelpPanel";
 import { demoScenarioConfig } from "@/lib/scenarios/demoConfig";
@@ -25,7 +25,7 @@ import { trackNumber, type PlotArea, type PlotInput, type PlotInsets } from "@/l
 import { UNIT_STATE_LABEL, missionLines, missionProgress, openingBriefing, transitObjective } from "@/lib/scenarios/objective";
 import type { GeoPoint } from "@/lib/plot/projection";
 import type { Contact } from "@/lib/simulation/gameState";
-import type { CombatEvent } from "@/lib/simulation/combat";
+import { buildFog, ownForce, projectRecord, stateWord, visibleWeapons } from "@/lib/simulation/combatRecord";
 import { Teletype, type TtyLine } from "./Teletype";
 
 const PlotView = dynamic(() => import("@/components/plot/PlotView"), { ssr: false });
@@ -61,14 +61,12 @@ const AUTOPAUSE_LABELS: Record<string, string> = {
   scenarioMessage: "Intel message",
 };
 
-const COMBAT_TAG: Record<string, string> = {
-  launch: "LNCH",
-  intercept: "INTC",
-  hit: "HIT ",
-  miss: "MISS",
-  destroyed: "KILL",
-  damaged: "DMG ",
-  defended: "DEFD",
+const TTY_TAG: Record<string, string> = {
+  LAUNCH: "LNCH",
+  INTERCEPT: "INTC",
+  DAMAGED: "DMG",
+  DEFENDED: "DEFD",
+  INTEL: "INTL",
 };
 
 /** A function-key style command: key cap beside the button, outside its text. */
@@ -186,6 +184,9 @@ export function TerminalPlay() {
   const [focusRequest, setFocusRequest] = useState<{ n: number; unitId: string } | null>(null);
   const [showBriefing, setShowBriefing] = useState(true);
   const [reviewing, setReviewing] = useState(false);
+  const [recordView, setRecordView] = useState<RecordView>(INITIAL_RECORD_VIEW);
+  const [recordHold, setRecordHold] = useState<"review" | null>(null);
+  const [recordFocusN, setRecordFocusN] = useState(0);
   const [areaFocus, setAreaFocus] = useState<{ n: number; areaId: string; include?: { lng: number; lat: number }[]; avoidRight?: number } | null>(null);
   const [homeRequest, setHomeRequest] = useState(0);
   const [moreBelow, setMoreBelow] = useState(false);
@@ -391,9 +392,17 @@ export function TerminalPlay() {
     setFocusRequest(null);
     setAreaFocus(null);
     setReviewing(false);
+    setRecordView(INITIAL_RECORD_VIEW);
+    setRecordHold(null);
+    setRecordFocusN(0);
     setShowBriefing(true);
     if (!frameOpening()) setHomeRequest((n) => n + 1);
   }, [resetSimulation, resetInfoWar, clearTarget, frameOpening]);
+
+  // a held review exists only while the turn is still in review
+  useEffect(() => {
+    if (phase !== "review" || ended) setRecordHold(null);
+  }, [phase, ended]);
 
   // A result or a turn lock ends order entry: drop any half-made order mode and any armed target.
   useEffect(() => {
@@ -434,27 +443,12 @@ export function TerminalPlay() {
   const weaponsInFlight = combatState?.weaponsInFlight ?? [];
   const combatLog = useMemo(() => combatState?.combatLog ?? [], [combatState?.combatLog]);
 
-  // Fog of war in the traffic: an enemy is named only once its contact carries
-  // a classified platform name. Before that it is its track number and
-  // classification level, or UNKNOWN TRACK if no sensor holds it. God mode
-  // shows true names.
-  const fogNames = useMemo(() => {
-    if (godMode) return null;
-    const byUnit = new Map(gameState.contacts.map((c) => [c.actualUnitId, c]));
-    return allUnits
-      .filter((u) => u.side !== playerSide)
-      .map((u) => {
-        const c = byUnit.get(u.id);
-        const label = c ? (c.platformName ? c.platformName : `TN${trackNumber(c.id)} ${CLS_LABEL[c.classification]}`) : "UNKNOWN TRACK";
-        return [u.name, label] as const;
-      })
-      .sort((a, b) => b[0].length - a[0].length);
-  }, [godMode, gameState.contacts, allUnits, playerSide]);
-  const fog = useCallback(
-    (text: string) => (fogNames ? fogNames.reduce((acc, [name, label]) => acc.split(name).join(label), text) : text),
-    [fogNames]
+  // Fog of war in the traffic: an enemy is named only through the player's own contact (classified name, else track
+  // label, else UNKNOWN TRACK). God mode shows true names.
+  const fog = useMemo(
+    () => buildFog({ units: allUnits, contacts: gameState.contacts, playerSide, godMode, trackNumber }),
+    [allUnits, gameState.contacts, playerSide, godMode],
   );
-  const describeEvent = useCallback((e: CombatEvent) => fog(e.description), [fog]);
   const unitName = useCallback(
     (id: string) => {
       const u = allUnits.find((x) => x.id === id);
@@ -463,15 +457,25 @@ export function TerminalPlay() {
     [allUnits, fog]
   );
 
+  const record = useMemo(
+    () => projectRecord({ combatLog, messages, units: allUnits, contacts: gameState.contacts, playerSide, godMode, trackNumber }),
+    [combatLog, messages, allUnits, gameState.contacts, playerSide, godMode],
+  );
+  const ordinaryRecord = useMemo(() => record.filter((r) => !r.debug), [record]);
+  const wifRows = useMemo(
+    () => visibleWeapons(weaponsInFlight, { units: allUnits, contacts: gameState.contacts, playerSide, godMode, trackNumber }),
+    [weaponsInFlight, allUnits, gameState.contacts, playerSide, godMode],
+  );
+  const force = useMemo(() => ownForce(allUnits, playerSide), [allUnits, playerSide]);
+  const ownUnitList = useMemo(() => allUnits.filter((u) => u.side === playerSide).map((u) => ({ id: u.id, name: u.name })), [allUnits, playerSide]);
+  const turnIds = useMemo(
+    () => (wego?.report ? new Set<string>([...wego.report.events.map((e) => e.id), ...wego.report.messageIds]) : null),
+    [wego?.report],
+  );
+
   const ttyLines = useMemo<TtyLine[]>(() => {
     const lines: TtyLine[] = [];
-    for (const e of combatLog) {
-      const hostileAct = e.side !== playerSide && (e.type === "launch" || e.type === "hit" || e.type === "destroyed" || e.type === "damaged");
-      lines.push({ id: e.id, time: e.time, tag: COMBAT_TAG[e.type] ?? e.type.toUpperCase(), text: fog(e.description).toUpperCase(), alarm: hostileAct });
-    }
-    for (const m of messages) {
-      lines.push({ id: m.id, time: m.time, tag: "INTL", text: `${m.title ? m.title.toUpperCase() + "  " : ""}${m.text.toUpperCase()}`, alarm: false });
-    }
+    for (const r of record) lines.push({ id: r.id, time: r.time, tag: TTY_TAG[r.tag] ?? r.tag, text: r.text, alarm: r.alarm });
     if (!ended) lines.push(...holds);
     const snap = demoScenarioConfig.scenario.snapshot;
     if (snap) {
@@ -479,7 +483,7 @@ export function TerminalPlay() {
       lines.push({ id: "snapshot", time: 0, tag: "ADSB", text: `SNAPSHOT ${snap.fetchedAt.slice(0, 16).replace("T", " ")}Z: ${n} AIRCRAFT IN VIEW, ALL LISTED UNDER FORCES`, alarm: false });
     }
     return lines.sort((a, b) => a.time - b.time).slice(-40);
-  }, [combatLog, messages, holds, playerSide, fog, ended]);
+  }, [record, holds, ended]);
 
   // Only the player's own objective geometry is drawn; no enemy mission areas, no detection implied.
   const plotAreas = useMemo<PlotArea[] | undefined>(
@@ -507,7 +511,6 @@ export function TerminalPlay() {
     const pad = (n: number) => String(Math.floor(n)).padStart(2, "0");
     const clock = `T+${pad(el / 3600000)}:${pad((el / 60000) % 60)}:${pad((el / 1000) % 60)}`;
     const kills = combatLog.filter((e) => e.type === "destroyed" && e.side === playerSide).length;
-    const friendlyLosses = friendlyUnits.filter((u) => u.damageState === "destroyed").length;
     let deciding: string;
     if (objective && progress) {
       if (scenarioResult.result === "victory") {
@@ -522,34 +525,36 @@ export function TerminalPlay() {
     } else {
       deciding = scenarioResult.message;
     }
-    const record = ttyLines.filter((l) => l.tag !== "HOLD" && l.tag !== "ADSB").slice(-8);
-    return { deciding, clock, kills, friendlyLosses, record };
-  }, [scenarioResult, gameState.scenario.startTime, gameState.simTime, combatLog, playerSide, friendlyUnits, objective, progress, unitName, ttyLines]);
+    const preview = ordinaryRecord.slice(-8);
+    return { deciding, clock, kills, friendlyLosses: force.lost, record: preview, total: ordinaryRecord.length };
+  }, [scenarioResult, gameState.scenario.startTime, gameState.simTime, combatLog, playerSide, objective, progress, unitName, ordinaryRecord, force.lost]);
 
   const clockOf = (ms: number) => {
     const pad = (n: number) => String(Math.floor(n)).padStart(2, "0");
     return `${pad(ms / 60000)}:${pad((ms / 1000) % 60)}`;
   };
 
-  // WeGo review: only what the player's own picture supports. Hostile text is fogged by the same contact-name rule as the
-  // teletype; hostile-only traffic (events that involve none of the player's units or fire) is left out.
+  // WeGo review: the turn's own-involved rows from the one record projection, by cursor membership.
   const review = useMemo(() => {
     const report = wego?.report;
-    if (!report) return null;
-    const own = new Set(friendlyUnits.map((u) => u.id));
-    const events = report.events.filter((e) => e.side === playerSide || (e.targetId && own.has(e.targetId)) || (e.unitId && own.has(e.unitId)));
-    const lines = events.map((e) => ({
-      id: e.id,
-      time: e.time,
-      tag: (COMBAT_TAG[e.type] ?? e.type.toUpperCase()).trim(),
-      text: fog(e.description).toUpperCase(),
-      alarm: e.side !== playerSide && (e.type === "launch" || e.type === "hit" || e.type === "destroyed" || e.type === "damaged"),
-    }));
-    const intel = messages.filter((m) => report.messageIds.includes(m.id)).map((m) => ({ id: m.id, time: m.time, tag: "INTL", text: `${m.title ? m.title.toUpperCase() + "  " : ""}${m.text.toUpperCase()}`, alarm: false }));
-    const record = [...lines, ...intel].sort((a, b) => a.time - b.time);
-    const kills = events.filter((e) => e.type === "destroyed" && e.side === playerSide).length;
-    return { report, record, kills };
-  }, [wego?.report, friendlyUnits, playerSide, fog, messages]);
+    if (!report || !turnIds) return null;
+    const rows = ordinaryRecord.filter((r) => turnIds.has(r.id));
+    const killIds = new Set(report.events.filter((e) => e.type === "destroyed" && e.side === playerSide).map((e) => e.id));
+    const kills = rows.filter((r) => killIds.has(r.id)).length;
+    return { report, record: rows, kills };
+  }, [wego?.report, turnIds, ordinaryRecord, playerSide]);
+
+  const openRecord = useCallback((from: "review" | "debrief") => {
+    setSidebarTab("combat");
+    setRecordFocusN((n) => n + 1);
+    if (from === "review") {
+      setRecordHold("review");
+      setRecordView({ ...INITIAL_RECORD_VIEW, scope: "turn" });
+    } else {
+      setReviewing(true);
+      setRecordView({ ...INITIAL_RECORD_VIEW });
+    }
+  }, []);
 
   const handleUnitSelect = useCallback((unitId: string | null, shiftKey?: boolean) => {
     if (unitId && shiftKey) {
@@ -567,6 +572,11 @@ export function TerminalPlay() {
     }
     setIsPlacingWaypoint(false);
   }, []);
+
+  const inspectOwn = useCallback((unitId: string) => {
+    handleUnitSelect(unitId);
+    setFocusRequest((prev) => ({ n: (prev?.n ?? 0) + 1, unitId }));
+  }, [handleUnitSelect]);
 
   const handleFacilitySelect = useCallback((facilityId: string | null) => {
     setSelectedFacilityId(facilityId);
@@ -825,7 +835,7 @@ export function TerminalPlay() {
             [
               ["forces", "Forces", null],
               ["messages", "Intel", unreadCount > 0 ? unreadCount : null],
-              ["combat", "Combat", weaponsInFlight.length > 0 ? weaponsInFlight.length : null],
+              ["combat", "Combat", wifRows.length > 0 ? wifRows.length : null],
               ["media", "Media", unreadMediaCount > 0 ? unreadMediaCount : null],
             ] as const
           ).map(([id, label, badge]) => (
@@ -916,19 +926,32 @@ export function TerminalPlay() {
 
           {sidebarTab === "combat" && (
             <section className="tx-section">
-              {weaponsInFlight.length > 0 && (
+              {wifRows.length > 0 && (
                 <div className="tx-wif">
                   <div className="tx-section-head tx-alarm">
-                    <span data-testid="weapons-in-flight-count">Weapons in Flight ({weaponsInFlight.length})</span>
+                    <span data-testid="weapons-in-flight-count">Weapons in Flight ({wifRows.length})</span>
                   </div>
-                  {weaponsInFlight.map((w) => (
-                    <div key={w.id} className="tx-wif-row">
-                      <span className="tx-alarm">{">>"}</span> {w.name} {"->"} {unitName(w.targetId)}
+                  {wifRows.map((w) => (
+                    <div key={w.id} className={`tx-wif-row${w.debug ? " is-god" : ""}`} data-testid="weapon-row">
+                      <span className="tx-alarm">{">>"}</span> {w.debug ? "[GOD] " : ""}{w.label}
                     </div>
                   ))}
                 </div>
               )}
-              <CombatLog events={combatLog} simTime={gameState.simTime} playerSide={playerSide} describe={describeEvent} />
+              <CombatRecord
+                rows={record}
+                turnIds={turnIds}
+                view={recordView}
+                onView={setRecordView}
+                force={force}
+                ownUnits={ownUnitList}
+                selectedUnitId={selectedUnitId}
+                onInspect={inspectOwn}
+                autoFocus={recordFocusN > 0}
+                key={recordFocusN}
+                returnLabel={recordHold === "review" ? "BACK TO REVIEW" : reviewing ? "BACK TO DEBRIEF" : undefined}
+                onReturn={recordHold === "review" ? () => setRecordHold(null) : reviewing ? () => setReviewing(false) : undefined}
+              />
             </section>
           )}
 
@@ -1053,8 +1076,8 @@ export function TerminalPlay() {
       )}
 
       {/* Right column: the selected track */}
-      {selectedUnit && !(isWeGo && phase === "review" && !ended) && (
-        <div className="tx-right" data-plot-occluder>
+      {selectedUnit && (selectedUnit.side === playerSide || !(isWeGo && phase === "review" && !ended)) && (
+        <div className="tx-right" data-plot-occluder data-testid="detail-column">
           <DetailPanel
             unit={selectedUnit}
             onClose={() => setSelectedUnitId(null)}
@@ -1080,8 +1103,18 @@ export function TerminalPlay() {
         </div>
       )}
 
-      {isWeGo && wego && phase === "review" && review && !ended && (
-        <section className="tx-panel tx-briefing tx-review" data-testid="turn-review" data-plot-occluder role="region" aria-label="Turn review">
+      {isWeGo && wego && phase === "review" && review && !ended && recordHold === "review" && (
+        <div className="tx-banner tx-result-strip" data-testid="review-hold-strip" data-plot-occluder>
+          <span>[ REVIEW ] TURN {review.report.turn} HELD</span>
+          <button type="button" className="tx-btn is-on" data-testid="review-back" onClick={() => setRecordHold(null)} onMouseDown={(e) => e.preventDefault()}>
+            BACK TO REVIEW
+          </button>
+        </div>
+      )}
+      {isWeGo && wego && phase === "review" && review && !ended && recordHold !== "review" && (
+        <section
+          className={`tx-panel tx-briefing tx-review${selectedUnit && selectedUnit.side === playerSide ? " has-detail" : ""}`}
+          data-testid="turn-review" data-plot-occluder role="region" aria-label="Turn review">
           <div className="tx-briefing-head">
             <span>[ REVIEW ] TURN {review.report.turn}</span>
             <span className="tx-dim">ELAPSED {clockOf(review.report.elapsedMs)}  //  {new Date(review.report.endTime).toISOString().slice(11, 19)}Z</span>
@@ -1089,9 +1122,15 @@ export function TerminalPlay() {
           <div className="tx-review-body">
             <div data-testid="review-losses">
               <b>YOUR LOSSES</b>{" "}
-              {review.report.ownLosses.length === 0
+              {review.report.ownLosses.filter((l) => l.to === "destroyed").length === 0
                 ? "NONE"
-                : review.report.ownLosses.map((l) => `${l.name.toUpperCase()} ${l.to === "destroyed" ? "LOST" : l.to.replace("-", " ").toUpperCase()}`).join("  //  ")}
+                : review.report.ownLosses.filter((l) => l.to === "destroyed").map((l) => `${l.name.toUpperCase()} LOST`).join("  //  ")}
+            </div>
+            <div data-testid="review-damage">
+              <b>DAMAGE</b>{" "}
+              {review.report.ownLosses.filter((l) => l.to !== "destroyed").length === 0
+                ? "NONE"
+                : review.report.ownLosses.filter((l) => l.to !== "destroyed").map((l) => `${l.name.toUpperCase()} ${stateWord(l.to)}`).join("  //  ")}
             </div>
             {review.report.outcomes.length > 0 && (
               <div data-testid="review-fire">
@@ -1103,8 +1142,13 @@ export function TerminalPlay() {
               <div className="tx-alarm" data-testid="review-alerts"><b>ALERTS</b> {review.report.alerts.map((a) => a.toUpperCase()).join("  //  ")}</div>
             )}
             <div className="tx-section-head">Record</div>
+            <div className="tx-dim" data-testid="review-record-count">
+              {review.record.length <= 5
+                ? `ALL ${review.record.length} OF ${review.record.length} THIS TURN SHOWN`
+                : `SHOWING LATEST 5 OF ${review.record.length} THIS TURN  //  ${review.record.length - 5} EARLIER NOT SHOWN HERE`}
+            </div>
             {review.record.length === 0 && <div className="tx-dim">NOTHING OBSERVED THIS TURN</div>}
-            {review.record.slice(-8).map((l) => (
+            {review.record.slice(-5).map((l) => (
               <div key={l.id} className={`tx-result-line${l.alarm ? " is-alarm" : ""}`}>
                 {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag} {l.text}
               </div>
@@ -1114,6 +1158,9 @@ export function TerminalPlay() {
           <div className="tx-briefing-foot">
             <span>ENTER OR NEXT TURN OPENS PLANNING AT THIS EXACT STATE</span>
             <span className="tx-briefing-actions">
+              <button type="button" className="tx-btn" data-testid="review-view-record" onClick={() => openRecord("review")} onMouseDown={(e) => e.preventDefault()}>
+                VIEW RECORD ({review.record.length})
+              </button>
               <button type="button" className="tx-btn is-on" data-testid="review-next-turn" onClick={nextTurn} onMouseDown={(e) => e.preventDefault()}>
                 NEXT TURN
               </button>
@@ -1263,19 +1310,33 @@ export function TerminalPlay() {
               {isWeGo && wego && (
                 <div data-testid="result-turns"><b>TURNS</b> {wego.turnsCommitted} COMMITTED  //  {wego.turnMinutes} MIN EACH  //  WEGO</div>
               )}
-              <div><b>YOUR LOSSES</b> {debrief.friendlyLosses}  //  <b>HOSTILE KILLS CONFIRMED</b> {debrief.kills}</div>
+              <div data-testid="result-losses"><b>YOUR LOSSES</b> {debrief.friendlyLosses}  //  <b>HOSTILE KILLS CONFIRMED</b> {debrief.kills}</div>
+              <div data-testid="result-condition">
+                <b>OWN FORCE</b> {force.total - force.damaged - force.missionKill - force.lost} UNDAMAGED  //  {force.damaged} DAMAGED  //  {force.missionKill} MISSION KILL  //  {force.lost} LOST
+              </div>
+              {force.affected.length > 0 && (
+                <div data-testid="result-affected">
+                  {force.affected.map((a) => `${a.name.toUpperCase()} ${stateWord(a.state)}`).join("  //  ")}
+                </div>
+              )}
             </div>
             <div className="tx-result-record" data-testid="result-record">
               <div className="tx-section-head">Record</div>
               {debrief.record.length === 0 && <div className="tx-dim">NO TRAFFIC RECORDED</div>}
               {debrief.record.map((l) => (
                 <div key={l.id} className={`tx-result-line${l.alarm ? " is-alarm" : ""}`}>
-                  {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag.trim()} {l.text}
+                  {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag} {l.text}
                 </div>
               ))}
+              <div className="tx-dim" data-testid="result-record-count">
+                {debrief.total <= debrief.record.length
+                  ? `ALL ${debrief.total} OF ${debrief.total} ENTRIES SHOWN`
+                  : `SHOWING LATEST ${debrief.record.length} OF ${debrief.total}  //  ${debrief.total - debrief.record.length} EARLIER NOT SHOWN HERE`}
+              </div>
             </div>
             <div className="tx-result-actions">
               <button type="button" onClick={handleReset} onKeyDown={swallowSpace} onKeyUp={swallowSpace} className="tx-btn is-on" data-testid="play-again" autoFocus>PLAY AGAIN</button>
+              <button type="button" onClick={() => openRecord("debrief")} className="tx-btn" data-testid="debrief-view-record">VIEW RECORD ({debrief.total})</button>
               <button type="button" onClick={() => setReviewing(true)} className="tx-btn" data-testid="review-record">REVIEW RECORD</button>
               <a href="/" className="tx-btn">MAIN MENU</a>
             </div>
