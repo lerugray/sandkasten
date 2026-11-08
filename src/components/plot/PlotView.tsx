@@ -13,7 +13,7 @@ export interface PlotViewProps {
   zoomRequest?: { n: number; factor: number };
   focusRequest?: { n: number; unitId: string } | null;
   facilityFocusRequest?: { n: number; facilityId: string } | null;
-  areaFocusRequest?: { n: number; areaId: string } | null;
+  areaFocusRequest?: { n: number; areaId: string; include?: { lng: number; lat: number }[]; avoidRight?: number } | null;
   homeRequest?: number;
   onFacilitySelect?: (facilityId: string | null) => void;
   onOsintSelect?: (siteId: string | null) => void;
@@ -86,7 +86,7 @@ export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, f
   }, [facilityFocusRequest]);
 
   useEffect(() => {
-    if (areaFocusRequest) plotRef.current?.focusArea(areaFocusRequest.areaId);
+    if (areaFocusRequest) plotRef.current?.focusArea(areaFocusRequest.areaId, { include: areaFocusRequest.include, avoidRight: areaFocusRequest.avoidRight });
   }, [areaFocusRequest]);
 
   useEffect(() => {

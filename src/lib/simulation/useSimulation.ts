@@ -19,6 +19,12 @@ export function useSimulation(config: ScenarioConfig) {
   if (!sessionRef.current) sessionRef.current = new SimulationSession(config);
   const session = sessionRef.current;
 
+  // Opt-in E2E handle: only a page that sets window.__SAND_E2E__ before load gets the live session.
+  useEffect(() => {
+    const w = window as unknown as { __SAND_E2E__?: boolean; __sandSession?: SimulationSession };
+    if (w.__SAND_E2E__) w.__sandSession = session;
+  }, [session]);
+
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => session.snapshot());
   const publish = useCallback(() => setSnapshot(session.snapshot()), [session]);
 

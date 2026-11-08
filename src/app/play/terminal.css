@@ -753,10 +753,9 @@
 /* opening briefing: the mission objective in full, gone on the first key or click */
 .tx-briefing {
   position: absolute;
-  left: calc(50% + 180px);
-  top: 40%;
-  transform: translate(-50%, -50%);
-  width: min(600px, calc(100vw - 420px));
+  right: 16px;
+  top: 76px;
+  width: min(540px, calc(100vw - 420px));
   z-index: 25;
   padding: 0 0 12px;
 }

@@ -408,6 +408,7 @@ export class TacticalPlot {
   private areaSource: PlotArea[] | undefined;
   private areaFills: THREE.Mesh[] = [];
   private areaLabelCount = 0;
+  private pendingAreaFocus: { areaId: string; opts: { include?: { lng: number; lat: number }[]; avoidRight?: number } } | null = null;
   private osintLabelCount = 0;
   private relief: THREE.Mesh | null = null;
   private reliefWire: LineSegments2 | null = null;
@@ -772,23 +773,33 @@ export class TacticalPlot {
     });
   }
 
-  /** Glide to a mission area and zoom until it fills a good part of the free area between the panels. */
-  focusArea(areaId: string) {
+  /**
+   * Glide to a mission area and zoom until it fills a good part of the free area between the panels.
+   * `include` widens the frame to more points; `avoidRight` keeps that many px on the right clear (a docked card).
+   */
+  focusArea(areaId: string, opts: { include?: { lng: number; lat: number }[]; avoidRight?: number } = {}) {
     const a = this.input?.areas?.find((x) => x.id === areaId);
-    if (!a) return;
+    if (!a) {
+      this.pendingAreaFocus = { areaId, opts };
+      return;
+    }
+    this.pendingAreaFocus = null;
     let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
-    for (const p of a.points) {
+    for (const p of [...a.points, ...(opts.include ?? [])]) {
       const x = this.proj.x(p.lng), y = this.proj.y(p.lat);
       x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
     }
-    const freeW = Math.max(200, this.W - this.insets.left - this.insets.right);
+    const avoid = opts.avoidRight ?? 0;
+    const freeW = Math.max(200, this.W - this.insets.left - this.insets.right - avoid);
     const freeH = Math.max(150, this.H - this.insets.top - this.insets.bottom);
+    const fill = opts.include?.length ? 0.68 : 0.55;
     // world km that one screen pixel spans at distance d is 2 d tan(FOV/2) / H
-    const need = Math.max(((x1 - x0) * this.H) / (0.55 * freeW), ((y1 - y0) * this.H) / (0.55 * freeH));
+    const need = Math.max(((x1 - x0) * this.H) / (fill * freeW), ((y1 - y0) * this.H) / (fill * freeH));
     this.vel.set(0, 0);
-    this.glide = new THREE.Vector2((x0 + x1) / 2, (y0 + y1) / 2);
     this.zoomAnchor = null;
     this.distGoal = THREE.MathUtils.clamp(need / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 2600);
+    const kmPerPx = (2 * this.distGoal * Math.tan(THREE.MathUtils.degToRad(FOV / 2))) / this.H;
+    this.glide = new THREE.Vector2((x0 + x1) / 2 + (avoid / 2) * kmPerPx, (y0 + y1) / 2);
   }
 
   /** Back to the opening theater view (a fresh run). */
@@ -949,7 +960,7 @@ export class TacticalPlot {
         return { x: s.x, y: s.y };
       },
       focusFacility: (id: string) => this.focusFacility(id),
-      focusArea: (id: string) => this.focusArea(id),
+      focusArea: (id: string, opts?: { include?: { lng: number; lat: number }[]; avoidRight?: number }) => this.focusArea(id, opts),
       drawnAreas: () => ({ areas: this.input?.areas?.length ?? 0, labels: this.areaLabelCount }),
       areaScreen: (id: string) => {
         const a = this.input?.areas?.find((x) => x.id === id);
@@ -1585,6 +1596,7 @@ export class TacticalPlot {
 
       // mission areas: the scenario's own polygon, outlined and labelled in the hi tone (a reference, not a contact)
       this.areaLabelCount = 0;
+      if (this.pendingAreaFocus) this.focusArea(this.pendingAreaFocus.areaId, this.pendingAreaFocus.opts);
       for (const a of input.areas ?? []) {
         if (a.points.length < 3) continue;
         dashed.breakRun();

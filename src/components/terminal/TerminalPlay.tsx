@@ -168,7 +168,7 @@ export function TerminalPlay() {
   const [focusRequest, setFocusRequest] = useState<{ n: number; unitId: string } | null>(null);
   const [showBriefing, setShowBriefing] = useState(true);
   const [reviewing, setReviewing] = useState(false);
-  const [areaFocus, setAreaFocus] = useState<{ n: number; areaId: string } | null>(null);
+  const [areaFocus, setAreaFocus] = useState<{ n: number; areaId: string; include?: { lng: number; lat: number }[]; avoidRight?: number } | null>(null);
   const [homeRequest, setHomeRequest] = useState(0);
   const [moreBelow, setMoreBelow] = useState(false);
   const panelBodyRef = useRef<HTMLDivElement>(null);
@@ -194,6 +194,20 @@ export function TerminalPlay() {
     setShowBriefing(true);
   }, [pause]);
   const closeBriefing = useCallback(() => setShowBriefing(false), []);
+
+  // The opening view frames the gate and the protected ship in the part of the plot the docked briefing leaves clear.
+  const frameOpening = useCallback(() => {
+    if (!objective) return false;
+    const start = demoScenarioConfig.scenario.sides.flatMap((sd) => sd.units).find((u) => u.id === objective.unitId)?.position;
+    const avoidRight = Math.min(540, window.innerWidth - 420) + 28;
+    setAreaFocus((f) => ({ n: (f?.n ?? 0) + 1, areaId: objective.areaId, include: start ? [start] : undefined, avoidRight }));
+    return true;
+  }, [objective]);
+  useEffect(() => {
+    frameOpening();
+    // once, on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleMeasure = useCallback(() => {
     setMeasureMode((prev) => {
@@ -347,8 +361,8 @@ export function TerminalPlay() {
     setAreaFocus(null);
     setReviewing(false);
     setShowBriefing(true);
-    setHomeRequest((n) => n + 1);
-  }, [resetSimulation, resetInfoWar, clearTarget]);
+    if (!frameOpening()) setHomeRequest((n) => n + 1);
+  }, [resetSimulation, resetInfoWar, clearTarget, frameOpening]);
 
   // A result ends order entry: drop any half-made order mode.
   useEffect(() => {
