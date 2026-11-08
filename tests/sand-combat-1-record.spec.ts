@@ -310,7 +310,7 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
               const number = /\b(\d{4})\b/.exec(first.optionText)?.[1];
               const rowText1 = (await page.getByTestId("staged-fire").innerText()).replace(/\s+/g, " ");
               if (number) expect(rowText1, "staged row shows the number the selector offered").toContain(number);
-              await expect(page.getByTestId("staged-fire")).toHaveAttribute("data-contact-id", first.contactId);
+              await expect(page.getByTestId("staged-fire").locator("[data-contact-id]")).toHaveAttribute("data-contact-id", first.contactId);
               await shotBoth(page, "A-staged-engage");
               await page.getByTestId("staged-cancel").click();
               await expect(page.getByTestId("staged-fire")).toHaveCount(0);
