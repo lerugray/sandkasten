@@ -1,0 +1,16 @@
+
+> sandkasten@0.1.0 test:unit
+> vitest run
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.1.0 /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten
+
+
+ Test Files  24 passed (24)
+      Tests  286 passed (286)
+   Start at  11:22:05
+   Duration  7.54s (tests 73%, import 18%, transform 8%, worker 1%)
+

@@ -1,0 +1,375 @@
+{
+ "note": "sha256 of every file in this directory at the time of the report commit",
+ "files": [
+  {
+   "path": "1440x900-final-record-strip.png",
+   "sha256": "cb1f5b4bd555aaba31f014c9ac652e0556e9afba0f1a578554357a669337e892",
+   "bytes": 1416961
+  },
+  {
+   "path": "1440x900-fixture-carrier-loss-defeat-debrief.png",
+   "sha256": "0e440a3b226621adf515e38347b69a800146ebb54791405320605554fc0f1849",
+   "bytes": 1028056
+  },
+  {
+   "path": "1440x900-fixture-score-draw-debrief.png",
+   "sha256": "13a642e9dab37c1623b72051477b4a912ae1c892158beaddab42b4475d03bef0",
+   "bytes": 942961
+  },
+  {
+   "path": "1440x900-fixture-score-victory-debrief.png",
+   "sha256": "c3f91ea009a5f254d2fe40ab73a28e2e0444f69d51289eb3c48564f0dc4709df",
+   "bytes": 962461
+  },
+  {
+   "path": "1440x900-play-briefing.png",
+   "sha256": "dbf558d783d26e5d66e49e13fc0fd66db198c52050cb3e1f2e79323d517f73c8",
+   "bytes": 1511342
+  },
+  {
+   "path": "1440x900-play1-debrief.png",
+   "sha256": "f28ba7ea7a06da0d80500d319edccb5fec90f466c6d075191b87debe16ceb0cd",
+   "bytes": 1162994
+  },
+  {
+   "path": "1440x900-play2-debrief.png",
+   "sha256": "d844c7bac56f38c4eb2d29cf6006432063be8a4a393260f4a9d042a02127cf95",
+   "bytes": 1042931
+  },
+  {
+   "path": "1440x900-play2-orders.png",
+   "sha256": "55baf69e804471be6cfbe63b011e16928c8718b506357535edd924d34b611b4f",
+   "bytes": 1483803
+  },
+  {
+   "path": "1920x1080-final-record-strip.png",
+   "sha256": "1df3f81835434b8932979d50365d365b2c6f0d40432f88f93b7ba88a27496e55",
+   "bytes": 2097123
+  },
+  {
+   "path": "1920x1080-fixture-carrier-loss-defeat-debrief.png",
+   "sha256": "934374c9ba0de8ca20f6049255eabba09ad6ce4b4d9ff39cdd3b30d8905c1233",
+   "bytes": 1587861
+  },
+  {
+   "path": "1920x1080-fixture-score-draw-debrief.png",
+   "sha256": "5320ec28ad9f76adaecf45ea642fe61afaf0676c06fe61952ab137ac9bb25177",
+   "bytes": 1442649
+  },
+  {
+   "path": "1920x1080-fixture-score-victory-debrief.png",
+   "sha256": "b4524110af13e6b92b06ea73eaf2a0820463436f19cd7d0f40e02083fedca83f",
+   "bytes": 1457896
+  },
+  {
+   "path": "1920x1080-play-briefing.png",
+   "sha256": "5f495e5de5fe2d305c880ac2bccdf51ed6fd9cd0e044572321d60dfff9b8ce83",
+   "bytes": 2168293
+  },
+  {
+   "path": "1920x1080-play1-debrief.png",
+   "sha256": "a1d21a0c832bc3f7d5851aba97af1a574b83d8ff9cce093759ba7542eb24af44",
+   "bytes": 1459266
+  },
+  {
+   "path": "1920x1080-play2-debrief.png",
+   "sha256": "d1b28c364e83b60d979ba0f6a419602d20edc64080688d049aed60680d38d5c5",
+   "bytes": 1549177
+  },
+  {
+   "path": "1920x1080-play2-orders.png",
+   "sha256": "b5d17d7eac315bfaa69a3059d8ccd68ff4f1b55b1fe4f998f1f83a01dd78022e",
+   "bytes": 2031635
+  },
+  {
+   "path": "combat-1-carries/1440x900-A-real-debrief.png",
+   "sha256": "7c3a5ba8622185eed760af4e3bd3c2dced17fc92ab5e9dedbc8a713d48720c47",
+   "bytes": 986352
+  },
+  {
+   "path": "combat-1-carries/1440x900-A-record-last-turn.png",
+   "sha256": "af0df76c34c6d5680f12e01b861a397f90143d1193b57e21c21a2d2bb3412d0e",
+   "bytes": 1368764
+  },
+  {
+   "path": "combat-1-carries/1440x900-A-record-older-activity.png",
+   "sha256": "6170507f122d0ab00f49e3981aaf34aa13cb89487a1e58f4c6a42800413f8f34",
+   "bytes": 1211052
+  },
+  {
+   "path": "combat-1-carries/1440x900-A-record-own-unit-filter.png",
+   "sha256": "459261ecfda1818718933653ed20a54e411f46153122c4d4e1b7cfad1967b91d",
+   "bytes": 1129268
+  },
+  {
+   "path": "combat-1-carries/1440x900-A-replay-clean.png",
+   "sha256": "17f1a58c7d10c70c468070d8a0d00446a6436c36e728ecaae807fd4aa3617ae9",
+   "bytes": 1625412
+  },
+  {
+   "path": "combat-1-carries/1440x900-A-review-fire-receipt.png",
+   "sha256": "104fa1c47e551e78204bfc323204a75239aaec68b6556a1c6eb01b6b8c02356c",
+   "bytes": 1337853
+  },
+  {
+   "path": "combat-1-carries/1440x900-A-review-fire-refusal-fixture.png",
+   "sha256": "f733b0258ed292f1ccb1c1f599f94fbb860e1958be7d535ad36992924dfe29b9",
+   "bytes": 1273073
+  },
+  {
+   "path": "combat-1-carries/1440x900-A-review-inspect-own-platform.png",
+   "sha256": "fd9f3f119ae08690b1fbed7fa13594ba5d842e5201261f068567cbdb0ce17944",
+   "bytes": 1188034
+  },
+  {
+   "path": "combat-1-carries/1440x900-A-review-omitted-preview-and-record-access.png",
+   "sha256": "c345923ea197798a02d185573ca259a630ecb6585c06ee00b00282c9f5072439",
+   "bytes": 1252905
+  },
+  {
+   "path": "combat-1-carries/1440x900-A-staged-engage-cancelled.png",
+   "sha256": "8d82b622140f5cb74c51a45dd6b0e745a3cde88b427d36e83397ccf01a5327cb",
+   "bytes": 1198193
+  },
+  {
+   "path": "combat-1-carries/1440x900-A-staged-engage.png",
+   "sha256": "91cc10be2e852efeb9c9779004fb59ff6c940e09085bf1601d2922f458040302",
+   "bytes": 1170039
+  },
+  {
+   "path": "combat-1-carries/1440x900-B-real-debrief.png",
+   "sha256": "603afe97fce28541d5eb36ca188b2c42022e2b5e7128df4a3a4c1d928fad0549",
+   "bytes": 1077526
+  },
+  {
+   "path": "combat-1-carries/1440x900-B-record-older-activity.png",
+   "sha256": "e4e23faba0e1f50257a65e02e1551ec46a10ac705d960beca5af9d958317e3bf",
+   "bytes": 1721813
+  },
+  {
+   "path": "combat-1-carries/1440x900-B-record-own-unit-filter.png",
+   "sha256": "547278d9adb6c6cb054dcc2e051e3aa490e8f18da41448e90d28b6de013768c4",
+   "bytes": 1680484
+  },
+  {
+   "path": "combat-1-carries/1440x900-B-replay-clean.png",
+   "sha256": "aaf3e8c2cb711cdbd5d30f297f2d130fb29340e8a0018d251752185c808aba76",
+   "bytes": 1531895
+  },
+  {
+   "path": "combat-1-carries/1920x1080-A-real-debrief.png",
+   "sha256": "42fb8f5657f573bc8b3d7ae1804109f5de45bcb48a2bfc044f82cbc87c0c809b",
+   "bytes": 1163068
+  },
+  {
+   "path": "combat-1-carries/1920x1080-A-record-last-turn.png",
+   "sha256": "1f47b63183f7e6e52e58e6bcff6e4cd1cb1ac05b01c5d0df233fa112900903c5",
+   "bytes": 1691492
+  },
+  {
+   "path": "combat-1-carries/1920x1080-A-record-older-activity.png",
+   "sha256": "c4ade2c9669d8817ee53644657f1099b815cac0b8ceeb722edcdcea33adcf00b",
+   "bytes": 1425031
+  },
+  {
+   "path": "combat-1-carries/1920x1080-A-record-own-unit-filter.png",
+   "sha256": "7b261e38ffaca34fb5a2d09408229b3279dcfd10178a232bed29ebd584455c07",
+   "bytes": 1296229
+  },
+  {
+   "path": "combat-1-carries/1920x1080-A-replay-clean.png",
+   "sha256": "19ec2d57a12b2fed7bac050c480c044f94738e031a590fa7c6892aecf7df6ec3",
+   "bytes": 2253856
+  },
+  {
+   "path": "combat-1-carries/1920x1080-A-review-fire-receipt.png",
+   "sha256": "a2c5b63ca508fbd04992d6a45ce1480c20d72a9b0ce8fa303ad2ae85d962dcf1",
+   "bytes": 1662773
+  },
+  {
+   "path": "combat-1-carries/1920x1080-A-review-fire-refusal-fixture.png",
+   "sha256": "e28fef14eeb2331304ff9f6aab7405098e9a25108f17a065e797844cd8bc1142",
+   "bytes": 1660212
+  },
+  {
+   "path": "combat-1-carries/1920x1080-A-review-inspect-own-platform.png",
+   "sha256": "39a8967ec330f0e232cba856389ef5d86e8caa30d06fa038bfb540cbe0f987cd",
+   "bytes": 1432462
+  },
+  {
+   "path": "combat-1-carries/1920x1080-A-review-omitted-preview-and-record-access.png",
+   "sha256": "12cf9950678cf9d371b58198bbed08e0a724869932f3f468365a08c6c05c257e",
+   "bytes": 1547130
+  },
+  {
+   "path": "combat-1-carries/1920x1080-A-staged-engage-cancelled.png",
+   "sha256": "f0312bdb3d2d6c86deab3b8f3195c2c0b735ac625d22d4192fea7b0777ca9940",
+   "bytes": 1435020
+  },
+  {
+   "path": "combat-1-carries/1920x1080-A-staged-engage.png",
+   "sha256": "e8f1141c18b889e5fcfe293de5fe0d504eaa40e3c44cdced1fec19e384519e4b",
+   "bytes": 1461751
+  },
+  {
+   "path": "combat-1-carries/1920x1080-B-real-debrief.png",
+   "sha256": "96d6fd37c99630c3388c0149016bcd025de73fbca475378e16d6344db655ed48",
+   "bytes": 1488193
+  },
+  {
+   "path": "combat-1-carries/1920x1080-B-record-older-activity.png",
+   "sha256": "6e9db0598ab5630bc00290a79d2e80557a8eba90d73a622230fa8478e05cf441",
+   "bytes": 2240436
+  },
+  {
+   "path": "combat-1-carries/1920x1080-B-record-own-unit-filter.png",
+   "sha256": "51a6599f895715037344d123f19bdfa2e4562b58285036167fc2e1ea384183cb",
+   "bytes": 2201706
+  },
+  {
+   "path": "combat-1-carries/1920x1080-B-replay-clean.png",
+   "sha256": "d4778f783da1f22d8e399dec543eea20a9c133526e6db6009f52b9283c7974a6",
+   "bytes": 2164506
+  },
+  {
+   "path": "combat-1-carries/frames.json",
+   "sha256": "084b2751c23e309778361855929c3054ee1c92bbf7496e4591c0a3d3ab14d081",
+   "bytes": 5819
+  },
+  {
+   "path": "combat-1-carries/plan-A-direct-flank-wego.json",
+   "sha256": "e77f1976d8fcb7a7053b9a57c698ee6373272ca018cd5a8375bb9b4021e8940f",
+   "bytes": 12285
+  },
+  {
+   "path": "combat-1-carries/plan-B-escorted-dogleg-continuous.json",
+   "sha256": "9ec30bb171de7060f7a2f156afe6d6e0adfd665fa7346f22b36a06ec61182370",
+   "bytes": 2278
+  },
+  {
+   "path": "e2e-early.log",
+   "sha256": "b86d143a156fc860c4ed1bd534433d97c8676a35ed89c5d0a4a1c26db191b00e",
+   "bytes": 35661
+  },
+  {
+   "path": "e2e-rerun.log",
+   "sha256": "3769c2aeca1dade456352508b527174b9e783a5b15bb3c9ca3c97f001be11229",
+   "bytes": 6580
+  },
+  {
+   "path": "e2e-rerun3.log",
+   "sha256": "afd11343ee6c86c8ba30ce017301a2567294cf8da40dc312f6929e166b440f4c",
+   "bytes": 7161
+  },
+  {
+   "path": "early-run/1440x900-fixture-carrier-loss-defeat-debrief.png",
+   "sha256": "c916a6ed116b699a545cc84a8035c0890298262e3de4462c5023ecf13bea3a8c",
+   "bytes": 975467
+  },
+  {
+   "path": "early-run/1440x900-fixture-score-draw-debrief.png",
+   "sha256": "18aa8808ff5dfefb823270770dd2ad7e49dea08dbf23b0c79bc5261586532c6b",
+   "bytes": 942821
+  },
+  {
+   "path": "early-run/1440x900-play-briefing.png",
+   "sha256": "998bac705634016df265bd98348f6efdfe5ba482f0b1bdf0037833c77ef3ef42",
+   "bytes": 1511192
+  },
+  {
+   "path": "early-run/1440x900-play1-debrief.png",
+   "sha256": "11de441c4574cb85e5dcd9c58f854e0222f49c33e60066cf29d24c0559d77702",
+   "bytes": 1159553
+  },
+  {
+   "path": "early-run/1440x900-play2-orders.png",
+   "sha256": "5697e258e31f341b86d558f23d40ac252b851492a044b929a77e278525151937",
+   "bytes": 1487611
+  },
+  {
+   "path": "early-run/1920x1080-fixture-carrier-loss-defeat-debrief.png",
+   "sha256": "a5eb65fa9d4939732cd2452464fac6e00d3b347f98346c2626f17b1d4aa7438d",
+   "bytes": 1500026
+  },
+  {
+   "path": "early-run/1920x1080-fixture-score-draw-debrief.png",
+   "sha256": "837727635d6452ebe7cbc21fb3ee55e79191b76ffdf98c0835157267fc100d64",
+   "bytes": 1441836
+  },
+  {
+   "path": "early-run/1920x1080-play-briefing.png",
+   "sha256": "6d02441b898509bbab74188a829f2a1667024b1f6605b86e266552efff3078d7",
+   "bytes": 2164787
+  },
+  {
+   "path": "early-run/1920x1080-play1-debrief.png",
+   "sha256": "d74aa0f5a319e32e8ba02393a2b5a366d4ac84383f730e1d06e3add145ce9c9e",
+   "bytes": 1343018
+  },
+  {
+   "path": "early-run/1920x1080-play2-orders.png",
+   "sha256": "c715e3ef48f7e03f067941d1a48bfd7a5f2487e6b122cda1ff8d8374168fb1f7",
+   "bytes": 1866558
+  },
+  {
+   "path": "early-run/e2e-early.clean.log",
+   "sha256": "c704ee2664d52814358302bc75276316f1375d9a1b02ad87a11dfd617eb29bff",
+   "bytes": 28267
+  },
+  {
+   "path": "final/battery.txt",
+   "sha256": "24a8b284f71f7608c55be6649dabbb7beaf54772c5d51ae7aeceb5d5695cd0f0",
+   "bytes": 139
+  },
+  {
+   "path": "final/build.log",
+   "sha256": "acaefb2b8c15af8a9273e34f32e9fff8315dc0b2b9dc51c231da673f153b7fc3",
+   "bytes": 796
+  },
+  {
+   "path": "final/e2e-helper-fix-verify.log",
+   "sha256": "841946c9f3373b4da229e91c12ade5d19a485655d9d4f78dd131e7bb4578f979",
+   "bytes": 3034
+  },
+  {
+   "path": "final/e2e.log",
+   "sha256": "4175a2471bcd02b1f1015dd4c5207a64497994b30eca7732e8369d4f8ef8d93d",
+   "bytes": 27135
+  },
+  {
+   "path": "final/tsc.log",
+   "sha256": "edfc45da088eb068a793e8df1ecbb65e0fd023bd0c7b211a1e86058c9dcb7db5",
+   "bytes": 628
+  },
+  {
+   "path": "final/unit.log",
+   "sha256": "a8c5cb8ea704333fdbd96c48771c8b010d852ac41eeb546ff70f337d8a989cc9",
+   "bytes": 637
+  },
+  {
+   "path": "frames.json",
+   "sha256": "665336356c0ab8234ceb638f850aa3d9a54ceaf3f11a3f126c117d3c3173e020",
+   "bytes": 3070
+  },
+  {
+   "path": "replay-rounds.json",
+   "sha256": "7efa6bbc697226cb68a84499019914ba150b9d9d79ce81ebb2dbdfa7fcc1fee0",
+   "bytes": 1866
+  },
+  {
+   "path": "strip-intersections.json",
+   "sha256": "e9479c1d3285717146cc3c0e01bf2d8b3841a214be0a26bdf7bfdf692ed11084",
+   "bytes": 341
+  },
+  {
+   "path": "two-plays.json",
+   "sha256": "bde5492cabc1fd2fc5ea64aedb37f5496e48c78d494c264bdaa057b116dba5b4",
+   "bytes": 5222
+  },
+  {
+   "path": "unit-red-on-base.log",
+   "sha256": "4d72a68327f6d65294d4ebc34e88229792c042b3f148bb3a05632ddf362fed3b",
+   "bytes": 23195
+  }
+ ]
+}

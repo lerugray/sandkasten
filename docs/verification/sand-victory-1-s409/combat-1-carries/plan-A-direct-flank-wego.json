@@ -1,0 +1,425 @@
+{
+  "plan": "A direct/flank, WeGo 5 min",
+  "renderer": "ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)",
+  "holdStrip": {
+    "1440x900": {
+      "present": true,
+      "strip": {
+        "x": 360,
+        "y": 96,
+        "w": 384.5,
+        "h": 38
+      },
+      "hits": [],
+      "clipped": false
+    },
+    "1920x1080": {
+      "present": true,
+      "strip": {
+        "x": 360,
+        "y": 96,
+        "w": 384.5,
+        "h": 38
+      },
+      "hits": [],
+      "clipped": false
+    }
+  },
+  "cancel": {
+    "turn": 2,
+    "cancelledRow": "HORNET 101 -> TN9484 DET CANCEL",
+    "stagedRowsAfter": 0,
+    "feedback": "Fire order cancelled."
+  },
+  "staged": {
+    "turn": 2,
+    "shooter": "Hornet 101",
+    "selectorOption": "TN9484 DET",
+    "stagedRow": "HORNET 101 -> TN9484 DET CANCEL",
+    "contactId": "contact-6",
+    "restagedOption": "TN9484 DET",
+    "restagedRow": "HORNET 101 -> TN9484 DET CANCEL",
+    "restagedContactId": "contact-6"
+  },
+  "fireReceipt": {
+    "turn": 2,
+    "shooter": "Hornet 101",
+    "shooterId": "us-fa18-1",
+    "contactId": "contact-6",
+    "selectorOption": "TN9484 DET",
+    "stagedRow": "HORNET 101 -> TN9484 DET CANCEL",
+    "status": "launched",
+    "text": "HORNET 101 -> TN9484 DET: LAUNCHED"
+  },
+  "refusedFixture": {
+    "label": "FIXTURE: contact removed from the live session between staging and commit",
+    "turn": 3,
+    "shooter": "Hornet 101",
+    "shooterId": "us-fa18-1",
+    "contactId": "contact-1",
+    "selectorOption": "TN2103 DET",
+    "stagedRow": "HORNET 101 -> TN2103 DET CANCEL",
+    "status": "refused",
+    "text": "HORNET 101 -> TN2103 DET: REFUSED, NO SUCH CONTACT"
+  },
+  "turns": [
+    {
+      "turn": 1,
+      "eventsThisTurn": 6,
+      "preview": "SHOWING LATEST 5 OF 9 THIS TURN // 4 EARLIER NOT SHOWN HERE",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE",
+      "recordCheck": {
+        "turnRows": 9,
+        "firstTurnRows": [
+          {
+            "id": "msg-1773554401000-0-do8w",
+            "type": "intel",
+            "tag": "INTEL",
+            "text": "06:00:01Z\nINTEL\nOPERATION SENTINEL PASSAGE YOUR CARRIER STRIKE GROUP MUST TRANSIT THE STRAIT OF HORMUZ: BRING USS NIMITZ INTO THE MARKED TRANSIT GATE. IRANIAN NAVAL FORCES ARE PATROLLING THE STRAIT. RULES OF ENGAGEMENT: WEAPONS TIGHT — ENGAGE ONLY IF FIRED UPON. INTELLIGENCE INDICATES IRANIAN FAST ATTACK CRAFT ARMED WITH C-802 ANTI-SHIP MISSILES IN THE AREA."
+          },
+          {
+            "id": "msg-1773554401000-1-m9og",
+            "type": "intel",
+            "tag": "INTEL",
+            "text": "06:00:01Z\nINTEL\nCONTACT REPORT RADAR CONTACT DETECTED. POSSIBLE IRANIAN NAVAL VESSEL. MAINTAIN COURSE AND SPEED. CONTINUE TO MONITOR."
+          },
+          {
+            "id": "msg-1773554401000-2-q11e",
+            "type": "intel",
+            "tag": "INTEL",
+            "text": "06:00:01Z\nINTEL\nINTELLIGENCE UPDATE SIGINT INTERCEPTS INDICATE IRANIAN NAVAL COMMAND HAS ORDERED PATROL BOATS TO INCREASE READINESS. IRGCN UNITS ARE GOING WEAPONS-FREE."
+          },
+          {
+            "id": "ce-3",
+            "type": "launch",
+            "tag": "LAUNCH",
+            "text": "06:03:50Z\nLAUNCH\nTN2103 DET LAUNCHED 2× AIM-54A PHOENIX AT HORNET 102\nINSPECT HORNET 102"
+          }
+        ]
+      }
+    },
+    {
+      "turn": 2,
+      "eventsThisTurn": 12,
+      "preview": "SHOWING LATEST 5 OF 12 THIS TURN // 7 EARLIER NOT SHOWN HERE",
+      "losses": "YOUR LOSSES HORNET 102 LOST",
+      "damage": "DAMAGE NONE",
+      "fireReceipt": {
+        "turn": 2,
+        "shooter": "Hornet 101",
+        "shooterId": "us-fa18-1",
+        "contactId": "contact-6",
+        "selectorOption": "TN9484 DET",
+        "stagedRow": "HORNET 101 -> TN9484 DET CANCEL",
+        "status": "launched",
+        "text": "HORNET 101 -> TN9484 DET: LAUNCHED"
+      }
+    },
+    {
+      "turn": 3,
+      "eventsThisTurn": 13,
+      "preview": "SHOWING LATEST 5 OF 13 THIS TURN // 8 EARLIER NOT SHOWN HERE",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 4,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 5,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 6,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 7,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 8,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 9,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 10,
+      "eventsThisTurn": 0,
+      "preview": "ALL 1 OF 1 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 11,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 12,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 13,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 14,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 15,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 16,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 17,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 18,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 19,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 20,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 21,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 22,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 23,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 24,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 25,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 26,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 27,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 28,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 29,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 30,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 31,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 32,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 33,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 34,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 35,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 36,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    },
+    {
+      "turn": 37,
+      "eventsThisTurn": 0,
+      "preview": "ALL 0 OF 0 THIS TURN SHOWN",
+      "losses": "YOUR LOSSES NONE",
+      "damage": "DAMAGE NONE"
+    }
+  ],
+  "result": "[ VICTORY ]",
+  "deciding": "DECIDED BY USS Nimitz entered the transit gate (afloat, undamaged).",
+  "debrief": {
+    "previewText": "SHOWING LATEST 8 OF 35 // 27 EARLIER NOT SHOWN HERE",
+    "total": 35,
+    "firstWindow": "SHOWING 1-20 OF 35 // PAGE 1/2",
+    "filtered": 7,
+    "filterUnit": "us-fa18-2",
+    "firstRows": [
+      {
+        "id": "msg-1773554401000-0-do8w",
+        "type": "intel",
+        "tag": "INTEL",
+        "text": "06:00:01Z\nINTEL\nOPERATION SENTINEL PASSAGE YOUR CARRIER STRIKE GROUP MUST TRANSIT THE STRAIT OF HORMUZ: BRING USS NIMITZ INTO THE MARKED TRANSIT GATE. IRANIAN NAVAL FORCES ARE PATROLLING THE STRAIT. RULES OF ENGAGEMENT: WEAPONS TIGHT — ENGAGE ONLY IF FIRED UPON. INTELLIGENCE INDICATES IRANIAN FAST ATTACK CRAFT ARMED WITH C-802 ANTI-SHIP MISSILES IN THE AREA."
+      },
+      {
+        "id": "msg-1773554401000-1-m9og",
+        "type": "intel",
+        "tag": "INTEL",
+        "text": "06:00:01Z\nINTEL\nCONTACT REPORT RADAR CONTACT DETECTED. POSSIBLE IRANIAN NAVAL VESSEL. MAINTAIN COURSE AND SPEED. CONTINUE TO MONITOR."
+      },
+      {
+        "id": "msg-1773554401000-2-q11e",
+        "type": "intel",
+        "tag": "INTEL",
+        "text": "06:00:01Z\nINTEL\nINTELLIGENCE UPDATE SIGINT INTERCEPTS INDICATE IRANIAN NAVAL COMMAND HAS ORDERED PATROL BOATS TO INCREASE READINESS. IRGCN UNITS ARE GOING WEAPONS-FREE."
+      }
+    ],
+    "lastRows": [
+      {
+        "id": "ce-48",
+        "type": "miss",
+        "tag": "MISS",
+        "text": "06:13:30Z\nMISS\nAIM-7E SPARROW FROM TN8803 DET RAN OUT OF FUEL\nINSPECT HORNET 101"
+      },
+      {
+        "id": "ce-49",
+        "type": "miss",
+        "tag": "MISS",
+        "text": "06:13:30Z\nMISS\nAIM-7E SPARROW FROM TN8803 DET RAN OUT OF FUEL\nINSPECT HORNET 101"
+      },
+      {
+        "id": "msg-1773557101000-3-a7zo",
+        "type": "intel",
+        "tag": "INTEL",
+        "text": "06:45:01Z\nINTEL\nNEW CONTACTS MULTIPLE FAST-MOVING SURFACE CONTACTS DETECTED DEPARTING BANDAR ABBAS. ASSESS AS IRGCN BOGHAMMAR-CLASS FAST ATTACK CRAFT."
+      }
+    ],
+    "facts": {
+      "total": 8,
+      "lost": [
+        "Hornet 102"
+      ],
+      "mk": [],
+      "dmg": [],
+      "condition": "OWN FORCE 7 UNDAMAGED // 0 DAMAGED // 0 MISSION KILL // 1 LOST",
+      "affected": "HORNET 102 LOST",
+      "losses": "YOUR LOSSES 1 // HOSTILE KILLS CONFIRMED 4"
+    }
+  }
+}

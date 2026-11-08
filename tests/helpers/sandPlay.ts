@@ -63,8 +63,8 @@ export async function runUntilResult(page: Page, timeoutMs: number) {
   const t0 = Date.now();
   while (Date.now() - t0 < timeoutMs) {
     if (await overlay.isVisible()) return;
-    const label = ((await page.getByTestId("sim-toggle-pause").textContent()) ?? "").trim();
-    if (/PLAY/i.test(label)) await page.getByTestId("sim-toggle-pause").click().catch(() => {});
+    const label = ((await page.getByTestId("sim-toggle-pause").textContent({ timeout: 2000 }).catch(() => null)) ?? "").trim();
+    if (/PLAY/i.test(label)) await page.getByTestId("sim-toggle-pause").click({ timeout: 2000 }).catch(() => {});
     await page.waitForTimeout(400);
   }
   await expect(overlay).toBeVisible({ timeout: 1000 });

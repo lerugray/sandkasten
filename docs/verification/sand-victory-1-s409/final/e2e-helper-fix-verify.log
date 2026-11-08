@@ -1,0 +1,21 @@
+start 12:15:31 sha=8c41ebf +helper edit
+
+Running 14 tests using 1 worker
+
+  ✓   1 [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1440x900 DPR 2 (16.5s)
+  ✓   2 [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1920x1080 DPR 2 (16.3s)
+  ✓   3 [chromium] › tests/sand-victory-1-replay.spec.ts:46:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › debrief to record and back keeps the verdict; Enter replays, Space does not; two replays leave nothing behind (4.3s)
+  ✓   4 [chromium] › tests/sand-victory-1-replay.spec.ts:126:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › RESET after a result and RESET in a WeGo plan both return to a fresh briefing with no leftover orders (3.5s)
+  ✓   5 [chromium] › tests/sand-victory-1.spec.ts:65:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted score ending names its rule, shows the score, and PLAY AGAIN starts fresh (6.5s)
+  ✓   6 [chromium] › tests/sand-victory-1.spec.ts:110:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted draw and a combat-loss defeat each name their own rule (10.2s)
+  ✓   7 [chromium] › tests/sand-victory-1.spec.ts:146:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › the final-record strip crosses no title, panel or control at 1440x900 and 1920x1080 (7.8s)
+  ✓   8 [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1440x900 DPR 2 (15.8s)
+  ✓   9 [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1920x1080 DPR 2 (16.6s)
+  ✓  10 [chromium] › tests/sand-victory-1-replay.spec.ts:46:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › debrief to record and back keeps the verdict; Enter replays, Space does not; two replays leave nothing behind (4.3s)
+  ✓  11 [chromium] › tests/sand-victory-1-replay.spec.ts:126:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › RESET after a result and RESET in a WeGo plan both return to a fresh briefing with no leftover orders (3.5s)
+  ✓  12 [chromium] › tests/sand-victory-1.spec.ts:65:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted score ending names its rule, shows the score, and PLAY AGAIN starts fresh (6.9s)
+  ✓  13 [chromium] › tests/sand-victory-1.spec.ts:110:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted draw and a combat-loss defeat each name their own rule (10.4s)
+  ✓  14 [chromium] › tests/sand-victory-1.spec.ts:146:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › the final-record strip crosses no title, panel or control at 1440x900 and 1920x1080 (8.0s)
+
+  14 passed (2.3m)
+exit=0 end 12:17:49

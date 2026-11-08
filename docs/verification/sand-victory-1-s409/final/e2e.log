@@ -1,0 +1,235 @@
+
+> sandkasten@0.1.0 test:e2e
+> playwright test --workers=1 --reporter=line
+
+
+Running 105 tests using 1 worker
+
+[1A[2K[1/105] [chromium] › tests/design-system.spec.ts:7:7 › Terminal register design system › home page — screenshot for visual review
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[2/105] [chromium] › tests/design-system.spec.ts:14:7 › Terminal register design system › play page — screenshot of initial state
+[1A[2K[3/105] [chromium] › tests/design-system.spec.ts:21:7 › Terminal register design system › play page — tilt mode screenshot
+[1A[2K[4/105] [chromium] › tests/design-system.spec.ts:34:7 › Terminal register design system › play page — unit selected with detail panel
+[1A[2K[5/105] [chromium] › tests/design-system.spec.ts:43:7 › Terminal register design system › play page — help panel screenshot
+[1A[2K[6/105] [chromium] › tests/design-system.spec.ts:51:7 › Terminal register design system › editor page — screenshot
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[7/105] [chromium] › tests/design-system.spec.ts:58:7 › Terminal register design system › SANDKASTEN title uses the phosphor primary colour
+[1A[2K[8/105] [chromium] › tests/design-system.spec.ts:67:7 › Terminal register design system › vendored terminal font is loaded and used
+[1A[2K[9/105] [chromium] › tests/design-system.spec.ts:85:7 › Terminal register design system › no remote font requests on /play
+[1A[2K[10/105] [chromium] › tests/design-system.spec.ts:101:7 › Terminal register design system › chrome overlays do not resize the canvas
+[1A[2K[11/105] [chromium] › tests/platform-database.spec.ts:38:7 › platform database data › every demo platform has a complete, sourced, licensed record
+[1A[2K[12/105] [chromium] › tests/platform-database.spec.ts:158:7 › platform database data › the API and engine lookup serve the first-party records
+[1A[2K[13/105] [chromium] › tests/platform-database.spec.ts:177:7 › platform viewer › steps through every demo platform with photo or placeholder, brief, tables and sources
+[1A[2K[14/105] [chromium] › tests/platform-database.spec.ts:231:7 › platform viewer › opens by id and slug, filters, and moves with the keyboard
+[1A[2K[15/105] [chromium] › tests/sand-001-unit-placement.spec.ts:9:7 › sand-001 — Unit placement + selection (editor) › place 3 units, drag one, select each and verify detail panel
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[16/105] [chromium] › tests/sand-002-radar-detection.spec.ts:4:7 › sand-002 — Radar detection transitions › contacts transition Unknown → Detected → Classified → Tracked
+[1A[2K[17/105] [chromium] › tests/sand-003-combat.spec.ts:17:7 › sand-003 — Combat launch + impact › weapon tracks appear, WIF count updates, combat log shows impacts
+[1A[2K[18/105] [chromium] › tests/sand-004-autopause.spec.ts:9:7 › sand-004 — Autopause trigger system › autopauses on new contact, incoming weapon, and switches tabs
+[1A[2K[19/105] [chromium] › tests/sand-005-fow-godmode.spec.ts:20:7 › sand-005 — Fog-of-war vs god-mode toggle › god-mode ON reveals all units and removes uncertainty circles
+[1A[2K[20/105] [chromium] › tests/sand-006-waypoint-throttle.spec.ts:9:7 › sand-006 — Waypoints + throttle interaction › waypoints render, flank throttle set, unit moves and waypoints clear
+[1A[2K[21/105] [chromium] › tests/sand-007-engage-roe.spec.ts:20:7 › sand-007 — player ENGAGE order and ROE › the US fires at an Iranian contact through the order panel
+[1A[2K[22/105] [chromium] › tests/sand-007-engage-roe.spec.ts:56:7 › sand-007 — player ENGAGE order and ROE › a unit with no weapons gets no ENGAGE control
+[1A[2K[23/105] [chromium] › tests/sand-007-engage-roe.spec.ts:70:7 › sand-007 — player ENGAGE order and ROE › ROE keys and buttons change the selected unit's rules
+[1A[2K[24/105] [chromium] › tests/sand-007-engage-roe.spec.ts:93:7 › sand-007 — player ENGAGE order and ROE › under the default TIGHT ROE a unit under attack fires back on its own
+[1A[2K[25/105] [chromium] › tests/sand-combat-1-record.spec.ts:245:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan A (direct flank), WeGo: staged ENGAGE, CANCEL, commit, review, inspection, record, debrief
+[1A[2K[26/105] [chromium] › tests/sand-combat-1-record.spec.ts:457:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan B (escorted dog-leg), continuous: record, debrief, record flow, clean replay
+[1A[2K[27/105] [chromium] › tests/sand-combat-1-record.spec.ts:503:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › fog, GOD, paging, place-keeping, empty filters, reset (own fixtures, continuous)
+[1A[2K[28/105] [chromium] › tests/sand-combat-1-record.spec.ts:612:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › demo, snapshot, demo, legacy: the record belongs to the run it was read from
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[29/105] [chromium] › tests/sand-map-1-facilities.spec.ts:49:7 › SAND-MAP-1 facilities + globe/terrain › facility layer builds with tiered symbol layers and OSM attribution
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[30/105] [chromium] › tests/sand-map-1-facilities.spec.ts:62:7 › SAND-MAP-1 facilities + globe/terrain › clicking Oghab 44 opens the panel with runways and based units
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[31/105] [chromium] › tests/sand-map-1-facilities.spec.ts:87:7 › SAND-MAP-1 facilities + globe/terrain › facilities toggle hides and shows the layer
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[32/105] [chromium] › tests/sand-map-1-facilities.spec.ts:98:7 › SAND-MAP-1 facilities + globe/terrain › globe projection toggles; terrain and satellite switch on
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[WebServer] [36m[browser][39m [33mYou are using the same source for a hillshade layer and for 3D terrain. Please consider using two separate sources to improve rendering quality.[39m [2m(src/components/map/TacticalMap.tsx:210:13)[22m
+
+[1A[2K[WebServer] [36m[browser][39m [33mcalculateFogMatrix is not supported on globe projection.[39m
+
+[1A[2K[33/105] [chromium] › tests/sand-map-1-facilities.spec.ts:118:7 › SAND-MAP-1 facilities + globe/terrain › projection is flat at tactical zoom and globe when zoomed out
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[34/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:30:7 › SAND-MAP-2 default /play facilities › the plot draws facility symbols and runways
+[1A[2K[35/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:40:7 › SAND-MAP-2 default /play facilities › the plot shows persistent OSM / OurAirports credits
+[1A[2K[36/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:48:7 › SAND-MAP-2 default /play facilities › clicking Oghab 44 opens the facility panel with runways; X closes it
+[1A[2K[37/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:65:7 › SAND-MAP-2 default /play facilities › clicking a military airbase at close zoom opens its panel (Havadarya)
+[1A[2K[38/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:76:7 › SAND-MAP-2 default /play facilities › a unit based at a facility lists its home base in the unit panel (god mode)
+[1A[2K[39/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: map (/)
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[40/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: map light theme
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[41/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: map with satellite
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[42/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: /play?map=legacy
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[43/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: /editor
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[44/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: /play plot
+[1A[2K[45/105] [chromium] › tests/sand-map-2-plot-facilities.spec.ts:132:7 › SAND-MAP-2 keyless base map on every view › OpenFreeMap tiles load and OSM attribution shows; satellite adds EOX credit with its licence
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[46/105] [chromium] › tests/sand-osint-1-frames.spec.ts:33:7 › verification frames at 1440x900
+[1A[2K[47/105] [chromium] › tests/sand-osint-1-frames.spec.ts:33:7 › verification frames at 1920x1080
+[1A[2K[48/105] [chromium] › tests/sand-osint-1-overlap-map.spec.ts:20:7 › /map has zero overlaps at 1440x900
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[WebServer] [36m[browser][39m [33mYou are using the same source for a hillshade layer and for 3D terrain. Please consider using two separate sources to improve rendering quality.[39m [2m(src/components/map/TacticalMap.tsx:210:13)[22m
+
+[1A[2K[49/105] [chromium] › tests/sand-osint-1-overlap-map.spec.ts:20:7 › /map has zero overlaps at 1920x1080
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[WebServer] [36m[browser][39m [33mYou are using the same source for a hillshade layer and for 3D terrain. Please consider using two separate sources to improve rendering quality.[39m [2m(src/components/map/TacticalMap.tsx:210:13)[22m
+
+[1A[2K[WebServer] [36m[browser][39m [31mInvalidStateError: The source image could not be decoded.[39m
+[WebServer] [31mInvalidStateError: The source image could not be decoded.[39m [2m(<anonymous>)[22m
+
+[1A[2K[50/105] [chromium] › tests/sand-osint-1-overlap-plot.spec.ts:12:7 › no overlaps among labels, blocks, symbols, icons and the scale bar at 1440x900
+[1A[2K[chromium] › tests/sand-osint-1-overlap-plot.spec.ts:12:7 › no overlaps among labels, blocks, symbols, icons and the scale bar at 1440x900
+cold-boot@1440x900 {"label":18,"block":8,"unit":8,"facility-icon":25,"osint-icon":4,"scale":1}
+
+[1A[2Kfac-oikb@1440x900 {"label":4,"facility-icon":1,"scale":1}
+
+[1A[2Kfac-oikp@1440x900 {"label":3,"scale":1}
+
+[1A[2Kfac-ir-0069@1440x900 {"label":2,"scale":1}
+
+[1A[2Kosint-bandar-abbas@1440x900 {"label":26,"unit":2,"facility-icon":20,"osint-icon":2,"scale":1}
+
+[1A[2Ksnapshot@1440x900 {"label":13,"block":9,"unit":36,"facility-icon":38,"osint-icon":3,"scale":1}
+
+[1A[2Ksnapshot-qeshm@1440x900 {"label":6,"scale":1}
+
+[1A[2K[51/105] [chromium] › tests/sand-osint-1-overlap-plot.spec.ts:12:7 › no overlaps among labels, blocks, symbols, icons and the scale bar at 1920x1080
+[1A[2K[chromium] › tests/sand-osint-1-overlap-plot.spec.ts:12:7 › no overlaps among labels, blocks, symbols, icons and the scale bar at 1920x1080
+cold-boot@1920x1080 {"label":36,"block":8,"unit":8,"facility-icon":38,"osint-icon":2,"scale":1}
+
+[1A[2Kfac-oikb@1920x1080 {"label":6,"facility-icon":1,"scale":1}
+
+[1A[2Kfac-oikp@1920x1080 {"label":5,"facility-icon":1,"osint-icon":1,"scale":1}
+
+[1A[2Kfac-ir-0069@1920x1080 {"label":3,"scale":1}
+
+[1A[2Kosint-bandar-abbas@1920x1080 {"label":35,"block":2,"unit":3,"facility-icon":34,"osint-icon":3,"scale":1}
+
+[1A[2Ksnapshot@1920x1080 {"label":39,"block":24,"unit":59,"facility-icon":71,"osint-icon":4,"scale":1}
+
+[1A[2Ksnapshot-qeshm@1920x1080 {"label":7,"facility-icon":1,"osint-icon":1,"scale":1}
+
+[1A[2K[52/105] [chromium] › tests/sand-osint-1-rings.spec.ts:29:7 › SAND-OSINT-1 /play plot › rings render for AD and radar sites; layer toggles hide and show them
+[1A[2K[53/105] [chromium] › tests/sand-osint-1-rings.spec.ts:45:7 › SAND-OSINT-1 /play plot › clicking an S-300 site opens the panel with the ESTIMATED range; X closes it
+[1A[2K[54/105] [chromium] › tests/sand-osint-1-rings.spec.ts:65:7 › SAND-OSINT-1 /play plot › the credit line names the OSINT sources
+[1A[2K[55/105] [chromium] › tests/sand-osint-1-rings.spec.ts:74:7 › SAND-OSINT-1 label rules › no label drawn on the plot contains Arabic-script characters, at theatre, Kish and Bandar Abbas zooms
+[1A[2K[56/105] [chromium] › tests/sand-osint-1-rings.spec.ts:99:7 › SAND-OSINT-1 MapLibre map › every OSINT label anchors to the nearest icon of its own feature, and none is in Arabic script
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[57/105] [chromium] › tests/sand-osint-1-rings.spec.ts:126:7 › SAND-OSINT-1 MapLibre map › the map credit line names OSINT sites: Auftragstaktik, like /play
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[58/105] [chromium] › tests/sand-osint-1-rings.spec.ts:132:7 › SAND-OSINT-1 MapLibre map › map toggles exist and a facility with OSINT fields shows them in its panel
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[59/105] [chromium] › tests/sand-osint-1-rings.spec.ts:140:7 › SAND-OSINT-1 MapLibre map › the map builds OSINT ring and symbol layers; the AD toggle removes AD features
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[60/105] [chromium] › tests/sand-osint-1-rings.spec.ts:159:7 › SAND-OSINT-1 snapshot scenario › /play?scenario=snapshot opens the committed ADS-B snapshot offline and runs
+[1A[2K[61/105] [chromium] › tests/sand-osint-1-rings.spec.ts:193:7 › SAND-OSINT-1 snapshot scenario › the editor SNAPSHOT button opens the same scenario
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[62/105] [chromium] › tests/sand-play-1-objective.spec.ts:5:7 › SAND-PLAY-1 CP1: the objective is legible before and during play › fresh /play shows the mission, the real gate, and a focus action; nothing is ordered by reading it
+[1A[2K[63/105] [chromium] › tests/sand-play-1-objective.spec.ts:49:7 › SAND-PLAY-1 CP1: the objective is legible before and during play › the briefing is recallable from the panel and from the keyboard, and closes with Esc/Enter/button
+[1A[2K[64/105] [chromium] › tests/sand-play-1-objective.spec.ts:81:7 › SAND-PLAY-1 CP1: the objective is legible before and during play › focus actions: SHOW GATE fits the real polygon on screen and GATE re-centres it
+[1A[2K[65/105] [chromium] › tests/sand-play-1-objective.spec.ts:105:7 › SAND-PLAY-1 CP1: the objective is legible before and during play › the snapshot route and legacy routes are not given the Hormuz objective
+[1A[2K[66/105] [chromium] › tests/sand-play-1-plans.spec.ts:47:7 › SAND-PLAY-1: two distinct plans, played through the ordinary UI, reach a real victory › plan A: the carrier alone, flank, straight at the gate
+[1A[2K[67/105] [chromium] › tests/sand-play-1-plans.spec.ts:69:7 › SAND-PLAY-1: two distinct plans, played through the ordinary UI, reach a real victory › plan B: escorts ahead to the gate, the carrier by a southern dog-leg at full
+[1A[2K[68/105] [chromium] › tests/sand-play-1-result.spec.ts:5:7 › SAND-PLAY-1 CP2: a real result, a frozen game, and a clean replay › defeat through the production combat path, frozen after, and PLAY AGAIN twice leaves nothing behind
+[1A[2K[69/105] [chromium] › tests/sand-play-1-result.spec.ts:99:7 › SAND-PLAY-1 CP2: a real result, a frozen game, and a clean replay › RESET mid-run returns to a fresh paused briefing too
+[1A[2K[70/105] [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1440x900 DPR 2
+[1A[2K[71/105] [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1920x1080 DPR 2
+[1A[2K[72/105] [chromium] › tests/sand-victory-1-plays.spec.ts:82:7 › SAND-VICTORY-1: two real wins with different orders, the second after PLAY AGAIN › direct/flank continuous, then escorted dog-leg WeGo
+[1A[2K[73/105] [chromium] › tests/sand-victory-1-replay.spec.ts:46:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › debrief to record and back keeps the verdict; Enter replays, Space does not; two replays leave nothing behind
+[1A[2K[74/105] [chromium] › tests/sand-victory-1-replay.spec.ts:126:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › RESET after a result and RESET in a WeGo plan both return to a fresh briefing with no leftover orders
+[1A[2K[75/105] [chromium] › tests/sand-victory-1.spec.ts:65:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted score ending names its rule, shows the score, and PLAY AGAIN starts fresh
+[1A[2K[76/105] [chromium] › tests/sand-victory-1.spec.ts:110:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted draw and a combat-loss defeat each name their own rule
+[1A[2K  1) [chromium] › tests/sand-victory-1.spec.ts:110:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted draw and a combat-loss defeat each name their own rule 
+
+    [31mTest timeout of 400000ms exceeded.[39m
+
+    Error: page.waitForTimeout: Target page, context or browser has been closed
+
+       at helpers/sandPlay.ts:68
+
+      66 |     const label = ((await page.getByTestId("sim-toggle-pause").textContent()) ?? "").trim();
+      67 |     if (/PLAY/i.test(label)) await page.getByTestId("sim-toggle-pause").click().catch(() => {});
+    > 68 |     await page.waitForTimeout(400);
+         |                ^
+      69 |   }
+      70 |   await expect(overlay).toBeVisible({ timeout: 1000 });
+      71 | }
+        at runUntilResult (/home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/helpers/sandPlay.ts:68:16)
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-victory-1.spec.ts:118:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-victory-1-SAND-VICTOR-1c1df-at-each-name-their-own-rule-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-victory-1-SAND-VICTOR-1c1df-at-each-name-their-own-rule-chromium/error-context.md
+
+
+[1A[2K[77/105] [chromium] › tests/sand-victory-1.spec.ts:146:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › the final-record strip crosses no title, panel or control at 1440x900 and 1920x1080
+[1A[2K[78/105] [chromium] › tests/sand-wego-1-flow.spec.ts:178:7 › SAND-WEGO-1: the turn loop and the command lock › mode choice, planning, a queued ENGAGE that waits, commit, resolution lock, review, next turn
+[1A[2K[79/105] [chromium] › tests/sand-wego-1-flow.spec.ts:263:7 › SAND-WEGO-1: the turn loop and the command lock › both sides stay in fog: the review lists only what the player's side saw
+[1A[2K[80/105] [chromium] › tests/sand-wego-1-flow.spec.ts:289:7 › SAND-WEGO-1: two real victories through the ordinary UI (GOD off) › plan A: the carrier alone, flank, straight at the gate (with a queued ENGAGE)
+[1A[2K[81/105] [chromium] › tests/sand-wego-1-flow.spec.ts:354:7 › SAND-WEGO-1: two real victories through the ordinary UI (GOD off) › plan B: escorts ahead to the gate, the carrier by a southern dog-leg at full
+[1A[2K[82/105] [chromium] › tests/sand-wego-1-flow.spec.ts:403:7 › SAND-WEGO-1: two real victories through the ordinary UI (GOD off) › a defeat resolves through the same turn path, then PLAY AGAIN replays cleanly
+[1A[2K[83/105] [chromium] › tests/sand-wego-1-flow.spec.ts:441:7 › SAND-WEGO-1: the continuous and snapshot routes stay continuous › demo, then the real snapshot, then the demo again, and legacy: no WeGo controls or state leak
+[1A[2K[84/105] [chromium] › tests/sand-wego-1-flow.spec.ts:524:9 › SAND-WEGO-1: look inspection at 1440x900 and 1920x1080, DPR 2 › flat and tilted gate, phase panels, font floors at 1440x900
+[1A[2K[85/105] [chromium] › tests/sand-wego-1-flow.spec.ts:524:9 › SAND-WEGO-1: look inspection at 1440x900 and 1920x1080, DPR 2 › flat and tilted gate, phase panels, font floors at 1920x1080
+[1A[2K[86/105] [chromium] › tests/simulation.spec.ts:39:7 › Simulation gameplay › simulation clock advances when unpaused
+[1A[2K[87/105] [chromium] › tests/simulation.spec.ts:55:7 › Simulation gameplay › contacts appear after simulation runs
+[1A[2K[88/105] [chromium] › tests/simulation.spec.ts:70:7 › Simulation gameplay › combat log gets entries after engagement
+[1A[2K[89/105] [chromium] › tests/simulation.spec.ts:83:7 › Simulation gameplay › selecting a unit and opening waypoint mode
+[1A[2K[90/105] [chromium] › tests/simulation.spec.ts:95:7 › Simulation gameplay › intel tab shows messages after events fire
+[1A[2K[91/105] [chromium] › tests/simulation.spec.ts:107:7 › Simulation gameplay › reset button restarts the simulation
+[1A[2K[92/105] [chromium] › tests/simulation.spec.ts:119:7 › Simulation gameplay › autopause triggers on new contact detection
+[1A[2K[93/105] [chromium] › tests/simulation.spec.ts:131:7 › Simulation gameplay › god mode toggle shows all units
+[1A[2K[94/105] [chromium] › tests/smoke.spec.ts:4:7 › Home page › loads with header and navigation links
+[1A[2K[95/105] [chromium] › tests/smoke.spec.ts:11:7 › Home page › shows scenario name and units on the map
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K[96/105] [chromium] › tests/smoke.spec.ts:16:7 › Home page › theme toggle switches between dark and light
+[1A[2K[97/105] [chromium] › tests/smoke.spec.ts:31:7 › Play page › loads with header, time controls, and sidebar
+[1A[2K[98/105] [chromium] › tests/smoke.spec.ts:40:7 › Play page › shows friendly units in sidebar
+[1A[2K[99/105] [chromium] › tests/smoke.spec.ts:45:7 › Play page › shows contacts section
+[1A[2K[100/105] [chromium] › tests/smoke.spec.ts:49:7 › Play page › pause/resume with spacebar
+[1A[2K[101/105] [chromium] › tests/smoke.spec.ts:55:7 › Play page › help panel opens with ? button and closes with Escape
+[1A[2K[102/105] [chromium] › tests/smoke.spec.ts:63:7 › Play page › sidebar tabs switch content
+[1A[2K[103/105] [chromium] › tests/smoke.spec.ts:77:7 › Play page › clicking a unit in the sidebar shows the order panel
+[1A[2K[104/105] [chromium] › tests/smoke.spec.ts:86:7 › Play page › speed control buttons are present
+[1A[2K[105/105] [chromium] › tests/smoke.spec.ts:92:7 › Editor page › loads without errors
+[1A[2K[WebServer] [36m[browser][39m [33mUnable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.[39m [2m(<anonymous>)[22m
+
+[1A[2K  Slow test file: [chromium] › tests/sand-wego-1-flow.spec.ts (10.6m)
+  Slow test file: [chromium] › tests/sand-combat-1-record.spec.ts (8.7m)
+  Slow test file: [chromium] › tests/sand-play-1-plans.spec.ts (7.7m)
+  Slow test file: [chromium] › tests/sand-victory-1-plays.spec.ts (7.7m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    [chromium] › tests/sand-victory-1.spec.ts:110:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted draw and a combat-loss defeat each name their own rule 
+  2 skipped
+  102 passed (52.6m)

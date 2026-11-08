@@ -1,97 +1,97 @@
 {
   "1440x900-play-briefing.png": {
-    "sha256": "9866b290ca9bccb68313062698a4b8291fefcd8ca2a2f97f7c09e3e3fb8e8418",
-    "bytes": 1513600,
+    "sha256": "dbf558d783d26e5d66e49e13fc0fd66db198c52050cb3e1f2e79323d517f73c8",
+    "bytes": 1511342,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-play-briefing.png": {
-    "sha256": "110b85d5778a4d7b4607f0bca2f29aff5de3ab4c4c5c563366dc05b9f0dd8f87",
-    "bytes": 2181394,
+    "sha256": "5f495e5de5fe2d305c880ac2bccdf51ed6fd9cd0e044572321d60dfff9b8ce83",
+    "bytes": 2168293,
     "viewport": "1920x1080",
     "dpr": 2
   },
   "1440x900-play1-debrief.png": {
-    "sha256": "c29ac84663ac9a0a1f224b3f0b8e7d9cb0810b82aca0d0956a36e34f8824332c",
-    "bytes": 1176618,
+    "sha256": "f28ba7ea7a06da0d80500d319edccb5fec90f466c6d075191b87debe16ceb0cd",
+    "bytes": 1162994,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-play1-debrief.png": {
-    "sha256": "6d2aa96d3dc5a34172b620bc706e5b63aef3d6cc9102dc5adc7ceb9f1e040cff",
-    "bytes": 1371253,
+    "sha256": "a1d21a0c832bc3f7d5851aba97af1a574b83d8ff9cce093759ba7542eb24af44",
+    "bytes": 1459266,
     "viewport": "1920x1080",
     "dpr": 2
   },
   "1440x900-play2-orders.png": {
-    "sha256": "a4515ac80494a9a2f74b819f83f548e3c72f0c74dfe7ba375d8462712364cd58",
-    "bytes": 1506934,
+    "sha256": "55baf69e804471be6cfbe63b011e16928c8718b506357535edd924d34b611b4f",
+    "bytes": 1483803,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-play2-orders.png": {
-    "sha256": "a03503dd9e06c7955ebc86f8670074070036482224009ff4367d57b637fe4986",
-    "bytes": 2036359,
+    "sha256": "b5d17d7eac315bfaa69a3059d8ccd68ff4f1b55b1fe4f998f1f83a01dd78022e",
+    "bytes": 2031635,
     "viewport": "1920x1080",
     "dpr": 2
   },
   "1440x900-fixture-score-draw-debrief.png": {
-    "sha256": "77f5039b308654a2dc67de2db659fc311365cac17072fde031bca13ebd4988b3",
-    "bytes": 943035,
+    "sha256": "13a642e9dab37c1623b72051477b4a912ae1c892158beaddab42b4475d03bef0",
+    "bytes": 942961,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-fixture-score-draw-debrief.png": {
-    "sha256": "cbabb63a33ddc441ea091faffe69dd23ab45f3420613a83a272c4d7402f6d913",
-    "bytes": 1433960,
+    "sha256": "5320ec28ad9f76adaecf45ea642fe61afaf0676c06fe61952ab137ac9bb25177",
+    "bytes": 1442649,
     "viewport": "1920x1080",
     "dpr": 2
   },
   "1440x900-fixture-carrier-loss-defeat-debrief.png": {
-    "sha256": "3e36bc3148a1953a0ab8247f920c2176a22bc8ce68f85ddbd267e91b0c7d82c7",
-    "bytes": 974702,
+    "sha256": "0e440a3b226621adf515e38347b69a800146ebb54791405320605554fc0f1849",
+    "bytes": 1028056,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-fixture-carrier-loss-defeat-debrief.png": {
-    "sha256": "c23951c132ec6fc1d5638312230591380ce4dc0376b7af7945e7b08be71c9d5e",
-    "bytes": 1510703,
+    "sha256": "934374c9ba0de8ca20f6049255eabba09ad6ce4b4d9ff39cdd3b30d8905c1233",
+    "bytes": 1587861,
     "viewport": "1920x1080",
     "dpr": 2
   },
   "1440x900-play2-debrief.png": {
-    "sha256": "bf9b316d5da50ca792e542cfd461e6a9eafd257c0c86ffb26256fc65795f412a",
-    "bytes": 1065521,
+    "sha256": "d844c7bac56f38c4eb2d29cf6006432063be8a4a393260f4a9d042a02127cf95",
+    "bytes": 1042931,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-play2-debrief.png": {
-    "sha256": "52038e187e80605e90a9a3b7fc63ab08fec3a899387e1e0516f9ee454691fd8e",
-    "bytes": 1546740,
+    "sha256": "d1b28c364e83b60d979ba0f6a419602d20edc64080688d049aed60680d38d5c5",
+    "bytes": 1549177,
     "viewport": "1920x1080",
     "dpr": 2
   },
   "1440x900-fixture-score-victory-debrief.png": {
-    "sha256": "e7035b9dfa9e22c03b0dc429519b990c4c24f31ca6c098704b758bb36096b13f",
-    "bytes": 957944,
+    "sha256": "c3f91ea009a5f254d2fe40ab73a28e2e0444f69d51289eb3c48564f0dc4709df",
+    "bytes": 962461,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-fixture-score-victory-debrief.png": {
-    "sha256": "5f4277eac4a1875e37ea75dabed5d30c9ceb0416ab5b2d758ae01efe96670b72",
-    "bytes": 1456585,
+    "sha256": "b4524110af13e6b92b06ea73eaf2a0820463436f19cd7d0f40e02083fedca83f",
+    "bytes": 1457896,
     "viewport": "1920x1080",
     "dpr": 2
   },
   "1440x900-final-record-strip.png": {
-    "sha256": "159df2ca76bacafe57707d26d5ce5cd5c9b846102cc780602872131ed47593f5",
-    "bytes": 1419094,
+    "sha256": "cb1f5b4bd555aaba31f014c9ac652e0556e9afba0f1a578554357a669337e892",
+    "bytes": 1416961,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-final-record-strip.png": {
-    "sha256": "3909e041f5370495a445133dfdc3b17bad106686bed1e48ed8014a41cf6d6435",
-    "bytes": 2102569,
+    "sha256": "1df3f81835434b8932979d50365d365b2c6f0d40432f88f93b7ba88a27496e55",
+    "bytes": 2097123,
     "viewport": "1920x1080",
     "dpr": 2
   }
