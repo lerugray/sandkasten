@@ -1,0 +1,19 @@
+{
+  "renderer": "ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)",
+  "briefing": {
+    "min": 12,
+    "n": 25
+  },
+  "planning": {
+    "min": 12,
+    "n": 11
+  },
+  "review": {
+    "min": 12,
+    "n": 50
+  },
+  "statusStrip": {
+    "min": 14,
+    "n": 1
+  }
+}

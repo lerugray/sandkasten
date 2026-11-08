@@ -1,0 +1,68 @@
+{
+  "plan": "A direct flank",
+  "turns": 38,
+  "queued": [
+    {
+      "turn": 2,
+      "shooter": "Hornet 101",
+      "logAfterStage": 7,
+      "logBeforeCommit": 7,
+      "simAfterStage": 1773554700000,
+      "simBeforeCommit": 1773554700000,
+      "logAfterTurn": 20
+    }
+  ],
+  "result": "[ VICTORY ]",
+  "deciding": "DECIDED BY USS Nimitz entered the transit gate (afloat, undamaged).",
+  "turnsLine": "TURNS 38 COMMITTED // 5 MIN EACH // WEGO",
+  "clock": "2026-03-15 09:06:15Z",
+  "record": "RECORD\n09:05:17Z MISS 76MM OTO MELARA COMPACT (76/62 FAMILY) MISSED USS NIMITZ (CVN-68)\n09:05:25Z LNCH TN8803 TRK LAUNCHED 76MM OTO MELARA COMPACT (76/62 FAMILY) AT USS NIMITZ (CVN-68)\n09:05:36Z MISS 107MM MRL (FADJR-1 ROCKETS) MISSED USS NIMITZ (CVN-68)\n09:05:45Z LNCH BOGHAMMAR 502 LAUNCHED 107MM MRL (FADJR-1 ROCKETS) AT USS NIMITZ (CVN-68)\n09:05:48Z MISS 76MM OTO MELARA COMPACT (76/62 FAMILY) MISSED USS NIMITZ (CVN-68)\n09:05:55Z LNCH TN8803 TRK LAUNCHED 76MM OTO MELARA COMPACT (76/62 FAMILY) AT USS NIMITZ (CVN-68)\n09:06:03Z MISS 107MM MRL (FADJR-1 ROCKETS) MISSED USS NIMITZ (CVN-68)\n09:06:15Z LNCH BOGHAMMAR 502 LAUNCHED 107MM MRL (FADJR-1 ROCKETS) AT USS NIMITZ (CVN-68)",
+  "renderer": "ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)",
+  "godMode": "false",
+  "state": {
+    "mode": "wego",
+    "phase": "review",
+    "turnNumber": 38,
+    "turnsCommitted": 38,
+    "turnStart": 1773565500000,
+    "turnEnd": 1773565800000,
+    "simTime": 1773565575000,
+    "intents": 0,
+    "paused": true,
+    "speed": 60,
+    "contacts": [
+      {
+        "id": "contact-8",
+        "cls": "detected"
+      },
+      {
+        "id": "contact-9",
+        "cls": "detected"
+      },
+      {
+        "id": "contact-18",
+        "cls": "tracked"
+      },
+      {
+        "id": "contact-19",
+        "cls": "tracked"
+      },
+      {
+        "id": "contact-20",
+        "cls": "tracked"
+      },
+      {
+        "id": "contact-21",
+        "cls": "unknown"
+      },
+      {
+        "id": "contact-22",
+        "cls": "tracked"
+      },
+      {
+        "id": "contact-23",
+        "cls": "tracked"
+      }
+    ]
+  }
+}

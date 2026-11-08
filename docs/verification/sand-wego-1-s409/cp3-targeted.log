@@ -1,0 +1,111 @@
+
+Running 4 tests using 1 worker
+
+[1A[2K[1/4] [chromium] › tests/sand-wego-1-flow.spec.ts:348:7 › SAND-WEGO-1: two real victories through the ordinary UI (GOD off) › plan B: escorts ahead to the gate, the carrier by a southern dog-leg at full
+[1A[2K[2/4] [chromium] › tests/sand-wego-1-flow.spec.ts:397:7 › SAND-WEGO-1: two real victories through the ordinary UI (GOD off) › a defeat resolves through the same turn path, then PLAY AGAIN replays cleanly
+[1A[2K  1) [chromium] › tests/sand-wego-1-flow.spec.ts:397:7 › SAND-WEGO-1: two real victories through the ordinary UI (GOD off) › a defeat resolves through the same turn path, then PLAY AGAIN replays cleanly 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByTestId('order-waypoint-item')
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for getByTestId('order-waypoint-item')[22m
+    [2m    9 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      39 |   for (const [i, w] of waypoints.entries()) {
+      40 |     await clickGeo(page, w.lng, w.lat);
+    > 41 |     await expect(page.getByTestId("order-waypoint-item")).toHaveCount(i + 1);
+         |                                                           ^
+      42 |   }
+      43 |   await page.keyboard.press("Escape");
+      44 |   await page.getByTestId("order-throttle").filter({ hasText: throttle }).click();
+        at orderShip (/home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:41:59)
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:406:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-wego-1-flow-SAND-WEGO-64a24--PLAY-AGAIN-replays-cleanly-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-wego-1-flow-SAND-WEGO-64a24--PLAY-AGAIN-replays-cleanly-chromium/error-context.md
+
+
+[1A[2K[3/4] [chromium] › tests/sand-wego-1-flow.spec.ts:518:9 › SAND-WEGO-1: look inspection at 1440x900 and 1920x1080, DPR 2 › flat and tilted gate, phase panels, font floors at 1440x900
+[1A[2K  2) [chromium] › tests/sand-wego-1-flow.spec.ts:518:9 › SAND-WEGO-1: look inspection at 1440x900 and 1920x1080, DPR 2 › flat and tilted gate, phase panels, font floors at 1440x900 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByTestId('order-waypoint-item')
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for getByTestId('order-waypoint-item')[22m
+    [2m    9 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      39 |   for (const [i, w] of waypoints.entries()) {
+      40 |     await clickGeo(page, w.lng, w.lat);
+    > 41 |     await expect(page.getByTestId("order-waypoint-item")).toHaveCount(i + 1);
+         |                                                           ^
+      42 |   }
+      43 |   await page.keyboard.press("Escape");
+      44 |   await page.getByTestId("order-throttle").filter({ hasText: throttle }).click();
+        at orderShip (/home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:41:59)
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:542:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-wego-1-flow-SAND-WEGO-71ccd-els-font-floors-at-1440x900-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-wego-1-flow-SAND-WEGO-71ccd-els-font-floors-at-1440x900-chromium/error-context.md
+
+
+[1A[2K[4/4] [chromium] › tests/sand-wego-1-flow.spec.ts:518:9 › SAND-WEGO-1: look inspection at 1440x900 and 1920x1080, DPR 2 › flat and tilted gate, phase panels, font floors at 1920x1080
+[1A[2K  3) [chromium] › tests/sand-wego-1-flow.spec.ts:518:9 › SAND-WEGO-1: look inspection at 1440x900 and 1920x1080, DPR 2 › flat and tilted gate, phase panels, font floors at 1920x1080 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByTestId('order-waypoint-item')
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for getByTestId('order-waypoint-item')[22m
+    [2m    9 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      39 |   for (const [i, w] of waypoints.entries()) {
+      40 |     await clickGeo(page, w.lng, w.lat);
+    > 41 |     await expect(page.getByTestId("order-waypoint-item")).toHaveCount(i + 1);
+         |                                                           ^
+      42 |   }
+      43 |   await page.keyboard.press("Escape");
+      44 |   await page.getByTestId("order-throttle").filter({ hasText: throttle }).click();
+        at orderShip (/home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:41:59)
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-wego-1-flow.spec.ts:542:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-wego-1-flow-SAND-WEGO-cc836-ls-font-floors-at-1920x1080-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-wego-1-flow-SAND-WEGO-cc836-ls-font-floors-at-1920x1080-chromium/error-context.md
+
+
+[1A[2K  3 failed
+    [chromium] › tests/sand-wego-1-flow.spec.ts:397:7 › SAND-WEGO-1: two real victories through the ordinary UI (GOD off) › a defeat resolves through the same turn path, then PLAY AGAIN replays cleanly 
+    [chromium] › tests/sand-wego-1-flow.spec.ts:518:9 › SAND-WEGO-1: look inspection at 1440x900 and 1920x1080, DPR 2 › flat and tilted gate, phase panels, font floors at 1440x900 
+    [chromium] › tests/sand-wego-1-flow.spec.ts:518:9 › SAND-WEGO-1: look inspection at 1440x900 and 1920x1080, DPR 2 › flat and tilted gate, phase panels, font floors at 1920x1080 
+  1 passed (5.3m)

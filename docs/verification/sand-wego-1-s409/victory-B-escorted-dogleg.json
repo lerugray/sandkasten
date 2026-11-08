@@ -1,0 +1,37 @@
+{
+  "plan": "B escorts + dog-leg",
+  "turns": 45,
+  "result": "[ VICTORY ]",
+  "deciding": "DECIDED BY USS Nimitz entered the transit gate (afloat, undamaged).",
+  "turnsLine": "TURNS 45 COMMITTED // 5 MIN EACH // WEGO",
+  "clock": "2026-03-15 09:43:27Z",
+  "record": "RECORD\n09:15:55Z LNCH USS COLE (DDG-67) LAUNCHED 4× RIM-66M SM-2MR AT UNKNOWN TRACK\n09:15:57Z HIT RIM-66M SM-2MR HIT UNKNOWN TRACK!\n09:15:57Z DMG UNKNOWN TRACK IS NOW MISSION-KILL\n09:15:58Z HIT RIM-66M SM-2MR HIT UNKNOWN TRACK!\n09:15:58Z KILL UNKNOWN TRACK HAS BEEN DESTROYED!\n09:15:58Z HIT RIM-66M SM-2MR HIT UNKNOWN TRACK!\n09:15:58Z HIT RIM-66M SM-2MR HIT UNKNOWN TRACK!\n09:16:00Z MISS 23MM ZU-23-2 FROM UNKNOWN TRACK RAN OUT OF FUEL",
+  "renderer": "ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)",
+  "godMode": "false",
+  "state": {
+    "mode": "wego",
+    "phase": "review",
+    "turnNumber": 45,
+    "turnsCommitted": 45,
+    "turnStart": 1773567600000,
+    "turnEnd": 1773567900000,
+    "simTime": 1773567807000,
+    "intents": 0,
+    "paused": true,
+    "speed": 60,
+    "contacts": [
+      {
+        "id": "contact-1",
+        "cls": "tracked"
+      },
+      {
+        "id": "contact-8",
+        "cls": "tracked"
+      },
+      {
+        "id": "contact-21",
+        "cls": "unknown"
+      }
+    ]
+  }
+}
