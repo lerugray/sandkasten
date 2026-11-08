@@ -1,0 +1,17 @@
+{
+  "1440x900": {
+    "present": true,
+    "strip": {
+      "x": 360,
+      "y": 52,
+      "w": 336.484375,
+      "h": 38
+    },
+    "hits": [
+      "button[plot-toggle-osint-ad]",
+      "button[plot-toggle-osint-radar]",
+      "button[plot-toggle-osint-nuclear]"
+    ],
+    "clipped": false
+  }
+}

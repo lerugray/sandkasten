@@ -933,7 +933,8 @@
   color: var(--tx-alarm);
 }
 .tx-result-strip {
-  /* anchored beside the left column, clear of the right-hand detail column and its title */
+  /* clear of the left column, the right-hand detail column and its title, and below the OSINT toggle row (which starts at left 362px, top 52px) */
+  top: 96px;
   left: 360px;
   transform: none;
   max-width: calc(100vw - 360px - 408px - 8px);

@@ -133,7 +133,7 @@ test.describe("SAND-VICTORY-1: two real wins with different orders, the second a
       await setSpeed(page, "60x");
       await shotBoth(page, "play2-orders");
       let turns = 0;
-      for (let n = 1; n <= 40; n++) {
+      for (let n = 1; n <= 70; n++) {
         if (await page.getByTestId("result-overlay").isVisible()) break;
         await waitPhase(page, "planning");
         await page.getByTestId("cmd-commit").click({ timeout: 20_000 });

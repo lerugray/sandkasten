@@ -1,0 +1,62 @@
+{
+  "1440x900-play-briefing.png": {
+    "sha256": "998bac705634016df265bd98348f6efdfe5ba482f0b1bdf0037833c77ef3ef42",
+    "bytes": 1511192,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-play-briefing.png": {
+    "sha256": "6d02441b898509bbab74188a829f2a1667024b1f6605b86e266552efff3078d7",
+    "bytes": 2164787,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-play1-debrief.png": {
+    "sha256": "11de441c4574cb85e5dcd9c58f854e0222f49c33e60066cf29d24c0559d77702",
+    "bytes": 1159553,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-play1-debrief.png": {
+    "sha256": "d74aa0f5a319e32e8ba02393a2b5a366d4ac84383f730e1d06e3add145ce9c9e",
+    "bytes": 1343018,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-play2-orders.png": {
+    "sha256": "5697e258e31f341b86d558f23d40ac252b851492a044b929a77e278525151937",
+    "bytes": 1487611,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-play2-orders.png": {
+    "sha256": "c715e3ef48f7e03f067941d1a48bfd7a5f2487e6b122cda1ff8d8374168fb1f7",
+    "bytes": 1866558,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-fixture-score-draw-debrief.png": {
+    "sha256": "18aa8808ff5dfefb823270770dd2ad7e49dea08dbf23b0c79bc5261586532c6b",
+    "bytes": 942821,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-fixture-score-draw-debrief.png": {
+    "sha256": "837727635d6452ebe7cbc21fb3ee55e79191b76ffdf98c0835157267fc100d64",
+    "bytes": 1441836,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-fixture-carrier-loss-defeat-debrief.png": {
+    "sha256": "c916a6ed116b699a545cc84a8035c0890298262e3de4462c5023ecf13bea3a8c",
+    "bytes": 975467,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-fixture-carrier-loss-defeat-debrief.png": {
+    "sha256": "a5eb65fa9d4939732cd2452464fac6e00d3b347f98346c2626f17b1d4aa7438d",
+    "bytes": 1500026,
+    "viewport": "1920x1080",
+    "dpr": 2
+  }
+}

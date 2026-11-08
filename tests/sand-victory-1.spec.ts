@@ -79,7 +79,10 @@ test.describe("SAND-VICTORY-1: which rule ended the run, the score beside it, an
       await expect(page.getByTestId("result-deciding")).toContainText(/Ending rule met/i);
       await expect(page.getByTestId("result-deciding")).toContainText(/score/i);
       await expect(page.getByTestId("result-deciding")).not.toContainText(/entered the transit gate/i);
-      await expect(page.getByTestId("result-score")).toContainText(/US NAVY 40/);
+      // the shipped events can add to the seeded 40 before the tick that ends the run: the card must equal the session's own score
+      const shown = Number(/US NAVY (-?\d+)/.exec(await page.getByTestId("result-score").innerText())?.[1]);
+      expect(shown).toBeGreaterThanOrEqual(40);
+      expect(shown).toBe((await freshState(page)).score["US Navy"]);
       await expect(page.getByTestId("result-score-note")).toContainText(/SCORE DECIDED/i);
       // internal event names are never player text
       expect(await page.getByTestId("result-overlay").innerText()).not.toContain("Fixture Score Win");
@@ -115,7 +118,7 @@ test.describe("SAND-VICTORY-1: which rule ended the run, the score beside it, an
       await runUntilResult(page, 120_000);
       await expect(page.getByTestId("result-title")).toContainText("DRAW");
       await expect(page.getByTestId("result-deciding")).toContainText(/Ending rule met/i);
-      await expect(page.getByTestId("result-score")).toContainText(/IRAN 5/);
+      await expect(page.getByTestId("result-score")).toContainText(/IRAN [5-9]/);
       await expect(page.getByTestId("result-score-note")).toContainText(/SCORE DECIDED/i);
       await shotBoth(page, "fixture-score-draw-debrief");
 

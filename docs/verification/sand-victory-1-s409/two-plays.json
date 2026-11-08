@@ -1,0 +1,148 @@
+{
+  "renderer": "ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)",
+  "run1": {
+    "orders": "Nimitz only, one waypoint at the gate centre, FLANK, continuous 60x",
+    "debrief": {
+      "title": "[ VICTORY ]",
+      "message": "Your carrier strike group has successfully transited the Strait of Hormuz. Well done, Admiral.",
+      "deciding": "DECIDED BY USS Nimitz entered the transit gate (afloat, undamaged).",
+      "score": "FINAL SCORE US NAVY 10 // IRAN 0 SCORE IS A TALLY. IT DID NOT DECIDE THIS ENDING.",
+      "losses": "YOUR LOSSES 2 // HOSTILE KILLS CONFIRMED 2",
+      "condition": "OWN FORCE 6 UNDAMAGED // 0 DAMAGED // 0 MISSION KILL // 2 LOST",
+      "record": "SHOWING LATEST 8 OF 78 // 70 EARLIER NOT SHOWN HERE"
+    },
+    "facts": {
+      "result": "victory",
+      "source": {
+        "event": "Transit Complete"
+      },
+      "score": {
+        "US Navy": 10,
+        "Iran": 0
+      },
+      "simTime": 1773565574580,
+      "ownStates": {
+        "USS Nimitz (CVN-68)": "undamaged",
+        "USS Chosin (CG-65)": "undamaged",
+        "USS Mahan (DDG-72)": "undamaged",
+        "USS Cole (DDG-67)": "undamaged",
+        "USS Nitze (DDG-94)": "undamaged",
+        "Hornet 101": "destroyed",
+        "Hornet 102": "destroyed",
+        "Hawkeye 601": "undamaged"
+      },
+      "godMode": null,
+      "fired": [
+        "First Contact Alert",
+        "Iranian Escalation",
+        "Reinforcement Boghammar",
+        "Transit Complete"
+      ],
+      "orders": [
+        [
+          "us-cvn-1",
+          1,
+          4
+        ],
+        [
+          "us-cg-1",
+          0,
+          2
+        ],
+        [
+          "us-ddg-1",
+          0,
+          2
+        ],
+        [
+          "us-ddg-2",
+          0,
+          2
+        ],
+        [
+          "us-ffg-1",
+          0,
+          2
+        ],
+        [
+          "us-fa18-1",
+          0,
+          2
+        ],
+        [
+          "us-fa18-2",
+          0,
+          2
+        ],
+        [
+          "us-e2c-1",
+          0,
+          2
+        ]
+      ]
+    }
+  },
+  "freshAfterReplay": {
+    "result": null,
+    "source": null,
+    "score": {
+      "US Navy": 0,
+      "Iran": 0
+    },
+    "simTime": 1773554400000,
+    "ownStates": {
+      "USS Nimitz (CVN-68)": "undamaged",
+      "USS Chosin (CG-65)": "undamaged",
+      "USS Mahan (DDG-72)": "undamaged",
+      "USS Cole (DDG-67)": "undamaged",
+      "USS Nitze (DDG-94)": "undamaged",
+      "Hornet 101": "undamaged",
+      "Hornet 102": "undamaged",
+      "Hawkeye 601": "undamaged"
+    },
+    "godMode": null,
+    "fired": [],
+    "orders": [
+      [
+        "us-cvn-1",
+        0,
+        2
+      ],
+      [
+        "us-cg-1",
+        0,
+        2
+      ],
+      [
+        "us-ddg-1",
+        0,
+        2
+      ],
+      [
+        "us-ddg-2",
+        0,
+        2
+      ],
+      [
+        "us-ffg-1",
+        0,
+        2
+      ],
+      [
+        "us-fa18-1",
+        0,
+        2
+      ],
+      [
+        "us-fa18-2",
+        0,
+        2
+      ],
+      [
+        "us-e2c-1",
+        0,
+        2
+      ]
+    ]
+  }
+}
