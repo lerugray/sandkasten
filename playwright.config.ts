@@ -3,7 +3,13 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = Number(process.env.SAND_E2E_PORT ?? 3001);
 
 // SAND_E2E_GPU=1: hardware GL for WebGL-heavy specs (the software renderer runs the plot at ~2 fps).
-const GPU_ARGS = process.env.SAND_E2E_GPU ? ["--use-gl=angle", "--use-angle=gl-egl", "--ignore-gpu-blocklist", "--mute-audio"] : ["--mute-audio"];
+// Windows always prefers D3D11 ANGLE so DPR-2 combat specs can clear the frame gate; Linux/WSL keeps EGL under SAND_E2E_GPU.
+const GPU_ARGS =
+  process.platform === "win32"
+    ? ["--mute-audio", "--use-gl=angle", "--use-angle=d3d11", "--ignore-gpu-blocklist"]
+    : process.env.SAND_E2E_GPU
+      ? ["--use-gl=angle", "--use-angle=gl-egl", "--ignore-gpu-blocklist", "--mute-audio"]
+      : ["--mute-audio"];
 
 export default defineConfig({
   testDir: "./tests",

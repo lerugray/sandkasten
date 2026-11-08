@@ -25,7 +25,7 @@ import { trackNumber, type PlotArea, type PlotInput, type PlotInsets } from "@/l
 import { UNIT_STATE_LABEL, missionLines, missionProgress, openingBriefing, transitObjective } from "@/lib/scenarios/objective";
 import type { GeoPoint } from "@/lib/plot/projection";
 import type { Contact } from "@/lib/simulation/gameState";
-import { buildFog, ownForce, projectRecord, stateWord, visibleWeapons } from "@/lib/simulation/combatRecord";
+import { buildFog, contactDisplayName, ownForce, projectRecord, stateWord, visibleWeapons } from "@/lib/simulation/combatRecord";
 import { Teletype, type TtyLine } from "./Teletype";
 
 const PlotView = dynamic(() => import("@/components/plot/PlotView"), { ssr: false });
@@ -45,13 +45,6 @@ const TTY_H = 150;
 type Tab = "forces" | "messages" | "combat" | "media";
 
 const ROE_SHORT = { "weapons-hold": "HOLD", "weapons-tight": "TIGHT", "weapons-free": "FREE" } as const;
-
-const CLS_LABEL: Record<Contact["classification"], string> = {
-  unknown: "UNK",
-  detected: "DET",
-  classified: "CLS",
-  tracked: "TRK",
-};
 
 const AUTOPAUSE_LABELS: Record<string, string> = {
   newContact: "New contact detected",
@@ -351,7 +344,10 @@ export function TerminalPlay() {
     [allUnits, selectedFacilityId, godMode, playerSide],
   );
   const selectedOrders = selectedUnitId ? gameState.orders.get(selectedUnitId) : undefined;
-  const contactTag = useCallback((c: Contact) => `${c.platformName ?? `TN${trackNumber(c.id)}`} ${CLS_LABEL[c.classification]}`, []);
+  const contactTag = useCallback((c: Contact) => {
+    const trueName = allUnits.find((u) => u.id === c.actualUnitId)?.name;
+    return contactDisplayName(c, trackNumber, trueName);
+  }, [allUnits, trackNumber]);
   const { fire, engageTarget, cycleTarget, setRoeFor, clearTarget } = useFireControls({
     unit: ordersOpen && selectedUnit && selectedUnit.side === gameState.scenario.playerSide ? selectedUnit : null,
     gameState,
@@ -913,7 +909,7 @@ export function TerminalPlay() {
 
               <section className="tx-section">
                 <div className="tx-section-head">Contacts ({gameState.contacts.length})</div>
-                <ContactList contacts={gameState.contacts} simTime={gameState.simTime} contactLabel={(c) => `TN${trackNumber(c.id)}`} />
+                <ContactList contacts={gameState.contacts} simTime={gameState.simTime} contactLabel={contactTag} />
               </section>
             </>
           )}

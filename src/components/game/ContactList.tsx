@@ -67,7 +67,7 @@ export function ContactList({ contacts, simTime, onContactClick, contactLabel }:
                 {CLASSIFICATION_LABELS[contact.classification]}
               </span>
               <span className="text-[var(--color-tactical-text)] truncate flex-1">
-                {contact.platformName ?? contactLabel?.(contact) ?? `Contact ${contact.id.slice(-4)}`}
+                {contactLabel?.(contact) ?? contact.platformName ?? `Contact ${contact.id.slice(-4)}`}
               </span>
               <span className="text-[var(--color-tactical-text-dim)] text-sm">
                 {contact.sensorType.toUpperCase()}

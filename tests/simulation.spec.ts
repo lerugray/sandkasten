@@ -68,15 +68,16 @@ test.describe("Simulation gameplay", () => {
   });
 
   test("combat log gets entries after engagement", async ({ page }) => {
+    test.setTimeout(90_000);
     await page.locator("button", { hasText: "60x" }).click();
     await runSimFor(page, 15_000);
     await ensurePaused(page);
 
-    await page.locator("button", { hasText: "Combat" }).click();
+    await page.getByTestId("sidebar-tab-combat").click();
 
-    const combatEntries = page.locator('[data-testid="side-panel"] >> text=/LAUNCH|HIT|MISS|DEFENDED|DESTROYED/i');
-    const count = await combatEntries.count();
-    expect(count).toBeGreaterThan(0);
+    const combatEntries = page.getByTestId("combat-log-entry").filter({ hasText: /LAUNCH|HIT|MISS|DEFENDED|DESTROYED|DAMAGED|LOST|KILL/i });
+    await expect(combatEntries.first()).toBeVisible({ timeout: 10_000 });
+    expect(await combatEntries.count()).toBeGreaterThan(0);
   });
 
   test("selecting a unit and opening waypoint mode", async ({ page }) => {

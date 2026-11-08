@@ -62,6 +62,19 @@ describe("combat record: eligibility and player view", () => {
     expect(unknown[0].text).toContain("UNKNOWN TRACK LAUNCHED");
   });
 
+  it("an unidentified hostile contact uses the track label, never the true hull name", () => {
+    const rows = projectRecord(input({ combatLog: [log[0]], contacts: [contact("ir-sina", "detected")] }));
+    expect(rows).toHaveLength(1);
+    expect(rows[0].text).toMatch(/^TN\S+ DET LAUNCHED/);
+    expect(rows[0].text).not.toMatch(/SINA SECRET/i);
+  });
+
+  it("does not treat a contact platformName equal to the true hull name as an identified class name", () => {
+    const rows = projectRecord(input({ combatLog: [log[0]], contacts: [contact("ir-sina", "classified", "Sina Secret 77")] }));
+    expect(rows[0].text).toMatch(/^TN\S+ CLS LAUNCHED/);
+    expect(rows[0].text).not.toMatch(/SINA SECRET/i);
+  });
+
   it("uses readable event names and tells an own loss from an enemy kill", () => {
     const rows = projectRecord(input({ combatLog: log }));
     expect(rows.map((r) => r.tag)).toEqual(["LAUNCH", "DEFENDED", "LOST", "DAMAGED"]);

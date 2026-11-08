@@ -57,6 +57,21 @@ export function isOwnInvolved(e: CombatEvent, playerSide: string, own: Set<strin
   return e.side === playerSide || (!!e.targetId && own.has(e.targetId)) || (!!e.unitId && own.has(e.unitId));
 }
 
+/**
+ * Player-visible name for a contact. A classified `platformName` is used only when it is not the
+ * true hull name (the sensor stub currently copies the unit name on classify; that must not leak).
+ * Otherwise: track label with classification. No contact → UNKNOWN TRACK.
+ */
+export function contactDisplayName(
+  contact: Contact | undefined,
+  trackNumber: (contactId: string) => string,
+  trueName?: string,
+): string {
+  if (!contact) return "UNKNOWN TRACK";
+  if (contact.platformName && contact.platformName !== trueName) return contact.platformName;
+  return `TN${trackNumber(contact.id)} ${CLS_LABEL[contact.classification]}`;
+}
+
 /** Replacement for every non-player unit name: classified name, else track label, else UNKNOWN TRACK. */
 export function buildFog(input: Pick<RecordInput, "units" | "contacts" | "playerSide" | "godMode" | "trackNumber">): (text: string) => string {
   if (input.godMode) return (t) => t;
@@ -65,8 +80,7 @@ export function buildFog(input: Pick<RecordInput, "units" | "contacts" | "player
     .filter((u) => u.side !== input.playerSide)
     .map((u) => {
       const c = byUnit.get(u.id);
-      const label = c ? (c.platformName ? c.platformName : `TN${input.trackNumber(c.id)} ${CLS_LABEL[c.classification]}`) : "UNKNOWN TRACK";
-      return [u.name, label] as const;
+      return [u.name, contactDisplayName(c, input.trackNumber, u.name)] as const;
     })
     .sort((a, b) => b[0].length - a[0].length);
   return (text) => pairs.reduce((acc, [name, label]) => acc.split(name).join(label), text);

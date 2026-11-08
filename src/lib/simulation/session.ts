@@ -7,6 +7,7 @@ import type { EventState } from "@/lib/ai/events";
 import type { Mission } from "@/lib/ai/missions";
 import type { Doctrine } from "@/lib/ai/doctrine";
 import { createCombatState, engageContact, validateEngagement, type CombatEvent, type CombatState, type EngageResult } from "./combat";
+import { contactDisplayName } from "./combatRecord";
 import { contactsFor } from "./gameState";
 import type { InfoWarConfig } from "@/lib/infowar/types";
 import {
@@ -415,7 +416,11 @@ export class SimulationSession {
       shooterId,
       shooterName: shooter.name,
       contactId,
-      contactLabel: contact.platformName ?? `TN${contact.id.replace(/\D/g, "")} ${contact.classification.toUpperCase()}`,
+      contactLabel: contactDisplayName(
+        contact,
+        (id) => id.replace(/\D/g, "") || id.slice(-4),
+        state.sides.flatMap((s) => s.units).find((u) => u.id === contact.actualUnitId)?.name,
+      ),
       weaponName,
     };
     this.intents = [...this.intents, intent];

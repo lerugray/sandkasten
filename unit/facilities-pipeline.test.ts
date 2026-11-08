@@ -480,7 +480,8 @@ describe("facility pipeline", () => {
     const cwd = join(__dirname, "..");
     execFileSync("node", ["scripts/build-facilities.mjs", "--offline", "--out", out], { cwd, stdio: "pipe" });
     execFileSync("node", ["scripts/import-osint.mjs", "--facilities", out, "--out", join(dir, "osint.json")], { cwd, stdio: "pipe" });
-    expect(readFileSync(out, "utf8")).toBe(readFileSync(join(cwd, "data", "facilities", "hormuz.json"), "utf8"));
-    expect(readFileSync(join(dir, "osint.json"), "utf8")).toBe(readFileSync(join(cwd, "data", "osint", "hormuz.json"), "utf8"));
+    const norm = (s: string) => s.replace(/\r\n/g, "\n");
+    expect(norm(readFileSync(out, "utf8"))).toBe(norm(readFileSync(join(cwd, "data", "facilities", "hormuz.json"), "utf8")));
+    expect(norm(readFileSync(join(dir, "osint.json"), "utf8"))).toBe(norm(readFileSync(join(cwd, "data", "osint", "hormuz.json"), "utf8")));
   });
 });
