@@ -1,0 +1,80 @@
+     28| type S = SimulationSession & Record<string, (...a: unknown[]) => unkno…
+     29| const call = (s: SimulationSession, name: string, ...a: unknown[]) => …
+       |                                                                                                ^
+     30|
+     31| function wego(options: SessionOptions = {}, config: ScenarioConfig = d…
+ ❯ src/lib/simulation/__tests__/wego.test.ts:374:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/22]⎯
+
+ FAIL  src/lib/simulation/__tests__/wego.test.ts > WeGo exact resolution > a contact that first appears mid-turn gets legal weapons-free auto-fire, with no AI replan
+TypeError: s[name] is not a function
+ ❯ call src/lib/simulation/__tests__/wego.test.ts:29:96
+     27| // The session API that the tests drive, typed loosely so the same fil…
+     28| type S = SimulationSession & Record<string, (...a: unknown[]) => unkno…
+     29| const call = (s: SimulationSession, name: string, ...a: unknown[]) => …
+       |                                                                                                ^
+     30|
+     31| function wego(options: SessionOptions = {}, config: ScenarioConfig = d…
+ ❯ src/lib/simulation/__tests__/wego.test.ts:391:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/22]⎯
+
+ FAIL  src/lib/simulation/__tests__/wego.test.ts > WeGo and the real scenario > a carrier already in the gate wins on its real tick, ends the burst early and gives no NEXT TURN
+TypeError: s[name] is not a function
+ ❯ call src/lib/simulation/__tests__/wego.test.ts:29:96
+     27| // The session API that the tests drive, typed loosely so the same fil…
+     28| type S = SimulationSession & Record<string, (...a: unknown[]) => unkno…
+     29| const call = (s: SimulationSession, name: string, ...a: unknown[]) => …
+       |                                                                                                ^
+     30|
+     31| function wego(options: SessionOptions = {}, config: ScenarioConfig = d…
+ ❯ src/lib/simulation/__tests__/wego.test.ts:414:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/22]⎯
+
+ FAIL  src/lib/simulation/__tests__/wego.test.ts > WeGo and the real scenario > carrier loss is a defeat, with no time-only or escort-only victory
+TypeError: s[name] is not a function
+ ❯ call src/lib/simulation/__tests__/wego.test.ts:29:96
+     27| // The session API that the tests drive, typed loosely so the same fil…
+     28| type S = SimulationSession & Record<string, (...a: unknown[]) => unkno…
+     29| const call = (s: SimulationSession, name: string, ...a: unknown[]) => …
+       |                                                                                                ^
+     30|
+     31| function wego(options: SessionOptions = {}, config: ScenarioConfig = d…
+ ❯ src/lib/simulation/__tests__/wego.test.ts:431:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/22]⎯
+
+ FAIL  src/lib/simulation/__tests__/wego.test.ts > WeGo and the real scenario > restarting after a result or mid-turn leaves no pending intent, phase, counter or message
+TypeError: s[name] is not a function
+ ❯ call src/lib/simulation/__tests__/wego.test.ts:29:96
+     27| // The session API that the tests drive, typed loosely so the same fil…
+     28| type S = SimulationSession & Record<string, (...a: unknown[]) => unkno…
+     29| const call = (s: SimulationSession, name: string, ...a: unknown[]) => …
+       |                                                                                                ^
+     30|
+     31| function wego(options: SessionOptions = {}, config: ScenarioConfig = d…
+ ❯ src/lib/simulation/__tests__/wego.test.ts:447:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/22]⎯
+
+ FAIL  src/lib/simulation/__tests__/wego.test.ts > WeGo and the real scenario > autopause preferences are kept but never interrupt the burst; alerts are collected for review
+TypeError: s[name] is not a function
+ ❯ call src/lib/simulation/__tests__/wego.test.ts:29:96
+     27| // The session API that the tests drive, typed loosely so the same fil…
+     28| type S = SimulationSession & Record<string, (...a: unknown[]) => unkno…
+     29| const call = (s: SimulationSession, name: string, ...a: unknown[]) => …
+       |                                                                                                ^
+     30|
+     31| function wego(options: SessionOptions = {}, config: ScenarioConfig = d…
+ ❯ src/lib/simulation/__tests__/wego.test.ts:480:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/22]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  22 failed | 1 passed (23)
+   Start at  23:26:11
+   Duration  572ms (transform 57%, import 34%, tests 8%, worker 1%)
+

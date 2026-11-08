@@ -59,12 +59,28 @@ export function simulationTick(
   return result;
 }
 
+/**
+ * One fixed simulated step through every phase. WeGo resolution calls this directly with
+ * `planAI: false`: the AI keeps its mission and doctrine context but does not re-plan mid-turn.
+ */
+export function simulationStep(
+  state: GameState,
+  simDtMs: number,
+  aiState?: AIState,
+  eventState?: EventState,
+  combatState?: CombatState,
+  opts: { planAI?: boolean } = {}
+): TickResult {
+  return tickStep(state, simDtMs, aiState, eventState, combatState, opts.planAI ?? true);
+}
+
 function tickStep(
   state: GameState,
   simDtMs: number,
   aiState?: AIState,
   eventState?: EventState,
-  combatState?: CombatState
+  combatState?: CombatState,
+  planAI = true
 ): TickResult {
   const simDtSeconds = simDtMs / 1000;
   const newSimTime = state.simTime + simDtMs;
@@ -74,7 +90,7 @@ function tickStep(
   let currentOrders = new Map(state.orders);
 
   // --- Phase 0: AI Decision-making ---
-  if (aiState && newSimTime >= schedule.aiAt) {
+  if (planAI && aiState && newSimTime >= schedule.aiAt) {
     currentOrders = runAIUpdate({ ...state, simTime: newSimTime, orders: currentOrders }, aiState);
     schedule = { ...schedule, aiAt: advanceDue(schedule.aiAt, newSimTime, AI_INTERVAL_MS) };
   }
