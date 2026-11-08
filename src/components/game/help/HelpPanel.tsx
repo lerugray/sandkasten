@@ -216,6 +216,19 @@ function SidebarTab() {
         ones included, but orders stay locked until you plan the next turn.
       </p>
 
+      <SectionTitle>How a Run Ends</SectionTitle>
+      <p>
+        The briefing and the MISSION panel list the endings your side is told
+        about: for Hormuz, USS Nimitz entering the transit gate wins and her
+        loss ends it. When a run ends, the debrief says which rule decided it,
+        shows the final score beside the result, and says whether the score
+        decided the ending or is only a tally. A line reading OTHER ENDINGS NOT
+        BRIEFED means the scenario has endings it does not tell you about.
+        PLAY AGAIN starts a clean paused run with the briefing up; you can try
+        different orders. VIEW RECORD or REVIEW RECORD reads the fight without
+        moving time.
+      </p>
+
       <SectionTitle>Media Tab</SectionTitle>
       <p>
         Simulated media coverage of in-game events. Requires Ollama running
