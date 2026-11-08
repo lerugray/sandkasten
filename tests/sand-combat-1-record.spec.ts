@@ -64,9 +64,7 @@ async function stageFire(page: Page): Promise<string | null> {
 const setSpeed = (page: Page, label: string) => page.getByTestId("sim-speed").filter({ hasText: label }).click();
 
 async function commitAndResolve(page: Page) {
-  console.log("STEP commit click", await page.getByTestId("cmd-commit").count(), await page.getByTestId("cmd-commit").isDisabled().catch(() => "n/a"));
   await page.getByTestId("cmd-commit").click({ timeout: 20_000 });
-  console.log("STEP committed", JSON.stringify(await wegoState(page).then((w) => ({ p: w.phase, t: w.simTime, sp: w.speed, pa: w.paused }))));
   await expect.poll(async () => (await wegoState(page)).phase, { timeout: 20_000 }).not.toBe("planning");
   await expect
     .poll(async () => ((await page.getByTestId("result-overlay").isVisible()) ? "result" : await phaseOf(page)), { timeout: 240_000, intervals: [500] })
@@ -236,12 +234,10 @@ function save(name: string, data: unknown) {
 
 test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", () => {
   test("plan A (direct flank), WeGo: staged ENGAGE, CANCEL, commit, review, inspection, record, debrief", async ({ browser }, info) => {
-    test.setTimeout(Number(process.env.SC1_TO ?? 1_200_000));
+    test.setTimeout(1_200_000);
     mkdirSync(OUT, { recursive: true });
     const ctx = await browser.newContext({ viewport: SIZES[0], deviceScaleFactor: 2 });
     const page = await ctx.newPage();
-    page.on("pageerror", (e) => console.log("PAGEERROR", e.message.slice(0, 400), (e.stack ?? "").slice(0, 600)));
-    page.on("console", (m) => { if (m.type() === "error") console.log("CONSOLEERR", m.text().slice(0, 400)); });
     const log: Record<string, unknown> = { plan: "A direct/flank, WeGo 5 min" };
     try {
       await openPlay(page, "/play", { e2eHandle: true });
@@ -249,10 +245,8 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
       const renderer = await page.evaluate(() => (window as unknown as W).__sandPlot!.rendererInfo().renderer);
       info.annotations.push({ type: "renderer", description: renderer });
       log.renderer = renderer;
-      console.log('STEP A pick');
       await pickWeGo(page, 5);
       await takeCommand(page);
-      console.log('STEP A command');
       await expect(page.getByLabel("Toggle god mode")).toHaveAttribute("data-active", "false");
       await page.getByTestId("mission-focus-unit").click();
       await page.getByTestId("order-add-waypoint").click();
@@ -293,7 +287,6 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
         if (await page.getByTestId("result-overlay").isVisible()) break;
         await waitPhase(page, "planning");
         await page.getByTestId("sidebar-tab-forces").click();
-        console.log('STEP A turn', n, JSON.stringify((await wegoState(page)).contacts.map((c) => c.cls)));
         if (!staged) {
           const w = await wegoState(page);
           if (w.contacts.some((c) => c.cls !== "unknown")) {
@@ -353,9 +346,7 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
           const held = await sessionState(page);
           expect(held.simTime).toBe(rv.simTime);
           expect((await wegoState(page)).phase).toBe("review");
-          console.log('STEP A in record', await windowText(page));
           const turnRows = await allPages(page);
-          console.log('STEP A turnRows', turnRows.length);
           expect(turnRows.length).toBe(await totalOf(page));
           await shotBoth(page, "A-record-last-turn");
           await page.getByTestId("record-scope-run").click();
