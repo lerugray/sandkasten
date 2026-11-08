@@ -180,6 +180,7 @@ function runwayFromEnds(id, a, b, props) {
     lighted: props.lighted ?? null,
     closed: props.closed ?? false,
     ...(props.construction ? { construction: true } : {}),
+    ...(props.lengthUnverified ? { lengthUnverified: true } : {}),
     ends,
     derivedEnds: props.derivedEnds ?? false,
     source: props.source,
@@ -406,6 +407,8 @@ export function parseOsmRunways(elements) {
     const width = num(String(t.width ?? "").replace(/[^0-9.]/g, ""));
     // construction=yes: an unfinished strip. It stays closed, takes no designator it was not given, and no chart record attaches to it.
     const construction = !!t.construction && t.construction !== "no";
+    const tagLen = parseFloat(String(t.length ?? ""));
+    const rough = /fixme|rough|sketch/i.test(`${t.note ?? ""} ${t.fixme ?? ""}`);
     out.push({
       osmId: osmId(el),
       center: { lat: (a.lat + b.lat) / 2, lng: (a.lng + b.lng) / 2 },
@@ -420,6 +423,8 @@ export function parseOsmRunways(elements) {
         source: { source: "osm", id: osmId(el) },
       }),
     });
+    // read by mergeStrip only; the merged runway is rebuilt without it
+    out[out.length - 1].runway._claims = { tagLengthM: tagLen > 0 ? tagLen : null, rough };
   }
   return out;
 }
@@ -606,6 +611,33 @@ function sameStrip(o, rw) {
 
 const sourceKey = (rw) => `${rw.source.source}:${rw.source.id}`;
 
+const within10 = (x, y) => Math.abs(x - y) <= 0.1 * Math.max(x, y);
+
+/**
+ * Drawn geometry and the length shown are separate things. The geometry (ends) is always the surveyed strip; the length
+ * is the one value the sources support, decided by agreement, not by "geometry wins":
+ *  - chart length agrees with the drawn extent, or with the OSM `length` tag: the chart length (Arzanah, Khasab, Jiroft);
+ *  - the OSM tag agrees with the chart's own end coordinates, though not its length field: the tag (Umm Al-Shokhot);
+ *  - the OSM tag agrees with the drawn extent (and the extent is not marked FIXME / rough sketch): the extent (Lavan, Suweihan);
+ *  - nothing agrees: the chart length, flagged unverified, since it matches the chart's own end coordinates and the
+ *    drawn extent may include displaced-threshold segments (Zirku, Sir Bani Yas).
+ * Returns lengthM null where the drawn extent stands.
+ */
+function resolveLength(osm, oa, drawnM) {
+  if (!oa.length) return { lengthM: null };
+  const chart = oa[0].lengthM ?? null;
+  const span = oa[0].derivedEnds ? null : haversineM(oa[0].ends[0], oa[0].ends[1]);
+  const claims = osm.map((m) => m._claims).filter(Boolean);
+  const tag = claims.map((c) => c.tagLengthM).find((v) => v != null) ?? null;
+  const rough = claims.some((c) => c.rough);
+  if (!osm.length || chart == null) return { lengthM: chart };
+  if (!rough && within10(chart, drawnM)) return { lengthM: chart };
+  if (tag != null && within10(chart, tag)) return { lengthM: chart };
+  if (tag != null && span != null && within10(tag, span)) return { lengthM: Math.round(tag) };
+  if (tag != null && !rough && within10(tag, drawnM)) return { lengthM: null };
+  return { lengthM: chart, unverified: true };
+}
+
 function mergeStrip(members) {
   const osm = members.filter((m) => m.source.source === "osm");
   const oa = members.filter((m) => m.source.source !== "osm").sort((x, y) => y.lengthM - x.lengthM || sourceKey(x).localeCompare(sourceKey(y)));
@@ -634,6 +666,7 @@ function mergeStrip(members) {
   const first = (key, bad) => [...osm, ...oa].map((m) => m[key]).find((v) => v != null && v !== bad);
   const primary = osm[0] ?? oa[0];
   const sources = [...osm, ...oa].map((m) => m.source);
+  const len = resolveLength(osm, oa, haversineM(a, b));
   const rw = runwayFromEnds(primary.id, a, b, {
     identA: withRef?.ends[0].ident,
     identB: withRef?.ends[1].ident,
@@ -642,8 +675,8 @@ function mergeStrip(members) {
     lighted: first("lighted"),
     closed: members.some((m) => m.closed),
     construction: members.some((m) => m.construction),
-    // the charted length stands unless it describes a different extent from the surveyed strip it is attached to (Suweihan: 2158 m charted, 3808 m drawn)
-    lengthM: oa.length && !(osm.length && Math.abs((oa[0].lengthM ?? 0) - haversineM(a, b)) > 0.1 * haversineM(a, b)) ? oa[0].lengthM ?? undefined : undefined,
+    ...(len.lengthM != null ? { lengthM: len.lengthM } : {}),
+    lengthUnverified: len.unverified,
     derivedEnds: !osm.length && oa[0].derivedEnds,
     source: primary.source,
   });

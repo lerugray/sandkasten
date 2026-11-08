@@ -22,6 +22,8 @@ export interface Runway {
   closed: boolean;
   /** Unfinished strip (OSM construction=yes): closed, carries no designator, never a spawn point. */
   construction?: boolean;
+  /** The sources disagree on the length and none corroborates another: lengthM is the charted value, the drawn strip may differ. */
+  lengthUnverified?: boolean;
   ends: [RunwayEnd, RunwayEnd];
   derivedEnds: boolean;
   source: { source: string; id: string };

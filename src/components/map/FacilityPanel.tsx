@@ -105,6 +105,7 @@ export function FacilityPanel({ facility: f, baseUnits = [], onClose, className 
                 HDG {String(r.ends[0].headingTrue).padStart(3, "0")}/{String(r.ends[1].headingTrue).padStart(3, "0")} T · {r.surface}
                 {r.lighted ? " · lit" : ""}
                 {r.construction ? " · UNDER CONSTRUCTION" : r.closed ? " · CLOSED" : ""}
+                {r.lengthUnverified ? " · length per chart, unverified" : ""}
                 {r.derivedEnds ? " · ends estimated" : ""}
               </div>
             </div>

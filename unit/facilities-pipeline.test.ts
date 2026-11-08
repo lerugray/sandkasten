@@ -390,7 +390,7 @@ describe("facility pipeline", () => {
       }
     });
 
-    const committed = () => JSON.parse(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8")).facilities as { id: string; runways: { id: string; lengthM: number; closed: boolean; construction?: boolean; source: { id: string }; sources?: { id: string }[]; ends: { ident: string; lat: number; lng: number }[] }[] }[];
+    const committed = () => JSON.parse(readFileSync(join(__dirname, "..", "data", "facilities", "hormuz.json"), "utf8")).facilities as { id: string; runways: { id: string; lengthM: number; closed: boolean; construction?: boolean; lengthUnverified?: boolean; source: { id: string }; sources?: { id: string }[]; ends: { ident: string; lat: number; lng: number }[] }[] }[];
 
     test("committed data: Kish has exactly 2 runways, no duplicate 09R/27L, and the 09R threshold is the OSM threshold (< 10 m)", () => {
       const f = committed().find((x) => x.id === "apt-oibk")!;
@@ -410,6 +410,44 @@ describe("facility pipeline", () => {
       }
       // a chart length describing a different extent than the drawn strip does not replace it (Suweihan: 2158 m charted, 3808 m drawn)
       expect(committed().find((x) => x.id === "apt-omaw")!.runways[0].lengthM).toBeGreaterThan(3700);
+    });
+
+    test("committed data: shown lengths follow source agreement; drawn ends, spawn thresholds and closed flags are unchanged by it", () => {
+      const len = (id: string) => committed().find((x) => x.id === id)!.runways[0];
+      // Arzanah: chart 1048 m and OSM length=1047.90 agree; the geometry is a "FIXME - rough sketch" of 849 m
+      expect(len("apt-omar").lengthM).toBe(1048);
+      // Khasab: chart 2500 m and OSM length=2516 agree; the drawn extent is 2786 m
+      expect(len("apt-ookb").lengthM).toBe(2500);
+      // Jiroft: chart 2206 m and OSM length=2206 agree; the drawn extent (with its displaced-threshold way) is 3300 m
+      expect(len("apt-oikj").lengthM).toBe(2206);
+      // Lavan: OSM length=2693 and its 2698 m geometry agree against the 2077 m chart, so the OSM extent stands
+      expect(len("apt-oibv").lengthM).toBe(2698);
+      // Umm Al-Shokhot: OSM length=730 agrees with the chart's own end coordinates (730 m), not its rounded 500 m field
+      expect(len("apt-ot62").lengthM).toBe(730);
+      for (const id of ["apt-omar", "apt-ookb", "apt-oikj", "apt-oibv", "apt-ot62"]) expect(len(id).lengthUnverified, id).toBeUndefined();
+      // nothing corroborates: the chart value is kept and flagged
+      for (const id of ["apt-omaz", "apt-omby"]) expect(len(id).lengthUnverified, id).toBe(true);
+      expect(len("apt-omaz").lengthM).toBe(1200);
+      expect(len("apt-omby").lengthM).toBe(2826);
+      // spawn thresholds and closed flags are the FIX3 ones
+      const before = JSON.parse(readFileSync(join(__dirname, "fixtures", "runway-ends-fix3.json"), "utf8")) as Record<string, { closed: boolean; ends: { ident: string; lat: number; lng: number }[] }>;
+      for (const [id, want] of Object.entries(before)) {
+        const r = len(id);
+        expect(r.closed, id).toBe(want.closed);
+        expect(r.ends.map((e) => [e.ident, e.lat, e.lng]), id).toEqual(want.ends.map((e) => [e.ident, e.lat, e.lng]));
+      }
+    });
+
+    test("length resolution: the charted length stands when it agrees with the drawn extent or the OSM length tag, rough-sketch or not", () => {
+      const mk = (extra: Record<string, string>, chartLat: number) =>
+        mergeFacilities({
+          ourairports: oaFor([26.0, 55.0005], [chartLat, 55.0240]),
+          osmFacilities: [],
+          osmRunways: parseOsmRunways([{ ...way(41, "09/27", [west, east]), tags: { aeroway: "runway", ref: "09/27", ...extra } }] as never),
+        }).facilities.find((f: { icao?: string }) => f.icao === "OIXX")!.runways as { lengthM: number; lengthUnverified?: boolean }[];
+      // chart 7800 ft = 2377 m; drawn extent about 2.46 km
+      expect(mk({}, 25.9981)[0].lengthM).toBe(2377);
+      expect(mk({ length: "2400", note: "FIXME - rough sketch" }, 25.9981)[0].lengthM).toBe(2377);
     });
 
     test("committed data: Fujairah construction strip stays construction/closed with no designator; the selected 11/29 threshold is on the active GCAA strip", () => {

@@ -93,6 +93,32 @@ Data (offline rebuild, byte-for-byte test green): `data/facilities/hormuz.json` 
 
 Proof: unit 191/191 (185 before, 6 net new), e2e 75 passed with 2 skipped (capture-only), `tsc` only the known sand-001 errors. The slot check (`clog-doctor-check.py --slot-check`) exited 0, so browser work ran: the frame spec re-ran the zero-overlap check at both sizes on every frame (0 overlaps), every frame in the spec recaptured under the same names at DPR 2, 1440x900 and 1920x1080, plus two new frames (Kish, Fujairah). No existing frame showed a changed runway.
 
+## Round 5 (FIX4 after Dot #ask-dot-night-s409-1: REJECT, 0 S1 / 1 S2)
+
+The FIX3 identity fixes are kept unchanged (Kish 2, Suweihan and Al Saqr 1, Fujairah construction strip, Chabahar, AE-0215/0217, all 871 facilities).
+
+Root cause: the FIX3 ">10% from the drawn extent, use the extent" rule treated the drawn geometry as the length. Arzanah's outline is a "FIXME - rough sketch" (849 m) while the chart (1048 m) and the OSM `length=1047.90` agree.
+
+Fix (`resolveLength` in `scripts/lib/facilities.mjs`): drawn geometry (ends, spawn thresholds, closed) is untouched; only the shown length is resolved, by agreement within 10%:
+1. chart length agrees with the drawn extent (unless that is marked rough) or with the OSM `length` tag: chart length;
+2. OSM tag agrees with the chart's own end coordinates, not its length field: the tag;
+3. OSM tag agrees with the drawn extent (not rough): the drawn extent;
+4. nothing agrees: chart length, with `lengthUnverified: true` (the panel says "length per chart, unverified").
+
+| Field | FIX2 (chart) | FIX3 | FIX4 | Why |
+|---|---|---|---|---|
+| Arzanah apt-omar | 1048 | 849 | 1048 | chart 1048 + OSM tag 1047.90 agree; outline is a rough sketch |
+| Khasab apt-ookb | 2500 | 2786 | 2500 | chart 2500 + OSM tag 2516 agree |
+| Jiroft apt-oikj | 2206 | 3300 | 2206 | chart 2206 + OSM tag 2206 agree; drawn extent includes a displaced-threshold way |
+| Lavan apt-oibv | 2077 | 2698 | 2698 | OSM tag 2693 + geometry 2698 agree against the chart |
+| Umm Al-Shokhot apt-ot62 | 500 | 1004 | 730 | OSM tag 730 = the chart's own end span (730 m); its 500 m field is a rounded 1640 ft |
+| Zirku apt-omaz | 1200 | 1921 | 1200, unverified | nothing agrees (no OSM tag; the 1921 m extent includes two displaced-threshold ways) |
+| Sir Bani Yas apt-omby | 2826 | 2527 | 2826, unverified | nothing agrees (no OSM tag; chart matches its own end span 2829 m) |
+
+Ends, spawn thresholds and closed flags of all seven are identical to FIX3 (unit test against a fixture of the FIX3 values, `unit/fixtures/runway-ends-fix3.json`). Suweihan stays 3808 m (OSM tag 3800 agrees with the drawn strip), Al Saqr 800 m. `data/osint/hormuz.json` unchanged; `data/facilities/hormuz.json` changed in lengths and two `lengthUnverified` flags only.
+
+Tests: unit 193/193 (191 before, 2 new: "shown lengths follow source agreement..." and "length resolution..."). Runway frames unchanged (no end moved); only the panel line for two fields changed, so no frame was recaptured.
+
 ## Sources, licences and terms
 
 | Source | Used for | Licence / terms | Rate limit / access | Status |
@@ -178,3 +204,4 @@ The SAND-MAP-1 frames 05 to 07 in `docs/verification/sand-map-1-s403/` were reca
 - Round 2: both entries were re-read at every checkpoint; no newer entries appeared.
 - Round 3: STEER.md re-read at every checkpoint; it still holds only 20261106T182116Z and 20261106T183238Z, so no newer entry was acted on.
 - Round 4: STEER.md re-read at every checkpoint; it still holds only 20261106T182116Z and 20261106T183238Z, so no newer entry was acted on. The instruction acted on is the GS seat's `say.md` (co-seat 3 steer: SAND-OSINT-1 FIX3).
+- Round 5: STEER.md re-read at every checkpoint; it still holds only 20261106T182116Z and 20261106T183238Z, so no newer entry was acted on. Instruction acted on: the GS seat's `say.md` (co-seat 3 steer: SAND-OSINT-1 FIX4).
