@@ -1,0 +1,5 @@
+head 62fb8b2 (code); real GPU ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)
+vitest: 20 files, 214/214 passed
+playwright --workers=1 (SAND_E2E_GPU=1): 85 passed, 2 skipped (capture-only), 0 failed, 17.4m
+tsc --noEmit: 3 errors, all baseline in tests/sand-001-unit-placement.spec.ts (72,80,100)
+npm run build: exit 0
