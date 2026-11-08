@@ -1,0 +1,79 @@
+{
+  "baselineProbes": {
+    "keydown": 3,
+    "total": 25,
+    "intervals": 3
+  },
+  "baseEventNames": [
+    "Scenario Briefing",
+    "First Contact Alert",
+    "Iranian Escalation",
+    "Reinforcement Boghammar",
+    "Transit Complete",
+    "Carrier Lost"
+  ],
+  "rounds": [
+    {
+      "round": 1,
+      "verdict": "DECIDED BY Ending rule met: US Navy score is at least 1.",
+      "score": "FINAL SCORE US NAVY 11 // IRAN 0 THE SCORE DECIDED THIS ENDING.",
+      "sourceEvent": "Replay Fixture 1",
+      "afterReplay": {
+        "score": {
+          "US Navy": 0,
+          "Iran": 0
+        },
+        "result": null,
+        "source": null,
+        "fired": [],
+        "eventNames": [
+          "Scenario Briefing",
+          "First Contact Alert",
+          "Iranian Escalation",
+          "Reinforcement Boghammar",
+          "Transit Complete",
+          "Carrier Lost"
+        ],
+        "intents": 0,
+        "log": 0,
+        "targetSelected": false
+      },
+      "probes": {
+        "keydown": 3,
+        "total": 25,
+        "intervals": 3
+      }
+    },
+    {
+      "round": 2,
+      "verdict": "DECIDED BY Ending rule met: US Navy score is at least 1.",
+      "score": "FINAL SCORE US NAVY 11 // IRAN 0 THE SCORE DECIDED THIS ENDING.",
+      "sourceEvent": "Replay Fixture 2",
+      "afterReplay": {
+        "score": {
+          "US Navy": 0,
+          "Iran": 0
+        },
+        "result": null,
+        "source": null,
+        "fired": [],
+        "eventNames": [
+          "Scenario Briefing",
+          "First Contact Alert",
+          "Iranian Escalation",
+          "Reinforcement Boghammar",
+          "Transit Complete",
+          "Carrier Lost"
+        ],
+        "intents": 0,
+        "log": 0,
+        "targetSelected": false
+      },
+      "probes": {
+        "keydown": 3,
+        "total": 25,
+        "intervals": 3
+      }
+    }
+  ]
+}

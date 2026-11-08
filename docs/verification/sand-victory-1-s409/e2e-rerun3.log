@@ -1,0 +1,96 @@
+start 11:04:42 sha=e1a3f68
+
+Running 5 tests using 1 worker
+
+[1A[2K[1/5] [chromium] › tests/sand-combat-1-record.spec.ts:245:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan A (direct flank), WeGo: staged ENGAGE, CANCEL, commit, review, inspection, record, debrief
+[1A[2K[2/5] [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1440x900 DPR 2
+[1A[2K  1) [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1440x900 DPR 2 ────────
+
+    [31mTest timeout of 240000ms exceeded.[39m
+
+    Error: page.waitForTimeout: Target page, context or browser has been closed
+
+       at helpers/sandPlay.ts:68
+
+      66 |     const label = ((await page.getByTestId("sim-toggle-pause").textContent()) ?? "").trim();
+      67 |     if (/PLAY/i.test(label)) await page.getByTestId("sim-toggle-pause").click().catch(() => {});
+    > 68 |     await page.waitForTimeout(400);
+         |                ^
+      69 |   }
+      70 |   await expect(overlay).toBeVisible({ timeout: 1000 });
+      71 | }
+        at runUntilResult (/home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/helpers/sandPlay.ts:68:16)
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-play-1-shots.spec.ts:97:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-play-1-shots-pixel-inspection-at-1440x900-DPR-2-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-play-1-shots-pixel-inspection-at-1440x900-DPR-2-chromium/error-context.md
+
+
+[1A[2K[3/5] [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1920x1080 DPR 2
+[1A[2K[4/5] [chromium] › tests/sand-victory-1-replay.spec.ts:46:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › debrief to record and back keeps the verdict; Enter replays, Space does not; two replays leave nothing behind
+[1A[2K  2) [chromium] › tests/sand-victory-1-replay.spec.ts:46:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › debrief to record and back keeps the verdict; Enter replays, Space does not; two replays leave nothing behind 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveAttribute[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByTestId('record-scope-run')
+    Expected: [32m"true"[39m
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toHaveAttribute" with timeout 5000ms[22m
+    [2m  - waiting for getByTestId('record-scope-run')[22m
+
+
+      112 |       await expect(page.getByTestId("record-window")).toContainText("SHOWING 0 OF 0");
+      113 |       await expect(page.getByTestId("record-cat-all")).toHaveAttribute("aria-pressed", "true");
+    > 114 |       await expect(page.getByTestId("record-scope-run")).toHaveAttribute("aria-pressed", "true");
+          |                                                          ^
+      115 |       await page.getByTestId("sidebar-tab-forces").click();
+      116 |
+      117 |       const counts = await probeCounts(page);
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-victory-1-replay.spec.ts:114:58
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-victory-1-replay-SAND-d20b8-eplays-leave-nothing-behind-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-victory-1-replay-SAND-d20b8-eplays-leave-nothing-behind-chromium/error-context.md
+
+
+[1A[2K[5/5] [chromium] › tests/sand-victory-1-replay.spec.ts:127:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › RESET after a result and RESET in a WeGo plan both return to a fresh briefing with no leftover orders
+[1A[2K  3) [chromium] › tests/sand-victory-1-replay.spec.ts:127:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › RESET after a result and RESET in a WeGo plan both return to a fresh briefing with no leftover orders 
+
+    [31mTest timeout of 300000ms exceeded.[39m
+
+    Error: locator.textContent: Test timeout of 300000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('sim-toggle-pause')[22m
+
+
+      24 |   await autopauseOff(page);
+      25 |   await page.getByTestId("sim-speed").filter({ hasText: "60x" }).click();
+    > 26 |   const label = ((await page.getByTestId("sim-toggle-pause").textContent()) ?? "").trim();
+         |                                                              ^
+      27 |   if (/PLAY/i.test(label)) await page.getByTestId("sim-toggle-pause").click();
+      28 | };
+      29 |
+        at live (/home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-victory-1-replay.spec.ts:26:62)
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-victory-1-replay.spec.ts:151:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-victory-1-replay-SAND-4ad46-ing-with-no-leftover-orders-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-victory-1-replay-SAND-4ad46-ing-with-no-leftover-orders-chromium/error-context.md
+
+
+[1A[2K  3 failed
+    [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1440x900 DPR 2 ─────────
+    [chromium] › tests/sand-victory-1-replay.spec.ts:46:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › debrief to record and back keeps the verdict; Enter replays, Space does not; two replays leave nothing behind 
+    [chromium] › tests/sand-victory-1-replay.spec.ts:127:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › RESET after a result and RESET in a WeGo plan both return to a fresh briefing with no leftover orders 
+  2 passed (13.7m)
+exit=1 end 11:18:26

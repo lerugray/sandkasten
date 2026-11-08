@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { stripIntersections, openPlay, clickGeo, sessionState, wegoState, autopauseOff, runUntilResult, GATE, type W } from "./helpers/sandPlay";
 
-const OUT = path.join(process.cwd(), "docs", "verification", "sand-combat-1-s409");
+const OUT = path.join(process.cwd(), "docs", "verification", "sand-victory-1-s409", "combat-1-carries");
 const SIZES = [{ width: 1440, height: 900 }, { width: 1920, height: 1080 }];
 
 /** Real mouse/keyboard play. Where a check needs the live session it only reads it (the two fixtures in the fog test say so). */
@@ -294,6 +294,7 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
       let stagedTurn = 0;
       let stagedExpect: { shooter: string; contactId: string; optionText: string } | null = null;
       let stagedRowText = "";
+      let refusal: { turn: number; rec: { shooter: string; contactId: string; optionText: string }; rowText: string } | null = null;
       const turnLog: unknown[] = [];
       for (let n = 1; n <= 40; n++) {
         if (await page.getByTestId("result-overlay").isVisible()) break;
@@ -314,6 +315,8 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
               await shotBoth(page, "A-staged-engage");
               await page.getByTestId("staged-cancel").click();
               await expect(page.getByTestId("staged-fire")).toHaveCount(0);
+              const cancelFeedback = ((await page.getByTestId("order-engage-feedback").textContent().catch(() => null)) ?? "").replace(/\s+/g, " ").trim();
+              log.cancel = { turn: n, cancelledRow: rowText1, stagedRowsAfter: await page.getByTestId("staged-fire").count(), feedback: cancelFeedback };
               await shotBoth(page, "A-staged-engage-cancelled");
               expect(await stageFire(page)).not.toBeNull();
               await expect(page.getByTestId("staged-fire")).toHaveCount(1);
@@ -324,6 +327,19 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
               stagedExpect = restaged;
               stagedRowText = rowText2;
             }
+          }
+        }
+        if (stagedTurn && !refusal && n > stagedTurn && (await wegoState(page)).contacts.some((c) => c.cls !== "unknown")) {
+          // FIXTURE (S3-3, the other outcome): the contact is removed from the session between staging and commit, so the commit refuses the order
+          const shooter = await stageFire(page);
+          if (shooter) {
+            const rec = lastStaged!;
+            const rowText = (await page.getByTestId("staged-fire").innerText()).replace(/\s+/g, " ");
+            await page.evaluate((id) => {
+              const sess = (window as unknown as W).__sandSession as any;
+              sess.gameState = { ...sess.gameState, contacts: sess.gameState.contacts.filter((c: any) => c.id !== id) };
+            }, rec.contactId);
+            refusal = { turn: n, rec, rowText };
           }
         }
         const logBefore = (await sessionState(page)).log;
@@ -354,6 +370,18 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
           entry.fireReceipt = { turn: n, shooter: stagedExpect.shooter, shooterId: await receipts.first().getAttribute("data-shooter-id"), contactId: stagedExpect.contactId, selectorOption: stagedExpect.optionText, stagedRow: stagedRowText, status, text };
           log.fireReceipt = entry.fireReceipt;
           await shotBoth(page, "A-review-fire-receipt");
+        }
+        if (refusal && n === refusal.turn) {
+          const receipts = page.getByTestId("review-fire-item");
+          await expect(receipts).toHaveCount(1);
+          expect(await receipts.first().getAttribute("data-status")).toBe("refused");
+          expect(await receipts.first().getAttribute("data-contact-id")).toBe(refusal.rec.contactId);
+          const text = (await receipts.first().innerText()).replace(/\s+/g, " ");
+          const number = /\b(\d{4})\b/.exec(refusal.rec.optionText)?.[1];
+          if (number) expect(text).toContain(number);
+          expect(text).toMatch(/REFUSED, [A-Z]/);
+          log.refusedFixture = { label: "FIXTURE: contact removed from the live session between staging and commit", turn: n, shooter: refusal.rec.shooter, shooterId: await receipts.first().getAttribute("data-shooter-id"), contactId: refusal.rec.contactId, selectorOption: refusal.rec.optionText, stagedRow: refusal.rowText, status: "refused", text };
+          await shotBoth(page, "A-review-fire-refusal-fixture");
         }
         await assertNoLeak(page, SURFACES);
         if (!reviewed && (after.log - logBefore > 0 || staged)) {

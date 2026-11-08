@@ -3,15 +3,22 @@
     "present": true,
     "strip": {
       "x": 360,
-      "y": 52,
+      "y": 96,
       "w": 336.484375,
       "h": 38
     },
-    "hits": [
-      "button[plot-toggle-osint-ad]",
-      "button[plot-toggle-osint-radar]",
-      "button[plot-toggle-osint-nuclear]"
-    ],
+    "hits": [],
+    "clipped": false
+  },
+  "1920x1080": {
+    "present": true,
+    "strip": {
+      "x": 360,
+      "y": 96,
+      "w": 336.484375,
+      "h": 38
+    },
+    "hits": [],
     "clipped": false
   }
 }

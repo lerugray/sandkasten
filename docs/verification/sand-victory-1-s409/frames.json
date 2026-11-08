@@ -1,61 +1,97 @@
 {
   "1440x900-play-briefing.png": {
-    "sha256": "998bac705634016df265bd98348f6efdfe5ba482f0b1bdf0037833c77ef3ef42",
-    "bytes": 1511192,
+    "sha256": "9866b290ca9bccb68313062698a4b8291fefcd8ca2a2f97f7c09e3e3fb8e8418",
+    "bytes": 1513600,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-play-briefing.png": {
-    "sha256": "6d02441b898509bbab74188a829f2a1667024b1f6605b86e266552efff3078d7",
-    "bytes": 2164787,
+    "sha256": "110b85d5778a4d7b4607f0bca2f29aff5de3ab4c4c5c563366dc05b9f0dd8f87",
+    "bytes": 2181394,
     "viewport": "1920x1080",
     "dpr": 2
   },
   "1440x900-play1-debrief.png": {
-    "sha256": "11de441c4574cb85e5dcd9c58f854e0222f49c33e60066cf29d24c0559d77702",
-    "bytes": 1159553,
+    "sha256": "c29ac84663ac9a0a1f224b3f0b8e7d9cb0810b82aca0d0956a36e34f8824332c",
+    "bytes": 1176618,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-play1-debrief.png": {
-    "sha256": "d74aa0f5a319e32e8ba02393a2b5a366d4ac84383f730e1d06e3add145ce9c9e",
-    "bytes": 1343018,
+    "sha256": "6d2aa96d3dc5a34172b620bc706e5b63aef3d6cc9102dc5adc7ceb9f1e040cff",
+    "bytes": 1371253,
     "viewport": "1920x1080",
     "dpr": 2
   },
   "1440x900-play2-orders.png": {
-    "sha256": "5697e258e31f341b86d558f23d40ac252b851492a044b929a77e278525151937",
-    "bytes": 1487611,
+    "sha256": "a4515ac80494a9a2f74b819f83f548e3c72f0c74dfe7ba375d8462712364cd58",
+    "bytes": 1506934,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-play2-orders.png": {
-    "sha256": "c715e3ef48f7e03f067941d1a48bfd7a5f2487e6b122cda1ff8d8374168fb1f7",
-    "bytes": 1866558,
+    "sha256": "a03503dd9e06c7955ebc86f8670074070036482224009ff4367d57b637fe4986",
+    "bytes": 2036359,
     "viewport": "1920x1080",
     "dpr": 2
   },
   "1440x900-fixture-score-draw-debrief.png": {
-    "sha256": "18aa8808ff5dfefb823270770dd2ad7e49dea08dbf23b0c79bc5261586532c6b",
-    "bytes": 942821,
+    "sha256": "77f5039b308654a2dc67de2db659fc311365cac17072fde031bca13ebd4988b3",
+    "bytes": 943035,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-fixture-score-draw-debrief.png": {
-    "sha256": "837727635d6452ebe7cbc21fb3ee55e79191b76ffdf98c0835157267fc100d64",
-    "bytes": 1441836,
+    "sha256": "cbabb63a33ddc441ea091faffe69dd23ab45f3420613a83a272c4d7402f6d913",
+    "bytes": 1433960,
     "viewport": "1920x1080",
     "dpr": 2
   },
   "1440x900-fixture-carrier-loss-defeat-debrief.png": {
-    "sha256": "c916a6ed116b699a545cc84a8035c0890298262e3de4462c5023ecf13bea3a8c",
-    "bytes": 975467,
+    "sha256": "3e36bc3148a1953a0ab8247f920c2176a22bc8ce68f85ddbd267e91b0c7d82c7",
+    "bytes": 974702,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-fixture-carrier-loss-defeat-debrief.png": {
-    "sha256": "a5eb65fa9d4939732cd2452464fac6e00d3b347f98346c2626f17b1d4aa7438d",
-    "bytes": 1500026,
+    "sha256": "c23951c132ec6fc1d5638312230591380ce4dc0376b7af7945e7b08be71c9d5e",
+    "bytes": 1510703,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-play2-debrief.png": {
+    "sha256": "bf9b316d5da50ca792e542cfd461e6a9eafd257c0c86ffb26256fc65795f412a",
+    "bytes": 1065521,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-play2-debrief.png": {
+    "sha256": "52038e187e80605e90a9a3b7fc63ab08fec3a899387e1e0516f9ee454691fd8e",
+    "bytes": 1546740,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-fixture-score-victory-debrief.png": {
+    "sha256": "e7035b9dfa9e22c03b0dc429519b990c4c24f31ca6c098704b758bb36096b13f",
+    "bytes": 957944,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-fixture-score-victory-debrief.png": {
+    "sha256": "5f4277eac4a1875e37ea75dabed5d30c9ceb0416ab5b2d758ae01efe96670b72",
+    "bytes": 1456585,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-final-record-strip.png": {
+    "sha256": "159df2ca76bacafe57707d26d5ce5cd5c9b846102cc780602872131ed47593f5",
+    "bytes": 1419094,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-final-record-strip.png": {
+    "sha256": "3909e041f5370495a445133dfdc3b17bad106686bed1e48ed8014a41cf6d6435",
+    "bytes": 2102569,
     "viewport": "1920x1080",
     "dpr": 2
   }

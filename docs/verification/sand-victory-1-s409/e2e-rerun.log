@@ -1,0 +1,78 @@
+start 10:23:09 sha=11ac4aa
+
+Running 10 tests using 1 worker
+
+[1A[2K[1/10] [chromium] › tests/sand-combat-1-record.spec.ts:245:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan A (direct flank), WeGo: staged ENGAGE, CANCEL, commit, review, inspection, record, debrief
+[1A[2K  1) [chromium] › tests/sand-combat-1-record.spec.ts:245:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan A (direct flank), WeGo: staged ENGAGE, CANCEL, commit, review, inspection, record, debrief 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveAttribute[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByTestId('staged-fire')
+    Expected: [32m"contact-6"[39m
+    Received: [31m""[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveAttribute" with timeout 5000ms[22m
+    [2m  - waiting for getByTestId('staged-fire')[22m
+    [2m    9 × locator resolved to <div data-testid="staged-fire" class="tx-mission-line tx-staged">…</div>[22m
+    [2m      - unexpected value "null"[22m
+
+
+      311 |               const rowText1 = (await page.getByTestId("staged-fire").innerText()).replace(/\s+/g, " ");
+      312 |               if (number) expect(rowText1, "staged row shows the number the selector offered").toContain(number);
+    > 313 |               await expect(page.getByTestId("staged-fire")).toHaveAttribute("data-contact-id", first.contactId);
+          |                                                             ^
+      314 |               await shotBoth(page, "A-staged-engage");
+      315 |               await page.getByTestId("staged-cancel").click();
+      316 |               await expect(page.getByTestId("staged-fire")).toHaveCount(0);
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-combat-1-record.spec.ts:313:61
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-combat-1-record-SAND--b0890-w-inspection-record-debrief-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-combat-1-record-SAND--b0890-w-inspection-record-debrief-chromium/error-context.md
+
+
+[1A[2K[2/10] [chromium] › tests/sand-combat-1-record.spec.ts:429:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan B (escorted dog-leg), continuous: record, debrief, record flow, clean replay
+[1A[2K[3/10] [chromium] › tests/sand-combat-1-record.spec.ts:475:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › fog, GOD, paging, place-keeping, empty filters, reset (own fixtures, continuous)
+[1A[2K[4/10] [chromium] › tests/sand-combat-1-record.spec.ts:584:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › demo, snapshot, demo, legacy: the record belongs to the run it was read from
+[1A[2K[5/10] [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1440x900 DPR 2
+[1A[2K  2) [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1440x900 DPR 2 ────────
+
+    [31mTest timeout of 240000ms exceeded.[39m
+
+    Error: page.waitForTimeout: Target page, context or browser has been closed
+
+       at helpers/sandPlay.ts:68
+
+      66 |     const label = ((await page.getByTestId("sim-toggle-pause").textContent()) ?? "").trim();
+      67 |     if (/PLAY/i.test(label)) await page.getByTestId("sim-toggle-pause").click().catch(() => {});
+    > 68 |     await page.waitForTimeout(400);
+         |                ^
+      69 |   }
+      70 |   await expect(overlay).toBeVisible({ timeout: 1000 });
+      71 | }
+        at runUntilResult (/home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/helpers/sandPlay.ts:68:16)
+        at /home/ray/ops-s260/sand-osint-1-s403/work/sandkasten/tests/sand-play-1-shots.spec.ts:97:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-play-1-shots-pixel-inspection-at-1440x900-DPR-2-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sand-play-1-shots-pixel-inspection-at-1440x900-DPR-2-chromium/error-context.md
+
+
+[1A[2K[6/10] [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1920x1080 DPR 2
+[1A[2K[7/10] [chromium] › tests/sand-victory-1-plays.spec.ts:82:7 › SAND-VICTORY-1: two real wins with different orders, the second after PLAY AGAIN › direct/flank continuous, then escorted dog-leg WeGo
+[1A[2K[8/10] [chromium] › tests/sand-victory-1.spec.ts:65:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted score ending names its rule, shows the score, and PLAY AGAIN starts fresh
+[1A[2K[9/10] [chromium] › tests/sand-victory-1.spec.ts:110:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted draw and a combat-loss defeat each name their own rule
+[1A[2K[10/10] [chromium] › tests/sand-victory-1.spec.ts:146:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › the final-record strip crosses no title, panel or control at 1440x900 and 1920x1080
+[1A[2K  Slow test file: [chromium] › tests/sand-victory-1-plays.spec.ts (7.8m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 failed
+    [chromium] › tests/sand-combat-1-record.spec.ts:245:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan A (direct flank), WeGo: staged ENGAGE, CANCEL, commit, review, inspection, record, debrief 
+    [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1440x900 DPR 2 ─────────
+  8 passed (17.8m)
+exit=1 end 10:41:01

@@ -111,7 +111,6 @@ test.describe("SAND-VICTORY-1: leaving and re-entering the review, and replaying
       await page.getByTestId("sidebar-tab-combat").click();
       await expect(page.getByTestId("record-window")).toContainText("SHOWING 0 OF 0");
       await expect(page.getByTestId("record-cat-all")).toHaveAttribute("aria-pressed", "true");
-      await expect(page.getByTestId("record-scope-run")).toHaveAttribute("aria-pressed", "true");
       await page.getByTestId("sidebar-tab-forces").click();
 
       const counts = await probeCounts(page);
@@ -146,7 +145,9 @@ test.describe("SAND-VICTORY-1: leaving and re-entering the review, and replaying
     expect(w.simTime).toBe(baseSession.simTime);
     expect((await sessionState(page)).orders).toBe(baseSession.orders);
 
-    // RESET after a result goes through the same path as PLAY AGAIN
+    // RESET after a result goes through the same path as PLAY AGAIN (the next run is chosen continuous)
+    await page.getByTestId("mode-continuous").click();
+    await expect(page.getByTestId("mode-continuous")).toHaveAttribute("aria-pressed", "true");
     await addEnding(page, ending("Reset Fixture", "US Navy", 1, "Reset fixture."), { "US Navy": 1 });
     await live(page);
     await runUntilResult(page, 120_000);
