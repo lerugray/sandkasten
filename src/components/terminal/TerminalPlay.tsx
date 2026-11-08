@@ -72,6 +72,11 @@ const COMBAT_TAG: Record<string, string> = {
 };
 
 /** A function-key style command: key cap beside the button, outside its text. */
+// Space is the clock key: after a result it must not also press the focused PLAY AGAIN (Enter and click do).
+const swallowSpace = (e: React.KeyboardEvent) => {
+  if (e.code === "Space") e.preventDefault();
+};
+
 function Cmd({
   cap,
   children,
@@ -249,7 +254,8 @@ export function TerminalPlay() {
         setShowBriefing(false);
       } else if (e.key === "Enter" && showBriefing && el === document.body) {
         e.preventDefault();
-        setShowBriefing(false);
+        // a double-tapped PLAY AGAIN must not also dismiss the fresh briefing
+        if (!e.repeat && performance.now() - resetAtRef.current > 600) setShowBriefing(false);
       } else if (k === "b" && objective && !ended) {
         e.preventDefault();
         if (showBriefing) setShowBriefing(false);
@@ -339,7 +345,9 @@ export function TerminalPlay() {
 
   // RESET and PLAY AGAIN: a fresh paused run with the opening briefing; only harmless display choices survive
   // (tilt, OSINT layers, sensor coverage, autopause settings).
+  const resetAtRef = useRef(0);
   const handleReset = useCallback(() => {
+    resetAtRef.current = performance.now();
     resetSimulation();
     resetInfoWar();
     clearTarget();
@@ -368,6 +376,9 @@ export function TerminalPlay() {
   useEffect(() => {
     if (!ended) return;
     setIsPlacingWaypoint(false);
+    setMeasureMode(false);
+    setMeasureStart(null);
+    setMeasureEnd(null);
     setShowBriefing(false);
   }, [ended]);
 
@@ -1029,7 +1040,7 @@ export function TerminalPlay() {
               ))}
             </div>
             <div className="tx-result-actions">
-              <button type="button" onClick={handleReset} className="tx-btn is-on" data-testid="play-again" autoFocus>PLAY AGAIN</button>
+              <button type="button" onClick={handleReset} onKeyDown={swallowSpace} onKeyUp={swallowSpace} className="tx-btn is-on" data-testid="play-again" autoFocus>PLAY AGAIN</button>
               <button type="button" onClick={() => setReviewing(true)} className="tx-btn" data-testid="review-record">REVIEW RECORD</button>
               <a href="/" className="tx-btn">MAIN MENU</a>
             </div>
@@ -1039,7 +1050,7 @@ export function TerminalPlay() {
       {scenarioResult && reviewing && (
         <div className="tx-banner tx-result-strip" data-testid="result-strip" data-plot-occluder>
           <span className={scenarioResult.result === "defeat" ? "tx-result-strip-bad" : undefined}>[ {scenarioResult.result.toUpperCase()} ]</span>
-          <button type="button" onClick={handleReset} className="tx-btn is-on" data-testid="play-again">PLAY AGAIN</button>
+          <button type="button" onClick={handleReset} onKeyDown={swallowSpace} onKeyUp={swallowSpace} className="tx-btn is-on" data-testid="play-again">PLAY AGAIN</button>
           <button type="button" onClick={() => setReviewing(false)} className="tx-btn" data-testid="show-debrief">DEBRIEF</button>
         </div>
       )}

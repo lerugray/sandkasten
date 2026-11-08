@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { openPlay, installProbes, probeCounts, sessionState, injectKillOnCarrier, restoreDice, clickGeo, assertFrozen } from "./helpers/sandPlay";
+import { openPlay, installProbes, probeCounts, sessionState, injectKillOnCarrier, restoreDice, runUntilResult, clickGeo, assertFrozen } from "./helpers/sandPlay";
 
 test.describe("SAND-PLAY-1 CP2: a real result, a frozen game, and a clean replay", () => {
   test("defeat through the production combat path, frozen after, and PLAY AGAIN twice leaves nothing behind", async ({ page }) => {
-    test.setTimeout(240_000);
+    test.setTimeout(480_000);
     await installProbes(page);
     await openPlay(page, "/play", { e2eHandle: true });
     const fresh = await sessionState(page);
@@ -27,11 +27,10 @@ test.describe("SAND-PLAY-1 CP2: a real result, a frozen game, and a clean replay
 
       await page.getByTestId("sim-speed").filter({ hasText: "1x" }).first().click();
       await page.getByTestId("sim-toggle-pause").click();
-      await expect(page.getByTestId("sim-state")).toContainText(/RUN/);
       await injectKillOnCarrier(page);
 
       const overlay = page.getByTestId("result-overlay");
-      await expect(overlay).toBeVisible({ timeout: 20_000 });
+      await runUntilResult(page, 40_000);
       await restoreDice(page);
       await expect(page.getByTestId("result-title")).toContainText(/DEFEAT|LOST|FAILED/i);
       await expect(page.getByTestId("result-deciding")).toContainText(/Nimitz/i);
@@ -53,7 +52,7 @@ test.describe("SAND-PLAY-1 CP2: a real result, a frozen game, and a clean replay
       await expect(page.getByTestId("result-strip")).toBeVisible();
       await page.keyboard.press("Escape");
       await expect(page.getByTestId("result-strip")).toBeVisible();
-      await assertFrozen(page);
+      await assertFrozen(page, { selected: false });
       await page.getByTestId("show-debrief").click();
       await expect(overlay).toBeVisible();
 

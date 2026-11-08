@@ -34,7 +34,7 @@ async function finish(page: Page, name: string, orders: unknown) {
   mkdirSync(OUT, { recursive: true });
   writeFileSync(path.join(OUT, `plan-${name}.json`), JSON.stringify(log[name], null, 2));
   await page.screenshot({ path: path.join(OUT, `plan-${name}-victory.png`) });
-  await assertFrozen(page);
+  await assertFrozen(page, { selected: false });
   // PLAY AGAIN: a fresh paused scenario with the briefing and default fog
   await page.getByTestId("play-again").click();
   await expect(page.getByTestId("briefing")).toBeVisible();

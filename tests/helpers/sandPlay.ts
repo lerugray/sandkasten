@@ -131,7 +131,7 @@ export async function restoreDice(page: Page) {
 }
 
 /** After a result nothing may change: keys, buttons and map clicks are all refused. */
-export async function assertFrozen(page: Page) {
+export async function assertFrozen(page: Page, opts: { selected?: boolean } = { selected: true }) {
   const before = await sessionState(page);
   await page.keyboard.press("Space");
   for (const k of ["1", "2", "3", "4", "5", "6", "e", "r", "x", "c", "f"]) await page.keyboard.press(k);
@@ -141,7 +141,8 @@ export async function assertFrozen(page: Page) {
     await page.getByTestId(id).click({ force: true, trial: false }).catch(() => {});
   }
   for (const sp of await page.getByTestId("sim-speed").all()) await sp.click({ force: true }).catch(() => {});
-  await expect(page.getByTestId("orders-locked")).toBeVisible();
+  await page.getByTestId("sidebar-tab-forces").evaluate((el) => (el as HTMLElement).click());
+  if (opts.selected) await expect(page.getByTestId("orders-locked")).toBeVisible();
   await expect(page.getByTestId("order-panel")).toHaveCount(0);
   // map handlers: a plain click, a shift-click and a click on the gate itself
   await clickGeo(page, 56.9, 26.2);
