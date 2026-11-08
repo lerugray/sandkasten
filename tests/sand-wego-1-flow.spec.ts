@@ -21,6 +21,7 @@ async function pickWeGo(page: Page, minutes: 1 | 5 | 15) {
 async function takeCommand(page: Page) {
   await page.getByTestId("briefing-show-gate").click();
   await expect(page.getByTestId("briefing")).toBeHidden();
+  await page.waitForTimeout(3500); // the camera glide to the gate finishes before any map click
 }
 
 async function phaseOf(page: Page) {
@@ -36,6 +37,11 @@ async function orderShip(page: Page, rowText: string | RegExp, waypoints: { lng:
   await expect(page.getByTestId("order-panel")).toBeVisible();
   await page.getByTestId("order-add-waypoint").click();
   await expect(page.getByText("CLICK MAP TO PLACE WAYPOINT")).toBeVisible();
+  if (waypoints[0].lat > 26.4) {
+    // selecting a ship re-centres the camera on it; bring the gate back into view, as a player would
+    await page.getByTestId("mission-focus-gate").click();
+    await page.waitForTimeout(3500);
+  }
   for (const [i, w] of waypoints.entries()) {
     await clickGeo(page, w.lng, w.lat);
     await expect(page.getByTestId("order-waypoint-item")).toHaveCount(i + 1);
@@ -416,8 +422,8 @@ test.describe("SAND-WEGO-1: two real victories through the ordinary UI (GOD off)
       await expect(page.getByTestId("cmd-commit")).toHaveCount(0);
       await shotBoth(page, "8-defeat-debrief");
       const s = await sessionState(page);
-      await page.keyboard.press("Enter");
       await page.keyboard.press("Space");
+      await page.keyboard.press("e");
       await page.waitForTimeout(1200);
       expect((await sessionState(page)).simTime).toBe(s.simTime);
       await page.getByTestId("play-again").click();
@@ -493,4 +499,72 @@ test.describe("SAND-WEGO-1: the continuous and snapshot routes stay continuous",
     await expect(page.locator("body")).toBeVisible();
     await noWeGo();
   });
+});
+
+async function minFont(page: Page, selector: string) {
+  return page.evaluate((sel) => {
+    const root = document.querySelector(sel);
+    if (!root) return { min: 0, n: 0 };
+    let min = 99, n = 0;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    for (let t = walker.nextNode(); t; t = walker.nextNode()) {
+      if (!t.textContent?.trim()) continue;
+      const el = t.parentElement!;
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0 || getComputedStyle(el).visibility === "hidden") continue;
+      min = Math.min(min, parseFloat(getComputedStyle(el).fontSize));
+      n++;
+    }
+    return { min, n };
+  }, selector);
+}
+
+test.describe("SAND-WEGO-1: look inspection at 1440x900 and 1920x1080, DPR 2", () => {
+  for (const size of SIZES) {
+    test(`flat and tilted gate, phase panels, font floors at ${size.width}x${size.height}`, async ({ browser }, info) => {
+      test.setTimeout(300_000);
+      mkdirSync(OUT, { recursive: true });
+      const ctx = await browser.newContext({ viewport: size, deviceScaleFactor: 2 });
+      const page = await ctx.newPage();
+      const fontLog: Record<string, unknown> = {};
+      try {
+        await openPlay(page, "/play", { e2eHandle: true });
+        expect(await page.evaluate(() => window.devicePixelRatio)).toBe(2);
+        const renderer = await page.evaluate(() => (window as unknown as W).__sandPlot!.rendererInfo().renderer);
+        info.annotations.push({ type: "renderer", description: renderer });
+        fontLog.renderer = renderer;
+        await pickWeGo(page, 5);
+        fontLog.briefing = await minFont(page, '[data-testid="briefing"]');
+        await takeCommand(page);
+        await page.getByTestId("mission-focus-gate").click();
+        await page.waitForTimeout(3500);
+        fontLog.planning = await minFont(page, '[data-testid="turn-panel"]');
+        await orderShip(page, /Nimitz/, [GATE.centre], "FLANK");
+        await setSpeed(page, "60x");
+        await page.screenshot({ path: path.join(OUT, `${size.width}x${size.height}-9-gate-flat.png`) });
+        await page.keyboard.press("t");
+        await page.waitForTimeout(3500);
+        await page.screenshot({ path: path.join(OUT, `${size.width}x${size.height}-10-gate-tilted.png`) });
+        await page.keyboard.press("t");
+        await page.waitForTimeout(1500);
+        await page.getByTestId("cmd-commit").click();
+        await waitPhase(page, "review", 120_000);
+        fontLog.review = await minFont(page, '[data-testid="turn-review"]');
+        fontLog.statusStrip = await minFont(page, '[data-testid="sim-state"]');
+        const rv = (await page.getByTestId("turn-review").boundingBox())!;
+        const vp = page.viewportSize()!;
+        expect(rv.x + rv.width).toBeLessThanOrEqual(vp.width);
+        expect(rv.y + rv.height).toBeLessThanOrEqual(vp.height);
+        for (const [k, v] of Object.entries(fontLog)) {
+          if (k === "renderer") continue;
+          const f = v as { min: number; n: number };
+          expect(f.n, k).toBeGreaterThan(0);
+          expect(f.min, `${k} smallest font`).toBeGreaterThanOrEqual(12);
+        }
+        writeFileSync(path.join(OUT, `fonts-${size.width}x${size.height}.json`), JSON.stringify(fontLog, null, 2));
+      } finally {
+        await ctx.close();
+      }
+    });
+  }
 });

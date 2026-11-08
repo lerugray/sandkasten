@@ -1053,7 +1053,7 @@ export function TerminalPlay() {
       )}
 
       {/* Right column: the selected track */}
-      {selectedUnit && (
+      {selectedUnit && !(isWeGo && phase === "review" && !ended) && (
         <div className="tx-right" data-plot-occluder>
           <DetailPanel
             unit={selectedUnit}
