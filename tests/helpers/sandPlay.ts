@@ -211,3 +211,26 @@ export async function wegoState(page: Page) {
       : { mode: snap.mode as string, phase: null, turnNumber: 0, turnsCommitted: 0, turnStart: 0, turnEnd: 0, simTime: snap.gameState.simTime as number, intents: 0, paused: true, speed: 1, contacts: [] };
   });
 }
+
+/** Every visible title, panel, control or button whose box crosses the given strip's box (the strip's own children excluded). */
+export async function stripIntersections(page: Page, testId: string) {
+  return page.evaluate((id) => {
+    const strip = document.querySelector(`[data-testid="${id}"]`) as HTMLElement | null;
+    if (!strip) return { present: false as const, strip: null, hits: [] as string[], clipped: false };
+    const s = strip.getBoundingClientRect();
+    const hits: string[] = [];
+    const sel = ".tx-top, .tx-top-right, .tx-left, .tx-right, .tx-cmd, .tx-cmd-right, .tx-panel, .tx-banner, button, select, input, [role=dialog]";
+    for (const el of document.querySelectorAll(sel)) {
+      if (el === strip || strip.contains(el) || el.contains(strip)) continue;
+      const cs = getComputedStyle(el);
+      if (cs.display === "none" || cs.visibility === "hidden" || Number(cs.opacity) === 0) continue;
+      const b = el.getBoundingClientRect();
+      if (b.width === 0 || b.height === 0) continue;
+      if (s.left < b.right && s.right > b.left && s.top < b.bottom && s.bottom > b.top) {
+        hits.push(`${el.tagName.toLowerCase()}${el.getAttribute("data-testid") ? `[${el.getAttribute("data-testid")}]` : `.${String(el.className).split(" ")[0]}`}`);
+      }
+    }
+    const clipped = s.left < 0 || s.right > window.innerWidth || s.top < 0 || s.bottom > window.innerHeight;
+    return { present: true as const, strip: { x: s.x, y: s.y, w: s.width, h: s.height }, hits, clipped };
+  }, testId);
+}

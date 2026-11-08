@@ -2,7 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { openPlay, sessionState, autopauseOff, runUntilResult, injectKillOnCarrier, restoreDice, type W } from "./helpers/sandPlay";
+import { stripIntersections, openPlay, sessionState, autopauseOff, runUntilResult, injectKillOnCarrier, restoreDice, type W } from "./helpers/sandPlay";
 
 const OUT = path.join(process.cwd(), "docs", "verification", "sand-victory-1-s409");
 const SIZES = [{ width: 1440, height: 900 }, { width: 1920, height: 1080 }];
@@ -140,48 +140,34 @@ test.describe("SAND-VICTORY-1: which rule ended the run, the score beside it, an
     }
   });
 
-  test("the debrief, the final-record view and the hold strip never overlap each other", async ({ browser }) => {
+  test("the final-record strip crosses no title, panel or control at 1440x900 and 1920x1080", async ({ browser }) => {
     test.setTimeout(400_000);
     const ctx = await browser.newContext({ viewport: SIZES[0], deviceScaleFactor: 2 });
     const page = await ctx.newPage();
+    const proof: Record<string, unknown> = {};
     try {
       await openPlay(page, "/play", { e2eHandle: true });
       await addEnding(page, ending("Fixture Score Win", "victory", "US Navy", 1, "Fixture."), { "US Navy": 1 });
       await runLive(page);
       await runUntilResult(page, 120_000);
+      await page.getByTestId("review-record").click();
+      await expect(page.getByTestId("result-strip")).toBeVisible();
       for (const size of SIZES) {
         await page.setViewportSize(size);
         await page.waitForTimeout(700);
-        await page.getByTestId("review-record").click().catch(() => {});
-        await expect(page.getByTestId("result-strip")).toBeVisible();
-        const boxes = await page.evaluate(() => {
-          const r = (id: string) => {
-            const e = document.querySelector(`[data-testid="${id}"]`) as HTMLElement | null;
-            if (!e) return null;
-            const b = e.getBoundingClientRect();
-            return { x: b.x, y: b.y, w: b.width, h: b.height, right: b.right, bottom: b.bottom };
-          };
-          const strip = r("result-strip");
-          const out: Record<string, unknown> = { strip, vw: window.innerWidth };
-          const others: Record<string, ReturnType<typeof r>> = {};
-          for (const id of ["tx-right", "mission-panel", "sim-toggle-pause", "sim-state"]) others[id] = r(id);
-          for (const el of document.querySelectorAll(".tx-right, .tx-title, .tx-topbar")) {
-            const b = el.getBoundingClientRect();
-            others[el.className.toString().split(" ")[0]] = { x: b.x, y: b.y, w: b.width, h: b.height, right: b.right, bottom: b.bottom };
-          }
-          out.others = others;
-          return out;
-        });
-        const strip = boxes.strip as { x: number; y: number; right: number; bottom: number };
-        for (const [name, o] of Object.entries(boxes.others as Record<string, { x: number; y: number; right: number; bottom: number } | null>)) {
-          if (!o) continue;
-          const overlap = strip.x < o.right && strip.right > o.x && strip.y < o.bottom && strip.bottom > o.y;
-          expect(overlap, `${size.width}x${size.height}: result strip overlaps ${name}`).toBe(false);
-        }
-        await shotBoth(page, `strip-${size.width}-final-record`);
-        await page.getByTestId("play-again").first().focus();
+        const r = await stripIntersections(page, "result-strip");
+        proof[`${size.width}x${size.height}`] = r;
+        expect(r.hits, `${size.width}x${size.height} result strip intersects ${r.hits.join(", ")}`).toEqual([]);
+        expect(r.clipped).toBe(false);
       }
+      await page.setViewportSize(SIZES[0]);
+      await shotBoth(page, "final-record-strip");
+      await page.getByTestId("show-debrief").click();
+      await expect(page.getByTestId("result-overlay")).toBeVisible();
+      await expect(page.getByTestId("result-score")).toContainText(/US NAVY 1/);
     } finally {
+      mkdirSync(OUT, { recursive: true });
+      writeFileSync(path.join(OUT, "strip-intersections.json"), JSON.stringify(proof, null, 2));
       await ctx.close();
     }
   });

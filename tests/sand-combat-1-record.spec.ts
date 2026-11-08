@@ -2,7 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { openPlay, clickGeo, sessionState, wegoState, autopauseOff, runUntilResult, GATE, type W } from "./helpers/sandPlay";
+import { stripIntersections, openPlay, clickGeo, sessionState, wegoState, autopauseOff, runUntilResult, GATE, type W } from "./helpers/sandPlay";
 
 const OUT = path.join(process.cwd(), "docs", "verification", "sand-combat-1-s409");
 const SIZES = [{ width: 1440, height: 900 }, { width: 1920, height: 1080 }];
@@ -43,6 +43,9 @@ async function orderShip(page: Page, rowText: string | RegExp, waypoints: { lng:
   await page.getByTestId("order-throttle").filter({ hasText: throttle }).click();
 }
 
+/** What the selector offered when the order was accepted (S3-7): the option the player chose, by contact id and shown text. */
+let lastStaged: { shooter: string; contactId: string; optionText: string } | null = null;
+
 async function stageFire(page: Page): Promise<string | null> {
   const names = ["Hornet 101", "Hornet 102", "USS Cole", "USS Mahan", "USS Chosin", "USS Nitze", "USS Nimitz"];
   for (const name of names) {
@@ -54,8 +57,14 @@ async function stageFire(page: Page): Promise<string | null> {
     const options = await select.locator("option").count();
     for (let i = 1; i < options; i++) {
       await select.selectOption({ index: i });
+      const chosen = await select.locator("option").nth(i);
+      const contactId = (await chosen.getAttribute("value")) ?? "";
+      const optionText = ((await chosen.textContent()) ?? "").trim();
       await page.getByTestId("order-engage").click();
-      if ((await page.getByTestId("order-engage-feedback").getAttribute("data-ok")) === "true") return name;
+      if ((await page.getByTestId("order-engage-feedback").getAttribute("data-ok")) === "true") {
+        lastStaged = { shooter: name, contactId, optionText };
+        return name;
+      }
     }
   }
   return null;
@@ -282,6 +291,9 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
 
       let reviewed = false;
       let staged = false;
+      let stagedTurn = 0;
+      let stagedExpect: { shooter: string; contactId: string; optionText: string } | null = null;
+      let stagedRowText = "";
       const turnLog: unknown[] = [];
       for (let n = 1; n <= 40; n++) {
         if (await page.getByTestId("result-overlay").isVisible()) break;
@@ -294,13 +306,23 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
             if (shooter) {
               staged = true;
               await expect(page.getByTestId("staged-fire")).toHaveCount(1);
+              const first = lastStaged!;
+              const number = /\b(\d{4})\b/.exec(first.optionText)?.[1];
+              const rowText1 = (await page.getByTestId("staged-fire").innerText()).replace(/\s+/g, " ");
+              if (number) expect(rowText1, "staged row shows the number the selector offered").toContain(number);
+              await expect(page.getByTestId("staged-fire")).toHaveAttribute("data-contact-id", first.contactId);
               await shotBoth(page, "A-staged-engage");
               await page.getByTestId("staged-cancel").click();
               await expect(page.getByTestId("staged-fire")).toHaveCount(0);
               await shotBoth(page, "A-staged-engage-cancelled");
               expect(await stageFire(page)).not.toBeNull();
               await expect(page.getByTestId("staged-fire")).toHaveCount(1);
-              log.staged = { turn: n, shooter };
+              const restaged = lastStaged!;
+              const rowText2 = (await page.getByTestId("staged-fire").innerText()).replace(/\s+/g, " ");
+              log.staged = { turn: n, shooter, selectorOption: first.optionText, stagedRow: rowText1, contactId: first.contactId, restagedOption: restaged.optionText, restagedRow: rowText2, restagedContactId: restaged.contactId };
+              stagedTurn = n;
+              stagedExpect = restaged;
+              stagedRowText = rowText2;
             }
           }
         }
@@ -318,6 +340,21 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
           damage: (await page.getByTestId("review-damage").innerText()).replace(/\s+/g, " "),
         };
         expect(await page.getByTestId("turn-review").locator(".tx-result-line").count()).toBeLessThanOrEqual(8);
+        if (n === stagedTurn && stagedExpect) {
+          // S3-3: the receipt of the staged ENGAGE is read in the held review, before NEXT TURN
+          const receipts = page.getByTestId("review-fire-item");
+          await expect(receipts).toHaveCount(1);
+          const status = await receipts.first().getAttribute("data-status");
+          expect(["launched", "refused"]).toContain(status);
+          expect(await receipts.first().getAttribute("data-contact-id")).toBe(stagedExpect.contactId);
+          const text = (await receipts.first().innerText()).replace(/\s+/g, " ");
+          const number = /\b(\d{4})\b/.exec(stagedExpect.optionText)?.[1];
+          if (number) expect(text, "receipt names the same track number the selector and staged row showed").toContain(number);
+          expect(text).toMatch(status === "launched" ? /LAUNCHED/ : /REFUSED, /);
+          entry.fireReceipt = { turn: n, shooter: stagedExpect.shooter, shooterId: await receipts.first().getAttribute("data-shooter-id"), contactId: stagedExpect.contactId, selectorOption: stagedExpect.optionText, stagedRow: stagedRowText, status, text };
+          log.fireReceipt = entry.fireReceipt;
+          await shotBoth(page, "A-review-fire-receipt");
+        }
         await assertNoLeak(page, SURFACES);
         if (!reviewed && (after.log - logBefore > 0 || staged)) {
           reviewed = true;
@@ -342,6 +379,19 @@ test.describe("SAND-COMBAT-1: the whole fight, read through the ordinary UI", ()
           await page.getByTestId("review-view-record").click();
           await expect(page.getByTestId("turn-review")).toBeHidden();
           await expect(page.getByTestId("review-hold-strip")).toBeVisible();
+          // S3-4: the hold strip crosses no title, panel or control at either size
+          const stripProof: Record<string, unknown> = {};
+          for (const size of SIZES) {
+            await page.setViewportSize(size);
+            await page.waitForTimeout(700);
+            const r = await stripIntersections(page, "review-hold-strip");
+            stripProof[`${size.width}x${size.height}`] = r;
+            expect(r.hits, `${size.width}x${size.height} hold strip intersects ${r.hits.join(", ")}`).toEqual([]);
+            expect(r.clipped).toBe(false);
+          }
+          await page.setViewportSize(SIZES[0]);
+          await page.waitForTimeout(500);
+          log.holdStrip = stripProof;
           await expect(page.getByTestId("record-scope-turn")).toHaveAttribute("aria-pressed", "true");
           const held = await sessionState(page);
           expect(held.simTime).toBe(rv.simTime);
