@@ -13,6 +13,8 @@ export interface PlotViewProps {
   zoomRequest?: { n: number; factor: number };
   focusRequest?: { n: number; unitId: string } | null;
   facilityFocusRequest?: { n: number; facilityId: string } | null;
+  areaFocusRequest?: { n: number; areaId: string } | null;
+  homeRequest?: number;
   onFacilitySelect?: (facilityId: string | null) => void;
   onOsintSelect?: (siteId: string | null) => void;
   onUnitSelect: (unitId: string | null, shiftKey?: boolean) => void;
@@ -22,7 +24,7 @@ export interface PlotViewProps {
 // Hosts the Three.js plot. The plot owns its canvas and animation loop; this
 // component only forwards React state into it, so React renders never tear
 // the scene down.
-export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, focusRequest, facilityFocusRequest, onUnitSelect, onMapClick, onFacilitySelect, onOsintSelect }: PlotViewProps) {
+export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, focusRequest, facilityFocusRequest, areaFocusRequest, homeRequest, onUnitSelect, onMapClick, onFacilitySelect, onOsintSelect }: PlotViewProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<TacticalPlot | null>(null);
@@ -82,6 +84,14 @@ export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, f
   useEffect(() => {
     if (facilityFocusRequest) plotRef.current?.focusFacility(facilityFocusRequest.facilityId);
   }, [facilityFocusRequest]);
+
+  useEffect(() => {
+    if (areaFocusRequest) plotRef.current?.focusArea(areaFocusRequest.areaId);
+  }, [areaFocusRequest]);
+
+  useEffect(() => {
+    if (homeRequest) plotRef.current?.homeView();
+  }, [homeRequest]);
 
   return (
     <div className="tx-plot" data-testid="tactical-plot-wrap">

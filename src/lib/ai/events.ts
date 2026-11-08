@@ -505,7 +505,7 @@ function evaluateCondition(
 
 // --- Geometry helpers ---
 
-function isPointInPolygon(point: Position, polygon: Position[]): boolean {
+export function isPointInPolygon(point: Position, polygon: Position[]): boolean {
   let inside = false;
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
     const xi = polygon[i].lng;

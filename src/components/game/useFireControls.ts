@@ -70,5 +70,7 @@ export function useFireControls({ unit, gameState, config, orderFeedback, setRoe
       }
     : undefined;
 
-  return { fire, engageTarget, cycleTarget, setRoeFor, roeOptions: ROE_CYCLE };
+  const clearTarget = useCallback(() => setTargetContactId(null), []);
+
+  return { fire, engageTarget, cycleTarget, setRoeFor, clearTarget, roeOptions: ROE_CYCLE };
 }

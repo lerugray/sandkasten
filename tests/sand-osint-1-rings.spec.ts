@@ -169,7 +169,8 @@ test.describe("SAND-OSINT-1 snapshot scenario", () => {
     await expect(page.getByTestId("briefing")).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId("briefing")).toContainText(/real snapshot of the air over the Strait of Hormuz/i);
     await expect(page.getByTestId("briefing")).toContainText(/every aircraft is listed under FORCES/);
-    await page.keyboard.press("Shift");
+    // SAND-PLAY-1: the briefing no longer vanishes on an arbitrary key; Esc (or Enter, or its button) closes it
+    await page.keyboard.press("Escape");
     await expect(page.getByTestId("briefing")).toBeHidden({ timeout: 10_000 });
     await expect(page.getByTestId("terminal-root")).toContainText(/ADS-B|SNAPSHOT/i);
     // normal player view: no G (god mode) pressed

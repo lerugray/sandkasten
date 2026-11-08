@@ -21,7 +21,8 @@ import { useSimulation } from "@/lib/simulation/useSimulation";
 import { useInfoWar } from "@/lib/infowar/useInfoWar";
 import { SPEED_OPTIONS } from "@/lib/simulation/gameState";
 import { formatMeasurement } from "@/lib/map/measure";
-import { trackNumber, type PlotInput, type PlotInsets } from "@/lib/plot/TacticalPlot";
+import { trackNumber, type PlotArea, type PlotInput, type PlotInsets } from "@/lib/plot/TacticalPlot";
+import { UNIT_STATE_LABEL, missionLines, missionProgress, openingBriefing, transitObjective } from "@/lib/scenarios/objective";
 import type { GeoPoint } from "@/lib/plot/projection";
 import type { Contact } from "@/lib/simulation/gameState";
 import type { CombatEvent } from "@/lib/simulation/combat";
@@ -52,18 +53,6 @@ const CLS_LABEL: Record<Contact["classification"], string> = {
   tracked: "TRK",
 };
 
-// The scenario's opening message is the mission objective; the briefing card
-// shows it in full before the clock starts.
-const OPENING = (() => {
-  for (const ev of demoScenarioConfig.events?.events ?? []) {
-    if (!ev.triggers.some((t) => t.type === "ScenarioLoaded")) continue;
-    for (const a of ev.actions) {
-      if (a.type === "DisplayMessage") return { title: a.title ?? "BRIEFING", text: a.text };
-    }
-  }
-  return { title: "BRIEFING", text: demoScenarioConfig.scenario.briefing };
-})();
-
 const AUTOPAUSE_LABELS: Record<string, string> = {
   newContact: "New contact detected",
   friendlyDamaged: "Friendly unit damaged",
@@ -92,6 +81,7 @@ function Cmd({
   testId,
   ariaLabel,
   dataSpeed,
+  disabled,
 }: {
   cap?: string;
   children: React.ReactNode;
@@ -101,6 +91,7 @@ function Cmd({
   testId?: string;
   ariaLabel?: string;
   dataSpeed?: number;
+  disabled?: boolean;
 }) {
   return (
     <span className="tx-key">
@@ -115,6 +106,7 @@ function Cmd({
         data-active={active ? "true" : "false"}
         aria-label={ariaLabel}
         aria-pressed={active}
+        disabled={disabled}
         className={`tx-btn${active ? " is-on" : ""}${alarm ? " is-alarm" : ""}`}
       >
         {children}
@@ -130,6 +122,7 @@ export function TerminalPlay() {
     combatState,
     autopauseEvent,
     autopausePrefsRef,
+    pause,
     togglePause,
     setSpeed,
     addWaypoint,
@@ -143,6 +136,16 @@ export function TerminalPlay() {
     resetSimulation,
     setAutopausePrefs,
   } = useSimulation(demoScenarioConfig);
+
+  const scenarioResult = eventState?.scenarioResult;
+  const ended = !!scenarioResult;
+
+  // The mission is read from the live scenario config at mount (the snapshot route swaps that config in
+  // before this component loads), never cached at module level.
+  const cfgScenario = demoScenarioConfig.scenario;
+  const cfgEvents = demoScenarioConfig.events;
+  const objective = useMemo(() => transitObjective({ scenario: cfgScenario, events: cfgEvents }), [cfgScenario, cfgEvents]);
+  const opening = useMemo(() => openingBriefing({ scenario: cfgScenario, events: cfgEvents }), [cfgScenario, cfgEvents]);
 
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
@@ -164,6 +167,9 @@ export function TerminalPlay() {
   const [holds, setHolds] = useState<TtyLine[]>([]);
   const [focusRequest, setFocusRequest] = useState<{ n: number; unitId: string } | null>(null);
   const [showBriefing, setShowBriefing] = useState(true);
+  const [reviewing, setReviewing] = useState(false);
+  const [areaFocus, setAreaFocus] = useState<{ n: number; areaId: string } | null>(null);
+  const [homeRequest, setHomeRequest] = useState(0);
   const [moreBelow, setMoreBelow] = useState(false);
   const panelBodyRef = useRef<HTMLDivElement>(null);
 
@@ -182,11 +188,12 @@ export function TerminalPlay() {
 
   const unreadMediaCount = infoWarState.posts.filter((p) => !p.read && p.simTime <= gameState.simTime).length;
 
-  const handleReset = useCallback(() => {
-    resetSimulation();
-    resetInfoWar();
-    setHolds([]);
-  }, [resetSimulation, resetInfoWar]);
+  // Reopening the briefing holds the clock; the player resumes it.
+  const openBriefing = useCallback(() => {
+    pause();
+    setShowBriefing(true);
+  }, [pause]);
+  const closeBriefing = useCallback(() => setShowBriefing(false), []);
 
   const toggleMeasure = useCallback(() => {
     setMeasureMode((prev) => {
@@ -219,12 +226,21 @@ export function TerminalPlay() {
         // a focused button takes Space itself; only the bare page toggles time
         if (el === document.body) {
           e.preventDefault();
-          togglePause();
+          if (!ended) togglePause();
         }
         return;
       }
       const k = e.key.toLowerCase();
-      if (k === "h" || e.key === "?") {
+      if (e.key === "Escape" && showBriefing) {
+        setShowBriefing(false);
+      } else if (e.key === "Enter" && showBriefing && el === document.body) {
+        e.preventDefault();
+        setShowBriefing(false);
+      } else if (k === "b" && objective && !ended) {
+        e.preventDefault();
+        if (showBriefing) setShowBriefing(false);
+        else openBriefing();
+      } else if (k === "h" || e.key === "?") {
         e.preventDefault();
         setShowHelp((p) => !p);
       } else if (k === "g") {
@@ -244,7 +260,7 @@ export function TerminalPlay() {
         setShowAutopauseSettings((p) => !p);
       } else if (/^[1-6]$/.test(e.key)) {
         e.preventDefault();
-        setSpeed(SPEED_OPTIONS[Number(e.key) - 1]);
+        if (!ended) setSpeed(SPEED_OPTIONS[Number(e.key) - 1]);
       } else if (e.key === "Escape") {
         if (showHelp) setShowHelp(false);
         else if (showAutopauseSettings) setShowAutopauseSettings(false);
@@ -257,20 +273,9 @@ export function TerminalPlay() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePause, setSpeed, toggleMeasure, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, selectedFacilityId, selectedOsintId]);
+  }, [togglePause, setSpeed, toggleMeasure, ended, showBriefing, objective, openBriefing, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, selectedFacilityId, selectedOsintId]);
 
-  // The briefing card goes away on the first key or click anywhere, and when
-  // the clock starts. It never swallows that input: the key or click still acts.
-  useEffect(() => {
-    if (!showBriefing) return;
-    const dismiss = () => setShowBriefing(false);
-    window.addEventListener("keydown", dismiss, true);
-    window.addEventListener("pointerdown", dismiss, true);
-    return () => {
-      window.removeEventListener("keydown", dismiss, true);
-      window.removeEventListener("pointerdown", dismiss, true);
-    };
-  }, [showBriefing]);
+  // The briefing closes only on a deliberate act (its own card or buttons, Enter, Esc, B) or when the clock starts.
   useEffect(() => {
     if (!gameState.isPaused) setShowBriefing(false);
   }, [gameState.isPaused]);
@@ -303,8 +308,8 @@ export function TerminalPlay() {
   );
   const selectedOrders = selectedUnitId ? gameState.orders.get(selectedUnitId) : undefined;
   const contactTag = useCallback((c: Contact) => `${c.platformName ?? `TN${trackNumber(c.id)}`} ${CLS_LABEL[c.classification]}`, []);
-  const { fire, engageTarget, cycleTarget, setRoeFor } = useFireControls({
-    unit: selectedUnit && selectedUnit.side === gameState.scenario.playerSide ? selectedUnit : null,
+  const { fire, engageTarget, cycleTarget, setRoeFor, clearTarget } = useFireControls({
+    unit: !ended && selectedUnit && selectedUnit.side === gameState.scenario.playerSide ? selectedUnit : null,
     gameState,
     config: demoScenarioConfig,
     orderFeedback,
@@ -317,6 +322,40 @@ export function TerminalPlay() {
     if (!fire) return;
     setRoeFor(fire.roe === "weapons-tight" ? "weapons-free" : fire.roe === "weapons-free" ? "weapons-hold" : "weapons-tight");
   }, [fire, setRoeFor]);
+
+  // RESET and PLAY AGAIN: a fresh paused run with the opening briefing; only harmless display choices survive
+  // (tilt, OSINT layers, sensor coverage, autopause settings).
+  const handleReset = useCallback(() => {
+    resetSimulation();
+    resetInfoWar();
+    clearTarget();
+    setHolds([]);
+    setSelectedUnitId(null);
+    setSelectedFacilityId(null);
+    setSelectedOsintId(null);
+    setPinnedRingIds(new Set());
+    setIsPlacingWaypoint(false);
+    setMeasureMode(false);
+    setMeasureStart(null);
+    setMeasureEnd(null);
+    setShowHelp(false);
+    setShowAutopauseSettings(false);
+    setGodMode(false);
+    setSidebarTab("forces");
+    setFacilityFocus(null);
+    setFocusRequest(null);
+    setAreaFocus(null);
+    setReviewing(false);
+    setShowBriefing(true);
+    setHomeRequest((n) => n + 1);
+  }, [resetSimulation, resetInfoWar, clearTarget]);
+
+  // A result ends order entry: drop any half-made order mode.
+  useEffect(() => {
+    if (!ended) return;
+    setIsPlacingWaypoint(false);
+    setShowBriefing(false);
+  }, [ended]);
 
   // Fire keys: E engage, N next contact, R cycles the ROE, F/X set weapons free/hold directly
   useEffect(() => {
@@ -339,7 +378,6 @@ export function TerminalPlay() {
   const friendlyUnits = allUnits.filter((u) => u.side === playerSide);
   const messages = useMemo(() => eventState?.messages ?? [], [eventState?.messages]);
   const unreadCount = messages.filter((m) => !m.read).length;
-  const scenarioResult = eventState?.scenarioResult;
   const weaponsInFlight = combatState?.weaponsInFlight ?? [];
   const combatLog = useMemo(() => combatState?.combatLog ?? [], [combatState?.combatLog]);
 
@@ -389,6 +427,51 @@ export function TerminalPlay() {
     }
     return lines.sort((a, b) => a.time - b.time).slice(-40);
   }, [combatLog, messages, holds, playerSide, fog]);
+
+  // Only the player's own objective geometry is drawn; no enemy mission areas, no detection implied.
+  const plotAreas = useMemo<PlotArea[] | undefined>(
+    () => (objective && objective.side === playerSide ? [{ id: objective.areaId, label: objective.gateLabel, points: objective.area }] : undefined),
+    [objective, playerSide],
+  );
+  const progress = useMemo(
+    () => (objective && objective.side === playerSide ? missionProgress(objective, allUnits, scenarioResult) : null),
+    [objective, playerSide, allUnits, scenarioResult],
+  );
+  const focusGate = useCallback(() => {
+    if (objective) setAreaFocus((f) => ({ n: (f?.n ?? 0) + 1, areaId: objective.areaId }));
+  }, [objective]);
+  const focusProtected = useCallback(() => {
+    if (!objective) return;
+    setSelectedUnitId(objective.unitId);
+    setFocusRequest((prev) => ({ n: (prev?.n ?? 0) + 1, unitId: objective.unitId }));
+  }, [objective]);
+
+  // What happened, from the player's own picture: the deciding condition, the clock, and the fogged traffic record.
+  const debrief = useMemo(() => {
+    if (!scenarioResult) return null;
+    const t0 = new Date(gameState.scenario.startTime).getTime();
+    const el = Math.max(0, gameState.simTime - t0);
+    const pad = (n: number) => String(Math.floor(n)).padStart(2, "0");
+    const clock = `T+${pad(el / 3600000)}:${pad((el / 60000) % 60)}:${pad((el / 1000) % 60)}`;
+    const kills = combatLog.filter((e) => e.type === "destroyed" && e.side === playerSide).length;
+    const friendlyLosses = friendlyUnits.filter((u) => u.damageState === "destroyed").length;
+    let deciding: string;
+    if (objective && progress) {
+      if (scenarioResult.result === "victory") {
+        deciding = `${objective.unitShort} entered the ${objective.gateLabel.toLowerCase()} afloat (${UNIT_STATE_LABEL[progress.unitState].toLowerCase()}).`;
+      } else if (scenarioResult.result === "defeat") {
+        const loss = [...combatLog].reverse().find((e) => e.type === "destroyed" && e.targetId === objective.unitId);
+        const by = loss?.unitId ? ` by ${unitName(loss.unitId)}` : "";
+        deciding = `${objective.unitShort} was destroyed${by}; the mission cannot be completed.`;
+      } else {
+        deciding = scenarioResult.message;
+      }
+    } else {
+      deciding = scenarioResult.message;
+    }
+    const record = ttyLines.filter((l) => l.tag !== "HOLD" && l.tag !== "ADSB").slice(-8);
+    return { deciding, clock, kills, friendlyLosses, record };
+  }, [scenarioResult, gameState.scenario.startTime, gameState.simTime, combatLog, playerSide, friendlyUnits, objective, progress, unitName, ttyLines]);
 
   const handleUnitSelect = useCallback((unitId: string | null, shiftKey?: boolean) => {
     if (unitId && shiftKey) {
@@ -476,12 +559,13 @@ export function TerminalPlay() {
       facilities: demoScenarioConfig.scenario.facilities,
       selectedFacilityId,
       osint: osintVisible,
+      areas: plotAreas,
       selectedOsintId: selectedOsint ? selectedOsintId : null,
       mode: measureMode ? "measure" : isPlacingWaypoint && selectedUnitId ? "waypoint" : "select",
     }),
     [allUnits, playerSide, gameState.contacts, gameState.orders, gameState.simTime, godMode, weaponsInFlight, combatLog,
       selectedUnitId, pinnedRingIds, showSensorCoverage, measureStart, measureEnd, measureMode, isPlacingWaypoint,
-      selectedFacilityId, osintVisible, selectedOsint, selectedOsintId]
+      selectedFacilityId, osintVisible, plotAreas, selectedOsint, selectedOsintId]
   );
 
   // "-- MORE --" pager cue when the left panel has content below the fold
@@ -536,6 +620,8 @@ export function TerminalPlay() {
         readouts={readouts}
         focusRequest={focusRequest}
         facilityFocusRequest={facilityFocus}
+        areaFocusRequest={areaFocus}
+        homeRequest={homeRequest}
         onFacilitySelect={handleFacilitySelect}
         onOsintSelect={handleOsintSelect}
         onUnitSelect={handleUnitSelect}
@@ -570,6 +656,33 @@ export function TerminalPlay() {
 
       {/* Left column: forces, intel, combat, media */}
       <aside className="tx-panel tx-left" data-testid="side-panel" data-plot-occluder>
+        {objective && progress && (
+          <section className="tx-mission" data-testid="mission-panel" aria-label="Mission">
+            <div className="tx-mission-head">
+              <span>[ MISSION ]</span>
+              <span
+                className={`tx-mission-status is-${progress.status}`}
+                data-testid="mission-status"
+                data-status={progress.status}
+              >
+                {progress.status === "pending" ? "PENDING" : progress.status === "complete" ? "COMPLETE" : progress.status === "failed" ? "FAILED" : "ENDED"}
+              </span>
+            </div>
+            <div className="tx-mission-line" data-testid="mission-win"><b>WIN</b> {missionLines(objective).win}</div>
+            <div className="tx-mission-line" data-testid="mission-lose"><b>LOSE</b> {missionLines(objective).lose}</div>
+            <div className="tx-mission-line tx-dim" data-testid="mission-progress">
+              {objective.unitShort.toUpperCase()} {UNIT_STATE_LABEL[progress.unitState]}
+              {progress.distanceNm !== null && progress.unitState !== "destroyed" && (
+                <>  //  {progress.distanceNm === 0 ? "INSIDE GATE" : `${Math.round(progress.distanceNm)} NM TO GATE EDGE`}</>
+              )}
+            </div>
+            <div className="tx-mission-actions">
+              <Cmd onClick={focusGate} testId="mission-focus-gate" ariaLabel="Focus the transit gate on the map">GATE</Cmd>
+              <Cmd onClick={focusProtected} testId="mission-focus-unit" ariaLabel={`Select and focus ${objective.unitShort}`}>{objective.unitShort.split(" ").pop()!.toUpperCase()}</Cmd>
+              <Cmd cap="B" onClick={() => (showBriefing ? closeBriefing() : openBriefing())} testId="mission-briefing" active={showBriefing} disabled={ended} ariaLabel="Show or hide the briefing">BRIEFING</Cmd>
+            </div>
+          </section>
+        )}
         <div data-testid="sidebar-tabs" className="tx-tabs">
           {(
             [
@@ -626,7 +739,12 @@ export function TerminalPlay() {
                 ))}
               </section>
 
-              {selectedUnit && selectedOrders && selectedUnit.side === playerSide && (
+              {ended && selectedUnit && selectedUnit.side === playerSide && (
+                <section className="tx-section tx-dim" data-testid="orders-locked">
+                  ORDERS LOCKED: THE MISSION HAS ENDED. PLAY AGAIN FOR A NEW RUN.
+                </section>
+              )}
+              {!ended && selectedUnit && selectedOrders && selectedUnit.side === playerSide && (
                 <section className="tx-section">
                   <OrderPanel
                     unit={selectedUnit}
@@ -684,15 +802,50 @@ export function TerminalPlay() {
         {moreBelow && <div className="tx-more" aria-hidden="true">-- MORE --</div>}
       </aside>
 
-      {showBriefing && (
-        <section className="tx-panel tx-briefing" data-testid="briefing" data-plot-occluder role="dialog" aria-label="Briefing">
+      {showBriefing && !ended && (
+        <section
+          className="tx-panel tx-briefing"
+          data-testid="briefing"
+          data-plot-occluder
+          role="dialog"
+          aria-label="Briefing"
+          onClick={closeBriefing}
+        >
           <div className="tx-briefing-head">
             <span>[ BRIEFING ]</span>
             <span className="tx-dim">{gameState.scenario.name.toUpperCase()}</span>
           </div>
-          <div className="tx-briefing-title">{OPENING.title.toUpperCase()}</div>
-          <p className="tx-briefing-text">{OPENING.text}</p>
-          <div className="tx-briefing-foot">PRESS ANY KEY OR CLICK TO TAKE COMMAND  //  SPC STARTS THE CLOCK</div>
+          <div className="tx-briefing-title">{opening.title.toUpperCase()}</div>
+          <p className="tx-briefing-text">{opening.text}</p>
+          {objective && (
+            <div className="tx-briefing-mission" data-testid="briefing-mission">
+              <div><b>PROTECT</b> {missionLines(objective).protect}</div>
+              <div><b>WIN</b> {missionLines(objective).win}</div>
+              <div><b>LOSE</b> {missionLines(objective).lose}</div>
+              <div className="tx-dim">{missionLines(objective).notes}</div>
+            </div>
+          )}
+          <div className="tx-briefing-foot">
+            <span>ESC OR ENTER TO TAKE COMMAND  //  SPC STARTS THE CLOCK  //  B RECALLS THIS BRIEFING</span>
+            <span className="tx-briefing-actions" onClick={(e) => e.stopPropagation()}>
+              {objective && (
+                <button
+                  type="button"
+                  className="tx-btn"
+                  data-testid="briefing-show-gate"
+                  onClick={() => {
+                    focusGate();
+                    closeBriefing();
+                  }}
+                >
+                  SHOW GATE
+                </button>
+              )}
+              <button type="button" className="tx-btn is-on" data-testid="briefing-close" onClick={closeBriefing}>
+                TAKE COMMAND
+              </button>
+            </span>
+          </div>
         </section>
       )}
 
@@ -769,13 +922,13 @@ export function TerminalPlay() {
 
       {/* Command bar */}
       <nav className="tx-cmd" data-testid="command-bar" data-plot-occluder>
-        <Cmd cap="SPC" onClick={togglePause} testId="sim-toggle-pause" active={!gameState.isPaused}>
+        <Cmd cap="SPC" onClick={togglePause} testId="sim-toggle-pause" active={!gameState.isPaused} disabled={ended}>
           {gameState.isPaused ? "PLAY" : "PAUSE"}
         </Cmd>
         <span className="tx-rule-v" />
         <span className="tx-group-label">TIME</span>
         {SPEED_OPTIONS.map((s, i) => (
-          <Cmd key={s} cap={String(i + 1)} onClick={() => setSpeed(s)} testId="sim-speed" dataSpeed={s} active={gameState.speed === s}>
+          <Cmd key={s} cap={String(i + 1)} onClick={() => setSpeed(s)} testId="sim-speed" dataSpeed={s} active={gameState.speed === s} disabled={ended}>
             {s}x
           </Cmd>
         ))}
@@ -793,8 +946,8 @@ export function TerminalPlay() {
           TILT
         </Cmd>
         <span className="tx-rule-v" />
-        <Cmd cap="E" onClick={engageTarget} testId="cmd-engage" ariaLabel="Engage selected contact">ENGAGE</Cmd>
-        <Cmd cap="R" onClick={cycleRoe} testId="cmd-roe" active={fire?.roe === "weapons-free"} alarm={fire?.roe === "weapons-free"} ariaLabel="Cycle rules of engagement">
+        <Cmd cap="E" onClick={engageTarget} testId="cmd-engage" disabled={ended} ariaLabel="Engage selected contact">ENGAGE</Cmd>
+        <Cmd cap="R" onClick={cycleRoe} testId="cmd-roe" disabled={ended} active={fire?.roe === "weapons-free"} alarm={fire?.roe === "weapons-free"} ariaLabel="Cycle rules of engagement">
           {fire ? ROE_SHORT[fire.roe] : "ROE"}
         </Cmd>
         <span className="tx-anchor">
@@ -834,24 +987,46 @@ export function TerminalPlay() {
           HELP
         </Cmd>
         <span className="tx-cmd-right">
-          <Cmd onClick={handleReset}>RESET</Cmd>
+          <Cmd onClick={handleReset} testId="cmd-reset" ariaLabel="Reset to a fresh briefing">RESET</Cmd>
         </span>
       </nav>
 
       {showHelp && <HelpPanel onClose={() => setShowHelp(false)} terminal />}
 
-      {scenarioResult && (
-        <div className="tx-result-backdrop">
-          <div className="tx-panel tx-result">
-            <div className={`tx-result-title${scenarioResult.result === "defeat" ? " tx-alarm" : ""}`}>
+      {scenarioResult && debrief && !reviewing && (
+        <div className="tx-result-backdrop" data-testid="result-overlay">
+          <div className="tx-panel tx-result" role="dialog" aria-label="Mission result">
+            <div className={`tx-result-title${scenarioResult.result === "defeat" ? " tx-alarm" : ""}`} data-testid="result-title">
               [ {scenarioResult.result.toUpperCase()} ]
             </div>
-            <p>{scenarioResult.message}</p>
+            <p data-testid="result-message">{scenarioResult.message}</p>
+            <div className="tx-result-facts" data-testid="result-debrief">
+              <div data-testid="result-deciding"><b>DECIDED BY</b> {debrief.deciding}</div>
+              <div><b>MISSION CLOCK</b> {debrief.clock}</div>
+              <div><b>YOUR LOSSES</b> {debrief.friendlyLosses}  //  <b>HOSTILE KILLS CONFIRMED</b> {debrief.kills}</div>
+            </div>
+            <div className="tx-result-record" data-testid="result-record">
+              <div className="tx-section-head">Record</div>
+              {debrief.record.length === 0 && <div className="tx-dim">NO TRAFFIC RECORDED</div>}
+              {debrief.record.map((l) => (
+                <div key={l.id} className={`tx-result-line${l.alarm ? " is-alarm" : ""}`}>
+                  {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag.trim()} {l.text}
+                </div>
+              ))}
+            </div>
             <div className="tx-result-actions">
-              <button type="button" onClick={handleReset} className="tx-btn is-on">PLAY AGAIN</button>
+              <button type="button" onClick={handleReset} className="tx-btn is-on" data-testid="play-again" autoFocus>PLAY AGAIN</button>
+              <button type="button" onClick={() => setReviewing(true)} className="tx-btn" data-testid="review-record">REVIEW RECORD</button>
               <a href="/" className="tx-btn">MAIN MENU</a>
             </div>
           </div>
+        </div>
+      )}
+      {scenarioResult && reviewing && (
+        <div className="tx-banner tx-result-strip" data-testid="result-strip" data-plot-occluder>
+          <span className={scenarioResult.result === "defeat" ? "tx-result-strip-bad" : undefined}>[ {scenarioResult.result.toUpperCase()} ]</span>
+          <button type="button" onClick={handleReset} className="tx-btn is-on" data-testid="play-again">PLAY AGAIN</button>
+          <button type="button" onClick={() => setReviewing(false)} className="tx-btn" data-testid="show-debrief">DEBRIEF</button>
         </div>
       )}
 

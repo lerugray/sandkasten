@@ -53,6 +53,15 @@ export interface PlotInput {
   /** Real-world AD, radar and nuclear sites (already filtered by the layer toggles); rebuilt when the array identity changes. */
   osint?: OsintSite[];
   selectedOsintId?: string | null;
+  /** Mission areas (the transit gate); the fill is rebuilt when the array identity changes. */
+  areas?: PlotArea[];
+}
+
+/** A player-authorised mission area drawn on the plot: the scenario's own polygon, labelled, not a sensor contact. */
+export interface PlotArea {
+  id: string;
+  label: string;
+  points: GeoPoint[];
 }
 
 export interface PlotCallbacks {
@@ -396,6 +405,9 @@ export class TacticalPlot {
   private facilityLabelCount = 0;
   private osintLayer: OsintPlotLayer | null = null;
   private osintSource: OsintSite[] | undefined;
+  private areaSource: PlotArea[] | undefined;
+  private areaFills: THREE.Mesh[] = [];
+  private areaLabelCount = 0;
   private osintLabelCount = 0;
   private relief: THREE.Mesh | null = null;
   private reliefWire: LineSegments2 | null = null;
@@ -742,6 +754,51 @@ export class TacticalPlot {
     this.distGoal = THREE.MathUtils.clamp(Math.max(longestKm, 1.2) * 2.6 / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 400);
   }
 
+  private rebuildAreaFills(areas: PlotArea[]) {
+    for (const m of this.areaFills) {
+      this.scene.remove(m);
+      m.geometry.dispose();
+      (m.material as THREE.Material).dispose();
+    }
+    this.areaFills = areas.map((a) => {
+      const shape = new THREE.Shape(a.points.map((p) => new THREE.Vector2(this.proj.x(p.lng), this.proj.y(p.lat))));
+      const mesh = new THREE.Mesh(
+        new THREE.ShapeGeometry(shape),
+        new THREE.MeshBasicMaterial({ color: C.hi.clone().multiplyScalar(0.07), transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }),
+      );
+      mesh.renderOrder = 4;
+      this.scene.add(mesh);
+      return mesh;
+    });
+  }
+
+  /** Glide to a mission area and zoom until it fills a good part of the free area between the panels. */
+  focusArea(areaId: string) {
+    const a = this.input?.areas?.find((x) => x.id === areaId);
+    if (!a) return;
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    for (const p of a.points) {
+      const x = this.proj.x(p.lng), y = this.proj.y(p.lat);
+      x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+    }
+    const freeW = Math.max(200, this.W - this.insets.left - this.insets.right);
+    const freeH = Math.max(150, this.H - this.insets.top - this.insets.bottom);
+    // world km that one screen pixel spans at distance d is 2 d tan(FOV/2) / H
+    const need = Math.max(((x1 - x0) * this.H) / (0.55 * freeW), ((y1 - y0) * this.H) / (0.55 * freeH));
+    this.vel.set(0, 0);
+    this.glide = new THREE.Vector2((x0 + x1) / 2, (y0 + y1) / 2);
+    this.zoomAnchor = null;
+    this.distGoal = THREE.MathUtils.clamp(need / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 2600);
+  }
+
+  /** Back to the opening theater view (a fresh run). */
+  homeView() {
+    this.vel.set(0, 0);
+    this.zoomAnchor = null;
+    this.glide = new THREE.Vector2(0, -12);
+    this.distGoal = 1000;
+  }
+
   zoomBy(factor: number) {
     this.zoomAnchor = null;
     this.distGoal = THREE.MathUtils.clamp(this.distGoal * factor, 15, 2600);
@@ -766,6 +823,10 @@ export class TacticalPlot {
       }
       this.facilityLayer = input.facilities?.length ? new FacilityPlotLayer(P, input.facilities) : null;
       if (this.facilityLayer) this.scene.add(this.facilityLayer.root);
+    }
+    if (input.areas !== this.areaSource) {
+      this.areaSource = input.areas;
+      this.rebuildAreaFills(input.areas ?? []);
     }
     if (input.osint !== this.osintSource) {
       this.osintSource = input.osint;
@@ -888,6 +949,16 @@ export class TacticalPlot {
         return { x: s.x, y: s.y };
       },
       focusFacility: (id: string) => this.focusFacility(id),
+      focusArea: (id: string) => this.focusArea(id),
+      drawnAreas: () => ({ areas: this.input?.areas?.length ?? 0, labels: this.areaLabelCount }),
+      areaScreen: (id: string) => {
+        const a = this.input?.areas?.find((x) => x.id === id);
+        if (!a) return null;
+        return a.points.map((p) => {
+          const s = this.toScreen(this.proj.x(p.lng), this.proj.y(p.lat), 0);
+          return { x: s.x, y: s.y };
+        });
+      },
       occupancy: () => this.occupancy(),
       labelOwners: () => this.labelMeta.filter(Boolean).map((m) => ({ ...m })),
       scaleInChrome: () => this.scaleInChrome(),
@@ -1510,6 +1581,24 @@ export class TacticalPlot {
           dr.coverageEdges++;
           if (tilt > 0.02) this.dome(thin, t.pos.x, t.pos.y, rKm, tilt * Math.max(0.4, edgeShare));
         }
+      }
+
+      // mission areas: the scenario's own polygon, outlined and labelled in the hi tone (a reference, not a contact)
+      this.areaLabelCount = 0;
+      for (const a of input.areas ?? []) {
+        if (a.points.length < 3) continue;
+        dashed.breakRun();
+        let top = -Infinity, cx = 0;
+        const xy = a.points.map((p) => [this.proj.x(p.lng), this.proj.y(p.lat)] as const);
+        for (let i = 0; i < xy.length; i++) {
+          const [x, y] = xy[i];
+          const [nx, ny] = xy[(i + 1) % xy.length];
+          dashed.seg(x, y, 0, nx, ny, 0, C.hi, 0.95);
+          mark(x, y, 0, C.hi, 1);
+          cx += x / xy.length;
+          top = Math.max(top, y);
+        }
+        if (this.placeNear(a.label, "tx-obj-label", cx, top, 4)) this.areaLabelCount++;
       }
 
       // range rings: selected unit and Shift+click pins
@@ -2176,7 +2265,7 @@ export class TacticalPlot {
       const b = el.getBoundingClientRect();
       return b.width > 0 && b.height > 0 ? { x: b.left - host.left, y: b.top - host.top, w: b.width, h: b.height } : null;
     };
-    this.overlay.querySelectorAll<HTMLElement>(".tx-grid-label, .tx-ring-label, .tx-fac-label, .tx-wp-label, .tx-measure-label").forEach((el) => {
+    this.overlay.querySelectorAll<HTMLElement>(".tx-grid-label, .tx-ring-label, .tx-fac-label, .tx-wp-label, .tx-measure-label, .tx-obj-label").forEach((el) => {
       const r = dom(el);
       if (r) push("label", el.textContent ?? "", r);
     });

@@ -151,7 +151,8 @@
 .tx-ring-label,
 .tx-fac-label,
 .tx-wp-label,
-.tx-measure-label {
+.tx-measure-label,
+.tx-obj-label {
   position: absolute;
   left: 0;
   top: 0;
@@ -834,4 +835,116 @@
 }
 .tx-osint-toggles .tx-group-label {
   display: inline;
+}
+
+/* ---- mission objective ---- */
+.tx-obj-label {
+  color: var(--tx-hi);
+  background: #020604;
+  border: 1px solid var(--tx-rule-hi);
+  padding: 1px 5px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.tx-mission {
+  flex-shrink: 0;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--tx-rule);
+}
+.tx-mission-head {
+  display: flex;
+  justify-content: space-between;
+  color: var(--tx-phosphor);
+  letter-spacing: 0.1em;
+  margin-bottom: 2px;
+}
+.tx-mission-status {
+  font-weight: 700;
+  color: var(--tx-hi);
+}
+.tx-mission-status.is-complete {
+  color: var(--tx-phosphor);
+}
+.tx-mission-status.is-failed {
+  color: var(--tx-alarm);
+}
+.tx-mission-line {
+  line-height: 1.35;
+}
+.tx-mission-line b,
+.tx-briefing-mission b,
+.tx-result-facts b {
+  display: inline-block;
+  min-width: 5ch;
+  color: var(--tx-phosphor);
+  letter-spacing: 0.08em;
+}
+.tx-mission-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.tx-briefing {
+  cursor: pointer;
+}
+.tx-briefing-mission {
+  margin: 0 18px 10px;
+  padding: 8px 0 2px;
+  border-top: 1px solid var(--tx-rule);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.tx-briefing-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tx-briefing-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.tx-result {
+  max-width: 640px;
+  width: min(640px, calc(100vw - 80px));
+  text-align: left;
+}
+.tx-result-title,
+.tx-result > p {
+  text-align: center;
+}
+.tx-result-facts {
+  margin: 14px 0 8px;
+  line-height: 1.5;
+}
+.tx-result-record {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--tx-rule);
+}
+.tx-result-line {
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--tx-text);
+  overflow-wrap: anywhere;
+}
+.tx-result-line.is-alarm {
+  color: var(--tx-alarm);
+}
+.tx-result-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px;
+  background: var(--tx-panel);
+  color: var(--tx-hi);
+  border: 1px solid var(--tx-rule-hi);
+}
+.tx-result-strip-bad {
+  color: var(--tx-alarm);
 }

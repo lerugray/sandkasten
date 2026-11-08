@@ -117,17 +117,33 @@ export class SimulationSession {
       friendly
     );
 
+    // a finished scenario holds the clock: no further orders or time until reset()
+    const justEnded = !hadResult && !!this.eventState?.scenarioResult;
+    if (justEnded) this.gameState = { ...this.gameState, isPaused: true };
+
     if (trigger) {
       this.gameState = { ...this.gameState, isPaused: true };
       this.autopauseEvent = trigger;
       return true;
     }
-    return !hadResult && !!this.eventState?.scenarioResult;
+    return justEnded;
+  }
+
+  /** True once the scenario has a result; only reset() starts a new run. */
+  get ended(): boolean {
+    return !!this.eventState?.scenarioResult;
   }
 
   // --- Commands: all synchronous, all on the session's own state ---
 
+  /** Hold the clock; a no-op when already held. */
+  pause(): void {
+    if (this.gameState.isPaused) return;
+    this.gameState = { ...this.gameState, isPaused: true };
+  }
+
   togglePause(): void {
+    if (this.ended) return;
     if (this.gameState.isPaused) {
       // Resuming — clear seen triggers so autopause can fire again
       this.seenTriggers.clear();
@@ -137,15 +153,18 @@ export class SimulationSession {
   }
 
   setSpeed(speed: number): void {
+    if (this.ended) return;
     this.gameState = { ...this.gameState, speed };
   }
 
   cycleSpeed(): void {
+    if (this.ended) return;
     const idx = SPEED_OPTIONS.indexOf(this.gameState.speed as (typeof SPEED_OPTIONS)[number]);
     this.gameState = { ...this.gameState, speed: SPEED_OPTIONS[(idx + 1) % SPEED_OPTIONS.length] };
   }
 
   private updateOrders(unitId: string, change: (o: NonNullable<ReturnType<GameState["orders"]["get"]>>) => ReturnType<GameState["orders"]["get"]>): void {
+    if (this.ended) return;
     const orders = this.gameState.orders.get(unitId);
     if (!orders) return;
     const next = change(orders);
@@ -178,6 +197,11 @@ export class SimulationSession {
 
   /** The player's ENGAGE order. The reason for a refusal comes back for the order panel to show. */
   engage(shooterId: string, contactId: string, weaponName?: string): EngageResult {
+    if (this.ended) {
+      this.feedbackSeq += 1;
+      this.orderFeedback = { ok: false, message: "Scenario ended: no further orders.", seq: this.feedbackSeq };
+      return { ok: false, message: this.orderFeedback.message, combatState: this.combatState };
+    }
     const result = engageContact(
       this.gameState,
       this.combatState,

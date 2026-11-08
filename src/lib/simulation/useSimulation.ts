@@ -60,6 +60,7 @@ export function useSimulation(config: ScenarioConfig) {
     [publish]
   );
 
+  const pause = useCallback(() => command(() => session.pause())(), [command, session]);
   const togglePause = useCallback(() => command(() => session.togglePause())(), [command, session]);
   const setSpeed = useCallback((speed: number) => command(() => session.setSpeed(speed))(), [command, session]);
   const cycleSpeed = useCallback(() => command(() => session.cycleSpeed())(), [command, session]);
@@ -95,6 +96,7 @@ export function useSimulation(config: ScenarioConfig) {
     autopauseEvent: snapshot.autopauseEvent,
     orderFeedback: snapshot.orderFeedback,
     autopausePrefsRef,
+    pause,
     togglePause,
     setSpeed,
     cycleSpeed,
