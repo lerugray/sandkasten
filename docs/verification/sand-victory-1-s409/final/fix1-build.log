@@ -1,0 +1,33 @@
+
+> sandkasten@0.1.0 build
+> next build
+
+▲ Next.js 16.2.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 9.9s
+  Running TypeScript ...
+  Finished TypeScript in 24.6s ...
+  Collecting page data using 9 workers ...
+  Generating static pages using 9 workers (0/8) ...
+  Generating static pages using 9 workers (2/8) 
+  Generating static pages using 9 workers (4/8) 
+  Generating static pages using 9 workers (6/8) 
+✓ Generating static pages using 9 workers (8/8) in 434ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/ollama/tags
+├ ƒ /api/platforms
+├ ƒ /api/snapshot
+├ ○ /database
+├ ○ /editor
+└ ƒ /play
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+exit=0

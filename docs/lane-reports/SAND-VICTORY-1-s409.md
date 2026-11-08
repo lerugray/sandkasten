@@ -108,3 +108,7 @@ All logs are in `docs/verification/sand-victory-1-s409/final/` (`battery.txt` ha
 - `combat-1-carries/`: staged, cancelled, receipt and refusal-fixture PNGs plus `plan-A-direct-flank-wego.json`, `plan-B-escorted-dogleg-continuous.json` and `frames.json`.
 - JSON: `frames.json` (per-frame hashes, DPR 2), `strip-intersections.json`, `two-plays.json`, `replay-rounds.json`.
 - Logs: `final/*.log`, `final/battery.txt`, `e2e-early.log`, `e2e-rerun.log`, `e2e-rerun3.log`, `unit-red-on-base.log`.
+
+## FIX1 (S2-1, Opus review round 2)
+
+`objective.ts` now walks TriggerEvent chains transitively (cycle-safe): an event that forces an ending is an ending route, a Time forcer sets `limited=true` and drops the "no time limit" note, and a forced target is never treated as pure transit. Hormuz briefing text is asserted byte-identical. Unit 290/290 and build pass (`final/fix1-unit.log`, `final/fix1-build.log`); no e2e run (land battery).

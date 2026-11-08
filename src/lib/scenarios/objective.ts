@@ -189,16 +189,49 @@ const endResults = (ev: ScenarioEvent) =>
   ev.actions.flatMap((a) => (a.type === "EndScenario" ? [a.result] : []));
 const RESULT_RANK = { defeat: 3, draw: 2, victory: 1 } as const;
 
+/** Every event name a TriggerEvent action can run from this event, through any number of hops (cycles are walked once). */
+function forcedFrom(ev: ScenarioEvent, byName: Map<string, ScenarioEvent>): ScenarioEvent[] {
+  const seen = new Set<string>([ev.name]);
+  const out: ScenarioEvent[] = [];
+  const walk = (e: ScenarioEvent) => {
+    for (const a of e.actions) {
+      if (a.type !== "TriggerEvent" || seen.has(a.eventName)) continue;
+      const t = byName.get(a.eventName);
+      if (!t) continue;
+      seen.add(t.name);
+      out.push(t);
+      walk(t);
+    }
+  };
+  walk(ev);
+  return out;
+}
+
+const forcedTargetNames = (events: ScenarioEvent[], byName: Map<string, ScenarioEvent>) =>
+  new Set(events.flatMap((e) => forcedFrom(e, byName).map((t) => t.name)));
+
 /** Every ending the scenario declares, split into what may be stated and what must stay unsaid. */
 export function describeEndings(config: Pick<ScenarioConfig, "scenario" | "events">, playerSide: string): EndingRules {
   const c: Ctx = { config, playerSide, after: false };
   const transit = transitObjective(config);
   const rules: EndingRule[] = [];
   let limited = false;
-  for (const ev of config.events?.events ?? []) {
-    const results = endResults(ev);
+  const events = config.events?.events ?? [];
+  const byName = new Map(events.map((e) => [e.name, e] as const));
+  const forcedTargets = forcedTargetNames(events, byName);
+  for (const ev of events) {
+    // an event that forces an ending event is itself an ending route, whatever it is called
+    const forced = forcedFrom(ev, byName).flatMap(endResults);
+    const results = [...endResults(ev), ...forced];
     if (results.length === 0) continue;
-    if (transit && isPureTransit(ev, transit)) {
+    if (forced.length > 0) {
+      if (endResults(ev).length === 0 && ev.triggers.length === 0) continue;
+      if (ev.triggers.some((t) => t.type === "Time")) {
+        limited = true;
+        continue;
+      }
+    }
+    if (transit && forced.length === 0 && !forcedTargets.has(ev.name) && isPureTransit(ev, transit)) {
       rules.push({
         result: ev.name === transit.winEvent ? "victory" : "defeat",
         text: ev.name === transit.winEvent ? missionLinesText(transit).win : missionLinesText(transit).lose,
@@ -257,7 +290,9 @@ export function explainResult(config: Pick<ScenarioConfig, "scenario" | "events"
   const transit = transitObjective(config);
   const ev = (config.events?.events ?? []).find((e) => e.name === src.event);
   if (!ev) return { kind: "unstated" };
-  if (transit && isPureTransit(ev, transit)) {
+  const byName = new Map((config.events?.events ?? []).map((e) => [e.name, e] as const));
+  const forcedTargets = forcedTargetNames(config.events?.events ?? [], byName);
+  if (transit && forcedFrom(ev, byName).length === 0 && !forcedTargets.has(ev.name) && isPureTransit(ev, transit)) {
     return ev.name === transit.winEvent ? (result.result === "victory" ? { kind: "transit-win" } : { kind: "unstated" }) : result.result === "defeat" ? { kind: "transit-loss" } : { kind: "unstated" };
   }
   const rule = describeEvent(ev, result.result, { config, playerSide, after: true });

@@ -192,4 +192,52 @@ describe("SAND-VICTORY-1 synthetic ending rules (labelled fixtures)", () => {
     expect(endingNotes(e, true)).not.toMatch(/No time limit|cannot complete or fail/);
     expect(endingNotes(e, true)).toMatch(/Do not assume time or score are safe/);
   });
+  describe("an event that forces an ending event is an ending route (S2-1)", () => {
+    const force = (name: string, triggers: ScenarioEvent["triggers"], target: string): ScenarioEvent => ({
+      name, repeatable: false, triggers, conditions: [], actions: [{ type: "TriggerEvent", eventName: target }],
+    });
+    const withEvents = (extra: ScenarioEvent[]) => ({ scenario: demoScenarioConfig.scenario, events: { events: [...demoScenarioConfig.events!.events, ...extra], firedEvents: new Set<string>(), messages: [] } });
+
+    it("Hormuz briefing text is unchanged", () => {
+      const e = demoEndings();
+      expect(e.limited).toBe(false);
+      expect(endingNotes(e, true)).toBe("No time limit. Escort ships, score and the clock cannot complete or fail the mission.");
+      expect(e.rules.every((r) => r.transit)).toBe(true);
+    });
+
+    it("a time-forced defeat is limited, not 'no time limit', and the target is not pure transit", () => {
+      const c = withEvents([force("Deadline", [{ type: "Time", time: T0 + 3600000 }], "Carrier Lost")]);
+      const e = describeEndings(c, SIDE);
+      expect(e.limited).toBe(true);
+      expect(endingNotes(e, true)).not.toMatch(/No time limit|cannot complete or fail/);
+      expect(e.rules.find((r) => r.event === "Carrier Lost")?.transit ?? false).toBe(false);
+      expect(explainResult(c, SIDE, { result: "defeat", message: "m", source: { event: "Carrier Lost" } }).kind).not.toBe("transit-loss");
+    });
+
+    it("a two-hop chain through a middle event with no end of its own is found", () => {
+      const c = withEvents([
+        force("Deadline", [{ type: "Time", time: T0 + 3600000 }], "Relay"),
+        force("Relay", [], "Carrier Lost"),
+      ]);
+      const e = describeEndings(c, SIDE);
+      expect(e.limited).toBe(true);
+      expect(endingNotes(e, true)).not.toMatch(/No time limit/);
+    });
+
+    it("a non-time forcer is stated as a rule with the forced result, and a cycle terminates", () => {
+      const c = withEvents([
+        force("Score Panic", [{ type: "SideScore", side: "Iran", threshold: 7, comparison: "gte" }], "Loop B"),
+        force("Loop B", [], "Loop A"),
+        force("Loop A", [], "Loop B"),
+        force("Loop Root", [{ type: "SideScore", side: "Iran", threshold: 9, comparison: "gte" }], "Loop A"),
+      ]);
+      const e = describeEndings(c, SIDE);
+      expect(e.rules.some((r) => r.event === "Score Panic")).toBe(false);
+      const c2 = withEvents([force("Score Panic", [{ type: "SideScore", side: "Iran", threshold: 7, comparison: "gte" }], "Carrier Lost")]);
+      const rule = describeEndings(c2, SIDE).rules.find((r) => r.event === "Score Panic");
+      expect(rule).toMatchObject({ result: "defeat", usesScore: true, transit: false });
+      expect(rule!.text).toMatch(/Iran score is at least 7/);
+      expect(endingNotes(describeEndings(c2, SIDE), true)).not.toMatch(/No time limit/);
+    });
+  });
 });
