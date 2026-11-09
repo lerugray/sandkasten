@@ -1,4 +1,4 @@
-SAND-SAVE-1 END-REVIEW VERDICT: DRAFT (pending lane save specs) S1=0 S2=0 S3=3
+SAND-SAVE-1 END-REVIEW VERDICT: ACCEPT S1=0 S2=0 S3=3
 
 Open-source CMO equivalent, friendlier than CMO: PARTLY. Save and resume now works the way a player expects.
 
@@ -19,7 +19,7 @@ No S1 or S2. Continuation equals the uninterrupted control. Loading: 8 MB bound,
 
 ## 5 Runs (SwiftShader, `--mute-audio`)
 - vitest 306/306, exit 0. `tsc --noEmit` exit 2: the 3 errors base already has in an untouched spec.
-- Lane save specs, `--workers=1`: still running when this draft was pushed (next commit updates this line).
+- Lane save specs (flow + lifecycle), `--workers=1`: 6/6 passed in 22.0 min, exit 0, 0 skipped. My rerun of the real checkpoint resumed in a fresh page to VICTORY at mission hour 3.10 ("USS Nimitz entered the transit gate (afloat, undamaged)"). The second plan from the unchanged file (dog-leg, FULL, radar toggled) won at 3.70 with losses 3.
 - Hands-on: I saved at T+00:06:02 while 60x ran, and [HOLD] showed. Then I reloaded the page and used LOAD BATTLE. The battle came back paused at the same clock (unchanged 3 s later), with no briefing, selection or God mode. Log, weapons in flight, ammo, fired events, score and orders were all equal. PLAY continued with no refill and no repeat. 0 page errors.
 
 ## Findings (S3)
