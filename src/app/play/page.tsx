@@ -13,5 +13,5 @@ export default async function PlayPage({
 }) {
   const { map, scenario } = await searchParams;
   if (scenario === "snapshot") return <SnapshotPlay legacy={map === "legacy"} />;
-  return map === "legacy" ? <LegacyPlay /> : <TerminalPlay />;
+  return map === "legacy" ? <LegacyPlay key="hormuz-legacy" /> : <TerminalPlay key="hormuz" configId="hormuz" />;
 }

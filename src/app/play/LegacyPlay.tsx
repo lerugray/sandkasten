@@ -11,13 +11,14 @@ import { CombatLog } from "@/components/game/CombatLog";
 import { MediaFeed } from "@/components/game/infowar/MediaFeed";
 import { HelpPanel } from "@/components/game/help/HelpPanel";
 import { demoScenarioConfig } from "@/lib/scenarios/demoConfig";
-import { useSimulation } from "@/lib/simulation/useSimulation";
+import { useSimulation, type ScenarioConfig } from "@/lib/simulation/useSimulation";
 import { useInfoWar } from "@/lib/infowar/useInfoWar";
 import { formatMeasurement } from "@/components/map/MeasurementLayer";
 import { useFireControls } from "@/components/game/useFireControls";
 import { ClassicFonts } from "@/components/ClassicFonts";
 
-export function LegacyPlay() {
+/** The old MapLibre view. The configuration is passed in by the route; it never reads shared module state. */
+export function LegacyPlay({ config = demoScenarioConfig }: { config?: ScenarioConfig }) {
   const {
     gameState,
     eventState,
@@ -36,7 +37,7 @@ export function LegacyPlay() {
     markMessageRead,
     resetSimulation,
     setAutopausePrefs,
-  } = useSimulation(demoScenarioConfig);
+  } = useSimulation(config);
 
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const [pinnedRingIds, setPinnedRingIds] = useState<Set<string>>(new Set());
@@ -55,7 +56,7 @@ export function LegacyPlay() {
     gameState,
     combatState,
     eventState,
-    demoScenarioConfig.infowar
+    config.infowar
   );
 
   const unreadMediaCount = infoWarState.posts.filter(
@@ -114,7 +115,7 @@ export function LegacyPlay() {
   }, [autopauseEvent]);
 
   const liveScenario = {
-    ...demoScenarioConfig.scenario,
+    ...config.scenario,
     sides: gameState.sides,
   };
 
@@ -123,7 +124,7 @@ export function LegacyPlay() {
   const { fire } = useFireControls({
     unit: selectedUnit && selectedUnit.side === gameState.scenario.playerSide ? selectedUnit : null,
     gameState,
-    config: demoScenarioConfig,
+    config,
     orderFeedback,
     setRoe,
     engage,

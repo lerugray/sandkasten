@@ -16,9 +16,13 @@ import { MessageLog } from "@/components/game/MessageLog";
 import { CombatRecord, INITIAL_RECORD_VIEW, type RecordView } from "@/components/game/CombatRecord";
 import { MediaFeed } from "@/components/game/infowar/MediaFeed";
 import { HelpPanel } from "@/components/game/help/HelpPanel";
-import { demoScenarioConfig } from "@/lib/scenarios/demoConfig";
+import { getBuiltinConfig, type BuiltinId } from "@/lib/scenarios/builtins";
+import { SimulationSession, type ScenarioConfig } from "@/lib/simulation/session";
+import { saveFileName, serializeBattle, type ParsedSave } from "@/lib/simulation/battleSave";
+import { LoadBattleDialog, SaveNotice, battleClock, type SaveNoticeState } from "./BattleFile";
 import { useSimulation } from "@/lib/simulation/useSimulation";
 import type { FireIntent } from "@/lib/simulation/session";
+import type { Unit } from "@/types/game";
 import { useInfoWar } from "@/lib/infowar/useInfoWar";
 import { SPEED_OPTIONS } from "@/lib/simulation/gameState";
 import { formatMeasurement } from "@/lib/map/measure";
@@ -113,7 +117,38 @@ function Cmd({
   );
 }
 
-export function TerminalPlay() {
+/**
+ * The Three.js terminal play screen for one built-in configuration. The configuration is owned here, chosen by the
+ * route (or by a loaded battle file) and never swapped into shared module state. A battle load replaces this whole
+ * view with a fresh one built on the restored session, so no selection, order mode, dialog, God mode, timer or media
+ * callback of the discarded run can survive into the loaded one.
+ */
+export function TerminalPlay({ configId = "hormuz" }: { configId?: BuiltinId }) {
+  const [run, setRun] = useState<{ configId: BuiltinId; session: SimulationSession | null; epoch: number }>({ configId, session: null, epoch: 0 });
+  const loadSession = useCallback((nextId: BuiltinId, session: SimulationSession) => {
+    setRun((r) => ({ configId: nextId, session, epoch: r.epoch + 1 }));
+    // keep the address honest: a reload of this page opens the scenario that is now on screen
+    try {
+      const url = nextId === "snapshot" ? "/play?scenario=snapshot" : "/play";
+      if (window.location.pathname + window.location.search !== url) window.history.replaceState(window.history.state, "", url);
+    } catch {
+      // the address is a courtesy only
+    }
+  }, []);
+  return <TerminalPlayView key={run.epoch} config={getBuiltinConfig(run.configId)} configId={run.configId} restored={run.session} onLoadSession={loadSession} />;
+}
+
+function TerminalPlayView({
+  config,
+  configId,
+  restored,
+  onLoadSession,
+}: {
+  config: ScenarioConfig;
+  configId: BuiltinId;
+  restored: SimulationSession | null;
+  onLoadSession: (configId: BuiltinId, session: SimulationSession) => void;
+}) {
   const {
     gameState,
     eventState,
@@ -141,20 +176,21 @@ export function TerminalPlay() {
     commitOrders,
     nextTurn,
     cancelIntent,
-  } = useSimulation(demoScenarioConfig);
+    checkpoint,
+  } = useSimulation(config, restored);
 
   const isWeGo = mode === "wego" && !!wego;
   const phase = wego?.phase ?? null;
   // The real-world snapshot route plays continuous only: it says so instead of offering an inert control.
-  const modeChoice = !demoScenarioConfig.scenario.snapshot;
+  const modeChoice = !config.scenario.snapshot;
 
   const scenarioResult = eventState?.scenarioResult;
   const ended = !!scenarioResult;
 
   // The mission is read from the live scenario config at mount (the snapshot route swaps that config in
   // before this component loads), never cached at module level.
-  const cfgScenario = demoScenarioConfig.scenario;
-  const cfgEvents = demoScenarioConfig.events;
+  const cfgScenario = config.scenario;
+  const cfgEvents = config.events;
   const objective = useMemo(() => transitObjective({ scenario: cfgScenario, events: cfgEvents }), [cfgScenario, cfgEvents]);
   const opening = useMemo(() => openingBriefing({ scenario: cfgScenario, events: cfgEvents }), [cfgScenario, cfgEvents]);
   // The endings the running session evaluates (its own event list), stated only as far as the briefing may state them.
@@ -187,7 +223,14 @@ export function TerminalPlay() {
   const [, forcePrefsRender] = useState(0);
   const [holds, setHolds] = useState<TtyLine[]>([]);
   const [focusRequest, setFocusRequest] = useState<{ n: number; unitId: string } | null>(null);
-  const [showBriefing, setShowBriefing] = useState(true);
+  // A restored battle opens where it was left, on the plot: the briefing is a start-of-run card (B recalls it).
+  const [showBriefing, setShowBriefing] = useState(!restored);
+  // Battle files: the load dialog (a modal) and the notice after a save
+  const [showLoad, setShowLoad] = useState(false);
+  const [saveNotice, setSaveNotice] = useState<SaveNoticeState | null>(null);
+  const modalOpenRef = useRef(false);
+  modalOpenRef.current = showLoad;
+  const lastSaveAtRef = useRef(0);
   const [reviewing, setReviewing] = useState(false);
   const [recordView, setRecordView] = useState<RecordView>(INITIAL_RECORD_VIEW);
   const [recordHold, setRecordHold] = useState<"review" | null>(null);
@@ -208,7 +251,7 @@ export function TerminalPlay() {
     gameState,
     combatState,
     eventState,
-    demoScenarioConfig.infowar
+    config.infowar
   );
 
   const unreadMediaCount = infoWarState.posts.filter((p) => !p.read && p.simTime <= gameState.simTime).length;
@@ -221,15 +264,17 @@ export function TerminalPlay() {
   const closeBriefing = useCallback(() => setShowBriefing(false), []);
 
   // The opening view frames the gate and the protected ship in the part of the plot the docked briefing leaves clear.
-  const frameOpening = useCallback(() => {
+  // A restored battle frames the same objective around where the protected ship is now, with no briefing in the way.
+  const frameOpening = useCallback((units?: Unit[]) => {
     if (!objective) return false;
-    const start = demoScenarioConfig.scenario.sides.flatMap((sd) => sd.units).find((u) => u.id === objective.unitId)?.position;
-    const avoidRight = Math.min(540, window.innerWidth - 420) + 28;
+    const pool = units ?? config.scenario.sides.flatMap((sd) => sd.units);
+    const start = pool.find((u) => u.id === objective.unitId)?.position;
+    const avoidRight = units ? undefined : Math.min(540, window.innerWidth - 420) + 28;
     setAreaFocus((f) => ({ n: (f?.n ?? 0) + 1, areaId: objective.areaId, include: start ? [start] : undefined, avoidRight }));
     return true;
-  }, [objective]);
+  }, [objective, config]);
   useEffect(() => {
-    frameOpening();
+    frameOpening(restored ? gameState.sides.flatMap((sd) => sd.units) : undefined);
     // once, on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -256,6 +301,8 @@ export function TerminalPlay() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      // a modal dialog owns the keyboard: no shortcut may reach the battle underneath it
+      if (modalOpenRef.current) return;
       const el = e.target as HTMLElement;
       const typing =
         (el.tagName === "INPUT" && (el as HTMLInputElement).type !== "checkbox") ||
@@ -373,7 +420,7 @@ export function TerminalPlay() {
   const { fire, engageTarget, cycleTarget, setRoeFor, clearTarget } = useFireControls({
     unit: ordersOpen && selectedUnit && selectedUnit.side === gameState.scenario.playerSide ? selectedUnit : null,
     gameState,
-    config: demoScenarioConfig,
+    config: config,
     orderFeedback,
     setRoe,
     engage,
@@ -417,6 +464,53 @@ export function TerminalPlay() {
     if (!frameOpening()) setHomeRequest((n) => n + 1);
   }, [resetSimulation, resetInfoWar, clearTarget, frameOpening]);
 
+  // SAVE BATTLE: pause at one atomic checkpoint and hand a versioned file to the browser's download.
+  const handleSave = useCallback(() => {
+    const now = performance.now();
+    if (now - lastSaveAtRef.current < 600) return; // rapid repeats make one file, not a burst of downloads
+    lastSaveAtRef.current = now;
+    try {
+      const dump = checkpoint();
+      const text = serializeBattle(configId, dump);
+      const name = saveFileName(configId, dump);
+      const blob = new Blob([text], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      a.rel = "noopener";
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      const el = Math.max(0, dump.gameState.simTime - dump.gameState.scenario.startTime);
+      setSaveNotice({ ok: true, name, bytes: blob.size, clock: battleClock(el) });
+    } catch (err) {
+      setSaveNotice({ ok: false, message: err instanceof Error ? err.message : "The battle could not be written to a file." });
+    }
+  }, [checkpoint, configId]);
+
+  // LOAD BATTLE opens a modal over a held battle; nothing is replaced until a validated file is confirmed.
+  const openLoad = useCallback(() => {
+    pause();
+    setSaveNotice(null);
+    setShowLoad(true);
+  }, [pause]);
+  const confirmLoad = useCallback(
+    (parsed: Extract<ParsedSave, { ok: true }>): string | null => {
+      try {
+        onLoadSession(parsed.envelope.configId, SimulationSession.restore(parsed.config, parsed.dump));
+        return null;
+      } catch {
+        return "The battle could not be restored. Your current battle is unchanged.";
+      }
+    },
+    [onLoadSession],
+  );
+  const hasProgress =
+    gameState.simTime > gameState.scenario.startTime || [...gameState.orders.values()].some((o) => o.waypoints.length > 0);
+
   // a held review exists only while the turn is still in review
   useEffect(() => {
     if (phase !== "review" || ended) setRecordHold(null);
@@ -440,7 +534,7 @@ export function TerminalPlay() {
   // Fire keys: E engage, N next contact, R cycles the ROE, F/X set weapons free/hold directly
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey || !fire) return;
+      if (e.metaKey || e.ctrlKey || e.altKey || !fire || modalOpenRef.current) return;
       const el = e.target as HTMLElement;
       if (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable) return;
       const k = e.key.toLowerCase();
@@ -495,7 +589,7 @@ export function TerminalPlay() {
     const lines: TtyLine[] = [];
     for (const r of record) lines.push({ id: r.id, time: r.time, tag: TTY_TAG[r.tag] ?? r.tag, text: r.text, alarm: r.alarm });
     if (!ended) lines.push(...holds);
-    const snap = demoScenarioConfig.scenario.snapshot;
+    const snap = config.scenario.snapshot;
     if (snap) {
       const n = snap.counts.units;
       lines.push({ id: "snapshot", time: 0, tag: "ADSB", text: `SNAPSHOT ${snap.fetchedAt.slice(0, 16).replace("T", " ")}Z: ${n} AIRCRAFT IN VIEW, ALL LISTED UNDER FORCES`, alarm: false });
@@ -627,7 +721,7 @@ export function TerminalPlay() {
     }
   }, []);
 
-  const osintVisible = useMemo(() => sitesFor(osintLayers, demoScenarioConfig.scenario.osint ?? []), [osintLayers]);
+  const osintVisible = useMemo(() => sitesFor(osintLayers, config.scenario.osint ?? []), [osintLayers]);
   const selectedOsint = selectedOsintId ? osintVisible.find((o) => o.id === selectedOsintId) ?? null : null;
 
   const showFacility = useCallback((facilityId: string) => {
@@ -677,7 +771,7 @@ export function TerminalPlay() {
       measureStart,
       measureEnd,
       simTime: gameState.simTime,
-      facilities: demoScenarioConfig.scenario.facilities,
+      facilities: config.scenario.facilities,
       selectedFacilityId,
       osint: osintVisible,
       areas: plotAreas,
@@ -726,7 +820,7 @@ export function TerminalPlay() {
 
   const clock = new Date(gameState.simTime).toISOString().replace("T", " ").slice(0, 19) + "Z";
   const prefs = autopausePrefsRef.current;
-  const theater = demoScenarioConfig.scenario.theater.center;
+  const theater = config.scenario.theater.center;
 
   return (
     <div className="tx-root" data-testid="terminal-root">
@@ -786,6 +880,9 @@ export function TerminalPlay() {
           </span>
         )}
         <span className="tx-top-right">
+          <Cmd onClick={handleSave} testId="cmd-save" ariaLabel="Save battle to a file">SAVE BATTLE</Cmd>
+          <Cmd onClick={openLoad} testId="cmd-load" ariaLabel="Load battle from a file">LOAD BATTLE</Cmd>
+          <span className="tx-rule-v" />
           {Object.entries(gameState.score).map(([side, score]) => (
             <span key={side} className="tx-score">
               <span className="tx-dim">{side.toUpperCase()}</span> {score}
@@ -1254,7 +1351,7 @@ export function TerminalPlay() {
         Facilities © OpenStreetMap contributors (ODbL), OurAirports (public domain). Land, coast, depth: Natural Earth, NOAA ETOPO1 (public domain). {OSINT_ATTRIBUTION}
       </div>
 
-      {demoScenarioConfig.scenario.osint?.length ? (
+      {config.scenario.osint?.length ? (
         <div className="tx-osint-toggles" data-testid="plot-osint-toggles" data-plot-occluder>
           <span className="tx-group-label">OSINT</span>
           {OSINT_LAYERS.map((l) => (
@@ -1414,6 +1511,8 @@ export function TerminalPlay() {
               <button type="button" onClick={handleReset} onKeyDown={swallowSpace} onKeyUp={swallowSpace} className="tx-btn is-on" data-testid="play-again" autoFocus>PLAY AGAIN</button>
               <button type="button" onClick={() => openRecord("debrief")} className="tx-btn" data-testid="debrief-view-record">VIEW RECORD ({debrief.total})</button>
               <button type="button" onClick={() => setReviewing(true)} className="tx-btn" data-testid="review-record">REVIEW RECORD</button>
+              <button type="button" onClick={handleSave} className="tx-btn" data-testid="result-save">SAVE BATTLE</button>
+              <button type="button" onClick={openLoad} className="tx-btn" data-testid="result-load">LOAD BATTLE</button>
               <a href="/" className="tx-btn">MAIN MENU</a>
             </div>
           </div>
@@ -1426,6 +1525,9 @@ export function TerminalPlay() {
           <button type="button" onClick={() => setReviewing(false)} className="tx-btn" data-testid="show-debrief">DEBRIEF</button>
         </div>
       )}
+
+      {saveNotice && <SaveNotice notice={saveNotice} onDismiss={() => setSaveNotice(null)} />}
+      {showLoad && <LoadBattleDialog hasProgress={hasProgress} ended={ended} onCancel={() => setShowLoad(false)} onConfirm={confirmLoad} />}
 
       <div className="tx-scan" aria-hidden="true" />
     </div>

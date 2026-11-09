@@ -14,10 +14,12 @@ const PUBLISH_INTERVAL_MS = 250; // React renders at ~4 fps to avoid UI jitter
  * React binding for a SimulationSession. The session owns the game; this hook ticks it,
  * forwards commands to it, and publishes snapshots for rendering.
  */
-export function useSimulation(config: ScenarioConfig) {
+export function useSimulation(config: ScenarioConfig, restored?: SimulationSession | null) {
   const sessionRef = useRef<SimulationSession | null>(null);
-  if (!sessionRef.current) sessionRef.current = new SimulationSession(config);
+  // A restored battle arrives as a fully built, already validated session (see battleSave.ts); it is paused.
+  if (!sessionRef.current) sessionRef.current = restored ?? new SimulationSession(config);
   const session = sessionRef.current;
+  const wasRestored = useRef(!!restored).current;
 
   // Test-build-only handle: the explicit NEXT_PUBLIC_SAND_E2E=1 build flag (set by the Playwright web server)
   // AND a page that sets window.__SAND_E2E__ before load. An ordinary build contains neither.
@@ -33,9 +35,11 @@ export function useSimulation(config: ScenarioConfig) {
   const autopausePrefsRef = useRef<AutopausePreferences>(session.autopausePrefs);
 
   useEffect(() => {
+    // a restored battle keeps the preferences it was saved with
+    if (wasRestored) return;
     session.autopausePrefs = loadAutopausePrefs();
     autopausePrefsRef.current = session.autopausePrefs;
-  }, [session]);
+  }, [session, wasRestored]);
 
   useEffect(() => {
     session.updateConfig(config);
@@ -92,6 +96,13 @@ export function useSimulation(config: ScenarioConfig) {
   const nextTurn = useCallback(() => command(() => session.nextTurn())(), [command, session]);
   const cancelIntent = useCallback((intentId: string) => command(() => session.cancelIntent(intentId))(), [command, session]);
 
+  /** One atomic checkpoint of the running battle: the session pauses, then its complete state is returned. */
+  const checkpoint = useCallback(() => {
+    const dump = session.checkpoint();
+    publish();
+    return dump;
+  }, [session, publish]);
+
   const setAutopausePrefs = useCallback(
     (prefs: AutopausePreferences) => {
       autopausePrefsRef.current = prefs;
@@ -129,5 +140,7 @@ export function useSimulation(config: ScenarioConfig) {
     markMessageRead,
     resetSimulation,
     setAutopausePrefs,
+    checkpoint,
+    restored: wasRestored,
   };
 }

@@ -36,9 +36,18 @@ export function useInfoWar(
     model: config?.model ?? "mistral",
   }));
 
-  // Track previous state lengths for diffing
-  const prevCombatLogLenRef = useRef(0);
-  const prevMessageCountRef = useRef(0);
+  // Track previous state lengths for diffing. They start at what the session already holds, so a restored
+  // battle's saved history is never regenerated as new media (generated media is not part of a battle save).
+  const prevCombatLogLenRef = useRef(combatState?.combatLog.length ?? 0);
+  const prevMessageCountRef = useRef(eventState?.messages.length ?? 0);
+  // Callbacks from requests started by a discarded session must not land in this one: a mounted flag per hook instance.
+  const aliveRef = useRef(true);
+  useEffect(() => {
+    aliveRef.current = true;
+    return () => {
+      aliveRef.current = false;
+    };
+  }, []);
 
   // Health check on mount + periodic
   useEffect(() => {
@@ -46,6 +55,7 @@ export function useInfoWar(
 
     const check = () => {
       ollamaService.checkConnection(infoWarState.model).then((hasModel) => {
+        if (!aliveRef.current) return;
         setInfoWarState((prev) => ({
           ...prev,
           ollamaConnected: ollamaService.connected,
@@ -68,6 +78,7 @@ export function useInfoWar(
 
   // Post callback — adds a generated post to state
   const handleNewPost = useCallback((post: MediaPost) => {
+    if (!aliveRef.current) return;
     setInfoWarState((prev) => ({
       ...prev,
       posts: [post, ...prev.posts].slice(0, 200), // Keep last 200

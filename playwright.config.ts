@@ -26,7 +26,15 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"], launchOptions: { args: GPU_ARGS } },
+      // SAND_E2E_CHROMIUM: path of an already installed Chromium (cloud containers ship one outside Playwright's cache).
+      // SAND_E2E_SWIFTSHADER=1 adds the software WebGL flags that browser needs when the machine has no GPU.
+      use: {
+        ...devices["Desktop Chrome"],
+        launchOptions: {
+          args: [...GPU_ARGS, ...(process.env.SAND_E2E_SWIFTSHADER ? ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] : [])],
+          ...(process.env.SAND_E2E_CHROMIUM ? { executablePath: process.env.SAND_E2E_CHROMIUM } : {}),
+        },
+      },
     },
   ],
   webServer: {
