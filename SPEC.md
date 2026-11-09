@@ -19,6 +19,9 @@ Ray changes his intent, quoting him.
 5. Fights: missiles, air defense, countermeasures, damage, all in a readable combat log. (GDD.md §5, README "Combat")
 6. Wins or loses on the scenario's victory conditions, and can play it again a different way. (GDD.md §6.5; Ray
    2026-11-03 names CMO scenarios that are "scripted in such a way that only one solution is viable" as the thing to beat)
+7. Saves a game in progress and resumes it later. (Ray, 2026-11-09 15:3x, asked "Should Sandkasten get save and
+   resume?": "Yes, add saves". Source: GS-private pings inbox 2026-11-09, RULING row. Until then the SAND-SAVE-1 card
+   was refused at the spec gate because this file did not cover saving.)
 
 ## Direction (Ray, 2026-11-03)
 - Restart and push: "I want to restart development and start pushing again on sandkasten".
