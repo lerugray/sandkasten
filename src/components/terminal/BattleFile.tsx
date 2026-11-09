@@ -81,26 +81,35 @@ export function LoadBattleDialog({
     }
   }, [state, onConfirm]);
 
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    e.stopPropagation();
-    if (e.key === "Escape") {
-      e.preventDefault();
-      onCancel();
-      return;
-    }
-    if (e.key === "Tab" && rootRef.current) {
-      const f = [...rootRef.current.querySelectorAll<HTMLElement>("button:not([disabled]), input:not([type=file])")];
-      if (f.length === 0) return;
-      const i = f.indexOf(document.activeElement as HTMLElement);
-      const next = e.shiftKey ? (i <= 0 ? f.length - 1 : i - 1) : i === f.length - 1 ? 0 : i + 1;
-      e.preventDefault();
-      f[next].focus();
-    }
-  };
+  // The dialog owns the keyboard wherever focus is (a click on the backdrop must not strand Esc): Esc cancels,
+  // Tab stays inside, and no other key reaches the battle underneath.
+  const cancelRef = useRef(onCancel);
+  cancelRef.current = onCancel;
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        cancelRef.current();
+        return;
+      }
+      if (e.key === "Tab" && rootRef.current) {
+        const f = [...rootRef.current.querySelectorAll<HTMLElement>("button:not([disabled])")];
+        if (f.length === 0) return;
+        const i = f.indexOf(document.activeElement as HTMLElement);
+        const next = e.shiftKey ? (i <= 0 ? f.length - 1 : i - 1) : i === f.length - 1 ? 0 : i + 1;
+        e.preventDefault();
+        f[next].focus();
+      }
+    };
+    document.addEventListener("keydown", onKey, true);
+    return () => document.removeEventListener("keydown", onKey, true);
+  }, []);
 
   const p = state.kind === "ready" ? state.parsed.preview : null;
   return (
-    <div className="tx-modal-backdrop" data-testid="load-backdrop">
+    <div className="tx-modal-backdrop" data-testid="load-backdrop" onMouseDown={(e) => e.preventDefault()}>
       <div
         ref={rootRef}
         className="tx-panel tx-modal"
@@ -109,7 +118,6 @@ export function LoadBattleDialog({
         aria-label="Load battle"
         data-testid="load-dialog"
         data-modal
-        onKeyDown={onKeyDown}
         onKeyUp={(e) => e.stopPropagation()}
       >
         <div className="tx-modal-head">[ LOAD BATTLE ]</div>

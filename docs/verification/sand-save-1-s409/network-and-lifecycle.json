@@ -1,0 +1,37 @@
+{
+  "requestsBlocked": [
+    "http://localhost:3001/api/ollama/tags?base=http%3A%2F%2Flocalhost%3A11434",
+    "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap",
+    "https://tiles.openfreemap.org/planet",
+    "https://tiles.openfreemap.org/fonts/Noto%20Sans%20Regular/0-255.pbf"
+  ],
+  "nonOllamaRequestsBlocked": [],
+  "probeCounts": [
+    {
+      "keydown": 2,
+      "total": 21,
+      "intervals": 2
+    },
+    {
+      "keydown": 2,
+      "total": 21,
+      "intervals": 2
+    },
+    {
+      "keydown": 2,
+      "total": 21,
+      "intervals": 2
+    },
+    {
+      "keydown": 2,
+      "total": 21,
+      "intervals": 2
+    },
+    {
+      "keydown": 2,
+      "total": 21,
+      "intervals": 2
+    }
+  ],
+  "pageErrors": []
+}

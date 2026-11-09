@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › tests/sand-save-1-lifecycle.spec.ts:193:7 › SAND-SAVE-1 refusal, terminal, navigation and lifecycle › snapshot round trip, demo to snapshot to demo navigation, reloads, legacy routes, repeated loads and a network-free save/load
+  Slow test file: [chromium] › tests/sand-save-1-lifecycle.spec.ts (5.7m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 passed (5.7m)
+exit 0

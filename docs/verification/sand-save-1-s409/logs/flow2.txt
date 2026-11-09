@@ -1,0 +1,9 @@
+
+Running 2 tests using 1 worker
+
+[1/2] [chromium] › tests/sand-save-1-flow.spec.ts:83:7 › SAND-SAVE-1 real play, save, close, reopen, resume › a fresh page loads the actual file paused, with the saved clock, orders and fog, and plays on to a real victory
+[2/2] [chromium] › tests/sand-save-1-flow.spec.ts:182:7 › SAND-SAVE-1 real play, save, close, reopen, resume › the same unchanged checkpoint, reloaded with a materially different plan (dog-leg at full, radar toggled)
+  Slow test file: [chromium] › tests/sand-save-1-flow.spec.ts (13.9m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 passed (14.2m)
+exit 0

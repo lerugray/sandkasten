@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › tests/sand-save-1-flow.spec.ts:24:7 › SAND-SAVE-1 real play, save, close, reopen, resume › play Hormuz into a nontrivial mid-battle checkpoint with ordinary controls and download it
+  1 passed (2.3m)
+exit 0

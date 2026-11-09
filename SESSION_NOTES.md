@@ -335,3 +335,13 @@ Worked from `docs/handoffs/sim-fix-2026-11-03/CARD.md`. Full per-finding record:
 - Vitest added (`npm run test:unit`); `npm test` runs it before Playwright.
 
 Next: the seat reviews, merges with the s386 round-3 lane (touched-lines list in NOTES), then commits.
+
+## SAND-SAVE-1 (2026-11-09, cloud lane, branch claude/sand-save-1-lane-mmiq6g)
+
+**What now exists:** manual battle save/resume. SAVE BATTLE (top bar and debrief) downloads a versioned `.sandsave.json`; LOAD BATTLE previews and confirms before replacing the run; a restored battle is always paused. Hormuz (continuous and WeGo) and the real-world snapshot are supported. Format v1 only, no migration. InfoWar media is not saved.
+
+**Where the code is:** `src/lib/simulation/battleSave.ts` (codec + validation), `session.ts` (`checkpoint()` / `SimulationSession.restore()`), `src/lib/scenarios/builtins.ts` (built-in config ids and revision digest), `src/components/terminal/BattleFile.tsx` (dialogs), `TerminalPlay.tsx` (config ownership: the route passes a built-in config id, no module swap). Unit tests: `battleSave.test.ts`. E2E: `tests/sand-save-1-flow.spec.ts` (real play, close, reopen, resume, second plan) and `tests/sand-save-1-lifecycle.spec.ts` (refusals, defeat fixture, snapshot, navigation, leaks). Receipts: `docs/verification/sand-save-1-s409/`. Report: `docs/lane-reports/SAND-SAVE-1-s409.md`.
+
+**Decisions:** WeGo battles are saved (not rejected). A rules change that does not touch data needs `RULES_REVISION` bumped in `builtins.ts`; data changes change the digest on their own and old saves are then refused with a clear message. Cloud E2E uses `SAND_E2E_CHROMIUM` and `SAND_E2E_SWIFTSHADER` (see README).
+
+**Next:** GS runs the real-GPU land battery and decides merge. Deferred S3: opening gate/site-label crowding and the grid-label/facility collision (map-layout work).

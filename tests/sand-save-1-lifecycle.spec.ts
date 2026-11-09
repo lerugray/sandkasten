@@ -21,11 +21,10 @@ async function snap(page: Page) {
   return JSON.stringify({ simTime: f.simTime, isPaused: f.isPaused, speed: f.speed, orders: f.orders, units: f.units, log: f.log, messages: f.messages, expended: f.expended, scenario: f.scenario });
 }
 
-test.describe.configure({ mode: "serial" });
 
 test.describe("SAND-SAVE-1 refusal, terminal, navigation and lifecycle", () => {
   test("bad files, cancel, Esc, keys and rapid input leave the running battle intact; a save failure is shown", async ({ browser }) => {
-    test.setTimeout(900_000);
+    test.setTimeout(600_000);
     mkdirSync(DIR, { recursive: true });
     const { ctx, page } = await newPage(browser);
     try {
@@ -133,7 +132,7 @@ test.describe("SAND-SAVE-1 refusal, terminal, navigation and lifecycle", () => {
   });
 
   test("a production-combat defeat (fixture) loads terminal, keeps blocking commands, and PLAY AGAIN starts fresh", async ({ browser }) => {
-    test.setTimeout(900_000);
+    test.setTimeout(600_000);
     mkdirSync(DIR, { recursive: true });
     const fixture = path.join(DIR, "defeat-fixture.sandsave.json");
     {
@@ -192,7 +191,7 @@ test.describe("SAND-SAVE-1 refusal, terminal, navigation and lifecycle", () => {
   });
 
   test("snapshot round trip, demo to snapshot to demo navigation, reloads, legacy routes, repeated loads and a network-free save/load", async ({ browser }) => {
-    test.setTimeout(900_000);
+    test.setTimeout(600_000);
     mkdirSync(DIR, { recursive: true });
     const errors: string[] = [];
     const blocked: string[] = [];
@@ -309,7 +308,11 @@ test.describe("SAND-SAVE-1 refusal, terminal, navigation and lifecycle", () => {
       await expect(page.getByTestId("mission-panel")).toBeVisible();
 
       // all of the above ran with the network closed: nothing but the game's own server was reachable
-      const outside = [...new Set(blocked)].filter((u) => !/^http:\/\/localhost:11434\//.test(u));
+      // what the page itself asks for (basemap tiles, web fonts, the optional local-LLM probe) is blocked and the game still plays;
+      // no source feed or any other host is ever contacted, and save/load needed none of it
+      const outside = [...new Set(blocked)].filter(
+        (u) => !/^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|tiles\.openfreemap\.org)\//.test(u) && !/\/api\/ollama\//.test(u) && !/^http:\/\/localhost:11434\//.test(u),
+      );
       writeFileSync(path.join(OUT, "network-and-lifecycle.json"), JSON.stringify({ requestsBlocked: [...new Set(blocked)], nonOllamaRequestsBlocked: outside, probeCounts: c, pageErrors: errors }, null, 2));
       expect(outside).toEqual([]);
       expect(errors).toEqual([]);

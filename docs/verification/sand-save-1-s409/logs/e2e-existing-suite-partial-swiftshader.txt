@@ -1,0 +1,89 @@
+
+Running 105 tests using 1 worker
+
+[1/105] [chromium] › tests/design-system.spec.ts:7:7 › Terminal register design system › home page — screenshot for visual review
+[2/105] [chromium] › tests/design-system.spec.ts:14:7 › Terminal register design system › play page — screenshot of initial state
+[3/105] [chromium] › tests/design-system.spec.ts:21:7 › Terminal register design system › play page — tilt mode screenshot
+[4/105] [chromium] › tests/design-system.spec.ts:34:7 › Terminal register design system › play page — unit selected with detail panel
+[5/105] [chromium] › tests/design-system.spec.ts:43:7 › Terminal register design system › play page — help panel screenshot
+[6/105] [chromium] › tests/design-system.spec.ts:51:7 › Terminal register design system › editor page — screenshot
+[7/105] [chromium] › tests/design-system.spec.ts:58:7 › Terminal register design system › SANDKASTEN title uses the phosphor primary colour
+[8/105] [chromium] › tests/design-system.spec.ts:67:7 › Terminal register design system › vendored terminal font is loaded and used
+[9/105] [chromium] › tests/design-system.spec.ts:85:7 › Terminal register design system › no remote font requests on /play
+[10/105] [chromium] › tests/design-system.spec.ts:101:7 › Terminal register design system › chrome overlays do not resize the canvas
+[11/105] [chromium] › tests/platform-database.spec.ts:38:7 › platform database data › every demo platform has a complete, sourced, licensed record
+[12/105] [chromium] › tests/platform-database.spec.ts:158:7 › platform database data › the API and engine lookup serve the first-party records
+[13/105] [chromium] › tests/platform-database.spec.ts:177:7 › platform viewer › steps through every demo platform with photo or placeholder, brief, tables and sources
+[14/105] [chromium] › tests/platform-database.spec.ts:231:7 › platform viewer › opens by id and slug, filters, and moves with the keyboard
+[15/105] [chromium] › tests/sand-001-unit-placement.spec.ts:9:7 › sand-001 — Unit placement + selection (editor) › place 3 units, drag one, select each and verify detail panel
+[16/105] [chromium] › tests/sand-002-radar-detection.spec.ts:4:7 › sand-002 — Radar detection transitions › contacts transition Unknown → Detected → Classified → Tracked
+[17/105] [chromium] › tests/sand-003-combat.spec.ts:17:7 › sand-003 — Combat launch + impact › weapon tracks appear, WIF count updates, combat log shows impacts
+[18/105] [chromium] › tests/sand-004-autopause.spec.ts:9:7 › sand-004 — Autopause trigger system › autopauses on new contact, incoming weapon, and switches tabs
+[19/105] [chromium] › tests/sand-005-fow-godmode.spec.ts:20:7 › sand-005 — Fog-of-war vs god-mode toggle › god-mode ON reveals all units and removes uncertainty circles
+[20/105] [chromium] › tests/sand-006-waypoint-throttle.spec.ts:9:7 › sand-006 — Waypoints + throttle interaction › waypoints render, flank throttle set, unit moves and waypoints clear
+[21/105] [chromium] › tests/sand-007-engage-roe.spec.ts:20:7 › sand-007 — player ENGAGE order and ROE › the US fires at an Iranian contact through the order panel
+[22/105] [chromium] › tests/sand-007-engage-roe.spec.ts:56:7 › sand-007 — player ENGAGE order and ROE › a unit with no weapons gets no ENGAGE control
+[23/105] [chromium] › tests/sand-007-engage-roe.spec.ts:70:7 › sand-007 — player ENGAGE order and ROE › ROE keys and buttons change the selected unit's rules
+[24/105] [chromium] › tests/sand-007-engage-roe.spec.ts:93:7 › sand-007 — player ENGAGE order and ROE › under the default TIGHT ROE a unit under attack fires back on its own
+[25/105] [chromium] › tests/sand-combat-1-record.spec.ts:245:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan A (direct flank), WeGo: staged ENGAGE, CANCEL, commit, review, inspection, record, debrief
+  1) [chromium] › tests/sand-combat-1-record.spec.ts:245:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan A (direct flank), WeGo: staged ENGAGE, CANCEL, commit, review, inspection, record, debrief 
+
+    TimeoutError: page.waitForFunction: Timeout 60000ms exceeded.
+
+       at helpers/sandPlay.ts:23
+
+      21 |   await page.goto(url, { timeout: 120_000 });
+      22 |   await page.waitForFunction(() => !!(window as unknown as W).__sandPlot, null, { timeout: 90_000 });
+    > 23 |   await page.waitForFunction(() => ((window as unknown as W).__sandPlot?.frames() ?? 0) > 30, null, { timeout: 60_000 });
+         |              ^
+      24 | }
+      25 |
+      26 | /** Turn the autopause off the way a player would, so a long unattended run is not stopped by it. */
+        at openPlay (/home/user/sandkasten/tests/helpers/sandPlay.ts:23:14)
+        at /home/user/sandkasten/tests/sand-combat-1-record.spec.ts:252:7
+
+    Error Context: test-results/sand-combat-1-record-SAND--b0890-w-inspection-record-debrief-chromium/error-context.md
+
+
+[26/105] [chromium] › tests/sand-combat-1-record.spec.ts:457:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan B (escorted dog-leg), continuous: record, debrief, record flow, clean replay
+  2) [chromium] › tests/sand-combat-1-record.spec.ts:457:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan B (escorted dog-leg), continuous: record, debrief, record flow, clean replay 
+
+    TimeoutError: page.waitForFunction: Timeout 60000ms exceeded.
+
+       at helpers/sandPlay.ts:23
+
+      21 |   await page.goto(url, { timeout: 120_000 });
+      22 |   await page.waitForFunction(() => !!(window as unknown as W).__sandPlot, null, { timeout: 90_000 });
+    > 23 |   await page.waitForFunction(() => ((window as unknown as W).__sandPlot?.frames() ?? 0) > 30, null, { timeout: 60_000 });
+         |              ^
+      24 | }
+      25 |
+      26 | /** Turn the autopause off the way a player would, so a long unattended run is not stopped by it. */
+        at openPlay (/home/user/sandkasten/tests/helpers/sandPlay.ts:23:14)
+        at /home/user/sandkasten/tests/sand-combat-1-record.spec.ts:464:7
+
+    Error Context: test-results/sand-combat-1-record-SAND--3db62-ef-record-flow-clean-replay-chromium/error-context.md
+
+
+[27/105] [chromium] › tests/sand-combat-1-record.spec.ts:503:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › fog, GOD, paging, place-keeping, empty filters, reset (own fixtures, continuous)
+  3) [chromium] › tests/sand-combat-1-record.spec.ts:503:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › fog, GOD, paging, place-keeping, empty filters, reset (own fixtures, continuous) 
+
+    TimeoutError: page.waitForFunction: Timeout 60000ms exceeded.
+
+       at helpers/sandPlay.ts:23
+
+      21 |   await page.goto(url, { timeout: 120_000 });
+      22 |   await page.waitForFunction(() => !!(window as unknown as W).__sandPlot, null, { timeout: 90_000 });
+    > 23 |   await page.waitForFunction(() => ((window as unknown as W).__sandPlot?.frames() ?? 0) > 30, null, { timeout: 60_000 });
+         |              ^
+      24 | }
+      25 |
+      26 | /** Turn the autopause off the way a player would, so a long unattended run is not stopped by it. */
+        at openPlay (/home/user/sandkasten/tests/helpers/sandPlay.ts:23:14)
+        at /home/user/sandkasten/tests/sand-combat-1-record.spec.ts:508:7
+
+    Error Context: test-results/sand-combat-1-record-SAND--d004c-et-own-fixtures-continuous--chromium/error-context.md
+
+
+[28/105] [chromium] › tests/sand-combat-1-record.spec.ts:612:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › demo, snapshot, demo, legacy: the record belongs to the run it was read from
+exit: killed by lane at ~27/105 (cloud software GL ~1 fps; helpers/sandPlay.ts openPlay needs frames()>30 in 60 s)

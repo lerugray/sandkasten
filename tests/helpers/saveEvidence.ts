@@ -94,7 +94,8 @@ export async function localOnly(page: Page, seen: string[]) {
     const u = new URL(route.request().url());
     const origin = `http://localhost:${process.env.SAND_E2E_PORT ?? 3001}`;
     // only the game's own server: a local LLM (Ollama on another port) and every source feed are blocked too
-    if (u.origin === origin || u.protocol === "data:" || u.protocol === "blob:") return route.continue();
+    // the game's own server-side proxies to a local LLM and to the live snapshot sources are closed as well (the local platform database stays open)
+    if ((u.origin === origin && !/^\/api\/(ollama|snapshot)/.test(u.pathname)) || u.protocol === "data:" || u.protocol === "blob:") return route.continue();
     seen.push(route.request().url());
     return route.abort();
   });

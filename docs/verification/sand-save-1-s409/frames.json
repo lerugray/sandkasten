@@ -72,14 +72,50 @@
     "dpr": 2
   },
   "1440x900-load-validation-error.png": {
-    "sha256": "12148c7a401120421bbde968365c5184a7abb933e388a3bbab2572ab2102f5a9",
-    "bytes": 910848,
+    "sha256": "8bb8e54b44f0824e6b304c25c2f801b5eb6185bd390bd6980b5e6e2c0e98520e",
+    "bytes": 929624,
     "viewport": "1440x900",
     "dpr": 2
   },
   "1920x1080-load-validation-error.png": {
-    "sha256": "9274de3604e98a068c0f6ceaaf9df9a829b7651567b3023dae34e90a0e74b775",
-    "bytes": 1027967,
+    "sha256": "e37bc75ff83096ce9ddcb977cf094cdee5c8c885deea583fead2df245484e362",
+    "bytes": 1041407,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-loaded-defeat-debrief.png": {
+    "sha256": "9e465c087d8a1d32b434d6c5f7f269dfb112ed80f4e00327faa962a4f86a9ce3",
+    "bytes": 1193065,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-loaded-defeat-debrief.png": {
+    "sha256": "0603203cd378210f619e3b72cf8f6361e03235ec79321a68fc7414f35afaf3a1",
+    "bytes": 1687470,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-loaded-defeat-play-again.png": {
+    "sha256": "1004459d134ad34c3f7223a8e863e13e2bfb44db5ac0f1ecb3ad1596aa2918b9",
+    "bytes": 1656323,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-loaded-defeat-play-again.png": {
+    "sha256": "897c4dd1a6c1bf8b93508176a3f75cb4afee30b01aa12a8a88cf37507e641924",
+    "bytes": 2200235,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-snapshot-and-demo-after-loads.png": {
+    "sha256": "e0830d1b86e9bb4937a82ec56650e21c6aeb40196028c07543c1fcc1bcb3a0c2",
+    "bytes": 1911084,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-snapshot-and-demo-after-loads.png": {
+    "sha256": "cd9bb53c40a623555da677dcbbdecb61e90105f7b15eaad38f57f1a565d6bd0b",
+    "bytes": 2484344,
     "viewport": "1920x1080",
     "dpr": 2
   }

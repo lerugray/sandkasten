@@ -1,0 +1,7 @@
+tests/sand-001-unit-placement.spec.ts(72,22): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+tests/sand-001-unit-placement.spec.ts(80,32): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+tests/sand-001-unit-placement.spec.ts(100,24): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+exit 2

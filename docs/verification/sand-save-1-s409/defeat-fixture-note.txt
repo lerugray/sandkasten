@@ -1,0 +1,1 @@
+FIXTURE: defeat produced by injectKillOnCarrier (tests/helpers/sandPlay.ts): 30 C-802 Noor missiles put in flight at USS Nimitz through the production combat phase with fixed dice (Math.random = 0.7), then saved from the real debrief with SAVE BATTLE and loaded in a fresh page. Not a real-play defeat.

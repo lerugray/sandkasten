@@ -1,0 +1,38 @@
+
+Running 3 tests using 1 worker
+
+[1/3] [chromium] › tests/sand-save-1-lifecycle.spec.ts:26:7 › SAND-SAVE-1 refusal, terminal, navigation and lifecycle › bad files, cancel, Esc, keys and rapid input leave the running battle intact; a save failure is shown
+[2/3] [chromium] › tests/sand-save-1-lifecycle.spec.ts:134:7 › SAND-SAVE-1 refusal, terminal, navigation and lifecycle › a production-combat defeat (fixture) loads terminal, keeps blocking commands, and PLAY AGAIN starts fresh
+[3/3] [chromium] › tests/sand-save-1-lifecycle.spec.ts:193:7 › SAND-SAVE-1 refusal, terminal, navigation and lifecycle › snapshot round trip, demo to snapshot to demo navigation, reloads, legacy routes, repeated loads and a network-free save/load
+  1) [chromium] › tests/sand-save-1-lifecycle.spec.ts:193:7 › SAND-SAVE-1 refusal, terminal, navigation and lifecycle › snapshot round trip, demo to snapshot to demo navigation, reloads, legacy routes, repeated loads and a network-free save/load 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 5
+
+    - Array []
+    + Array [
+    +   "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap",
+    +   "https://tiles.openfreemap.org/planet",
+    +   "https://tiles.openfreemap.org/fonts/Noto%20Sans%20Regular/0-255.pbf",
+    + ]
+
+      311 |       const outside = [...new Set(blocked)].filter((u) => !/^http:\/\/localhost:11434\//.test(u));
+      312 |       writeFileSync(path.join(OUT, "network-and-lifecycle.json"), JSON.stringify({ requestsBlocked: [...new Set(blocked)], nonOllamaRequestsBlocked: outside, probeCounts: c, pageErrors: errors }, null, 2));
+    > 313 |       expect(outside).toEqual([]);
+          |                       ^
+      314 |       expect(errors).toEqual([]);
+      315 |     } finally {
+      316 |       await ctx.close();
+        at /home/user/sandkasten/tests/sand-save-1-lifecycle.spec.ts:313:23
+
+    Error Context: test-results/sand-save-1-lifecycle-SAND-c46dc-nd-a-network-free-save-load-chromium/error-context.md
+
+
+  Slow test file: [chromium] › tests/sand-save-1-lifecycle.spec.ts (11.5m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    [chromium] › tests/sand-save-1-lifecycle.spec.ts:193:7 › SAND-SAVE-1 refusal, terminal, navigation and lifecycle › snapshot round trip, demo to snapshot to demo navigation, reloads, legacy routes, repeated loads and a network-free save/load 
+  2 passed (11.6m)
+exit 1

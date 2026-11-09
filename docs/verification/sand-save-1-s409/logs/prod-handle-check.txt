@@ -1,0 +1,8 @@
+{
+  "base": "http://localhost:3002",
+  "flagSetInPage": true,
+  "windowSandSession": "undefined",
+  "jsChunksScanned": 23,
+  "chunksContainingHandleName": []
+}
+PASS: no E2E session handle in the production build
