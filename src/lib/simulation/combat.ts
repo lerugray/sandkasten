@@ -136,6 +136,17 @@ const ENGAGEMENT_INTERVAL_MS = 5000;
 const SALVO_COOLDOWN_MS = 30000;
 
 let idCounter = 0;
+
+/** Current weapon/combat-log id counter, for a battle checkpoint. */
+export function getCombatSeq(): number {
+  return idCounter;
+}
+
+/** Make sure no new weapon or log id can repeat one at or below `floor` (a restored battle already holds them). Never lowers it. */
+export function reserveCombatIds(floor: number): void {
+  if (Number.isFinite(floor) && floor > idCounter) idCounter = Math.floor(floor);
+}
+
 function nextId(prefix: string): string {
   idCounter += 1;
   return `${prefix}-${idCounter}`;

@@ -282,3 +282,24 @@ export function getPlatform(id: number): PlatformInfo | undefined {
 export function getAllPlatforms(): PlatformInfo[] {
   return PLATFORMS;
 }
+
+/**
+ * Stable digest of every simulation profile the engine can read (PLATFORMS, which already carries the
+ * SIMFIX_PROFILES overrides, plus the snapshot placeholder profiles). A battle save records it so a file
+ * is refused after any change to the data a restored battle would run on.
+ */
+export function simulationProfilesDigest(): string {
+  const all = [...PLATFORMS, platformMap.get(UNKNOWN_AIR_PLATFORM_ID), platformMap.get(UNKNOWN_SURFACE_PLATFORM_ID)];
+  return fnv1a(JSON.stringify(all));
+}
+
+function fnv1a(text: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(16).padStart(8, "0");
+}
+
+export { fnv1a as digestText };

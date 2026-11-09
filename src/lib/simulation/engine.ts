@@ -29,6 +29,16 @@ function advanceDue(due: number, now: number, interval: number): number {
 
 let contactSeq = 0;
 
+/** Current contact-id counter, for a battle checkpoint. */
+export function getContactSeq(): number {
+  return contactSeq;
+}
+
+/** Make sure no new contact id can repeat one at or below `floor` (a restored battle already holds them). Never lowers it. */
+export function reserveContactIds(floor: number): void {
+  if (Number.isFinite(floor) && floor > contactSeq) contactSeq = Math.floor(floor);
+}
+
 type TickResult = { gameState: GameState; eventState?: EventState; combatState?: CombatState };
 
 /**

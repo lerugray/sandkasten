@@ -1,12 +1,12 @@
 import type { Scenario, Unit } from "@/types/game";
 import { createInitialGameState, SPEED_OPTIONS, type GameState } from "./gameState";
-import { simulationTick, simulationStep } from "./engine";
+import { simulationTick, simulationStep, getContactSeq, reserveContactIds } from "./engine";
 import { runAIUpdate } from "@/lib/ai/aiController";
 import type { AIState } from "@/lib/ai/aiController";
 import type { EventState } from "@/lib/ai/events";
 import type { Mission } from "@/lib/ai/missions";
 import type { Doctrine } from "@/lib/ai/doctrine";
-import { createCombatState, engageContact, validateEngagement, type CombatEvent, type CombatState, type EngageResult } from "./combat";
+import { createCombatState, engageContact, getCombatSeq, reserveCombatIds, validateEngagement, type CombatEvent, type CombatState, type EngageResult } from "./combat";
 import { contactDisplayName } from "./combatRecord";
 import { trackNumber } from "./trackNumber";
 import { contactsFor } from "./gameState";
@@ -107,6 +107,41 @@ export interface SessionSnapshot {
   autopauseEvent: AutopauseResult | null;
   /** Result of the player's last order that can be refused (ENGAGE), for the order panel. */
   orderFeedback: { ok: boolean; message: string; seq: number } | null;
+}
+
+/** Everything the session itself owns that a battle checkpoint must keep (WeGo bookkeeping included). */
+export interface WeGoDump {
+  phase: WeGoPhase;
+  turnStart: number;
+  turnEnd: number;
+  turnsCommitted: number;
+  intents: FireIntent[];
+  intentSeq: number;
+  report: TurnReport | null;
+  started: boolean;
+  resolveBudgetMs: number;
+  turnAlerts: string[];
+  turnOutcomes: IntentOutcome[];
+  turnLossBaseline: Map<string, Unit["damageState"]>;
+  turnEventCursor: number;
+  turnMessageCursor: number;
+}
+
+/**
+ * The authoritative state of a running battle as plain typed data (Maps and Sets intact). The battle-save codec
+ * turns it into a validated, versioned file and back; the session takes it back through `SimulationSession.restore`.
+ */
+export interface BattleDump {
+  mode: PlayMode;
+  turnMinutes: TurnMinutes;
+  gameState: GameState;
+  eventState: EventState | undefined;
+  combatState: CombatState;
+  ai: { patrolIndex: Map<string, number>; transitStarted: Set<string>; transitDone: Set<string> };
+  autopausePrefs: AutopausePreferences;
+  wego: WeGoDump;
+  /** Module id counters at the time of the checkpoint (contacts; weapons and combat-log entries). */
+  ids: { contactSeq: number; combatSeq: number };
 }
 
 function cloneEvents(events: EventState | undefined): EventState | undefined {
@@ -570,6 +605,87 @@ export class SimulationSession {
       ...this.eventState,
       messages: this.eventState.messages.map((m) => (m.id === messageId ? { ...m, read: true } : m)),
     };
+  }
+
+  /**
+   * Pause and return the complete authoritative state as of this instant: one atomic checkpoint.
+   * A running battle is held first, so what is saved is exactly what stays on screen.
+   */
+  checkpoint(): BattleDump {
+    this.pause();
+    const rt = this.ai;
+    return {
+      mode: this.mode,
+      turnMinutes: this.turnMinutes,
+      gameState: this.gameState,
+      eventState: this.eventState,
+      combatState: this.combatState,
+      ai: {
+        patrolIndex: new Map(rt.patrolIndex ?? []),
+        transitStarted: new Set(rt.transitStarted ?? []),
+        transitDone: new Set(rt.transitDone ?? []),
+      },
+      autopausePrefs: this.autopausePrefs,
+      wego: {
+        phase: this.phase,
+        turnStart: this.turnStart,
+        turnEnd: this.turnEnd,
+        turnsCommitted: this.turnsCommitted,
+        intents: this.intents,
+        intentSeq: this.intentSeq,
+        report: this.report,
+        started: this.started,
+        resolveBudgetMs: this.resolveBudgetMs,
+        turnAlerts: this.turnAlerts,
+        turnOutcomes: this.turnOutcomes,
+        turnLossBaseline: new Map(this.turnLossBaseline),
+        turnEventCursor: this.turnEventCursor,
+        turnMessageCursor: this.turnMessageCursor,
+      },
+      ids: { contactSeq: getContactSeq(), combatSeq: getCombatSeq() },
+    };
+  }
+
+  /**
+   * A new session standing exactly where a checkpoint was taken, always held. The dump must already be validated
+   * (see battleSave.ts); this only places it, in one synchronous step, so a failure can never leave a half-built
+   * session: the caller builds this first and swaps it in only if it returned.
+   */
+  static restore(config: ScenarioConfig, dump: BattleDump): SimulationSession {
+    const session = new SimulationSession(config, { mode: dump.mode, turnMinutes: dump.turnMinutes });
+    session.gameState = { ...dump.gameState, isPaused: true };
+    session.eventState = dump.eventState;
+    session.combatState = dump.combatState;
+    session.ai = {
+      missions: config.missions ?? [],
+      sideDoctrine: config.sideDoctrine ?? {},
+      patrolIndex: new Map(dump.ai.patrolIndex),
+      transitStarted: new Set(dump.ai.transitStarted),
+      transitDone: new Set(dump.ai.transitDone),
+    };
+    session.autopausePrefs = dump.autopausePrefs;
+    session.autopauseEvent = null;
+    session.orderFeedback = null;
+    session.seenTriggers = new Set();
+    const w = dump.wego;
+    session.phase = w.phase;
+    session.turnStart = w.turnStart;
+    session.turnEnd = w.turnEnd;
+    session.turnsCommitted = w.turnsCommitted;
+    session.intents = w.intents;
+    session.intentSeq = w.intentSeq;
+    session.report = w.report;
+    session.started = w.started;
+    session.resolveBudgetMs = w.resolveBudgetMs;
+    session.turnAlerts = w.turnAlerts;
+    session.turnOutcomes = w.turnOutcomes;
+    session.turnLossBaseline = new Map(w.turnLossBaseline);
+    session.turnEventCursor = w.turnEventCursor;
+    session.turnMessageCursor = w.turnMessageCursor;
+    // new contact, weapon and log ids must never repeat one the restored battle already holds
+    reserveContactIds(dump.ids.contactSeq);
+    reserveCombatIds(dump.ids.combatSeq);
+    return session;
   }
 
   /** A fresh run. Passing options is the explicit restart that may change the mode. */

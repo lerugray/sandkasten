@@ -44,3 +44,4 @@ state/
 
 # Facility pipeline raw cache
 .cache/
+tsconfig.tsbuildinfo
