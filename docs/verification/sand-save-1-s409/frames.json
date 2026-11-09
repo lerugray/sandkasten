@@ -1,0 +1,86 @@
+{
+  "1440x900-save-notice.png": {
+    "sha256": "49621b2a7daaaf74e70c19353ebbd7dd39829ed827e906716ba787bf726d95cb",
+    "bytes": 1344574,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-save-notice.png": {
+    "sha256": "f4cbe7a956e3cfc421ef7afc471b750389cf3fc8d494b2a3b68ae8a101297e52",
+    "bytes": 1416905,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-load-dialog-preview.png": {
+    "sha256": "da6aea074662b1a7d49fcbb5b838840fb3f088e61db6ddc3c637ae3b31b9b3f5",
+    "bytes": 894429,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-load-dialog-preview.png": {
+    "sha256": "032564e3ddee2f2357d72bf7be2f7ebd1fd2497463c37252637e6b9af78dfb60",
+    "bytes": 1398232,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-resumed-objective-flat.png": {
+    "sha256": "6ad27781c2ece148320b563133ec10ee2b7cb21be11a4ef18a44fe92e6f9b965",
+    "bytes": 1208509,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-resumed-objective-flat.png": {
+    "sha256": "8c1a721f4e155e4675739aea62a26a67706c520f10b24667a275732d896f8d81",
+    "bytes": 1389437,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-resumed-objective-tilt.png": {
+    "sha256": "56e88aff7759b29d884cf91c1cf9c81ed3b5e34d3f12afedc452e3ce3a310b59",
+    "bytes": 1247201,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-resumed-objective-tilt.png": {
+    "sha256": "eefbe3d6799a6071aea19e1c90ab514c259154076cadccea27a2832927bdd14f",
+    "bytes": 1634565,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-resumed-real-victory-debrief.png": {
+    "sha256": "df3d545dcae0a6781e3d87b02a2666a01467efe1365f70bce75f0aa6d67e1b29",
+    "bytes": 1227749,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-resumed-real-victory-debrief.png": {
+    "sha256": "17846b80bc3cf97026c18535d4f8bce5ec8d5c9128e397f45b469d2b8e51aaa6",
+    "bytes": 1498357,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-second-plan-debrief.png": {
+    "sha256": "b30b4df89dc60ce0d7c4baefa70bed8da18a14a34d4571937f49e9de79470275",
+    "bytes": 1202843,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-second-plan-debrief.png": {
+    "sha256": "06602669db9a7002e49710b6c791209ebc0240f593527d9dfe80367d5dc10dbe",
+    "bytes": 1823406,
+    "viewport": "1920x1080",
+    "dpr": 2
+  },
+  "1440x900-load-validation-error.png": {
+    "sha256": "12148c7a401120421bbde968365c5184a7abb933e388a3bbab2572ab2102f5a9",
+    "bytes": 910848,
+    "viewport": "1440x900",
+    "dpr": 2
+  },
+  "1920x1080-load-validation-error.png": {
+    "sha256": "9274de3604e98a068c0f6ceaaf9df9a829b7651567b3023dae34e90a0e74b775",
+    "bytes": 1027967,
+    "viewport": "1920x1080",
+    "dpr": 2
+  }
+}

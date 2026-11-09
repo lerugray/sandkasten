@@ -1,0 +1,117 @@
+{
+  "checkpoint": "real-checkpoint.sandsave.json (unchanged)",
+  "commands": [
+    "Nimitz: CLEAR WAYPOINTS (the saved plan was one waypoint at the gate)",
+    "Nimitz: waypoint 1 at 57E 25.9N",
+    "Nimitz: waypoint 2 at 56.45E 26.65N",
+    "Nimitz: throttle FULL (the saved plan was FLANK)",
+    "Nimitz: radar toggled (EMCON change)"
+  ],
+  "result": "victory",
+  "elapsedH": 3.6891166666666666,
+  "debrief": {
+    "title": "[ VICTORY ]",
+    "message": "Your carrier strike group has successfully transited the Strait of Hormuz. Well done, Admiral.",
+    "deciding": "DECIDED BY USS Nimitz entered the transit gate (afloat, undamaged).",
+    "score": "FINAL SCORE US NAVY 10 // IRAN 0 SCORE IS A TALLY. IT DID NOT DECIDE THIS ENDING.",
+    "losses": "YOUR LOSSES 2 // HOSTILE KILLS CONFIRMED 3"
+  },
+  "ordersAtStart": {
+    "us-cvn-1": {
+      "wp": [
+        [
+          56.449999997466506,
+          26.65000000068747
+        ]
+      ],
+      "throttle": 4,
+      "radar": true
+    },
+    "us-cg-1": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-ddg-1": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-ddg-2": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-ffg-1": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-fa18-1": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-fa18-2": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-e2c-1": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    }
+  },
+  "ordersAfterCommands": {
+    "us-cvn-1": {
+      "wp": [
+        [
+          56.99999996243018,
+          25.899999995885093
+        ],
+        [
+          56.449999924111374,
+          26.65000000333136
+        ]
+      ],
+      "throttle": 3,
+      "radar": false
+    },
+    "us-cg-1": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-ddg-1": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-ddg-2": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-ffg-1": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-fa18-1": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-fa18-2": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    },
+    "us-e2c-1": {
+      "wp": [],
+      "throttle": 2,
+      "radar": true
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "attempts": [
+    {
+      "attempt": 1,
+      "resumedFrom": "2026-03-15 06:10:38Z",
+      "result": "victory",
+      "elapsedH": 3.1041166666666666,
+      "debrief": {
+        "title": "[ VICTORY ]",
+        "message": "Your carrier strike group has successfully transited the Strait of Hormuz. Well done, Admiral.",
+        "deciding": "DECIDED BY USS Nimitz entered the transit gate (afloat, undamaged).",
+        "score": "FINAL SCORE US NAVY 10 // IRAN 0 SCORE IS A TALLY. IT DID NOT DECIDE THIS ENDING.",
+        "losses": "YOUR LOSSES 2 // HOSTILE KILLS CONFIRMED 2"
+      },
+      "probes0": {
+        "keydown": 2,
+        "total": 21,
+        "intervals": 2
+      },
+      "probes1": {
+        "keydown": 2,
+        "total": 21,
+        "intervals": 2
+      },
+      "fired": [
+        "First Contact Alert",
+        "Iranian Escalation",
+        "Reinforcement Boghammar",
+        "Transit Complete"
+      ]
+    }
+  ],
+  "externalRequestsBlocked": []
+}
