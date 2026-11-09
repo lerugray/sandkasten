@@ -8,20 +8,20 @@
     "Nimitz: radar toggled (EMCON change)"
   ],
   "result": "victory",
-  "elapsedH": 3.6891166666666666,
+  "elapsedH": 3.6908833333333333,
   "debrief": {
     "title": "[ VICTORY ]",
     "message": "Your carrier strike group has successfully transited the Strait of Hormuz. Well done, Admiral.",
     "deciding": "DECIDED BY USS Nimitz entered the transit gate (afloat, undamaged).",
     "score": "FINAL SCORE US NAVY 10 // IRAN 0 SCORE IS A TALLY. IT DID NOT DECIDE THIS ENDING.",
-    "losses": "YOUR LOSSES 2 // HOSTILE KILLS CONFIRMED 3"
+    "losses": "YOUR LOSSES 1 // HOSTILE KILLS CONFIRMED 4"
   },
   "ordersAtStart": {
     "us-cvn-1": {
       "wp": [
         [
-          56.449999997466506,
-          26.65000000068747
+          56.450000018370076,
+          26.650000003980743
         ]
       ],
       "throttle": 4,
@@ -67,12 +67,12 @@
     "us-cvn-1": {
       "wp": [
         [
-          56.99999996243018,
-          25.899999995885093
+          56.99999997825051,
+          25.900000014549523
         ],
         [
-          56.449999924111374,
-          26.65000000333136
+          56.44999996997853,
+          26.649999998957586
         ]
       ],
       "throttle": 3,

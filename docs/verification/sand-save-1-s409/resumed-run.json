@@ -2,15 +2,15 @@
   "attempts": [
     {
       "attempt": 1,
-      "resumedFrom": "2026-03-15 06:10:38Z",
+      "resumedFrom": "2026-03-15 06:10:00Z",
       "result": "victory",
-      "elapsedH": 3.1041166666666666,
+      "elapsedH": 3.1042666666666667,
       "debrief": {
         "title": "[ VICTORY ]",
         "message": "Your carrier strike group has successfully transited the Strait of Hormuz. Well done, Admiral.",
         "deciding": "DECIDED BY USS Nimitz entered the transit gate (afloat, undamaged).",
         "score": "FINAL SCORE US NAVY 10 // IRAN 0 SCORE IS A TALLY. IT DID NOT DECIDE THIS ENDING.",
-        "losses": "YOUR LOSSES 2 // HOSTILE KILLS CONFIRMED 2"
+        "losses": "YOUR LOSSES 1 // HOSTILE KILLS CONFIRMED 5"
       },
       "probes0": {
         "keydown": 2,
@@ -30,5 +30,7 @@
       ]
     }
   ],
-  "externalRequestsBlocked": []
+  "externalRequestsBlocked": [
+    "http://localhost:3001/api/ollama/tags?base=http%3A%2F%2Flocalhost%3A11434"
+  ]
 }
