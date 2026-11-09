@@ -1,4 +1,6 @@
-@@HEADLINE@@
+SAND-SAVE-1 PARTIAL head=87737e8 roundtrip=pass cold_resume=pass atomic_reject=pass terminal=pass snapshot=pass unit=306/306 e2e=6/6 skipped=0 gpu=ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)), SwiftShader driver)
+
+`e2e=6/6` is this lane's two specs only (the tested code tree is `87737e8`; later commits are receipts and this report). The existing 105-spec suite was not completed here: 24 of 27 finished passed, 3 failed on the software-GL frame gate, 77 did not run. See Battery.
 
 # SAND-SAVE-1 (s409 / s420co3): save and resume a battle
 
