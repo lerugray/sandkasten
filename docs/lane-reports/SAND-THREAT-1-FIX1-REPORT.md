@@ -70,4 +70,4 @@ npx vitest run src/lib/scenarios/__tests__/fix1Probe.test.ts --maxWorkers=1
 # revisions and parseBattle+restore outcomes as in the table above (probe removed after measurement)
 ```
 
-Full host battery: see end of this report after the run (unit + Playwright with Chromium `--mute-audio --no-sandbox` for this host only).
+Full host battery: not completed and not required by the fix card. The seat stopped the lane at 2026-11-10 09:17 EST after the blocked result was proven, while an extra Playwright run was active. No full-battery PASS is claimed; the focused author-tip and variant results above are the evidence.
