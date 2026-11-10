@@ -345,3 +345,8 @@ Next: the seat reviews, merges with the s386 round-3 lane (touched-lines list in
 **Decisions:** WeGo battles are saved (not rejected). A rules change that does not touch data needs `RULES_REVISION` bumped in `builtins.ts`; data changes change the digest on their own and old saves are then refused with a clear message. Cloud E2E uses `SAND_E2E_CHROMIUM` and `SAND_E2E_SWIFTSHADER` (see README).
 
 **Next:** GS runs the real-GPU land battery and decides merge. Deferred S3: opening gate/site-label crowding and the grid-label/facility collision (map-layout work).
+
+## SAND-RC-FIX1 (2026-11-10, co3 t420 backup lane, branch s422co3/sand-rc-fix1-brief)
+
+**What changed (UI only):** editor LOAD now validates the file (`src/lib/scenarios/parseScenarioFile`) and shows a message instead of the browser error page when the JSON is not a scenario; the ORDERS panel keeps THROTTLE/ROE fixed with the route list last in a bounded box, scrolls into view on every selection, and the stale inline `max-height` sidebar clip is gone (the MORE cue is a fixed row). Space no longer re-presses a focused sidebar button. Report: `docs/lane-reports/SAND-RC-FIX1-REPORT.md`.
+**Next:** a new RC sha for the confirming cold play; GS real-GPU run of the long victory/WEGO/combat e2e plays (they did not run clean in the cloud container on base or after). MEDIA tab bug did not reproduce.

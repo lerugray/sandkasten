@@ -59,7 +59,7 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Sensor coverage overlay — toggle radar coverage circles (`S` key)
 - Measurement tools — click two points for distance/bearing (`M` key)
 - Dark/light theme (MapLibre pages; the terminal play view is dark only)
-- Scenario editor at `/editor` — place units, drag to reposition, set sides, save/load JSON
+- Scenario editor at `/editor` — place units, drag to reposition, set sides, save/load JSON (LOAD checks the file and says so if it is not a scenario, for example a battle save)
 - Platform manual at `/database`: 16 Hormuz platforms (ships and aircraft) with real open-license photos and credits, sourced specs, plain-English "what it is / how it is used / typical missions", sensors, weapons, defenses and a numbered bibliography. Records live in `src/data/platforms/records/`; the simulation reads them through `src/lib/platforms/lookup.ts`. Estimation methods are in `src/data/platforms/METHODS.md`. Nothing is copied from CMO.
 
 ### Real-world map (default `/play` plot, plus the MapLibre views `/`, `/editor`, `/play?map=legacy`)
