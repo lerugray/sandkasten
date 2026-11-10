@@ -124,7 +124,7 @@ test.describe("SAND-RC-FIX2: editor LOAD refuses out-of-range positions", () => 
     await expect(page.getByTestId("editor-file-message")).toContainText(/off the map/i);
     await expect(page.getByText("This page couldn’t load")).toHaveCount(0);
     await expect(page.getByText("New Scenario").first()).toBeVisible();
-    await expect(page.getByText("Off The Map")).toHaveCount(0);
+    await expect(page.getByText("Off The Map", { exact: true })).toHaveCount(0);
     expect(errors).toEqual([]);
   });
 });
