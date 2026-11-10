@@ -34,6 +34,9 @@ function newBattle() {
   return s;
 }
 
+/** 21 authored Hormuz units plus the two Boghammar the reinforcement event adds (17 + 2 before SAND-THREAT-1). */
+const UNITS_WITH_REINFORCEMENTS = 23;
+
 /** Run Plan A until a nontrivial moment: reinforcements spawned, weapons in flight, ammunition and defences spent. */
 function runToMidFight(s: SimulationSession) {
   s.togglePause();
@@ -41,7 +44,7 @@ function runToMidFight(s: SimulationSession) {
     s.tick(50);
     const sn = s.snapshot();
     const units = sn.gameState.sides.flatMap((x) => x.units).length;
-    if (units >= 19 && sn.combatState.weaponsInFlight.length > 0 && sn.combatState.weaponsExpended.size > 2 && sn.combatState.defensesExpended.size > 0) return;
+    if (units >= UNITS_WITH_REINFORCEMENTS && sn.combatState.weaponsInFlight.length > 0 && sn.combatState.weaponsExpended.size > 2 && sn.combatState.defensesExpended.size > 0) return;
   }
   throw new Error("never reached a mid-fight state");
 }
@@ -73,7 +76,9 @@ afterEach(() => vi.restoreAllMocks());
 
 describe("battle save round trip", () => {
   it("a nontrivial mid-battle checkpoint exports, parses and re-exports identically", () => {
-    const r = rng(7919);
+    // SAND-THREAT-1: stream 7907, not 7919. With Mahan weapons-free the 7919 run now ends without a moment that has
+    // reinforcements, weapons in flight and spent defences all at once.
+    const r = rng(7907);
     vi.spyOn(Math, "random").mockImplementation(() => r.next());
     const s = newBattle();
     s.setRoe("us-ddg-1", "weapons-free");
@@ -81,7 +86,7 @@ describe("battle save round trip", () => {
     const dump = s.checkpoint();
 
     // the battle really is nontrivial
-    expect(dump.gameState.sides.flatMap((x) => x.units).length).toBeGreaterThanOrEqual(19);
+    expect(dump.gameState.sides.flatMap((x) => x.units).length).toBeGreaterThanOrEqual(UNITS_WITH_REINFORCEMENTS);
     expect(dump.combatState.weaponsInFlight.length).toBeGreaterThan(0);
     expect(dump.combatState.weaponsExpended.size).toBeGreaterThan(0);
     expect(dump.combatState.defensesExpended.size).toBeGreaterThan(0);
@@ -202,37 +207,55 @@ describe("battle save round trip", () => {
     expect(drop(serializeBattle("hormuz", restored.checkpoint(), NOW))).toBe(drop(serializeBattle("hormuz", fresh.checkpoint(), NOW)));
   }, 60_000);
 
-  it("a finished battle stays terminal with its deciding result and blocks commands", () => {
-    const r = rng(7919);
-    vi.spyOn(Math, "random").mockImplementation(() => r.next());
-    const s = newBattle();
-    s.togglePause();
-    for (let i = 0; i < 20 * 3600 * 2 && !s.ended; i++) s.tick(50);
-    expect(s.ended).toBe(true);
-    const text = serializeBattle("hormuz", s.checkpoint(), NOW);
-    const p = parseBattle(text);
-    if (!p.ok) throw new Error(p.error);
-    expect(p.preview.result).toBe("victory");
-    const restored = SimulationSession.restore(p.config, p.dump);
-    const snap = restored.snapshot();
-    expect(restored.ended).toBe(true);
-    expect(snap.eventState!.scenarioResult).toEqual(s.snapshot().eventState!.scenarioResult);
-    expect(snap.eventState!.scenarioResult!.source?.event).toBe("Transit Complete");
-    const wp = snap.gameState.orders.get("us-cvn-1")!.waypoints.length;
-    restored.addWaypoint("us-cvn-1", { lng: 56, lat: 26 });
-    restored.setThrottle("us-cvn-1", 1);
-    restored.togglePause();
-    restored.setSpeed(30);
-    restored.tick(5000);
-    const after = restored.snapshot();
-    expect(after.gameState.orders.get("us-cvn-1")!.waypoints.length).toBe(wp);
-    expect(after.gameState.isPaused).toBe(true);
-    expect(after.gameState.simTime).toBe(snap.gameState.simTime);
-    // PLAY AGAIN starts fresh
-    restored.reset();
-    expect(restored.ended).toBe(false);
-    expect(restored.snapshot().gameState.simTime).toBe(new Date(demoScenarioConfig.scenario.startTime).getTime());
-  }, 60_000);
+  // SAND-THREAT-1: Plan A (carrier alone, flank, direct) now ends in the real defeat, so both endings are covered:
+  // the natural loss, and a win by the southern dog-leg.
+  const finished: [string, (s: SimulationSession) => void, "victory" | "defeat", string][] = [
+    ["the natural defeat of Plan A", () => {}, "defeat", "Carrier Lost"],
+    [
+      "a victory by the southern dog-leg",
+      (s) => {
+        s.clearWaypoints("us-cvn-1");
+        for (const wp of [{ lng: 56.85, lat: 25.6 }, { lng: 56.62, lat: 26.3 }, GATE]) s.addWaypoint("us-cvn-1", wp);
+        s.setThrottle("us-cvn-1", 3);
+      },
+      "victory",
+      "Transit Complete",
+    ],
+  ];
+  for (const [label, orders, result, event] of finished) {
+    it(`a finished battle stays terminal with its deciding result and blocks commands: ${label}`, () => {
+      const r = rng(7919);
+      vi.spyOn(Math, "random").mockImplementation(() => r.next());
+      const s = newBattle();
+      orders(s);
+      s.togglePause();
+      for (let i = 0; i < 20 * 3600 * 2 && !s.ended; i++) s.tick(50);
+      expect(s.ended).toBe(true);
+      const text = serializeBattle("hormuz", s.checkpoint(), NOW);
+      const p = parseBattle(text);
+      if (!p.ok) throw new Error(p.error);
+      expect(p.preview.result).toBe(result);
+      const restored = SimulationSession.restore(p.config, p.dump);
+      const snap = restored.snapshot();
+      expect(restored.ended).toBe(true);
+      expect(snap.eventState!.scenarioResult).toEqual(s.snapshot().eventState!.scenarioResult);
+      expect(snap.eventState!.scenarioResult!.source?.event).toBe(event);
+      const wp = snap.gameState.orders.get("us-cvn-1")!.waypoints.length;
+      restored.addWaypoint("us-cvn-1", { lng: 56, lat: 26 });
+      restored.setThrottle("us-cvn-1", 1);
+      restored.togglePause();
+      restored.setSpeed(30);
+      restored.tick(5000);
+      const after = restored.snapshot();
+      expect(after.gameState.orders.get("us-cvn-1")!.waypoints.length).toBe(wp);
+      expect(after.gameState.isPaused).toBe(true);
+      expect(after.gameState.simTime).toBe(snap.gameState.simTime);
+      // PLAY AGAIN starts fresh
+      restored.reset();
+      expect(restored.ended).toBe(false);
+      expect(restored.snapshot().gameState.simTime).toBe(new Date(demoScenarioConfig.scenario.startTime).getTime());
+    }, 60_000);
+  }
 
   it("the real-world snapshot round-trips as neutral observation: no objective, no result, no scripted events", () => {
     const cfg = getBuiltinConfig("snapshot");

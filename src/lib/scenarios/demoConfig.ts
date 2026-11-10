@@ -36,13 +36,16 @@ const iranMissions: Mission[] = [
     name: "Missile Boat Patrol",
     side: "Iran",
     type: "patrol",
-    assignedUnitIds: ["ir-pc-1", "ir-pc-2"],
+    assignedUnitIds: ["ir-pc-1", "ir-pc-2", "ir-pc-3", "ir-pc-4", "ir-pc-5", "ir-pc-6"],
+    // SAND-THREAT-1: the two ends of the picket line in the eastern approach (see demo.ts). The boats run down to the
+    // south-east end first, toward a group coming up from the Gulf of Oman, then back up the line.
     referencePoints: [
-      { lng: 55.8, lat: 26.6 },
-      { lng: 56.4, lat: 26.3 },
-      { lng: 56.0, lat: 26.0 },
+      { lng: 57.218, lat: 25.683 },
+      { lng: 57.021, lat: 25.861 },
     ],
-    prosecutionRange: 130,
+    // km. The pickets hold their line and close only on a contact inside 25 km (a ship their own radar holds).
+    // At 130 km they ran after the first aircraft they saw and left the approach open.
+    prosecutionRange: 25,
     repeating: true,
   },
   {

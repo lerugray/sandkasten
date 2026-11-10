@@ -4,6 +4,8 @@ import { demoScenarioConfig } from "@/lib/scenarios/demoConfig";
 import { DEFAULT_AUTOPAUSE } from "../autopause";
 
 // SAND-PLAY-1: two different player plans, run through the production session, decided by the real rules.
+// SAND-THREAT-1 re-aimed plan A and the no-orders run: the carrier alone on the direct course, and the group left with no
+// orders, are now lost to the missile-boat picket line. The winning plans are proven in scenarios/__tests__/hormuzThreat.test.ts.
 function seeded(seed: number) {
   let a = seed;
   return () => {
@@ -27,7 +29,7 @@ function play(orders: (s: SimulationSession) => void) {
   return { result: snap.eventState?.scenarioResult?.result, hours: (snap.gameState.simTime - new Date(demoScenarioConfig.scenario.startTime ?? 0).getTime()) / 3.6e6, session: s };
 }
 
-describe("SAND-PLAY-1 two distinct plans reach a real victory", () => {
+describe("SAND-PLAY-1 two distinct plans are decided by the real rules", () => {
   afterEach(() => vi.restoreAllMocks());
 
   const planA = (s: SimulationSession) => {
@@ -45,11 +47,11 @@ describe("SAND-PLAY-1 two distinct plans reach a real victory", () => {
   };
 
   for (const seed of [1, 2, 3]) {
-    it(`plan A (carrier alone, flank, direct) wins - seed ${seed}`, () => {
+    it(`plan A (carrier alone, flank, direct) is lost before the gate - seed ${seed}`, () => {
       vi.spyOn(Math, "random").mockImplementation(seeded(seed * 7919));
       const r = play(planA);
-      expect(r.result).toBe("victory");
-      expect(r.hours).toBeLessThan(4);
+      expect(r.result).toBe("defeat");
+      expect(r.hours).toBeLessThan(3.1);
     }, 60_000);
 
     it(`plan B (escorts ahead, dog-leg, cruise) wins on a different timetable - seed ${seed}`, () => {
@@ -60,10 +62,10 @@ describe("SAND-PLAY-1 two distinct plans reach a real victory", () => {
     }, 60_000);
   }
 
-  it("with no orders the carrier never reaches the gate and nothing is decided in five days", () => {
+  it("with no orders the carrier never reaches the gate and is lost on the way", () => {
     vi.spyOn(Math, "random").mockImplementation(seeded(99));
     const r = play(() => {});
-    expect(r.result).toBeUndefined();
-    expect(r.hours).toBeGreaterThan(119);
+    expect(r.result).toBe("defeat");
+    expect(r.hours).toBeLessThan(4);
   }, 60_000);
 });
