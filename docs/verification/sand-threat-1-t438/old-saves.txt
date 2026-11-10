@@ -1,8 +1,24 @@
 # Saves made on main e3697c0d (docs/verification/sand-save-1-s409/files), parsed by this branch
 format sandkasten-battle-save version 1
+
+# --- author tip 1df1434 (pickets + demoConfig mission edits) ---
 hormuz revision now sand-rules-1.7e5cbf79.ba5c1736
 snapshot revision now sand-rules-1.7e5cbf79.cbc0f6b9
 good: file revision sand-rules-1.7e5cbf79.e2c9e818 format sandkasten-battle-save v1 -> REFUSED: configRevision: this save was made with different rules or platform data than this version of the game, so it cannot be resumed here
 hormuz-early: file revision sand-rules-1.7e5cbf79.e2c9e818 format sandkasten-battle-save v1 -> REFUSED: configRevision: this save was made with different rules or platform data than this version of the game, so it cannot be resumed here
 defeat-fixture: file revision sand-rules-1.7e5cbf79.e2c9e818 format sandkasten-battle-save v1 -> REFUSED: configRevision: this save was made with different rules or platform data than this version of the game, so it cannot be resumed here
 snapshot: file revision sand-rules-1.7e5cbf79.cbc0f6b9 format sandkasten-battle-save v1 -> LOADS
+
+# --- FIX1 variant 1: demoConfig.ts = fc337505, demo.ts pickets kept ---
+hormuz revision sand-rules-1.7e5cbf79.efd8decc
+good / hormuz-early / defeat-fixture -> REFUSED: configRevision (same reason as above)
+snapshot -> LOADS
+
+# --- both scenario files = fc337505 (control) ---
+hormuz revision sand-rules-1.7e5cbf79.e2c9e818
+good: LOADS via parseBattle + SimulationSession.restore (configId hormuz, 17 units)
+hormuz-early: LOADS (17 units)
+defeat-fixture: LOADS (17 units)
+snapshot: LOADS (configId snapshot, 137 units)
+
+# Note: e2c9e818 requires fc337505 sides (unit list). Picket unit data alone moves the digest (builtins hashes sides).
