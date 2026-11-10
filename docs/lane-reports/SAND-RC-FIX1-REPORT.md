@@ -72,3 +72,11 @@ Run results, `--workers=2`, Chromium with SwiftShader, no network (tile server u
 - Out-of-scope items from the card were left alone (toothless scenario, escorts not following, Hornets 0 kts at waypoints, no keyboard map pan, one scenario).
 - The camera re-centring on selection (a click-coordinate shift in the cold play) is by design in this code and unchanged.
 - The confirming cold play needs a new RC sha from this branch.
+
+## Re-verification (co3 t428 relaunch r2, backup account)
+The branch already held the full fix from the first run, so this run re-checked it and changed no code. Chromium via `SAND_E2E_CHROMIUM=/opt/pw-browsers/chromium`, `SAND_E2E_SWIFTSHADER=1`, `--workers=2`, no network (tile server unreachable).
+- Unit (vitest): 317 / 317 pass (26 files).
+- `tests/sand-rc-fix1.spec.ts`: 13 / 13 pass.
+- Existing specs on sidebar, orders, save and design (smoke, simulation, design-system, sand-001..007, sand-save-1 flow and lifecycle, sand-play-1 plans and objective, platform-database): 56 / 56 pass.
+- Not re-run here: the long victory / WEGO / combat / overlap plays that the first run found do not finish on software GL. They still need the GS real-GPU run.
+- Test runs rewrote tracked files under `docs/verification/`; restored, not committed.
