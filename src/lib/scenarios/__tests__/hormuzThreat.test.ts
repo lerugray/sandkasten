@@ -1,4 +1,5 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, expect, afterEach, afterAll } from "vitest";
+import { writeFileSync } from "node:fs";
 import { SimulationSession } from "@/lib/simulation/session";
 import { DEFAULT_AUTOPAUSE } from "@/lib/simulation/autopause";
 import { distanceKm, bearingDeg } from "@/lib/simulation/movement";
@@ -71,6 +72,20 @@ function play(plan: Plan, seed: number, maxHours = 12) {
 
 const count = <T,>(list: T[], pred: (x: T) => boolean) => list.filter(pred).length;
 
+// SAND_THREAT_TABLE=<file> writes the per-seed table of every proof run (the tables in the lane report come from it).
+const table: string[] = ["| proof | seed | result | decided by | T+ hours | Nimitz damage | hits on Nimitz (C-802) | escorts lost |", "|---|---|---|---|---|---|---|---|"];
+function record(proof: string, runs: ReturnType<typeof play>[]) {
+  runs.forEach((r, i) =>
+    table.push(
+      `| ${proof} | ${SEEDS[i]} | ${r.result ?? "undecided"} | ${r.decidedBy ?? "-"} | ${r.hours.toFixed(2)} | ${Math.round(r.carrier.damage ?? 0)} / 3600 ${r.carrier.damageState} | ${r.iranianHits} (${r.missileHits}) | ${r.escortsLost} |`,
+    ),
+  );
+  return runs;
+}
+afterAll(() => {
+  if (process.env.SAND_THREAT_TABLE) writeFileSync(process.env.SAND_THREAT_TABLE, table.join("\n") + "\n");
+});
+
 // --- the plans -------------------------------------------------------------------------------------------------------
 
 /** Proof 1: no orders at all. */
@@ -116,7 +131,7 @@ const southernDoglegWithAirSupport: Plan = (s) => {
 
 describe("SAND-THREAT-1: a passive or careless player loses the Hormuz transit", () => {
   it("do-nothing loses: no orders, clock run to the end at 60x, DEFEAT in at least 4 of 5 seeds", () => {
-    const runs = SEEDS.map((seed) => play(doNothing, seed));
+    const runs = record("1 do-nothing", SEEDS.map((seed) => play(doNothing, seed)));
     expect(count(runs, (r) => r.result === "defeat")).toBeGreaterThanOrEqual(4);
     for (const r of runs.filter((x) => x.result === "defeat")) {
       // the scenario's own loss rule, reached by damage Iranian weapons did through the combat phase
@@ -131,7 +146,7 @@ describe("SAND-THREAT-1: a passive or careless player loses the Hormuz transit",
   }, 120_000);
 
   it("careless loses: Nimitz alone, one FLANK waypoint straight to the gate, ROE HOLD, DEFEAT in at least 3 of 5 seeds", () => {
-    const runs = SEEDS.map((seed) => play(carelessFlankAlone, seed));
+    const runs = record("2 careless", SEEDS.map((seed) => play(carelessFlankAlone, seed)));
     expect(count(runs, (r) => r.result === "defeat")).toBeGreaterThanOrEqual(3);
     for (const r of runs.filter((x) => x.result === "defeat")) {
       expect(r.decidedBy).toBe("Carrier Lost");
@@ -145,13 +160,13 @@ describe("SAND-THREAT-1: a passive or careless player loses the Hormuz transit",
 
 describe("SAND-THREAT-1: two different sensible plans still win", () => {
   it("plan A, escort screen forward with ROE FREE ahead of the carrier, wins in at least 3 of 5 seeds", () => {
-    const runs = SEEDS.map((seed) => play(escortScreenForwardRoeFree, seed));
+    const runs = record("3a escort screen forward, ROE FREE", SEEDS.map((seed) => play(escortScreenForwardRoeFree, seed)));
     expect(count(runs, (r) => r.result === "victory")).toBeGreaterThanOrEqual(3);
     for (const r of runs.filter((x) => x.result === "victory")) expect(r.decidedBy).toBe("Transit Complete");
   }, 120_000);
 
   it("plan B, southern dog-leg clear of the pickets with CAP and Hawkeye support, wins in at least 3 of 5 seeds", () => {
-    const runs = SEEDS.map((seed) => play(southernDoglegWithAirSupport, seed));
+    const runs = record("3b southern dog-leg, air support", SEEDS.map((seed) => play(southernDoglegWithAirSupport, seed)));
     expect(count(runs, (r) => r.result === "victory")).toBeGreaterThanOrEqual(3);
     for (const r of runs.filter((x) => x.result === "victory")) expect(r.decidedBy).toBe("Transit Complete");
   }, 120_000);

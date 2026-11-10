@@ -1,0 +1,17 @@
+# Offset of the picket line from the Nimitz base course (km, north-east) against outcome, 8 seeds each, continuous 60x.
+# Six Kaman, same line length, leg order and prosecution range as shipped. The shipped offset is 18.
+offset 14.5 km nothing: {"undecided":8}  hours[14.00 14.00 14.00 14.00 14.00 14.00 14.00 14.00] dmg[501 835 2766 835 2453 501 1821 2515]
+offset 14.5 km careless: {"defeat":8}  hours[1.36 1.36 1.24 1.36 1.30 1.31 1.39 1.30] dmg[2901 2884 2907 2886 2890 2888 2882 2888]
+offset 15.5 km nothing: {"defeat":8}  hours[2.24 2.35 2.21 2.13 2.19 2.17 2.25 2.10] dmg[2886 2880 2888 2924 2888 2886 2884 2881]
+offset 15.5 km careless: {"defeat":8}  hours[1.25 1.36 1.30 1.37 1.31 1.34 1.30 1.26] dmg[2894 2886 2886 2884 2888 2901 2888 2905]
+offset 16.5 km nothing: {"defeat":8}  hours[2.24 2.26 2.33 2.25 2.23 2.17 2.30 2.30] dmg[2886 2886 2882 2886 2905 2892 2884 2886]
+offset 16.5 km careless: {"defeat":8}  hours[1.39 1.35 1.33 1.24 1.30 1.30 1.37 1.37] dmg[2882 2884 2888 2894 2890 2890 2886 2886]
+offset 18 km nothing: {"defeat":8}  hours[2.27 2.07 2.27 2.36 2.28 2.24 2.32 2.24] dmg[2918 2887 2888 2882 2903 2890 2899 2888]
+offset 18 km careless: {"defeat":8}  hours[1.39 1.36 1.36 1.33 1.35 1.32 1.35 1.33] dmg[2884 2903 2886 2890 2884 2888 2888 2890]
+offset 19.5 km nothing: {"defeat":8}  hours[2.25 2.36 2.39 2.31 2.32 2.32 2.36 2.41] dmg[2881 2890 2886 2892 2892 2890 2888 2882]
+offset 19.5 km careless: {"defeat":8}  hours[1.43 1.38 1.39 1.29 1.44 1.40 1.39 1.37] dmg[2884 2886 2884 2892 2884 2901 2888 2888]
+offset 20.3 km nothing: {"defeat":8}  hours[2.46 2.40 2.35 2.29 2.41 2.40 2.47 2.36] dmg[2886 2888 2892 2883 2888 2888 2897 2892]
+offset 20.3 km careless: {"defeat":8}  hours[1.23 1.30 1.33 1.38 1.35 1.31 1.43 1.30] dmg[2883 2892 2890 2886 2890 2892 2886 2892]
+offset 21.5 km nothing: {"undecided":8}  hours[14.00 14.00 14.00 14.00 14.00 14.00 14.00 14.00] dmg[0 0 0 0 0 0 0 0]
+offset 21.5 km careless: {"defeat":8}  hours[1.37 1.42 1.44 1.42 1.41 1.44 1.35 1.48] dmg[2907 2886 2884 2886 2888 2884 2905 2882]
+
