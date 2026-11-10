@@ -18,6 +18,45 @@ async function debrief(page: Page) {
   return { title: await txt("result-title"), message: await txt("result-message"), deciding: await txt("result-deciding"), score: await txt("result-score"), losses: await txt("result-losses") };
 }
 
+/** Ordinary UI: select a ship, set waypoints and throttle. */
+async function orderShip(page: Page, rowText: string | RegExp, waypoints: { lng: number; lat: number }[], throttle: string) {
+  await page.getByTestId("force-row").filter({ hasText: rowText }).first().click();
+  await expect(page.getByTestId("order-panel")).toBeVisible();
+  if ((await page.getByTestId("order-waypoint-item").count()) > 0) {
+    await page.getByTestId("order-clear-waypoints").click();
+    await expect(page.getByTestId("order-waypoint-item")).toHaveCount(0);
+  }
+  await page.getByTestId("order-add-waypoint").click();
+  await expect(page.getByText("CLICK MAP TO PLACE WAYPOINT")).toBeVisible();
+  if (waypoints[0].lat > 26.4) {
+    await page.getByTestId("mission-focus-gate").click();
+    await page.waitForTimeout(3500);
+  }
+  for (const [i, w] of waypoints.entries()) {
+    await clickGeo(page, w.lng, w.lat);
+    await expect(page.getByTestId("order-waypoint-item")).toHaveCount(i + 1);
+  }
+  await page.keyboard.press("Escape");
+  await page.getByTestId("order-throttle").filter({ hasText: throttle }).click();
+}
+
+/**
+ * SAND-THREAT-1 proof 3a through the ordinary UI: four escorts ahead with ROE FREE, carrier to the gate at CRUISE.
+ * Applied after a real mid-battle load so the resume no longer follows the saved careless FLANK transit.
+ */
+async function applyEscortScreenRoeFree(page: Page) {
+  const escortGoal = { lng: 56.5, lat: 26.6 };
+  for (const row of [/Chosin/, /Mahan/, /Cole/, /Nitze/]) {
+    await orderShip(page, row, [escortGoal], "FULL");
+    await page.getByTestId("order-roe").filter({ hasText: "FREE" }).click();
+    await expect(page.getByTestId("order-roe").filter({ hasText: "FREE" })).toHaveAttribute("aria-pressed", "true");
+  }
+  await page.getByTestId("mission-focus-unit").click();
+  await expect(page.getByTestId("order-panel")).toBeVisible();
+  await page.getByTestId("order-throttle").filter({ hasText: "CRUISE" }).click();
+  await expect(page.getByTestId("order-waypoint-item")).toHaveCount(1);
+}
+
 test.describe.configure({ mode: "serial" });
 
 test.describe("SAND-SAVE-1 real play, save, close, reopen, resume", () => {
@@ -80,7 +119,7 @@ test.describe("SAND-SAVE-1 real play, save, close, reopen, resume", () => {
     }
   });
 
-  test("a fresh page loads the actual file paused, with the saved clock, orders and fog, and plays on to a real victory", async ({ browser }, info) => {
+  test("a fresh page loads the actual file paused, with the saved clock, orders and fog; then escort-screen ROE FREE plays on to a real victory", async ({ browser }, info) => {
     test.setTimeout(1_500_000);
     const saved = JSON.parse(readFileSync(path.join(OUT, "real-checkpoint-log.json"), "utf8"));
     const netSeen: string[] = [];
@@ -146,6 +185,13 @@ test.describe("SAND-SAVE-1 real play, save, close, reopen, resume", () => {
           await expect(page.getByTestId("briefing")).toBeHidden();
         }
 
+        // the saved orders are the careless carrier-alone FLANK transit (now a proven defeat). Switch to
+        // SAND-THREAT-1 proof 3a: escort screen forward with ROE FREE, carrier at CRUISE to the gate.
+        await applyEscortScreenRoeFree(page);
+        const adapted = await facts(page);
+        expect(JSON.stringify(adapted.orders)).not.toBe(JSON.stringify(f0.orders));
+        expect(adapted.simTime).toBe(f0.simTime);
+
         // resume with the real controls
         const probes0 = await probeCounts(page);
         await autopauseOff(page);
@@ -155,7 +201,7 @@ test.describe("SAND-SAVE-1 real play, save, close, reopen, resume", () => {
         const f1 = await facts(page);
         const d = await debrief(page);
         const probes1 = await probeCounts(page);
-        const rec: Record<string, unknown> = { attempt, resumedFrom: saved.atSave.clock, result: f1.result, elapsedH: f1.elapsedH, debrief: d, probes0, probes1, fired: f1.fired };
+        const rec: Record<string, unknown> = { attempt, resumedFrom: saved.atSave.clock, plan: "3a escort screen forward, ROE FREE", result: f1.result, elapsedH: f1.elapsedH, debrief: d, probes0, probes1, fired: f1.fired };
         // nothing refilled, nothing repeated
         for (const [u, w] of Object.entries(saved.atSave.expended as Record<string, Record<string, number>>)) {
           for (const [n, c] of Object.entries(w)) expect(f1.expended[u]?.[n] ?? 0).toBeGreaterThanOrEqual(c);

@@ -21,19 +21,26 @@ async function orderShip(page: Page, rowText: string | RegExp, waypoints: { lng:
 
 const log: Record<string, unknown> = {};
 
-async function finish(page: Page, name: string, orders: unknown) {
+async function finish(page: Page, name: string, orders: unknown, outcome: "victory" | "defeat") {
   await runUntilResult(page, 420_000);
-  await expect(page.getByTestId("result-title")).toContainText(/VICTORY|COMPLETE/i);
-  await expect(page.getByTestId("result-deciding")).toContainText(/Nimitz/);
-  await expect(page.getByTestId("result-deciding")).toContainText(/gate/i);
-  await expect(page.getByTestId("mission-status")).toHaveAttribute("data-status", "complete");
+  if (outcome === "victory") {
+    await expect(page.getByTestId("result-title")).toContainText(/VICTORY|COMPLETE/i);
+    await expect(page.getByTestId("result-deciding")).toContainText(/Nimitz/);
+    await expect(page.getByTestId("result-deciding")).toContainText(/gate/i);
+    await expect(page.getByTestId("mission-status")).toHaveAttribute("data-status", "complete");
+  } else {
+    await expect(page.getByTestId("result-title")).toContainText(/DEFEAT/i);
+    await expect(page.getByTestId("result-deciding")).toContainText(/Nimitz/i);
+    await expect(page.getByTestId("result-deciding")).toContainText(/destroyed/i);
+    await expect(page.getByTestId("mission-status")).toHaveAttribute("data-status", "failed");
+  }
   const record = await page.getByTestId("result-record").innerText();
   const clockText = await page.getByTestId("sim-clock").innerText();
   const renderer = await page.evaluate(() => (window as unknown as W).__sandPlot!.rendererInfo().renderer);
   log[name] = { orders, result: await page.getByTestId("result-title").innerText(), deciding: await page.getByTestId("result-deciding").innerText(), clock: clockText, record, renderer, godMode: await page.getByLabel("Toggle god mode").getAttribute("data-active") };
   mkdirSync(OUT, { recursive: true });
   writeFileSync(path.join(OUT, `plan-${name}.json`), JSON.stringify(log[name], null, 2));
-  await page.screenshot({ path: path.join(OUT, `plan-${name}-victory.png`) });
+  await page.screenshot({ path: path.join(OUT, `plan-${name}-${outcome}.png`) });
   await assertFrozen(page, { selected: false });
   // PLAY AGAIN: a fresh paused scenario with the briefing and default fog
   await page.getByTestId("play-again").click();
@@ -43,8 +50,8 @@ async function finish(page: Page, name: string, orders: unknown) {
   await expect(page.getByTestId("mission-status")).toHaveAttribute("data-status", "pending");
 }
 
-test.describe("SAND-PLAY-1: two distinct plans, played through the ordinary UI, reach a real victory", () => {
-  test("plan A: the carrier alone, flank, straight at the gate", async ({ page }) => {
+test.describe("SAND-PLAY-1: carrier-alone loses; escorted southern dog-leg wins", () => {
+  test("plan A: the carrier alone, flank, straight at the gate — real DEFEAT", async ({ page }) => {
     test.setTimeout(540_000);
     await openPlay(page, "/play", { e2eHandle: true });
     // cold open: read the objective, then take command
@@ -63,7 +70,7 @@ test.describe("SAND-PLAY-1: two distinct plans, played through the ordinary UI, 
     await page.getByTestId("order-throttle").filter({ hasText: "FLANK" }).click();
     await page.getByTestId("sim-speed").filter({ hasText: "60x" }).click();
     await page.getByTestId("sim-toggle-pause").click();
-    await finish(page, "A-direct-flank", { carrier: [GATE.centre], throttle: "FLANK", speed: "60x" });
+    await finish(page, "A-direct-flank", { carrier: [GATE.centre], throttle: "FLANK", speed: "60x" }, "defeat");
   });
 
   test("plan B: escorts ahead to the gate, the carrier by a southern dog-leg at full", async ({ page }) => {
@@ -76,6 +83,6 @@ test.describe("SAND-PLAY-1: two distinct plans, played through the ordinary UI, 
     await orderShip(page, /Nimitz/, [{ lng: 57.0, lat: 25.9 }, GATE.centre], "FULL");
     await page.getByTestId("sim-speed").filter({ hasText: "60x" }).click();
     await page.getByTestId("sim-toggle-pause").click();
-    await finish(page, "B-escorted-dogleg", { escorts: [escortGoal], carrier: [{ lng: 57.0, lat: 25.9 }, GATE.centre], throttle: "FULL", speed: "60x" });
+    await finish(page, "B-escorted-dogleg", { escorts: [escortGoal], carrier: [{ lng: 57.0, lat: 25.9 }, GATE.centre], throttle: "FULL", speed: "60x" }, "victory");
   });
 });
