@@ -1,0 +1,32 @@
+{
+  "orders": "none",
+  "speed": "60x",
+  "debrief": {
+    "title": "[ DEFEAT ]",
+    "deciding": "DECIDED BY USS Nimitz was destroyed by TN5341 TRK; the mission cannot be completed.",
+    "clock": "2026-03-15 08:17:58Z",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "facts": {
+    "result": "defeat",
+    "decidedBy": "Carrier Lost",
+    "elapsedHours": 2.2996666666666665,
+    "nimitzState": "destroyed",
+    "nimitzDamage": 2918,
+    "hitsOnNimitz": 154,
+    "missileHits": 4,
+    "launchers": [
+      "ir-pc-1",
+      "ir-pc-2",
+      "ir-pc-4",
+      "ir-pc-3",
+      "ir-pc-6",
+      "ir-pc-5"
+    ],
+    "launcherSides": [
+      "Iran"
+    ],
+    "usOrders": 0,
+    "nativeDice": true
+  }
+}
