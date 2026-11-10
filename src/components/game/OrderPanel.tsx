@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Unit } from "@/types/game";
 import type { Contact, UnitOrders } from "@/lib/simulation/gameState";
 import type { Doctrine } from "@/lib/ai/doctrine";
@@ -59,6 +59,12 @@ export function OrderPanel({
   const targetId =
     fire && fire.targetContactId && fire.contacts.some((c) => c.id === fire.targetContactId) ? fire.targetContactId : "";
   const [weaponName, setWeaponName] = useState("");
+  const listRef = useRef<HTMLDivElement>(null);
+  // the newest waypoint stays in view inside the bounded list
+  useEffect(() => {
+    const el = listRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [orders.waypoints.length]);
   return (
     <div data-testid="order-panel" className="text-sm space-y-3">
       <div className="text-[var(--color-terminal-green)] font-bold uppercase tracking-wider">
@@ -94,20 +100,6 @@ export function OrderPanel({
             </button>
           )}
         </div>
-        {orders.waypoints.length > 0 && (
-          <div data-testid="order-waypoints-list" className="mt-2 space-y-1">
-            {orders.waypoints.map((wp, i) => (
-              <div
-                key={i}
-                data-testid="order-waypoint-item"
-                data-waypoint-index={i}
-                className="text-sm text-[var(--color-tactical-text-dim)] font-mono"
-              >
-                WP{i + 1}: {wp.position.lat.toFixed(3)}N {wp.position.lng.toFixed(3)}E
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Throttle */}
@@ -115,7 +107,7 @@ export function OrderPanel({
         <div className="text-[var(--color-tactical-text-dim)] uppercase tracking-wider mb-1">
           Throttle
         </div>
-        <div className="flex gap-0.5">
+        <div className="flex gap-0.5" data-testid="order-throttle-row">
           {[0, 1, 2, 3, 4].map((t) => (
             <button
               key={t}
@@ -246,6 +238,30 @@ export function OrderPanel({
           </span>
         )}
       </div>
+
+      {/* Waypoint list: last, in a bounded box, so a growing route never moves the controls above it. */}
+      {orders.waypoints.length > 0 && (
+        <div>
+          <div className="text-[var(--color-tactical-text-dim)] uppercase tracking-wider mb-1">Route</div>
+          <div
+            ref={listRef}
+            data-testid="order-waypoints-list"
+            className="space-y-1 overflow-y-auto pr-1"
+            style={{ maxHeight: "6.5rem" }}
+          >
+            {orders.waypoints.map((wp, i) => (
+              <div
+                key={i}
+                data-testid="order-waypoint-item"
+                data-waypoint-index={i}
+                className="text-sm text-[var(--color-tactical-text-dim)] font-mono"
+              >
+                WP{i + 1}: {wp.position.lat.toFixed(3)}N {wp.position.lng.toFixed(3)}E
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

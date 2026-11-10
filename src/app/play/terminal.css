@@ -791,20 +791,23 @@
   letter-spacing: 0.08em;
 }
 
-/* pager cue when the left panel scrolls */
+/* pager cue when the left panel scrolls: its own fixed-height row under the list, never laid over it,
+   and always there (blank when idle) so showing it cannot move anything above it */
 .tx-more {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 3px 0;
+  flex-shrink: 0;
+  height: 24px;
+  line-height: 24px;
   text-align: center;
   font-size: 12px;
   letter-spacing: 0.14em;
-  color: var(--tx-field);
-  background: var(--tx-phosphor);
+  color: transparent;
+  background: transparent;
   text-shadow: none;
   pointer-events: none;
+}
+.tx-more.is-on {
+  color: var(--tx-field);
+  background: var(--tx-phosphor);
 }
 
 /* the radar emission note sits on its own line under the button */

@@ -239,6 +239,8 @@ function TerminalPlayView({
   const [homeRequest, setHomeRequest] = useState(0);
   const [moreBelow, setMoreBelow] = useState(false);
   const panelBodyRef = useRef<HTMLDivElement>(null);
+  const ordersRef = useRef<HTMLElement>(null);
+  const [orderFocusN, setOrderFocusN] = useState(0);
   const turnKeyAtRef = useRef(0);
 
   const cursorRef = useRef<HTMLSpanElement>(null);
@@ -309,8 +311,8 @@ function TerminalPlayView({
         el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable;
       if (typing) return;
       if (e.code === "Space") {
-        // a focused button takes Space itself; only the bare page toggles time
-        if (el === document.body) {
+        // Space is the clock key. A sidebar button that kept focus after a click must not take it (Enter still does).
+        if (el === document.body || (el.tagName === "BUTTON" && el.closest('[data-testid="side-panel"]'))) {
           e.preventDefault();
           if (!ended && !e.repeat && (!isWeGo || phase === "resolving")) togglePause();
         }
@@ -369,8 +371,18 @@ function TerminalPlayView({
         else if (selectedFacilityId) setSelectedFacilityId(null);
       }
     };
+    // Space on a focused sidebar button presses it on key-up: swallow that too (Enter is untouched).
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code !== "Space" || modalOpenRef.current) return;
+      const el = e.target as HTMLElement;
+      if (el.tagName === "BUTTON" && el.closest('[data-testid="side-panel"]')) e.preventDefault();
+    };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
   }, [togglePause, setSpeed, toggleMeasure, ended, isWeGo, phase, commitOrders, nextTurn, showBriefing, objective, openBriefing, showHelp, showAutopauseSettings, measureMode, isPlacingWaypoint, selectedUnitId, selectedFacilityId, selectedOsintId, recordHold]);
 
   // The briefing closes only on a deliberate act (its own card or buttons, Enter, Esc, B) or when the clock starts.
@@ -611,7 +623,9 @@ function TerminalPlayView({
   }, [objective]);
   const focusProtected = useCallback(() => {
     if (!objective) return;
+    setSidebarTab("forces");
     setSelectedUnitId(objective.unitId);
+    setOrderFocusN((n) => n + 1);
     setFocusRequest((prev) => ({ n: (prev?.n ?? 0) + 1, unitId: objective.unitId }));
   }, [objective]);
 
@@ -696,9 +710,16 @@ function TerminalPlayView({
     if (unitId) {
       setSelectedFacilityId(null);
       setSelectedOsintId(null);
+      setOrderFocusN((n) => n + 1);
     }
     setIsPlacingWaypoint(false);
   }, []);
+
+  // A pick on the map shows the unit's orders in the FORCES tab, wherever the sidebar was left.
+  const selectOnMap = useCallback((unitId: string | null, shiftKey?: boolean) => {
+    if (unitId) setSidebarTab("forces");
+    handleUnitSelect(unitId, shiftKey);
+  }, [handleUnitSelect]);
 
   const inspectOwn = useCallback((unitId: string) => {
     handleUnitSelect(unitId);
@@ -792,31 +813,26 @@ function TerminalPlayView({
   useEffect(() => {
     updateMore();
   });
-  // when the list overflows, end it on a whole row above the cue: no half row under "-- MORE --"
-  const snapPanelBody = useCallback(() => {
-    const el = panelBodyRef.current;
-    if (!el) return;
-    el.style.maxHeight = "";
-    const panel = el.parentElement;
-    if (!panel || el.scrollHeight <= el.clientHeight + 1) return;
-    const cueH = 28;
-    const avail = el.clientHeight - cueH;
-    let bottom = 0;
-    const top = el.getBoundingClientRect().top;
-    el.querySelectorAll<HTMLElement>(".tx-row").forEach((row) => {
-      const b = row.getBoundingClientRect().bottom - top;
-      if (b <= avail && b > bottom) bottom = b;
-    });
-    if (bottom > 0) el.style.maxHeight = `${Math.round(bottom)}px`;
-  }, []);
+  // Every selection (a re-click of the selected unit included) brings that unit's ORDERS into view.
+  const showOrdersInView = useCallback(() => {
+    const body = panelBodyRef.current;
+    const sec = ordersRef.current;
+    if (!body || !sec) return;
+    const core = sec.querySelector<HTMLElement>('[data-testid="order-roe-note"]') ?? sec.querySelector<HTMLElement>('[data-testid="order-throttle-row"]') ?? sec;
+    const base = body.getBoundingClientRect().top;
+    const topRel = sec.getBoundingClientRect().top - base;
+    const endRel = core.getBoundingClientRect().bottom - base + 8;
+    // scroll the least that shows the title through the ROE rows; never push the title off the top
+    let delta = 0;
+    if (endRel > body.clientHeight) delta = endRel - body.clientHeight;
+    if (topRel - delta < 0) delta = topRel;
+    if (delta !== 0) body.scrollTop += delta;
+    updateMore();
+  }, [updateMore]);
+  // ...and so does coming back to FORCES from another tab with a unit still selected.
   useEffect(() => {
-    snapPanelBody();
-    const panel = panelBodyRef.current?.parentElement;
-    if (!panel || typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver(() => snapPanelBody());
-    ro.observe(panel);
-    return () => ro.disconnect();
-  }, [snapPanelBody, sidebarTab, friendlyUnits.length]);
+    if (orderFocusN > 0 && sidebarTab === "forces") showOrdersInView();
+  }, [orderFocusN, sidebarTab, showOrdersInView]);
 
   const clock = new Date(gameState.simTime).toISOString().replace("T", " ").slice(0, 19) + "Z";
   const prefs = autopausePrefsRef.current;
@@ -839,7 +855,7 @@ function TerminalPlayView({
         homeRequest={homeRequest}
         onFacilitySelect={handleFacilitySelect}
         onOsintSelect={handleOsintSelect}
-        onUnitSelect={handleUnitSelect}
+        onUnitSelect={selectOnMap}
         onMapClick={handleMapClick}
       />
 
@@ -1040,7 +1056,7 @@ function TerminalPlayView({
                 </section>
               )}
               {ordersOpen && selectedUnit && selectedOrders && selectedUnit.side === playerSide && (
-                <section className="tx-section">
+                <section className="tx-section" ref={ordersRef} data-testid="orders-section">
                   <OrderPanel
                     unit={selectedUnit}
                     orders={selectedOrders}
@@ -1107,7 +1123,7 @@ function TerminalPlayView({
             />
           )}
         </div>
-        {moreBelow && <div className="tx-more" aria-hidden="true">-- MORE --</div>}
+        <div className={`tx-more${moreBelow ? " is-on" : ""}`} aria-hidden="true" data-testid="more-cue">{moreBelow ? "-- MORE --" : ""}</div>
       </aside>
 
       {showBriefing && !ended && (
