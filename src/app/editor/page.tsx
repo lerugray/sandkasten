@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { MapWrapper } from "@/components/map/MapWrapper";
 import { DetailPanel } from "@/components/map/DetailPanel";
 import { EditorToolbar } from "@/components/editor/EditorToolbar";
@@ -8,6 +8,7 @@ import { UnitPlacer } from "@/components/editor/UnitPlacer";
 import { ScenarioSettings } from "@/components/editor/ScenarioSettings";
 import type { Scenario, Unit, Side, Position } from "@/types/game";
 import { ClassicFonts } from "@/components/ClassicFonts";
+import { parseScenarioFile } from "@/lib/scenarios/parseScenario";
 import { exampleSnapshotScenario, withFacilities } from "@/lib/snapshot/example";
 
 const DEFAULT_SCENARIO: Scenario = {
@@ -34,6 +35,8 @@ export default function EditorPage() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [activePanel, setActivePanel] = useState<"none" | "place" | "settings">("none");
   const [placingSide, setPlacingSide] = useState<string>("Side A");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileMessage, setFileMessage] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
   const [snapshotStatus, setSnapshotStatus] = useState<{ busy: boolean; message: string | null }>({ busy: false, message: null });
 
   const allUnits = scenario.sides.flatMap((s) => s.units);
@@ -111,30 +114,35 @@ export default function EditorPage() {
     a.href = url;
     a.download = `${scenario.name.replace(/\s+/g, "_").toLowerCase()}.json`;
     a.click();
-    URL.revokeObjectURL(url);
+    // Revoking in the same tick can cancel the download in some browsers.
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
   }, [scenario]);
 
+  // The picker input lives in the page (hidden), not detached, so every browser opens its chooser.
   const loadScenario = useCallback(() => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json";
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const loaded = JSON.parse(reader.result as string) as Scenario;
-          setScenario(loaded);
-          setSelectedUnitId(null);
-          setPinnedRingIds(new Set());
-        } catch {
-          alert("Invalid scenario file");
-        }
-      };
-      reader.readAsText(file);
+    fileInputRef.current?.click();
+  }, []);
+
+  const onScenarioFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const file = input.files?.[0];
+    input.value = ""; // choosing the same file twice must fire again
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const parsed = parseScenarioFile(String(reader.result ?? ""));
+      if (!parsed.ok) {
+        setFileMessage({ kind: "error", text: parsed.error });
+        return;
+      }
+      setScenario(parsed.scenario);
+      setSelectedUnitId(null);
+      setPinnedRingIds(new Set());
+      setPlacingSide(parsed.scenario.sides[0]?.name ?? "Side A");
+      setFileMessage({ kind: "ok", text: `Loaded ${parsed.scenario.name}` });
     };
-    input.click();
+    reader.onerror = () => setFileMessage({ kind: "error", text: "Could not read that file." });
+    reader.readAsText(file);
   }, []);
 
   const openScenario = useCallback((loaded: Scenario) => {
@@ -185,14 +193,33 @@ export default function EditorPage() {
         </span>
 
         <div className="ml-auto flex items-center gap-2">
+          {fileMessage && (
+            <span
+              role="status"
+              data-testid="editor-file-message"
+              className={`text-xs ${fileMessage.kind === "error" ? "text-[var(--color-terminal-amber)]" : "text-[var(--color-tactical-text-dim)]"}`}
+            >
+              {fileMessage.text}
+            </span>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json,application/json"
+            onChange={onScenarioFile}
+            className="hidden"
+            data-testid="editor-load-input"
+          />
           <button
             onClick={loadScenario}
+            data-testid="editor-load"
             className="text-xs text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
           >
             LOAD
           </button>
           <button
             onClick={saveScenario}
+            data-testid="editor-save"
             className="text-xs text-[var(--color-tactical-text-dim)] hover:text-[var(--color-tactical-text)] border border-[var(--color-tactical-border)] px-2 py-0.5 rounded cursor-pointer"
           >
             SAVE
