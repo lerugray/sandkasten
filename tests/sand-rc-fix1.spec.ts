@@ -101,6 +101,34 @@ test.describe("SAND-RC-FIX1 defect 1: editor LOAD", () => {
   });
 });
 
+test.describe("SAND-RC-FIX2: editor LOAD refuses out-of-range positions", () => {
+  test("a scenario with a unit at latitude 95 shows the message, no error page, editor untouched", async ({ page }) => {
+    mkdirSync(OUT, { recursive: true });
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    const file = path.join(OUT, "lat95.json");
+    writeFileSync(file, JSON.stringify({
+      name: "Off The Map", description: "", briefing: "",
+      theater: { center: { lng: 56.5, lat: 26.5 }, zoom: 7 },
+      startTime: "2026-01-01T00:00:00.000Z", playerSide: "Side A",
+      sides: [
+        { name: "Side A", color: "#00aaff", isAI: false, units: [
+          { id: "a1", name: "Alpha", platformId: 1, side: "Side A", position: { lng: 56.2, lat: 95 }, heading: 0, speed: 0, damageState: "undamaged" },
+        ] },
+        { name: "Side B", color: "#ff4444", isAI: true, units: [] },
+      ],
+      referencePoints: [],
+    }));
+    await openEditor(page);
+    await loadFile(page, file);
+    await expect(page.getByTestId("editor-file-message")).toContainText(/off the map/i);
+    await expect(page.getByText("This page couldn’t load")).toHaveCount(0);
+    await expect(page.getByText("New Scenario").first()).toBeVisible();
+    await expect(page.getByText("Off The Map")).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+});
+
 // ---------------------------------------------------------------------------------------------
 // Defect 2 + S3: the ORDERS panel
 // ---------------------------------------------------------------------------------------------

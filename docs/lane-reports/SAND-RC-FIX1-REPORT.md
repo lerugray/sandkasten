@@ -1,6 +1,6 @@
 # SAND-RC-FIX1 report
 
-Lane: co3 t420 (backup account), branch `s422co3/sand-rc-fix1-brief`. Card: `docs/handoffs/sand-rc-fix1-t420/CARD.md`.
+Lane: co3 t420 (backup account), branch `claude/sand-rc-fix1-lane-8mxspe`. Card: `docs/handoffs/sand-rc-fix1-t420/CARD.md`.
 Base: sandkasten main `e3697c0d` (brief commit `c9880b0`). UI only: no change to sim rules, combat, sensors, victory, scenario data, save format or the WEGO loop.
 Reproduced on a production build (`next build` + `next start`), Playwright, 1280x720 and 1920x1080, software GL.
 
