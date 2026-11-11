@@ -1,7 +1,7 @@
 "use client";
 
 import "@/app/play/terminal.css";
-import { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { DetailPanel } from "@/components/map/DetailPanel";
 import { FacilityPanel } from "@/components/map/FacilityPanel";
@@ -157,6 +157,30 @@ function turnAtSpaces(text: string, cols: number, lead = 0): string {
     lines = narrower.lines;
   }
   return lines.join("\n");
+}
+
+/**
+ * Keep hyphenated / parenthetical tokens (C-802, (CVN-68)) on one glyph run. Breaks stay at the spaces
+ * turnAtSpaces already chose; a soft wrap must not cut inside those tokens.
+ */
+function nowrapTokens(text: string): ReactNode {
+  const out: ReactNode[] = [];
+  const re = /(\S+)/g;
+  let m: RegExpExecArray | null;
+  let last = 0;
+  let n = 0;
+  while ((m = re.exec(text))) {
+    if (m.index > last) out.push(text.slice(last, m.index));
+    const tok = m[1];
+    if (/[-–—/]/.test(tok) || /^\([^)]*\)$/.test(tok)) {
+      out.push(<span key={n++} className="tx-nowrap">{tok}</span>);
+    } else {
+      out.push(tok);
+    }
+    last = m.index + tok.length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out.length === 1 ? out[0] : out;
 }
 
 /** What a record line holds ahead of its text, less the tag: "06:00:00Z " and the space after the tag. */
@@ -1172,7 +1196,7 @@ function TerminalPlayView({
                       {/* a row hangs 3ch under its ">> " mark, so the label has cols - 3 on every line */}
                       {wifRows.map((w) => (
                         <div key={w.id} className={`tx-wif-row${w.debug ? " is-god" : ""}`} data-testid="weapon-row">
-                          <span className="tx-alarm">{">>"}</span> {w.debug ? "[GOD] " : ""}<span className="tx-turns">{turnAtSpaces(w.label, cols - 3, w.debug ? 6 : 0)}</span>
+                          <span className="tx-alarm">{">>"}</span> {w.debug ? "[GOD] " : ""}<span className="tx-turns">{nowrapTokens(turnAtSpaces(w.label, cols - 3, w.debug ? 6 : 0))}</span>
                         </div>
                       ))}
                     </>
@@ -1415,7 +1439,7 @@ function TerminalPlayView({
             <Measured>
               {(cols) => review.record.slice(-5).map((l) => (
                 <div key={l.id} className={`tx-result-line${l.alarm ? " is-alarm" : ""}`}>
-                  {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag} <span className="tx-turns">{turnAtSpaces(l.text, cols, RECORD_LEAD + l.tag.length)}</span>
+                  {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag} <span className="tx-turns">{nowrapTokens(turnAtSpaces(l.text, cols, RECORD_LEAD + l.tag.length))}</span>
                 </div>
               ))}
             </Measured>
@@ -1599,7 +1623,7 @@ function TerminalPlayView({
               <Measured>
                 {(cols) => debrief.record.map((l) => (
                   <div key={l.id} className={`tx-result-line${l.alarm ? " is-alarm" : ""}`}>
-                    {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag} <span className="tx-turns">{turnAtSpaces(l.text, cols, RECORD_LEAD + l.tag.length)}</span>
+                    {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag} <span className="tx-turns">{nowrapTokens(turnAtSpaces(l.text, cols, RECORD_LEAD + l.tag.length))}</span>
                   </div>
                 ))}
               </Measured>

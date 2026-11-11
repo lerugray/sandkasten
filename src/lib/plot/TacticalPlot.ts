@@ -363,7 +363,8 @@ function labelSlots(half: number, w: number, h: number): [number, number][] {
   const out: [number, number][] = [
     [half + g, -h / 2], [-half - g - w, -h / 2], [-w / 2, -half - g - h], [-w / 2, half + g],
   ];
-  for (const r of [half + 14, half + 30, half + 50, half + 74]) {
+  // Extra outer rings so a close-zoom runway obstacle grid still leaves a free plate (esp. at 1920×1080).
+  for (const r of [half + 14, half + 30, half + 50, half + 74, half + 102, half + 136]) {
     const d = r * 0.72;
     out.push([r, -h / 2], [-r - w, -h / 2], [-w / 2, -r - h], [-w / 2, r], [d, -d - h], [d, d], [-d - w, -d - h], [-d - w, d]);
   }
@@ -1634,7 +1635,13 @@ export class TacticalPlot {
     }
 
     const hash = `${this.target.x.toFixed(2)},${this.target.y.toFixed(2)},${this.dist.toFixed(2)},${t.toFixed(3)},${this.W},${this.H}`;
-    const declKey = `${hash}|${this.input?.selectedFacilityId ?? ""}|${this.input?.showFacilities !== false}|${this.osintLayer?.root.visible ? 1 : 0}`;
+    // Coarse unit fingerprint so a settled camera re-declutters once tracks (or ADS-B snapshot traffic) appear.
+    let unitSig = this.tracks.size;
+    for (const tr of this.tracks.values()) {
+      if (tr.kind === "weapon" || !tr.sprite) continue;
+      unitSig = (unitSig * 33 + (Math.round(tr.pos.x) << 5) + Math.round(tr.pos.y)) | 0;
+    }
+    const declKey = `${hash}|${this.input?.selectedFacilityId ?? ""}|${this.input?.showFacilities !== false}|${this.osintLayer?.root.visible ? 1 : 0}|${unitSig}`;
     if (declKey !== this.declKey) {
       this.declKey = declKey;
       this.declutterFacilities();
@@ -2253,32 +2260,35 @@ export class TacticalPlot {
     const { w, h } = this.textBox(o.text, o.cls);
     const slots = labelSlots(o.half, w, h);
     const icons = this.icons;
-    for (const strict of [true, false]) {
-      for (let si = 0; si < slots.length; si++) {
-        const r: Rect = { x: Math.round(o.ax + slots[si][0]), y: Math.round(o.ay + slots[si][1]), w, h };
-        if (!this.slotClear(r)) continue;
-        const d0 = distToRect(o.ax, o.ay, r);
-        let nearestKey = o.key, nd = d0;
-        for (const i of icons) {
-          if (i.kind === "osint-dot" || `${i.kind}:${i.id}` === o.key) continue;
-          const d = distToRect(i.cx, i.cy, r);
-          if (d < nd - 0.01) { nd = d; nearestKey = `${i.kind}:${i.id}`; }
-        }
-        const own = nearestKey === o.key;
-        if (strict && !own) continue;
-        const idx = this.labelAt(o.text, o.cls, r, true);
-        this.gLab.add(r);
-        const leader = si >= 4 || !own;
-        if (leader) {
-          const ex = Math.max(r.x, Math.min(o.ax, r.x + r.w)), ey = Math.max(r.y, Math.min(o.ay, r.y + r.h));
-          const dx = ex - o.ax, dy = ey - o.ay, len = Math.hypot(dx, dy);
-          if (len > o.half + 2) {
-            const sx = o.ax + (dx / len) * (o.half + 1), sy = o.ay + (dy / len) * (o.half + 1);
-            this.siteLeaders.push({ ev: idx, d: `M${sx.toFixed(1)} ${sy.toFixed(1)}L${ex.toFixed(1)} ${ey.toFixed(1)}` });
+    // Prefer slots clear of runways; if the strip grid blankets the field at close zoom, allow a led plate off the strip.
+    for (const avoidRun of [true, false]) {
+      for (const strict of [true, false]) {
+        for (let si = 0; si < slots.length; si++) {
+          const r: Rect = { x: Math.round(o.ax + slots[si][0]), y: Math.round(o.ay + slots[si][1]), w, h };
+          if (!this.slotClear(r, avoidRun)) continue;
+          const d0 = distToRect(o.ax, o.ay, r);
+          let nearestKey = o.key, nd = d0;
+          for (const i of icons) {
+            if (i.kind === "osint-dot" || `${i.kind}:${i.id}` === o.key) continue;
+            const d = distToRect(i.cx, i.cy, r);
+            if (d < nd - 0.01) { nd = d; nearestKey = `${i.kind}:${i.id}`; }
           }
+          const own = nearestKey === o.key;
+          if (strict && !own) continue;
+          const idx = this.labelAt(o.text, o.cls, r, true);
+          this.gLab.add(r);
+          const leader = si >= 4 || !own || !avoidRun;
+          if (leader) {
+            const ex = Math.max(r.x, Math.min(o.ax, r.x + r.w)), ey = Math.max(r.y, Math.min(o.ay, r.y + r.h));
+            const dx = ex - o.ax, dy = ey - o.ay, len = Math.hypot(dx, dy);
+            if (len > o.half + 2) {
+              const sx = o.ax + (dx / len) * (o.half + 1), sy = o.ay + (dy / len) * (o.half + 1);
+              this.siteLeaders.push({ ev: idx, d: `M${sx.toFixed(1)} ${sy.toFixed(1)}L${ex.toFixed(1)} ${ey.toFixed(1)}` });
+            }
+          }
+          this.labelMeta[idx] = { text: o.text, owner: o.key, nearest: nearestKey, leader };
+          return true;
         }
-        this.labelMeta[idx] = { text: o.text, owner: o.key, nearest: nearestKey, leader };
-        return true;
       }
     }
     return false;
@@ -2418,7 +2428,7 @@ export class TacticalPlot {
     this.osintLabelCount = osintUsed;
   }
 
-  /** Hide facility symbols that would sit on another symbol or on an OSINT icon; the icon with the better claim stays. */
+  /** Hide facility symbols that would sit on another symbol, an OSINT icon, or a unit glyph; the better claim stays. */
   private declutterFacilities() {
     const layer = this.facilityLayer;
     if (!layer || !layer.root.visible) return;
@@ -2429,7 +2439,14 @@ export class TacticalPlot {
         if (s.z < 1) osint.push({ cx: s.x, cy: s.y });
       }
     }
-    layer.declutter(this.kPx, this.input?.selectedFacilityId ?? null, (x, y) => this.toScreen(x, y, 0), osint, { w: this.W, h: this.H });
+    const units: { cx: number; cy: number; gap: number }[] = [];
+    for (const t of this.tracks.values()) {
+      if (t.kind === "weapon" || !t.sprite || !t.sprite.visible || t.alpha < 0.05 || !t.spriteW) continue;
+      const s = this.toScreen(t.pos.x + t.disp.x, t.pos.y + t.disp.y, t.z);
+      if (s.z >= 1) continue;
+      units.push({ cx: s.x, cy: s.y, gap: FACILITY_SYMBOL_PX / 2 + Math.max(t.spriteAx, t.spriteAy, t.spriteW / 2) + 1 });
+    }
+    layer.declutter(this.kPx, this.input?.selectedFacilityId ?? null, (x, y) => this.toScreen(x, y, 0), osint, { w: this.W, h: this.H }, FACILITY_SYMBOL_PX + 1, FACILITY_SYMBOL_PX / 2 + 11 + 1, units);
   }
 
   /** Every drawn facility symbol, OSINT symbol and OSINT true-position dot, as screen-space centres with a half size. */

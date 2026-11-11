@@ -36,8 +36,6 @@ export const DEFAULT_TURN_MINUTES: TurnMinutes = 5;
 export const WEGO_DEFAULT_SPEED = 30;
 /** Every WeGo resolution step is exactly this many simulated ms, whatever the timer or playback speed. */
 export const RESOLVE_STEP_MS = 1000;
-/** A stalled frame must not become a huge jump (same bound as continuous play). */
-const MAX_REAL_DT_MS = 2000;
 
 export interface SessionOptions {
   mode?: PlayMode;
@@ -535,7 +533,10 @@ export class SimulationSession {
 
   private tickWeGo(dtMs: number): boolean {
     if (this.phase !== "resolving" || this.gameState.isPaused || this.ended) return false;
-    this.resolveBudgetMs += Math.min(Math.max(dtMs, 0), MAX_REAL_DT_MS) * this.gameState.speed;
+    // A sealed turn has a fixed end: when the UI stalls (heavy plot frames) the real-dt clip used in
+    // continuous play would leave the burst hanging for minutes. Count the whole gap so commit→review
+    // still completes under the player's chosen speed.
+    this.resolveBudgetMs += Math.max(dtMs, 0) * this.gameState.speed;
 
     const playerSide = this.gameState.scenario.playerSide;
     let finished = false;

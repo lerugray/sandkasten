@@ -350,6 +350,8 @@ export class FacilityPlotLayer {
     bounds: { w: number; h: number },
     minGap = SYMBOL_PX + 1,
     osintGap = SYMBOL_PX / 2 + 11 + 1,
+    /** Unit (or other) glyph centres the facility icon must stay clear of; each carries its own gap. */
+    units: { cx: number; cy: number; gap: number }[] = [],
   ) {
     const mt = this.maxTier(kmPerPx);
     const cand: { it: FacilityItem; x: number; y: number }[] = [];
@@ -376,6 +378,9 @@ export class FacilityPlotLayer {
     };
     for (const c of cand) {
       let bad = c.it.facility.id !== selectedId && osint.some((o) => Math.abs(o.cx - c.x) < osintGap && Math.abs(o.cy - c.y) < osintGap);
+      if (!bad && c.it.facility.id !== selectedId) {
+        bad = units.some((u) => Math.hypot(u.cx - c.x, u.cy - c.y) < u.gap);
+      }
       if (!bad && c.it.facility.id !== selectedId) bad = near(c.x, c.y, minGap);
       this.setDecl(c.it, bad);
       if (!bad) {
@@ -439,7 +444,9 @@ export class FacilityPlotLayer {
         const count = g.tierEnd[mt];
         for (let i = 0; i < count; i++) {
           const it = g.items[i];
-          if (it.hidden) continue;
+          // Decluttered symbols yield to a neighbour. Withdrawn ones (runway is the marker) keep a hit
+          // disc at the field centre so a click on the airfield — not only on the strip — still opens it.
+          if (it.decl) continue;
           const s = toScreen(it.x, it.y);
           if (s.z >= 1) continue;
           const d = Math.hypot(s.x - sx, s.y - sy);
