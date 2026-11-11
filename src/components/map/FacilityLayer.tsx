@@ -11,13 +11,7 @@ import {
 import type { Facility } from "@/lib/facilities/facilities";
 
 import { MAP_FONT } from "@/lib/map/styles";
-import { raiseFacilityPoints } from "@/lib/map/mapLayout";
-const POINT_TIERS = [
-  { tier: 0, minzoom: 3, labelMinzoom: 7 },
-  { tier: 1, minzoom: 5.5, labelMinzoom: 8 },
-  { tier: 2, minzoom: 7.5, labelMinzoom: 9.5 },
-  { tier: 3, minzoom: 9.5, labelMinzoom: 11 },
-];
+import { FACILITY_ICONS_ALL_DRAWN_ZOOM, FACILITY_POINT_TIERS as POINT_TIERS, raiseFacilityPoints } from "@/lib/map/mapLayout";
 const pointLayerId = (tier: number) => `facility-points-t${tier}`;
 const labelLayerId = (tier: number) => `facility-labels-t${tier}`;
 export const FACILITY_POINT_LAYERS = POINT_TIERS.map((t) => pointLayerId(t.tier));
@@ -232,7 +226,8 @@ function build(map: maplibregl.Map, facilities: Facility[], unitPositions: [numb
       layout: {
         "icon-image": ["concat", "fac-", ["get", "kind"], "-", ["get", "use"]],
         "icon-size": ["interpolate", ["linear"], ["zoom"], 4, 0.5, 8, 0.75, 12, 1],
-        "icon-allow-overlap": ["step", ["zoom"], false, 9, true],
+        // the layout controller relies on this: from this zoom it takes every symbol's place from the data
+        "icon-allow-overlap": ["step", ["zoom"], false, FACILITY_ICONS_ALL_DRAWN_ZOOM, true],
         "icon-padding": 2,
         "symbol-sort-key": tier,
       },

@@ -3,6 +3,8 @@ import { placeAll, rectAt, type Placeable, type Rect } from "./declutter";
 import { ICON_RADIUS, LABEL_H, layoutLabels, siteSlots, slotPx } from "@/lib/osint/labelLayout";
 import { siteLabel } from "@/lib/osint/sites";
 import type { OsintSite } from "@/lib/osint/sites";
+import { facilityTier } from "@/lib/facilities/facilities";
+import type { Facility } from "@/lib/facilities/facilities";
 
 /**
  * One layout pass for every DOM layer on the /map view: OSINT icons first (around the facility symbols they sit on),
@@ -33,7 +35,20 @@ export interface MapLayout {
   key: string;
 }
 
-export const FACILITY_POINT_LAYER_IDS = [0, 1, 2, 3].map((t) => `facility-points-t${t}`);
+/** The facility symbol tiers: tier t is drawn from `minzoom`, its map text from `labelMinzoom`. One table for the layers and the layout. */
+export const FACILITY_POINT_TIERS = [
+  { tier: 0, minzoom: 3, labelMinzoom: 7 },
+  { tier: 1, minzoom: 5.5, labelMinzoom: 8 },
+  { tier: 2, minzoom: 7.5, labelMinzoom: 9.5 },
+  { tier: 3, minzoom: 9.5, labelMinzoom: 11 },
+] as const;
+/**
+ * From this zoom every facility symbol of a visible tier is drawn (icon-allow-overlap on the symbol layers); below it the
+ * renderer hides symbols that collide, so only the renderer knows which are on screen.
+ */
+export const FACILITY_ICONS_ALL_DRAWN_ZOOM = 9;
+
+export const FACILITY_POINT_LAYER_IDS = FACILITY_POINT_TIERS.map((t) => `facility-points-t${t.tier}`);
 
 /** Same ramp as the facility symbol layers' icon-size: 0.5 at z4, 0.75 at z8, 1 from z12. */
 export function facilityIconSize(zoom: number): number {
@@ -43,11 +58,47 @@ export function facilityIconSize(zoom: number): number {
   return 1;
 }
 
-/** Facility symbols are drawn by the map canvas: rebuild their discs from the symbols the renderer actually placed. */
-export function facilityIconRects(map: maplibregl.Map): Rect[] {
+/**
+ * The discs of every facility symbol the map draws at `zoom`, straight from the facility data. Only valid from
+ * FACILITY_ICONS_ALL_DRAWN_ZOOM, where no symbol is hidden by a collision: there the answer does not depend on what the
+ * renderer has got round to placing, so a layout solved right after a zoom is already correct.
+ */
+export function facilityIconRectsFromData(
+  facilities: Facility[],
+  zoom: number,
+  project: (lngLat: [number, number]) => { x: number; y: number },
+  bounds: { w: number; h: number },
+  tiers: ReadonlySet<number> = new Set(FACILITY_POINT_TIERS.map((t) => t.tier)),
+): Rect[] {
+  const d = 28 * facilityIconSize(zoom);
+  const drawn = new Set<number>(FACILITY_POINT_TIERS.filter((t) => tiers.has(t.tier) && zoom >= t.minzoom).map((t) => t.tier));
+  const seen = new Set<string>();
+  const out: Rect[] = [];
+  for (const f of facilities) {
+    // same set as the symbol source (facilityPointsGeoJSON)
+    if (f.kind === "military_area" || seen.has(f.id) || !drawn.has(facilityTier(f))) continue;
+    seen.add(f.id);
+    const p = project([f.position.lng, f.position.lat]);
+    if (p.x < -d || p.y < -d || p.x > bounds.w + d || p.y > bounds.h + d) continue;
+    out.push(rectAt(p.x, p.y, d));
+  }
+  return out;
+}
+
+/**
+ * Facility symbols are drawn by the map canvas. From z9 every one of them is on screen, so their discs come from the
+ * data (`facilities`); below z9 they are rebuilt from the symbols the renderer actually placed.
+ */
+export function facilityIconRects(map: maplibregl.Map, facilities?: Facility[]): Rect[] {
   const layers = FACILITY_POINT_LAYER_IDS.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, "visibility") !== "none");
   if (!layers.length) return [];
-  const d = 28 * facilityIconSize(map.getZoom());
+  const zoom = map.getZoom();
+  if (facilities && zoom >= FACILITY_ICONS_ALL_DRAWN_ZOOM) {
+    const host = map.getContainer();
+    const tiers = new Set(FACILITY_POINT_TIERS.filter((t) => layers.includes(`facility-points-t${t.tier}`)).map((t) => t.tier));
+    return facilityIconRectsFromData(facilities, zoom, (ll) => map.project(ll), { w: host.clientWidth, h: host.clientHeight }, tiers);
+  }
+  const d = 28 * facilityIconSize(zoom);
   const seen = new Set<string>();
   const out: Rect[] = [];
   for (const f of map.queryRenderedFeatures(undefined, { layers })) {
@@ -58,6 +109,19 @@ export function facilityIconRects(map: maplibregl.Map): Rect[] {
     out.push(rectAt(p.x, p.y, d));
   }
   return out;
+}
+
+/**
+ * Identity of the facility symbols the layout has to work around right now. From z9 that is fixed by the data; below it
+ * it is whatever the renderer has placed, which changes while a new view streams in.
+ */
+export function drawnFacilityKey(map: maplibregl.Map, fromData: boolean): string {
+  const layers = FACILITY_POINT_LAYER_IDS.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, "visibility") !== "none");
+  if (!layers.length) return "none";
+  if (fromData && map.getZoom() >= FACILITY_ICONS_ALL_DRAWN_ZOOM) return "data";
+  const ids = new Set<string>();
+  for (const f of map.queryRenderedFeatures(undefined, { layers })) ids.add(String(f.properties?.id));
+  return [...ids].sort().join(",");
 }
 
 function contactRects(map: maplibregl.Map): Rect[] {
@@ -72,11 +136,11 @@ const r1 = (n: number) => Math.round(n * 2) / 2;
 
 export function computeMapLayout(
   map: maplibregl.Map,
-  input: { units: LayoutUnit[]; sites: OsintSite[]; textWidth: (s: string) => number },
+  input: { units: LayoutUnit[]; sites: OsintSite[]; textWidth: (s: string) => number; /** the facilities the map draws (the FacilityLayer's list) */ facilities?: Facility[] },
 ): MapLayout {
   const host = map.getContainer();
   const bounds = { w: host.clientWidth, h: host.clientHeight };
-  const fixed: Rect[] = [...facilityIconRects(map), ...contactRects(map)];
+  const fixed: Rect[] = [...facilityIconRects(map, input.facilities), ...contactRects(map)];
 
   // 1. OSINT icons
   const slots = siteSlots(input.sites);
