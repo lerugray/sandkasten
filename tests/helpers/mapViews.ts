@@ -35,6 +35,34 @@ export const QESHM_VIEW = { center: [56.0, 26.85] as [number, number], zoom: 9 }
 export const DHAFRA_VIEW = { center: [54.5477, 24.2482] as [number, number], zoom: 10 };
 export const UDEID_VIEW = { center: [51.315, 25.1173] as [number, number], zoom: 10 };
 
+/**
+ * Answers the base-map tile host locally, so a /map spec needs no tile server: a TileJSON, empty vector tiles and empty
+ * glyph ranges (the terrain and satellite hosts get empty answers too). `hold()` keeps back every base-map tile asked
+ * for from then on, as a slow connection would, until `release()`; while tiles are held the map cannot go idle.
+ */
+export async function stubTileHost(page: Page) {
+  let open: Promise<void> = Promise.resolve();
+  let release = () => {};
+  await page.route(/tiles\.openfreemap\.org\/planet$/, (r) =>
+    r.fulfill({ contentType: "application/json", body: JSON.stringify({ tilejson: "3.0.0", tiles: ["https://tiles.openfreemap.org/planet/stub/{z}/{x}/{y}.pbf"], minzoom: 0, maxzoom: 14, vector_layers: [] }) }),
+  );
+  await page.route(/tiles\.openfreemap\.org\/planet\/stub\//, async (r) => {
+    await open;
+    await r.fulfill({ status: 204, body: "" }).catch(() => {});
+  });
+  await page.route(/tiles\.openfreemap\.org\/fonts\//, (r) => r.fulfill({ status: 200, contentType: "application/x-protobuf", body: "" }));
+  await page.route(/(s3\.amazonaws\.com|tiles\.maps\.eox\.at)\//, (r) => r.fulfill({ status: 204, body: "" }));
+  return {
+    hold() {
+      release();
+      open = new Promise<void>((ok) => { release = ok; });
+    },
+    release() {
+      release();
+    },
+  };
+}
+
 export async function openMap(page: Page) {
   await page.goto("/");
   await page.waitForSelector(".maplibregl-canvas", { timeout: 30_000 });

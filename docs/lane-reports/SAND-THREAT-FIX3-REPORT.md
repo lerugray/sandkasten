@@ -103,7 +103,8 @@ Tests:
 
 - `tests/sand-osint-1-overlap-map-loading.spec.ts` (new, 2 tests): answers the tile host locally, holds the base-map tiles of each view, checks zero overlaps while the view is still loading, releases the tiles and checks the settled view. Seven views at both sizes, including the Gulf to Qeshm zoom, a pan at one zoom and the way back below z9. It needs no tile server and no GPU flag. On the old layout it fails at both sizes with the reported pair; with the fix it passes.
 - `unit/map-layout-facilities.test.ts` (new, 7 tests): on the real Hormuz data, the Khalij Fars label is clear of the airport symbol when the renderer has placed nothing, and the same layout without the facility list puts the label on the symbol (the defect).
-- `tests/sand-osint-1-overlap-map.spec.ts` is unchanged. It was right.
+- `tests/sand-osint-1-overlap-map.spec.ts`: its checks are unchanged; it was right. One opt-in was added: `SAND_E2E_STUB_TILES=1` answers the tile host locally (`stubTileHost` in `tests/helpers/mapViews.ts`) so the spec can run on a machine without the tile server. Unset, nothing changes.
+- While holding tiles, the loading spec waits 3 s for the facility symbols to appear and then allows up to 20 s for the overlaps to clear. On the old layout they never clear while the tiles are held.
 
 ## 5. Both directions still proven
 
@@ -121,9 +122,27 @@ Environment here: cloud container, 4 cores, no GPU, no route to the tile server.
 |---|---|---|
 | unit (`vitest run`) | 341 / 341 at `70b3aa1` | **352 / 352** |
 | e2e, attribution host (from the card, focused set) | candidate 3 failed / 32 passed; base 2 failed / 32 passed | not run by this lane (seat's land battery) |
-| e2e, this container, full suite, 2 workers | not run | in progress |
+| e2e, this container, full suite, 2 workers | not run | **stopped at the time cap: 68 passed, 21 failed, 2 skipped, 37 of 128 not run** |
 
-_Full e2e run in progress when this checkpoint was pushed; the result replaces this line._
+**The full e2e run is not "0 failed" here, and it did not finish.** I stopped it after 39 minutes to keep the three passive runs inside the cap. The list is in `e2e-full-2-workers-stopped-at-cap.log`. Not reached: the rest of `sand-save-1-flow`, `sand-victory-1*`, `sand-wego-1-flow`, `simulation`, `smoke` (and the passive spec, which was then run four times on its own, below).
+
+The 21 reds, by spec, with the error each one gave:
+
+| spec | reds | error |
+|---|---|---|
+| `sand-map-2-plot-facilities` | 8 | failed tile requests counted by the "no failed requests" tests (no tile server); plot clicks at software-GL frame rates |
+| `sand-combat-1-record` | 3 | 60 s frame gate of the DPR 2 plot (software WebGL) |
+| `sand-osint-1-overlap-plot` | 2 | plot draws no labels in time at 1440 and 1920 (software WebGL) |
+| `sand-play-1-shots` | 2 | DPR 2 pixel inspection (software WebGL) |
+| `sand-osint-1-overlap-map` | 2 | no tile server: the attribution control stays open and covers facility symbols at the top edge. No Khalij Fars pair. With `SAND_E2E_STUB_TILES=1` both sizes pass (below) |
+| `sand-osint-1-rings` | 1 | plot label check (software WebGL) |
+| `design-system` | 1 | tilt reached 0.89 of 0.95 within 5 s; `/play`, code this lane did not touch; passed in a rerun |
+| `sand-001-unit-placement` | 1 | editor map without tiles; passed in two reruns on this code |
+| `sand-map-1-facilities` | 1 | globe / terrain / satellite test ran past its 30 s |
+
+Attribution I could do in the time: `sand-001`, `design-system` and the `sand-map-1` globe test were rerun against the base layout code and against this branch. `sand-001` passes on both. The tilt test passed on base once and failed on this branch once; it is a `/play` page that runs none of the changed code. **The globe test is the one to watch:** it passed once on base, then failed alone on base and failed alone on this branch, so in this container it is unstable either way and I cannot show it is unaffected by the layout change. The OSINT report already notes it at 27.7 s of its 30 s on a real host. If it is red in the seat's battery, the suspect is the layout re-solving while the globe is drawing (`onRender` in `LayoutController.tsx`); removing that handler alone leaves the reported Qeshm fix intact (the z9 data path) but lets the transient overlaps below z9 return.
+
+The other reds were not rerun against base. Their errors are tile requests and frame gates, and earlier lane reports record the same specs as unable to run in this container.
 
 Focused runs in this container:
 
@@ -137,10 +156,24 @@ Focused runs in this container:
 
 The three extra passive runs the card asks for:
 
-_Pending: they run after the full e2e pass._
+| run | CPU throttle | result | game time at defeat | wall time | resumes |
+|---|---|---|---|---|---|
+| 1 (beside the throttled run) | none | PASS, DEFEAT | T+2.31 h | 293 s | 133 |
+| 2 (beside run 1) | 4x | PASS, DEFEAT | T+2.16 h | 262 s | 99 |
+| 3 (beside the map specs) | none | PASS, DEFEAT | T+2.33 h | 303 s | 148 |
+
+With the earlier run that makes four of four on the new wait. Receipts: `docs/verification/sand-threat-1-t438/passive-defeat.json` (run 3) and `passive-defeat-cpu4x.json` (run 2). The container restarted once during this step and killed a first attempt at runs 1 and 2; they were started again from scratch.
+
+Map specs after the final test edits, tile host answered locally:
+
+| run | result |
+|---|---|
+| `sand-osint-1-overlap-map-loading` 1440 and 1920 | PASS, PASS (run three times on the final code) |
+| `sand-osint-1-overlap-map` with `SAND_E2E_STUB_TILES=1`, 1440 and 1920, all 14 views | PASS, PASS (0 overlaps; the outline-on-land check has no base-map water to test against in this mode) |
 
 ## 7. Left for the seat
 
+- **The full e2e suite has not been seen green at this candidate.** Section 6 has what ran here. The card's "e2e 0 failed" is still owed and needs the seat's host.
 - **Run the land battery on a real-GPU host with the tile server reachable.** The original `/map` zero-overlap spec and the plot spec at 1440 and 1920 could not run in this container. The new loading spec covers the defect without a tile server, and the unit test covers the layout, but the original spec against real tiles is the confirming run.
 - **Stepping is frame-rate dependent in its detail** (section 1.1): same seed, different frame rate, slightly different run, same result in 1,140 of 1,140 runs. If main wants bit-identical runs for a given seed, that is a fixed-step accumulator in `simulationTick`, a rules-level change outside this card.
 - **The autopause fires about 110 to 135 times in a passive run**, almost all of them in the last half hour of game time. That is what a passive player sits through before the defeat, and it is what made the old proof slow. Whether repeated "weapon incoming" pauses should collapse during one attack is a UI decision for the seat, not part of this card.

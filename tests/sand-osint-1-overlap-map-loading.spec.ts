@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { findOverlaps } from "./helpers/overlap";
-import { collectMapBoxes, openMap, settleMap, ABU_MUSA_VIEW, BANDAR_ABBAS_VIEW, DHAFRA_VIEW, GULF_VIEW, QESHM_VIEW, UDEID_VIEW } from "./helpers/mapViews";
+import { collectMapBoxes, openMap, settleMap, stubTileHost, ABU_MUSA_VIEW, BANDAR_ABBAS_VIEW, DHAFRA_VIEW, GULF_VIEW, QESHM_VIEW, UDEID_VIEW } from "./helpers/mapViews";
 
 /**
  * SAND-THREAT-1 FIX3: on /map nothing overlaps WHILE a new view is still loading its base map.
@@ -13,13 +13,6 @@ import { collectMapBoxes, openMap, settleMap, ABU_MUSA_VIEW, BANDAR_ABBAS_VIEW, 
  * This spec needs no tile server: the tile host is answered locally, and the base-map tiles of each view are HELD until
  * the view has been checked, so the map cannot go idle first. It then releases them and checks the settled view too.
  */
-
-type Gate = { open: Promise<void>; release: () => void };
-const gate = (): Gate => {
-  let release = () => {};
-  const open = new Promise<void>((ok) => { release = ok; });
-  return { open, release };
-};
 
 const DENSE = new Set(["qeshm", "dhafra", "udeid"]);
 const VIEWS: [string, { center: [number, number]; zoom: number }][] = [
@@ -42,39 +35,36 @@ async function overlapsNow(page: Page, id: string) {
 for (const [w, h] of [[1440, 900], [1920, 1080]]) {
   test(`/map has zero overlaps while a view is still loading, at ${w}x${h}`, async ({ page }) => {
     test.setTimeout(300_000);
-    let held = gate();
-    held.release();
-    await page.route(/tiles\.openfreemap\.org\/planet$/, (r) =>
-      r.fulfill({ contentType: "application/json", body: JSON.stringify({ tilejson: "3.0.0", tiles: ["https://tiles.openfreemap.org/planet/held/{z}/{x}/{y}.pbf"], minzoom: 0, maxzoom: 14, vector_layers: [] }) }),
-    );
-    await page.route(/tiles\.openfreemap\.org\/planet\/held\//, async (r) => {
-      await held.open;
-      await r.fulfill({ status: 204, body: "" }).catch(() => {});
-    });
-    await page.route(/tiles\.openfreemap\.org\/fonts\//, (r) => r.fulfill({ status: 200, contentType: "application/x-protobuf", body: "" }));
-    await page.route(/(s3\.amazonaws\.com|tiles\.maps\.eox\.at)\//, (r) => r.fulfill({ status: 204, body: "" }));
-
+    const tiles = await stubTileHost(page);
     await page.setViewportSize({ width: w, height: h });
     await openMap(page);
     await settleMap(page, 3000);
 
     const failures: string[] = [];
     for (const [id, view] of VIEWS) {
-      held = gate();
+      tiles.hold();
       await page.evaluate((v) => (window as unknown as { __sandMap: { jumpTo(o: unknown): void } }).__sandMap.jumpTo({ center: v.center, zoom: v.zoom, pitch: 0, bearing: 0 }), view);
+      // give the facility symbols of the new view time to appear; the base map cannot, its tiles are held
       await page.waitForTimeout(3000);
       // while the tiles of a new zoom level are held the map is not idle: the state a player looks at on a slow connection
       // (a view whose tiles are already cached has nothing to wait for)
       const stillLoading = !(await page.evaluate(() => (window as unknown as { __sandMap: { loaded(): boolean } }).__sandMap.loaded()));
-      const loading = await overlapsNow(page, id);
+      // The layout has to clear every overlap WITHOUT the map going idle. A slow machine may need a moment longer, so
+      // look again for up to 20 s; the old layout never cleared them while the tiles were held.
+      let loading = await overlapsNow(page, id);
+      for (const t0 = Date.now(); loading.overlaps.length && Date.now() - t0 < 20_000; ) {
+        await page.waitForTimeout(500);
+        loading = await overlapsNow(page, id);
+      }
       if (loading.overlaps.length) failures.push(`${id} z${view.zoom}, ${stillLoading ? "still loading" : "tiles cached"}:\n  ${loading.overlaps.join("\n  ")}`);
       if (id === "qeshm") {
         // the check must not pass because the map had already settled, or because nothing was drawn
         expect(stillLoading, "qeshm: base-map tiles are still held").toBe(true);
+        expect(await page.evaluate(() => (window as unknown as { __sandMap: { loaded(): boolean } }).__sandMap.loaded()), "qeshm: the map has not settled yet").toBe(false);
         expect(loading.boxes.some((b) => b.kind === "facility-icon" && b.id === "apt-ir-0057"), "Qeshm airport symbol is drawn").toBe(true);
         expect(loading.boxes.some((b) => b.kind === "site-label" && b.id === "radar-ir-khalij-fars"), "Khalij Fars label is drawn").toBe(true);
       }
-      held.release();
+      tiles.release();
       await settleMap(page);
       const settled = await overlapsNow(page, id);
       if (settled.overlaps.length) failures.push(`${id} z${view.zoom}, settled:\n  ${settled.overlaps.join("\n  ")}`);
