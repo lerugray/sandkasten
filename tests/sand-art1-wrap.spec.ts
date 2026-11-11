@@ -4,7 +4,7 @@
 // ("INCOMING WEAPON -" / "> USS NIMITZ (CVN-68)") and split the weapon id in the debrief ("4x C-" / "802 NOOR").
 // TerminalPlay now writes those turns itself (turnAtSpaces); this spec holds it to that at two window sizes.
 import { test, expect, type Page } from "@playwright/test";
-import { openPlay, runUntilResult, autopauseOff, restoreDice, GATE, type W } from "./helpers/sandPlay";
+import { openPlay, runUntilResult, autopauseOff, restoreDice, type W } from "./helpers/sandPlay";
 
 type Any = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -94,11 +94,14 @@ for (const size of [{ width: 1920, height: 1080 }, { width: 1280, height: 720 }]
       test.setTimeout(240_000);
       await begin(page);
       await page.evaluate(() => { const w = window as Any; w.__origRandom = Math.random; Math.random = () => 0.7; });
-      await page.evaluate((c) => {
+      // FIX5: GATE.centre is ~17 nm from ir-fac-1 — outside surface radar horizon (~11 nm at 20 ft masts),
+      // so the opening C-802 salvo never enters the record. Place Nimitz inside ir-fac-1's horizon
+      // (test-only; production scenario untouched). Point ~8 nm from ir-fac-1 toward the gate.
+      await page.evaluate(() => {
         const s = (window as unknown as W).__sandSession as Any;
         const u = s.gameState.sides.flatMap((x: Any) => x.units).find((x: Any) => x.id === "us-cvn-1");
-        u.position = { lng: c.lng, lat: c.lat };
-      }, GATE.centre);
+        u.position = { lng: 56.38, lat: 26.78 };
+      });
       await runUntilResult(page, 60_000);
       await restoreDice(page);
 
