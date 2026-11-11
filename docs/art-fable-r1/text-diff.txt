@@ -1,0 +1,82 @@
+TEXT DIFF before -> after: 32 poses
+  01-briefing: strings 154/154  exact -0 +0  masked -0 +0
+  02-plot-start: strings 136/136  exact -0 +0  masked -0 +0
+  03-objective-focused: strings 106/106  exact -0 +0  masked -0 +0
+  04-own-unit-selected: strings 151/151  exact -0 +0  masked -0 +0
+  05-own-unit-selected-close: strings 170/170  exact -0 +0  masked -0 +0
+  06-contacts-certainty: strings 179/179  exact -0 +0  masked -0 +0
+  07-contacts-intel-tab: strings 105/105  exact -0 +0  masked -0 +0
+  07b-launch: strings 104/104  exact -0 +0  masked -0 +0
+  08-missiles-in-flight: strings 163/163  exact -0 +0  masked -0 +0
+  09-missiles-combat-tab: strings 143/143  exact -0 +0  masked -0 +0
+  10-hit: strings 148/148  exact -0 +0  masked -0 +0
+  11-kill: strings 172/172  exact -0 +0  masked -0 +0
+  12-hover: strings 170/170  exact -0 +0  masked -0 +0
+  13-mode-sensors: strings 170/170  exact -0 +0  masked -0 +0
+  14-mode-sensors-tilt: strings 182/182  exact -0 +0  masked -0 +0
+  15-mode-tilt: strings 205/205  exact -0 +0  masked -0 +0
+  16-mode-god: strings 152/152  exact -0 +0  masked -0 +0
+  17-mode-god-close: strings 125/125  exact -0 +0  masked -0 +0
+  18-mode-measure: strings 120/120  exact -0 +0  masked -0 +0
+  19-mode-osint-off: strings 116/116  exact -0 +0  masked -0 +0
+  20-facility-close: strings 98/98  exact -0 +0  masked -0 +0
+  21-help: strings 155/155  exact -0 +0  masked -0 +0
+  22-battle-file-load: strings 104/104  exact -0 +0  masked -0 +0
+  23-briefing-wego: strings 177/177  exact -0 +0  masked -0 +0
+  24-wego-planning: strings 122/122  exact -0 +0  masked -0 +0
+  25-wego-resolving: strings 192/192  exact -0 +0  masked -0 +0
+  26-wego-review: strings 227/227  exact -0 +0  masked -0 +0
+  27-debrief-victory: strings 273/273  exact -0 +0  masked -0 +0
+  28-debrief-defeat: strings 264/264  exact -0 +0  masked -0 +0
+  29-defeat-plot-after: strings 195/195  exact -0 +0  masked -0 +0
+  30-snapshot-briefing: strings 284/284  exact -0 +0  masked -0 +0
+  31-snapshot-plot: strings 287/287  exact -0 +0  masked -0 +0
+TOTAL exact=0 masked=0
+
+CONTROL before vs before-b (same tree, two runs): masked=0
+UNEXPLAINED in after (not in either before run, or in both and missing): 0
+
+
+ONE-WORD LAST LINES cured (40):
+  01-briefing: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  02-plot-start: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  03-objective-focused: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  04-own-unit-selected: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  05-own-unit-selected-close: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  06-contacts-certainty: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  07-contacts-intel-tab: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  07b-launch: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  08-missiles-in-flight: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  09-missiles-combat-tab: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  09-missiles-combat-tab: tx-rec-text :: ...ATROL BOATS TO INCREASE READINESS. IRGCN UNITS ARE GOING WEAPONS-FREE. :: last line "WEAPONS-FREE."
+  09-missiles-combat-tab: weapon-row :: ...>> INCOMING WEAPON -> USS NIMITZ (CVN-##) (CVN-##) :: last line "(CVN-##)"
+  10-hit: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  10-hit: tx-rec-text :: ...ATROL BOATS TO INCREASE READINESS. IRGCN UNITS ARE GOING WEAPONS-FREE. :: last line "WEAPONS-FREE."
+  10-hit: weapon-row :: ...>> INCOMING WEAPON -> USS NIMITZ (CVN-##) (CVN-##) :: last line "(CVN-##)"
+  11-kill: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  12-hover: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  13-mode-sensors: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  14-mode-sensors-tilt: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  15-mode-tilt: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  16-mode-god: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  17-mode-god-close: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  18-mode-measure: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  19-mode-osint-off: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  20-facility-close: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  21-help:  :: ...R Cycle rules of engagement F Weapons free X Weapons hold :: last line "hold"
+  21-help: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  22-battle-file-load: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  23-briefing-wego: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  24-wego-planning: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  25-wego-resolving: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  26-wego-review: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  27-debrief-victory: mission-progress :: ...USS NIMITZ AFLOAT, UNDAMAGED // INSIDE GATE :: last line "GATE"
+  27-debrief-victory: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  27-debrief-victory: tx-result-line is-alarm :: ...UNCH TN#### CLS LAUNCHED #× C-### NOOR AT USS NIMITZ (CVN-##) (CVN-##) :: last line "(CVN-##)"
+  27-debrief-victory: tx-result-line is-alarm :: ...UNCH TN#### DET LAUNCHED #× C-### NOOR AT USS NIMITZ (CVN-##) (CVN-##) :: last line "(CVN-##)"
+  27-debrief-victory: tx-result-line is-alarm :: ...UNCH TN#### TRK LAUNCHED #× C-### NOOR AT USS NIMITZ (CVN-##) (CVN-##) :: last line "(CVN-##)"
+  28-debrief-defeat: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  29-defeat-plot-after: mission-win :: ...WIN USS Nimitz enters the transit gate afloat :: last line "afloat"
+  30-snapshot-briefing: briefing-rule-note :: ...his scenario. Nothing in it ends the run by itself; RESET restarts it. :: last line "it."
+ONE-WORD LAST LINES still present in both (0):
+ONE-WORD LAST LINES new in after (0):

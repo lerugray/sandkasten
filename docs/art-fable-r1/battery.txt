@@ -1,0 +1,170 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.1.0 .
+
+
+ Test Files  26 passed (26)
+      Tests  331 passed (331)
+   Start at  20:56:55
+   Duration  9.64s (tests 69%, import 21%, transform 10%, worker 1%)
+
+
+Running 135 tests using 5 workers
+
+  ✓    2 [chromium] › tests/design-system.spec.ts:14:7 › Terminal register design system › play page — screenshot of initial state (5.9s)
+  ✓    3 [chromium] › tests/design-system.spec.ts:43:7 › Terminal register design system › play page — help panel screenshot (6.0s)
+  ✓    5 [chromium] › tests/design-system.spec.ts:21:7 › Terminal register design system › play page — tilt mode screenshot (6.1s)
+  ✓    4 [chromium] › tests/design-system.spec.ts:34:7 › Terminal register design system › play page — unit selected with detail panel (6.9s)
+  ✓    1 [chromium] › tests/design-system.spec.ts:7:7 › Terminal register design system › home page — screenshot for visual review (7.2s)
+  ✓    6 [chromium] › tests/design-system.spec.ts:51:7 › Terminal register design system › editor page — screenshot (3.8s)
+  ✓   11 [chromium] › tests/platform-database.spec.ts:38:7 › platform database data › every demo platform has a complete, sourced, licensed record (43ms)
+  ✓    7 [chromium] › tests/design-system.spec.ts:58:7 › Terminal register design system › SANDKASTEN title uses the phosphor primary colour (3.8s)
+  ✓    8 [chromium] › tests/design-system.spec.ts:67:7 › Terminal register design system › vendored terminal font is loaded and used (3.8s)
+  ✓   12 [chromium] › tests/platform-database.spec.ts:158:7 › platform database data › the API and engine lookup serve the first-party records (596ms)
+  ✓    9 [chromium] › tests/design-system.spec.ts:85:7 › Terminal register design system › no remote font requests on /play (4.6s)
+  ✓   10 [chromium] › tests/design-system.spec.ts:101:7 › Terminal register design system › chrome overlays do not resize the canvas (5.5s)
+  ✓   14 [chromium] › tests/platform-database.spec.ts:231:7 › platform viewer › opens by id and slug, filters, and moves with the keyboard (2.9s)
+  ✓   16 [chromium] › tests/sand-002-radar-detection.spec.ts:4:7 › sand-002 — Radar detection transitions › contacts transition Unknown → Detected → Classified → Tracked (3.7s)
+  ✓   13 [chromium] › tests/platform-database.spec.ts:177:7 › platform viewer › steps through every demo platform with photo or placeholder, brief, tables and sources (7.2s)
+  ✓   15 [chromium] › tests/sand-001-unit-placement.spec.ts:9:7 › sand-001 — Unit placement + selection (editor) › place 3 units, drag one, select each and verify detail panel (7.2s)
+  ✓   19 [chromium] › tests/sand-005-fow-godmode.spec.ts:20:7 › sand-005 — Fog-of-war vs god-mode toggle › god-mode ON reveals all units and removes uncertainty circles (4.5s)
+  ✓   18 [chromium] › tests/sand-004-autopause.spec.ts:9:7 › sand-004 — Autopause trigger system › autopauses on new contact, incoming weapon, and switches tabs (8.5s)
+  ✓   17 [chromium] › tests/sand-003-combat.spec.ts:17:7 › sand-003 — Combat launch + impact › weapon tracks appear, WIF count updates, combat log shows impacts (9.1s)
+  ✓   21 [chromium] › tests/sand-007-engage-roe.spec.ts:20:7 › sand-007 — player ENGAGE order and ROE › the US fires at an Iranian contact through the order panel (6.8s)
+  -   25 [chromium] › tests/sand-art1-frames.spec.ts:233:5 › briefing, start, objective, selection, display modes
+  -   26 [chromium] › tests/sand-art1-frames.spec.ts:314:5 › contacts at each certainty state
+  -   27 [chromium] › tests/sand-art1-frames.spec.ts:339:5 › missiles in flight, a hit, a kill
+  -   28 [chromium] › tests/sand-art1-frames.spec.ts:392:5 › a kill
+  -   29 [chromium] › tests/sand-art1-frames.spec.ts:426:5 › WeGo planning, resolving, review
+  -   30 [chromium] › tests/sand-art1-frames.spec.ts:457:5 › debrief: victory
+  -   31 [chromium] › tests/sand-art1-frames.spec.ts:479:5 › debrief: defeat
+  -   32 [chromium] › tests/sand-art1-frames.spec.ts:499:5 › snapshot scenario
+  -   33 [chromium] › tests/sand-art1-frames.spec.ts:519:5 › frame time, heaviest pose, 10 s
+  -   34 [chromium] › tests/sand-art1-glyphs.spec.ts:55:5 › glyph sheet: before and after, real pixels and 4x
+  ✓   22 [chromium] › tests/sand-007-engage-roe.spec.ts:56:7 › sand-007 — player ENGAGE order and ROE › a unit with no weapons gets no ENGAGE control (5.3s)
+  ✓   20 [chromium] › tests/sand-006-waypoint-throttle.spec.ts:9:7 › sand-006 — Waypoints + throttle interaction › waypoints render, flank throttle set, unit moves and waypoints clear (8.8s)
+  ✓   23 [chromium] › tests/sand-007-engage-roe.spec.ts:70:7 › sand-007 — player ENGAGE order and ROE › ROE keys and buttons change the selected unit's rules (6.4s)
+  ✓   24 [chromium] › tests/sand-007-engage-roe.spec.ts:93:7 › sand-007 — player ENGAGE order and ROE › under the default TIGHT ROE a unit under attack fires back on its own (9.6s)
+  ✓   38 [chromium] › tests/sand-combat-1-record.spec.ts:612:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › demo, snapshot, demo, legacy: the record belongs to the run it was read from (10.3s)
+  ✓   37 [chromium] › tests/sand-combat-1-record.spec.ts:503:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › fog, GOD, paging, place-keeping, empty filters, reset (own fixtures, continuous) (12.4s)
+  ✓   39 [chromium] › tests/sand-map-1-facilities.spec.ts:49:7 › SAND-MAP-1 facilities + globe/terrain › facility layer builds with tiered symbol layers and OSM attribution (7.4s)
+  ✓   41 [chromium] › tests/sand-map-1-facilities.spec.ts:87:7 › SAND-MAP-1 facilities + globe/terrain › facilities toggle hides and shows the layer (7.2s)
+  ✓   40 [chromium] › tests/sand-map-1-facilities.spec.ts:62:7 › SAND-MAP-1 facilities + globe/terrain › clicking Oghab 44 opens the panel with runways and based units (9.1s)
+  ✓   44 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:30:7 › SAND-MAP-2 default /play facilities › the plot draws facility symbols and runways (4.7s)
+  ✓   43 [chromium] › tests/sand-map-1-facilities.spec.ts:118:7 › SAND-MAP-1 facilities + globe/terrain › projection is flat at tactical zoom and globe when zoomed out (6.9s)
+  ✓   45 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:40:7 › SAND-MAP-2 default /play facilities › the plot shows persistent OSM / OurAirports credits (3.4s)
+  ✓   42 [chromium] › tests/sand-map-1-facilities.spec.ts:98:7 › SAND-MAP-1 facilities + globe/terrain › globe projection toggles; terrain and satellite switch on (17.1s)
+  ✓   46 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:48:7 › SAND-MAP-2 default /play facilities › clicking Oghab 44 opens the facility panel with runways; X closes it (6.6s)
+  ✓   47 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:65:7 › SAND-MAP-2 default /play facilities › clicking a military airbase at close zoom opens its panel (Havadarya) (7.2s)
+  ✓   48 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:76:7 › SAND-MAP-2 default /play facilities › a unit based at a facility lists its home base in the unit panel (god mode) (7.1s)
+  ✓   49 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: map (/) (7.9s)
+  ✓   50 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: map light theme (7.6s)
+  ✓   51 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: map with satellite (8.1s)
+  ✓   52 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: /play?map=legacy (7.7s)
+  ✓   54 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: /play plot (4.9s)
+  -   56 [chromium] › tests/sand-osint-1-frames.spec.ts:33:7 › verification frames at 1440x900
+  -   57 [chromium] › tests/sand-osint-1-frames.spec.ts:33:7 › verification frames at 1920x1080
+  ✓   53 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:109:9 › SAND-MAP-2 keyless base map on every view › no API KEY text and no failed requests: /editor (7.7s)
+  ✓   55 [chromium] › tests/sand-map-2-plot-facilities.spec.ts:132:7 › SAND-MAP-2 keyless base map on every view › OpenFreeMap tiles load and OSM attribution shows; satellite adds EOX credit with its licence (3.4s)
+cold-boot@1440x900 {"label":18,"block":8,"unit":8,"facility-icon":25,"osint-icon":4,"scale":1}
+fac-oikb@1440x900 {"label":4,"facility-icon":1,"scale":1}
+fac-oikp@1440x900 {"label":3,"scale":1}
+fac-ir-0069@1440x900 {"label":2,"scale":1}
+osint-bandar-abbas@1440x900 {"label":26,"unit":2,"facility-icon":19,"osint-icon":2,"scale":1}
+snapshot@1440x900 {"label":13,"block":9,"unit":36,"facility-icon":38,"osint-icon":3,"scale":1}
+snapshot-qeshm@1440x900 {"label":6,"scale":1}
+  ✓   60 [chromium] › tests/sand-osint-1-overlap-plot.spec.ts:12:7 › no overlaps among labels, blocks, symbols, icons and the scale bar at 1440x900 (36.8s)
+cold-boot@1920x1080 {"label":36,"block":8,"unit":8,"facility-icon":38,"osint-icon":2,"scale":1}
+fac-oikb@1920x1080 {"label":6,"facility-icon":1,"scale":1}
+fac-oikp@1920x1080 {"label":5,"facility-icon":1,"osint-icon":1,"scale":1}
+fac-ir-0069@1920x1080 {"label":3,"scale":1}
+osint-bandar-abbas@1920x1080 {"label":35,"block":2,"unit":3,"facility-icon":34,"osint-icon":3,"scale":1}
+snapshot@1920x1080 {"label":39,"block":24,"unit":59,"facility-icon":71,"osint-icon":4,"scale":1}
+snapshot-qeshm@1920x1080 {"label":7,"facility-icon":1,"osint-icon":1,"scale":1}
+  ✓   61 [chromium] › tests/sand-osint-1-overlap-plot.spec.ts:12:7 › no overlaps among labels, blocks, symbols, icons and the scale bar at 1920x1080 (38.0s)
+  ✓   62 [chromium] › tests/sand-osint-1-rings.spec.ts:29:7 › SAND-OSINT-1 /play plot › rings render for AD and radar sites; layer toggles hide and show them (5.9s)
+  ✓   63 [chromium] › tests/sand-osint-1-rings.spec.ts:45:7 › SAND-OSINT-1 /play plot › clicking an S-300 site opens the panel with the ESTIMATED range; X closes it (5.8s)
+  ✓   64 [chromium] › tests/sand-osint-1-rings.spec.ts:65:7 › SAND-OSINT-1 /play plot › the credit line names the OSINT sources (3.9s)
+  ✓   65 [chromium] › tests/sand-osint-1-rings.spec.ts:74:7 › SAND-OSINT-1 label rules › no label drawn on the plot contains Arabic-script characters, at theatre, Kish and Bandar Abbas zooms (17.4s)
+  ✓   66 [chromium] › tests/sand-osint-1-rings.spec.ts:99:7 › SAND-OSINT-1 MapLibre map › every OSINT label anchors to the nearest icon of its own feature, and none is in Arabic script (6.0s)
+  ✓   67 [chromium] › tests/sand-osint-1-rings.spec.ts:126:7 › SAND-OSINT-1 MapLibre map › the map credit line names OSINT sites: Auftragstaktik, like /play (2.9s)
+  ✓   68 [chromium] › tests/sand-osint-1-rings.spec.ts:132:7 › SAND-OSINT-1 MapLibre map › map toggles exist and a facility with OSINT fields shows them in its panel (2.2s)
+  ✓   69 [chromium] › tests/sand-osint-1-rings.spec.ts:140:7 › SAND-OSINT-1 MapLibre map › the map builds OSINT ring and symbol layers; the AD toggle removes AD features (6.4s)
+  ✓   58 [chromium] › tests/sand-osint-1-overlap-map.spec.ts:20:7 › /map has zero overlaps at 1440x900 (2.1m)
+  ✓   71 [chromium] › tests/sand-osint-1-rings.spec.ts:193:7 › SAND-OSINT-1 snapshot scenario › the editor SNAPSHOT button opens the same scenario (4.1s)
+  ✓   70 [chromium] › tests/sand-osint-1-rings.spec.ts:159:7 › SAND-OSINT-1 snapshot scenario › /play?scenario=snapshot opens the committed ADS-B snapshot offline and runs (6.9s)
+  ✓   73 [chromium] › tests/sand-play-1-objective.spec.ts:49:7 › SAND-PLAY-1 CP1: the objective is legible before and during play › the briefing is recallable from the panel and from the keyboard, and closes with Esc/Enter/button (5.0s)
+  ✓   72 [chromium] › tests/sand-play-1-objective.spec.ts:5:7 › SAND-PLAY-1 CP1: the objective is legible before and during play › fresh /play shows the mission, the real gate, and a focus action; nothing is ordered by reading it (8.1s)
+  ✓   75 [chromium] › tests/sand-play-1-objective.spec.ts:105:7 › SAND-PLAY-1 CP1: the objective is legible before and during play › the snapshot route and legacy routes are not given the Hormuz objective (3.8s)
+  ✓   74 [chromium] › tests/sand-play-1-objective.spec.ts:81:7 › SAND-PLAY-1 CP1: the objective is legible before and during play › focus actions: SHOW GATE fits the real polygon on screen and GATE re-centres it (11.1s)
+  ✓   59 [chromium] › tests/sand-osint-1-overlap-map.spec.ts:20:7 › /map has zero overlaps at 1920x1080 (2.7m)
+  ✓   78 [chromium] › tests/sand-play-1-result.spec.ts:5:7 › SAND-PLAY-1 CP2: a real result, a frozen game, and a clean replay › defeat through the production combat path, frozen after, and PLAY AGAIN twice leaves nothing behind (55.8s)
+  ✓   79 [chromium] › tests/sand-play-1-result.spec.ts:99:7 › SAND-PLAY-1 CP2: a real result, a frozen game, and a clean replay › RESET mid-run returns to a fresh paused briefing too (7.2s)
+  ✓   36 [chromium] › tests/sand-combat-1-record.spec.ts:457:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan B (escorted dog-leg), continuous: record, debrief, record flow, clean replay (4.7m)
+  ✓   35 [chromium] › tests/sand-combat-1-record.spec.ts:245:7 › SAND-COMBAT-1: the whole fight, read through the ordinary UI › plan A (direct flank), WeGo: staged ENGAGE, CANCEL, commit, review, inspection, record, debrief (4.9m)
+  ✓   82 [chromium] › tests/sand-rc-fix1.spec.ts:35:7 › SAND-RC-FIX1 defect 1: editor LOAD › LOAD opens a chooser, and a scenario saved by SAVE loads back unchanged (2.7s)
+  ✓   83 [chromium] › tests/sand-rc-fix1.spec.ts:60:7 › SAND-RC-FIX1 defect 1: editor LOAD › a scenario with units loads and shows them in the forces list (996ms)
+  ✓   80 [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1440x900 DPR 2 (21.0s)
+  ✓   84 [chromium] › tests/sand-rc-fix1.spec.ts:84:7 › SAND-RC-FIX1 defect 1: editor LOAD › a file that is not a scenario (a battle save) is refused with a message, not the browser error page (2.6s)
+  ✓   85 [chromium] › tests/sand-rc-fix1.spec.ts:105:7 › SAND-RC-FIX2: editor LOAD refuses out-of-range positions › a scenario with a unit at latitude 95 shows the message, no error page, editor untouched (1.3s)
+  ✓   81 [chromium] › tests/sand-play-1-shots.spec.ts:50:7 › pixel inspection at 1920x1080 DPR 2 (24.2s)
+  ✓   86 [chromium] › tests/sand-rc-fix1.spec.ts:182:9 › SAND-RC-FIX1 defect 2: ORDERS panel at 1280x720 › (c) selecting a unit puts its ORDERS panel, through the ROE rows, inside the viewport (5.0s)
+  ✓   87 [chromium] › tests/sand-rc-fix1.spec.ts:197:9 › SAND-RC-FIX1 defect 2: ORDERS panel at 1280x720 › (b) adding 4 waypoints leaves the THROTTLE and ROE buttons exactly where they were (4.9s)
+  ✓   88 [chromium] › tests/sand-rc-fix1.spec.ts:228:9 › SAND-RC-FIX1 defect 2: ORDERS panel at 1280x720 › no black or clipped region after a visit to COMBAT; the sidebar body fills its panel (5.1s)
+  ✓   89 [chromium] › tests/sand-rc-fix1.spec.ts:252:9 › SAND-RC-FIX1 defect 2: ORDERS panel at 1280x720 › S3: re-clicking the selected unit shows its orders again; NIMITZ from COMBAT lands on FORCES (4.0s)
+  ✓   90 [chromium] › tests/sand-rc-fix1.spec.ts:182:9 › SAND-RC-FIX1 defect 2: ORDERS panel at 1920x1080 › (c) selecting a unit puts its ORDERS panel, through the ROE rows, inside the viewport (4.1s)
+  ✓   91 [chromium] › tests/sand-rc-fix1.spec.ts:197:9 › SAND-RC-FIX1 defect 2: ORDERS panel at 1920x1080 › (b) adding 4 waypoints leaves the THROTTLE and ROE buttons exactly where they were (4.8s)
+  ✓   93 [chromium] › tests/sand-rc-fix1.spec.ts:252:9 › SAND-RC-FIX1 defect 2: ORDERS panel at 1920x1080 › S3: re-clicking the selected unit shows its orders again; NIMITZ from COMBAT lands on FORCES (4.7s)
+  ✓   92 [chromium] › tests/sand-rc-fix1.spec.ts:228:9 › SAND-RC-FIX1 defect 2: ORDERS panel at 1920x1080 › no black or clipped region after a visit to COMBAT; the sidebar body fills its panel (5.5s)
+  ✓   94 [chromium] › tests/sand-rc-fix1.spec.ts:271:7 › SAND-RC-FIX1 S3: keys and tabs › Space runs the clock after a sidebar button was clicked, and does not press the button; Enter still does (4.9s)
+  ✓   95 [chromium] › tests/sand-rc-fix1.spec.ts:291:7 › SAND-RC-FIX1 S3: keys and tabs › every sidebar tab switches when clicked, including MEDIA, also after waypoints and a COMBAT visit (5.5s)
+  ✓   96 [chromium] › tests/sand-save-1-flow.spec.ts:24:7 › SAND-SAVE-1 real play, save, close, reopen, resume › play Hormuz into a nontrivial mid-battle checkpoint with ordinary controls and download it (20.6s)
+  ✓   97 [chromium] › tests/sand-save-1-lifecycle.spec.ts:26:7 › SAND-SAVE-1 refusal, terminal, navigation and lifecycle › bad files, cancel, Esc, keys and rapid input leave the running battle intact; a save failure is shown (29.7s)
+  ✓   98 [chromium] › tests/sand-save-1-lifecycle.spec.ts:134:7 › SAND-SAVE-1 refusal, terminal, navigation and lifecycle › a production-combat defeat (fixture) loads terminal, keeps blocking commands, and PLAY AGAIN starts fresh (29.1s)
+  ✓  100 [chromium] › tests/sand-save-1-lifecycle.spec.ts:193:7 › SAND-SAVE-1 refusal, terminal, navigation and lifecycle › snapshot round trip, demo to snapshot to demo navigation, reloads, legacy routes, repeated loads and a network-free save/load (56.8s)
+  ✓   76 [chromium] › tests/sand-play-1-plans.spec.ts:47:7 › SAND-PLAY-1: two distinct plans, played through the ordinary UI, reach a real victory › plan A: the carrier alone, flank, straight at the gate (3.6m)
+  ✓  102 [chromium] › tests/sand-victory-1-replay.spec.ts:46:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › debrief to record and back keeps the verdict; Enter replays, Space does not; two replays leave nothing behind (6.3s)
+  ✓  103 [chromium] › tests/sand-victory-1-replay.spec.ts:126:7 › SAND-VICTORY-1: leaving and re-entering the review, and replaying cleanly › RESET after a result and RESET in a WeGo plan both return to a fresh briefing with no leftover orders (5.0s)
+  ✓  104 [chromium] › tests/sand-victory-1.spec.ts:65:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted score ending names its rule, shows the score, and PLAY AGAIN starts fresh (9.3s)
+  ✓  105 [chromium] › tests/sand-victory-1.spec.ts:110:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › a scripted draw and a combat-loss defeat each name their own rule (19.0s)
+  ✓  106 [chromium] › tests/sand-victory-1.spec.ts:146:7 › SAND-VICTORY-1: which rule ended the run, the score beside it, and a clean second run › the final-record strip crosses no title, panel or control at 1440x900 and 1920x1080 (15.2s)
+  ✓  108 [chromium] › tests/sand-wego-1-flow.spec.ts:263:7 › SAND-WEGO-1: the turn loop and the command lock › both sides stay in fog: the review lists only what the player's side saw (16.6s)
+  ✓   77 [chromium] › tests/sand-play-1-plans.spec.ts:69:7 › SAND-PLAY-1: two distinct plans, played through the ordinary UI, reach a real victory › plan B: escorts ahead to the gate, the carrier by a southern dog-leg at full (4.3m)
+  ✓  107 [chromium] › tests/sand-wego-1-flow.spec.ts:178:7 › SAND-WEGO-1: the turn loop and the command lock › mode choice, planning, a queued ENGAGE that waits, commit, resolution lock, review, next turn (56.7s)
+  ✓  111 [chromium] › tests/sand-wego-1-flow.spec.ts:403:7 › SAND-WEGO-1: two real victories through the ordinary UI (GOD off) › a defeat resolves through the same turn path, then PLAY AGAIN replays cleanly (30.4s)
+  ✓  112 [chromium] › tests/sand-wego-1-flow.spec.ts:441:7 › SAND-WEGO-1: the continuous and snapshot routes stay continuous › demo, then the real snapshot, then the demo again, and legacy: no WeGo controls or state leak (12.3s)
+  ✓  113 [chromium] › tests/sand-wego-1-flow.spec.ts:524:9 › SAND-WEGO-1: look inspection at 1440x900 and 1920x1080, DPR 2 › flat and tilted gate, phase panels, font floors at 1440x900 (29.4s)
+  ✓   99 [chromium] › tests/sand-save-1-flow.spec.ts:83:7 › SAND-SAVE-1 real play, save, close, reopen, resume › a fresh page loads the actual file paused, with the saved clock, orders and fog, and plays on to a real victory (3.8m)
+  ✓  114 [chromium] › tests/sand-wego-1-flow.spec.ts:524:9 › SAND-WEGO-1: look inspection at 1440x900 and 1920x1080, DPR 2 › flat and tilted gate, phase panels, font floors at 1920x1080 (36.9s)
+  ✓  116 [chromium] › tests/simulation.spec.ts:39:7 › Simulation gameplay › simulation clock advances when unpaused (8.2s)
+  ✓  117 [chromium] › tests/simulation.spec.ts:55:7 › Simulation gameplay › contacts appear after simulation runs (11.1s)
+  ✓  118 [chromium] › tests/simulation.spec.ts:70:7 › Simulation gameplay › combat log gets entries after engagement (17.7s)
+  ✓  119 [chromium] › tests/simulation.spec.ts:83:7 › Simulation gameplay › selecting a unit and opening waypoint mode (3.0s)
+  ✓  120 [chromium] › tests/simulation.spec.ts:95:7 › Simulation gameplay › intel tab shows messages after events fire (5.2s)
+  ✓  121 [chromium] › tests/simulation.spec.ts:107:7 › Simulation gameplay › reset button restarts the simulation (5.7s)
+  ✓  122 [chromium] › tests/simulation.spec.ts:119:7 › Simulation gameplay › autopause triggers on new contact detection (2.7s)
+  ✓  123 [chromium] › tests/simulation.spec.ts:131:7 › Simulation gameplay › god mode toggle shows all units (2.9s)
+  ✓  124 [chromium] › tests/smoke.spec.ts:4:7 › Home page › loads with header and navigation links (686ms)
+  ✓  125 [chromium] › tests/smoke.spec.ts:11:7 › Home page › shows scenario name and units on the map (1.1s)
+  ✓  126 [chromium] › tests/smoke.spec.ts:16:7 › Home page › theme toggle switches between dark and light (647ms)
+  ✓  127 [chromium] › tests/smoke.spec.ts:31:7 › Play page › loads with header, time controls, and sidebar (2.3s)
+  ✓  128 [chromium] › tests/smoke.spec.ts:40:7 › Play page › shows friendly units in sidebar (2.3s)
+  ✓  129 [chromium] › tests/smoke.spec.ts:45:7 › Play page › shows contacts section (2.3s)
+  ✓  130 [chromium] › tests/smoke.spec.ts:49:7 › Play page › pause/resume with spacebar (2.8s)
+  ✓  131 [chromium] › tests/smoke.spec.ts:55:7 › Play page › help panel opens with ? button and closes with Escape (2.4s)
+  ✓  132 [chromium] › tests/smoke.spec.ts:63:7 › Play page › sidebar tabs switch content (3.6s)
+  ✓  133 [chromium] › tests/smoke.spec.ts:77:7 › Play page › clicking a unit in the sidebar shows the order panel (2.8s)
+  ✓  134 [chromium] › tests/smoke.spec.ts:86:7 › Play page › speed control buttons are present (2.7s)
+  ✓  135 [chromium] › tests/smoke.spec.ts:92:7 › Editor page › loads without errors (1.1s)
+  ✓  109 [chromium] › tests/sand-wego-1-flow.spec.ts:289:7 › SAND-WEGO-1: two real victories through the ordinary UI (GOD off) › plan A: the carrier alone, flank, straight at the gate (with a queued ENGAGE) (4.0m)
+  ✓  110 [chromium] › tests/sand-wego-1-flow.spec.ts:354:7 › SAND-WEGO-1: two real victories through the ordinary UI (GOD off) › plan B: escorts ahead to the gate, the carrier by a southern dog-leg at full (4.7m)
+  ✓  115 [chromium] › tests/sand-save-1-flow.spec.ts:182:7 › SAND-SAVE-1 real play, save, close, reopen, resume › the same unchanged checkpoint, reloaded with a materially different plan (dog-leg at full, radar toggled) (4.0m)
+  ✓  101 [chromium] › tests/sand-victory-1-plays.spec.ts:82:7 › SAND-VICTORY-1: two real wins with different orders, the second after PLAY AGAIN › direct/flank continuous, then escorted dog-leg WeGo (8.3m)
+
+  Slow test file: [chromium] › tests/sand-victory-1-plays.spec.ts (8.3m)
+  Slow test file: [chromium] › tests/sand-save-1-flow.spec.ts (8.2m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  12 skipped
+  123 passed (14.6m)

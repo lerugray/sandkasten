@@ -7,7 +7,6 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
-import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2.js";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
@@ -21,7 +20,7 @@ import { trackNumber } from "@/lib/simulation/trackNumber";
 import { PlotProjection, type GeoPoint, FT_TO_KM, KM_PER_NM } from "./projection";
 import { LineBatch } from "./lineBatch";
 import { PALETTE } from "./palette";
-import { sidcFor, symbolTexture } from "./symbolTextures";
+import { sidcFor, symbolTexture, drawGlyph, GLYPH_PX, type GlyphState } from "./symbolTextures";
 import { FacilityPlotLayer, FACILITY_SYMBOL_PX } from "./facilityLayer";
 import { OsintPlotLayer, OSINT_SYMBOL_PX } from "./osintLayer";
 import { sideForAffiliation, siteLabel } from "@/lib/osint/sites";
@@ -177,8 +176,15 @@ interface Effect {
   x: number;
   y: number;
   t0: number;
-  kind: "hit" | "intercept" | "kill";
+  kind: "hit" | "intercept" | "kill" | "launch" | "wreck";
+  /** launch: the shooter's side colour and the heading the weapon left on (radians) */
+  friendly?: boolean;
+  dir?: number;
 }
+
+const EFFECT_LIFE: Record<Effect["kind"], number> = { launch: 700, intercept: 700, hit: 1000, kill: 1600, wreck: 45_000 };
+/** Fixed pseudo-random 0..1 per debris streak, so a burst looks the same every time it is drawn. */
+const DEBRIS = [0.83, 0.31, 0.62, 0.12, 0.95, 0.47, 0.71, 0.24, 0.56, 0.9, 0.38, 0.05, 0.67, 0.19];
 
 const FOV = 30;
 const TILT_PITCH = 0.94; // radians at full tilt, about 54 degrees
@@ -188,6 +194,11 @@ const HIST_UNIT_MS = 45_000;
 const HIST_WEAPON_MS = 2_500;
 const HIST_MAX = 12;
 const SWEEP_PERIOD_S = 4;
+/** Water over the continental shelf: the field colour of the chart. Deeper water steps down toward PALETTE.field. */
+const SHELF_WATER = 0x030e08;
+/** Seconds without a fresh report before a contact's frame is drawn broken. */
+const STALE_S = 45;
+const OWN: GlyphState = { certainty: "own" };
 
 const C = {
   phosphor: new THREE.Color(PALETTE.phosphor),
@@ -196,6 +207,8 @@ const C = {
   faint: new THREE.Color(PALETTE.phosphorFaint),
   alarm: new THREE.Color(PALETTE.alarm),
   alarmDim: new THREE.Color(PALETTE.alarmDim),
+  caution: new THREE.Color(PALETTE.caution),
+  cautionDim: new THREE.Color(PALETTE.cautionDim),
   land: new THREE.Color(PALETTE.land),
 };
 
@@ -263,6 +276,8 @@ const FINISH_SHADER = {
       vec2 q = vUv - 0.5;
       float vig = 1.0 - dot(q, q) * 0.6;
       gl_FragColor = vec4(c.rgb * vig, 1.0);
+      // last pass: this also does the display encoding, which used to cost a full-screen pass of its own
+      #include <colorspace_fragment>
     }`,
 };
 
@@ -355,6 +370,58 @@ function labelSlots(half: number, w: number, h: number): [number, number][] {
   return out;
 }
 
+/**
+ * The land tone as a texture: the elevation grid (ETOPO1, 0.1 degree) resampled smooth and lit from the north-west,
+ * all inside the land's own dark phosphor tone. Sea cells are flat; the land mesh is the mask.
+ */
+function reliefTexture(r: { rows: number; cols: number; step: number; elev: number[] }): THREE.CanvasTexture {
+  const K = 6;
+  const w = (r.cols - 1) * K + 1, h = (r.rows - 1) * K + 1;
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const g = canvas.getContext("2d")!;
+  const img = g.createImageData(w, h);
+  const at = (i: number, j: number) => Math.max(0, r.elev[Math.min(r.rows - 1, Math.max(0, i)) * r.cols + Math.min(r.cols - 1, Math.max(0, j))]);
+  const field = new Float32Array(w * h);
+  for (let y = 0; y < h; y++) {
+    const fi = y / K, i0 = Math.floor(fi), ti = fi - i0;
+    for (let x = 0; x < w; x++) {
+      const fj = x / K, j0 = Math.floor(fj), tj = fj - j0;
+      const a = at(i0, j0), b = at(i0, j0 + 1), c = at(i0 + 1, j0), d = at(i0 + 1, j0 + 1);
+      // smoothstep weights: no creases along the coarse grid lines
+      const u = tj * tj * (3 - 2 * tj), v = ti * ti * (3 - 2 * ti);
+      field[y * w + x] = (a * (1 - u) + b * u) * (1 - v) + (c * (1 - u) + d * u) * v;
+    }
+  }
+  // canvas pixels are sRGB bytes: take the palette tone as written, not three's linear copy of it
+  const hex = parseInt(PALETTE.land.slice(1), 16);
+  const base = { r: ((hex >> 16) & 255) / 255, g: ((hex >> 8) & 255) / 255, b: (hex & 255) / 255 };
+  const cell = (r.step * 111_000) / K; // metres per texel
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const e = field[y * w + x];
+      const dx = (field[y * w + Math.min(w - 1, x + 1)] - field[y * w + Math.max(0, x - 1)]) / (2 * cell);
+      const dy = (field[Math.min(h - 1, y + 1) * w + x] - field[Math.max(0, y - 1) * w + x]) / (2 * cell);
+      // light from the north-west; row 0 is the south edge
+      const lit = THREE.MathUtils.clamp((-dx + dy) * 9, -1, 1);
+      const k = 0.92 + lit * 0.5 + Math.min(1, e / 2600) * 0.55;
+      const o = ((h - 1 - y) * w + x) * 4;
+      img.data[o] = Math.min(255, base.r * 255 * k * 0.9);
+      img.data[o + 1] = Math.min(255, base.g * 255 * k);
+      img.data[o + 2] = Math.min(255, base.b * 255 * k * 0.95);
+      img.data[o + 3] = 255;
+    }
+  }
+  g.putImageData(img, 0, 0);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.minFilter = THREE.LinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  tex.generateMipmaps = false;
+  return tex;
+}
+
 export class TacticalPlot {
   readonly proj: PlotProjection;
   private host: HTMLElement;
@@ -396,6 +463,9 @@ export class TacticalPlot {
   // scene content
   private staticBatches: LineBatch[] = [];
   private coastBatch: LineBatch | null = null;
+  private coastHalo: LineBatch | null = null;
+  /** CSS px width of the static batches that are not 1 px */
+  private batchWidth = new Map<LineBatch, number>();
   private landMesh: THREE.Mesh | null = null;
   private facilityLayer: FacilityPlotLayer | null = null;
   private facilitySource: Facility[] | undefined;
@@ -490,7 +560,10 @@ export class TacticalPlot {
     this.proj = new PlotProjection(origin);
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    this.renderer.setClearColor(new THREE.Color(PALETTE.field), 1);
+    // The field. three 0.187 writes the clear colour into the linear frame as if it were already display-encoded,
+    // so the palette's near-black used to reach the screen as a grey-green haze (about #182a22) that was lighter
+    // than the land. Encoding the wanted tone once more cancels that, and the shelf water comes out as written.
+    this.renderer.setClearColor(new THREE.Color(SHELF_WATER).convertSRGBToLinear(), 1);
     this.renderer.domElement.setAttribute("data-testid", "plot-canvas");
     this.renderer.domElement.style.display = "block";
     this.renderer.domElement.style.width = "100%";
@@ -501,10 +574,11 @@ export class TacticalPlot {
     const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
     this.composer = new EffectComposer(this.renderer, rt);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.32, 0.3, 0.34);
+    // A tight glow that stays on the stroke. The earlier, wider setting spread every bright line into a veil
+    // over the water around it, which is a large part of why the plot was hard to read.
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.26, 0.12, 0.34);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new ShaderPass(FINISH_SHADER));
-    this.composer.addPass(new OutputPass());
 
     // label leaders are drawn in screen space so they stay exact when tilted
     const NS = "http://www.w3.org/2000/svg";
@@ -568,17 +642,43 @@ export class TacticalPlot {
       (a[0] === bbox[0] && b[0] === bbox[0]) || (a[0] === bbox[2] && b[0] === bbox[2]) ||
       (a[1] === bbox[1] && b[1] === bbox[1]) || (a[1] === bbox[3] && b[1] === bbox[3]);
 
-    // land fill
-    const shapes: THREE.Shape[] = [];
-    for (const poly of geo.land as number[][][][]) {
-      const outer = poly[0].map((p) => new THREE.Vector2(P.x(p[0]), P.y(p[1])));
-      const shape = new THREE.Shape(outer);
+    // the chart sheet: shelf water a shade lighter than the deeps, so the sea has form before any line is drawn
+    const W0 = P.x(bbox[0]), W1 = P.x(bbox[2]), S0 = P.y(bbox[1]), N1 = P.y(bbox[3]);
+    const flat = (color: number, order: number, geom: THREE.BufferGeometry) => {
+      const m = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({ color, depthTest: false, depthWrite: false }));
+      m.renderOrder = order;
+      this.scene.add(m);
+      return m;
+    };
+    // The shelf-water tone is the renderer's clear colour (see the constructor), so the sea costs no fill at
+    // all; only the deeps are drawn, as darker steps on top of it.
+    const shapesOf = (polys: number[][][][]) => polys.map((poly) => {
+      const shape = new THREE.Shape(poly[0].map((p) => new THREE.Vector2(P.x(p[0]), P.y(p[1]))));
       for (const hole of poly.slice(1)) shape.holes.push(new THREE.Path(hole.map((p) => new THREE.Vector2(P.x(p[0]), P.y(p[1])))));
-      shapes.push(shape);
+      return shape;
+    });
+    const depthTone: Record<string, number> = { "200": 0x030b06, "1000": 0x020905, "2000": 0x020704, "3000": 0x020604 };
+    Object.entries(geo.depth as Record<string, number[][][][]>)
+      .sort((p, q) => Number(p[0]) - Number(q[0]))
+      .forEach(([depth, polys], i) => flat(depthTone[depth] ?? 0x020805, -3 + i * 0.1, new THREE.ShapeGeometry(shapesOf(polys))));
+
+    // land fill, lit by the same elevation grid the tilt view extrudes: hills read as hills in the flat chart too
+    const landGeo = new THREE.ShapeGeometry(shapesOf(geo.land as number[][][][]));
+    const rel = geo.relief as { lat0: number; lng0: number; step: number; rows: number; cols: number; elev: number[] };
+    {
+      const pos = landGeo.attributes.position as THREE.BufferAttribute;
+      const uv = new Float32Array(pos.count * 2);
+      const spanLng = (rel.cols - 1) * rel.step, spanLat = (rel.rows - 1) * rel.step;
+      for (let i = 0; i < pos.count; i++) {
+        const gp = P.toGeo(pos.getX(i), pos.getY(i));
+        uv[i * 2] = (gp.lng - rel.lng0) / spanLng;
+        uv[i * 2 + 1] = (gp.lat - rel.lat0) / spanLat;
+      }
+      landGeo.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
     }
     const land = new THREE.Mesh(
-      new THREE.ShapeGeometry(shapes),
-      new THREE.MeshBasicMaterial({ color: C.land, depthTest: false, depthWrite: false, transparent: true }),
+      landGeo,
+      new THREE.MeshBasicMaterial({ map: reliefTexture(rel), depthTest: false, depthWrite: false, transparent: true }),
     );
     land.renderOrder = 1;
     this.landMesh = land;
@@ -588,7 +688,7 @@ export class TacticalPlot {
     const contour = new LineBatch({ width: 1, dashed: true, renderOrder: 3 });
     contour.material.dashSize = 6;
     contour.material.gapSize = 5;
-    const depthAlpha: Record<string, number> = { "200": 0.55, "1000": 0.4, "2000": 0.32, "3000": 0.26 };
+    const depthAlpha: Record<string, number> = { "200": 0.42, "1000": 0.32, "2000": 0.26, "3000": 0.22 };
     for (const [depth, polys] of Object.entries(geo.depth as Record<string, number[][][][]>)) {
       for (const poly of polys) {
         for (const ring of poly) {
@@ -603,14 +703,17 @@ export class TacticalPlot {
     }
     contour.flush();
 
-    // coastline and land borders
-    const coast = new LineBatch({ width: 1.4, renderOrder: 5 });
+    // coastline: a crisp line over a soft wide one, so the shore glows the way a stroke does on a tube
+    const coast = new LineBatch({ width: 1.5, renderOrder: 5 });
+    const coastHalo = new LineBatch({ width: 6, renderOrder: 4 });
     for (const line of geo.coast as number[][][]) {
       const pts: number[] = [];
       for (const p of line) pts.push(P.x(p[0]), P.y(p[1]));
-      coast.polyline(pts, 0, C.phosphor, 0.5);
+      coast.polyline(pts, 0, C.phosphor, 0.4);
+      coastHalo.polyline(pts, 0, C.phosphor, 0.035);
     }
     coast.flush();
+    coastHalo.flush();
     const borders = new LineBatch({ width: 1, dashed: true, renderOrder: 4 });
     borders.material.dashSize = 3;
     borders.material.gapSize = 4;
@@ -621,20 +724,36 @@ export class TacticalPlot {
     }
     borders.flush();
 
-    // lat/long grid every 0.5 degree, whole degrees brighter
+    // Graticule every 0.5 degree. The lines stay very quiet (Ray: the green grid was "a bit too much"); the
+    // crossings carry small register crosses instead, which is all the eye needs to read position off a chart.
     const grid = new LineBatch({ width: 1, renderOrder: 2 });
+    const ticks = new LineBatch({ width: 1, renderOrder: 2 });
+    const whole = (v: number) => Math.abs(v - Math.round(v)) < 1e-6;
     for (let lng = Math.ceil(bbox[0] * 2) / 2; lng <= bbox[2]; lng += 0.5) {
-      const major = Math.abs(lng - Math.round(lng)) < 1e-6;
-      grid.seg(P.x(lng), P.y(bbox[1]), 0, P.x(lng), P.y(bbox[3]), 0, C.faint, major ? 0.9 : 0.5);
+      grid.seg(P.x(lng), P.y(bbox[1]), 0, P.x(lng), P.y(bbox[3]), 0, C.faint, whole(lng) ? 0.5 : 0.2);
     }
     for (let lat = Math.ceil(bbox[1] * 2) / 2; lat <= bbox[3]; lat += 0.5) {
-      const major = Math.abs(lat - Math.round(lat)) < 1e-6;
-      grid.seg(P.x(bbox[0]), P.y(lat), 0, P.x(bbox[2]), P.y(lat), 0, C.faint, major ? 0.9 : 0.5);
+      grid.seg(P.x(bbox[0]), P.y(lat), 0, P.x(bbox[2]), P.y(lat), 0, C.faint, whole(lat) ? 0.5 : 0.2);
     }
+    for (let lng = Math.ceil(bbox[0] * 2) / 2; lng <= bbox[2]; lng += 0.5) {
+      for (let lat = Math.ceil(bbox[1] * 2) / 2; lat <= bbox[3]; lat += 0.5) {
+        const big = whole(lng) && whole(lat);
+        const arm = big ? 2.4 : 1.2; // km
+        const x = P.x(lng), y = P.y(lat);
+        ticks.seg(x - arm, y, 0, x + arm, y, 0, C.dim, big ? 0.7 : 0.4);
+        ticks.seg(x, y - arm, 0, x, y + arm, 0, C.dim, big ? 0.7 : 0.4);
+      }
+    }
+    // neat line: the edge of the charted sheet
+    ticks.polyline([W0, S0, W1, S0, W1, N1, W0, N1], 0, C.dim, 0.55, true);
     grid.flush();
+    ticks.flush();
 
-    this.staticBatches = [contour, coast, borders, grid];
+    this.staticBatches = [contour, coast, borders, grid, coastHalo, ticks];
+    this.batchWidth.set(coast, 1.5);
+    this.batchWidth.set(coastHalo, 6);
     this.coastBatch = coast;
+    this.coastHalo = coastHalo;
     for (const b of this.staticBatches) this.scene.add(b.object);
 
     this.buildRelief();
@@ -762,7 +881,7 @@ export class TacticalPlot {
       const shape = new THREE.Shape(a.points.map((p) => new THREE.Vector2(this.proj.x(p.lng), this.proj.y(p.lat))));
       const mesh = new THREE.Mesh(
         new THREE.ShapeGeometry(shape),
-        new THREE.MeshBasicMaterial({ color: C.hi.clone().multiplyScalar(0.07), transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }),
+        new THREE.MeshBasicMaterial({ color: C.hi.clone().multiplyScalar(0.018), transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }),
       );
       mesh.renderOrder = 4;
       this.scene.add(mesh);
@@ -821,6 +940,7 @@ export class TacticalPlot {
       t.seen = false;
       if (t.kind === "weapon") prevWeapons.set(t.id, t);
     }
+    const hadInput = this.input !== null;
     this.input = input;
     const P = this.proj;
     if (input.facilities !== this.facilitySource) {
@@ -859,7 +979,8 @@ export class TacticalPlot {
       const aff = getAffiliation(u, input.playerSide);
       const pl = getPlatform(u.platformId);
       const color = aff === "friendly" ? PALETTE.phosphor : aff === "hostile" ? PALETTE.alarm : PALETTE.phosphorDim;
-      this.setSprite(t, sidcFor(aff, pl?.dimension ?? "sea", pl?.functionId ?? "CL"), color);
+      const damage = u.damageState === "damaged" ? 1 : u.damageState === "mission-kill" ? 2 : 0;
+      this.setSprite(t, sidcFor(aff, pl?.dimension ?? "sea", pl?.functionId ?? "CL"), color, damage ? { certainty: "own", damage } : OWN);
     }
 
     // contacts exactly as the sensors report them
@@ -876,16 +997,24 @@ export class TacticalPlot {
       const known = c.classification === "classified" || c.classification === "tracked";
       const actual = known ? unitById.get(c.actualUnitId) : undefined;
       const pl = actual ? getPlatform(actual.platformId) : undefined;
+      // How sure the sensors are is drawn into the glyph: UNK dotted, DET solid with a question mark, CLS a thin
+      // frame, TRK a heavy frame with lock ticks; any of them breaks into dashes once the report is stale.
       this.setSprite(
         t,
         known ? sidcFor("hostile", pl?.dimension ?? "unknown", pl?.functionId ?? "") : sidcFor("unknown", "unknown", ""),
-        known ? PALETTE.alarm : PALETTE.phosphorDim,
+        known ? PALETTE.alarm : PALETTE.caution,
+        { certainty: c.classification, stale: (input.simTime - c.lastUpdateTime) / 1000 > STALE_S },
       );
     }
 
     // weapons in flight
     for (const w of this.visibleWeapons(input)) {
+      const fresh = !this.tracks.has(`weapon:${w.id}`);
       const t = this.ensureTrack("weapon", w.id);
+      // a launch: one short flare where the weapon leaves the rail
+      if (fresh && hadInput && this.effects.length < 64) {
+        this.effects.push({ x: P.x(w.position.lng), y: P.y(w.position.lat), t0: now, kind: "launch", friendly: w.launchedBySide === input.playerSide, dir: THREE.MathUtils.degToRad(w.heading) });
+      }
       t.weapon = w;
       this.moveTrack(t, P.x(w.position.lng), P.y(w.position.lat), now, true);
       this.sampleHistory(t, input.simTime, HIST_WEAPON_MS);
@@ -908,14 +1037,25 @@ export class TacticalPlot {
       if (e.type === "destroyed" && e.targetId) killed.add(e.targetId);
     }
 
-    for (const [key, t] of this.tracks) {
+    for (const t of this.tracks.values()) {
       if (t.seen) continue;
       if (t.kind === "weapon" && prevWeapons.has(t.id) && t.weapon) {
-        this.effects.push({ x: t.pos.x, y: t.pos.y, t0: now, kind: hitTargets.has(t.weapon.targetId) ? "hit" : "intercept" });
+        const struck = hitTargets.has(t.weapon.targetId);
+        const tgt = this.tracks.get(`unit:${t.weapon.targetId}`);
+        // Only a weapon that reached its target bursts, and it bursts on the target. The rest of a salvo, left
+        // without a target when it dies, simply ends: it used to draw a hit in open water for every one of them.
+        const far = !!tgt && t.pos.distanceTo(tgt.pos) > Math.max(6, 30 * this.kPx);
+        if (!struck) this.effects.push({ x: t.pos.x, y: t.pos.y, t0: now, kind: "intercept" });
+        else if (!far) this.effects.push({ x: tgt ? tgt.pos.x : t.pos.x, y: tgt ? tgt.pos.y : t.pos.y, t0: now, kind: "hit" });
       }
       if (t.kind === "unit" && t.unit && killed.has(t.unit.id)) {
         this.effects.push({ x: t.pos.x, y: t.pos.y, t0: now, kind: "kill" });
+        this.effects.push({ x: t.pos.x, y: t.pos.y, t0: now, kind: "wreck" });
       }
+    }
+    // dispose only after every effect is placed: a weapon's burst needs its dead target's last position
+    for (const [key, t] of this.tracks) {
+      if (t.seen) continue;
       this.disposeTrack(t);
       this.tracks.delete(key);
     }
@@ -993,6 +1133,8 @@ export class TacticalPlot {
       },
       setDist: (km: number) => { this.distGoal = this.dist = km; this.updateCamera(); },
       drawnTracks: () => ({ units: this.drawn.unitSprites, contacts: this.drawn.contactSprites }),
+      /** One glyph as a PNG data URL, exactly as the plot draws it (the art sheet is built from this). */
+      glyph: (sidc: string, color: string, resolution: number, state?: GlyphState) => drawGlyph(sidc, color, resolution, state).toDataURL("image/png"),
       tilt: (on: boolean) => this.setTilt(on),
       view: () => ({ dist: this.dist, tilt: this.tiltAmt, target: { x: this.target.x, y: this.target.y } }),
     };
@@ -1105,10 +1247,10 @@ export class TacticalPlot {
     this.effects.length = 0;
   }
 
-  private setSprite(t: Track, sidc: string, color: string) {
-    const key = `${sidc}|${color}`;
+  private setSprite(t: Track, sidc: string, color: string, state: GlyphState) {
+    const key = `${sidc}|${color}|${state.certainty}|${state.stale ? 1 : 0}|${state.damage ?? 0}`;
     if (t.spriteKey === key) return;
-    const tex = symbolTexture(sidc, color, Math.max(2, Math.ceil(this.dpr * 1.5)));
+    const tex = symbolTexture(sidc, color, Math.max(2, Math.ceil(this.dpr * 1.5)), state);
     if (!t.sprite) {
       const m = new THREE.SpriteMaterial({
         map: tex.texture,
@@ -1124,7 +1266,8 @@ export class TacticalPlot {
       (t.sprite.material as THREE.SpriteMaterial).map = tex.texture;
       (t.sprite.material as THREE.SpriteMaterial).needsUpdate = true;
     }
-    t.sprite.center.copy(tex.center);
+    // the drawing is centred on the anchor; the layout box below is the one labels have always kept clear of
+    t.sprite.center.set(0.5, 0.5);
     t.spriteW = tex.width;
     t.spriteH = tex.height;
     t.spriteAx = tex.center.x * tex.width;
@@ -1350,7 +1493,7 @@ export class TacticalPlot {
     (this.dots.material as THREE.PointsMaterial).size = 3 * this.dpr;
     (this.marks.material as THREE.PointsMaterial).size = 7 * this.dpr;
     for (const b of [this.solid, this.thin, this.dashed, ...this.staticBatches]) {
-      b.material.linewidth = (b === this.solid ? 1.4 : b === this.dashed ? 1.3 : b === this.staticBatches[1] ? 1.4 : 1) * this.dpr;
+      b.material.linewidth = (b === this.solid ? 1.5 : b === this.dashed ? 1.3 : this.batchWidth.get(b) ?? 1) * this.dpr;
     }
     if (this.reliefWire) (this.reliefWire.material as LineMaterial).linewidth = this.dpr;
     this.camera.aspect = w / h;
@@ -1407,7 +1550,9 @@ export class TacticalPlot {
   private frame = (now: number) => {
     if (this.disposed) return;
     this.raf = requestAnimationFrame(this.frame);
-    const dt = Math.min(0.1, (now - this.lastFrame) / 1000);
+    // Never a negative step: the browser stamps a frame when it is scheduled, which on a busy page can be before
+    // this plot was even built. A negative step turned the opening zoom's ease into a throw far out of the theater.
+    const dt = Math.min(0.1, Math.max(0, (now - this.lastFrame) / 1000));
     this.lastFrame = now;
     this.frames++;
 
@@ -1463,7 +1608,16 @@ export class TacticalPlot {
     const coastK = THREE.MathUtils.clamp((this.kPx - 0.05) / 0.1, 0, 1);
     if (this.coastBatch) this.coastBatch.material.opacity = coastK;
     if (this.coastBatch) this.coastBatch.object.visible = coastK > 0.01;
-    if (this.landMesh) (this.landMesh.material as THREE.MeshBasicMaterial).opacity = coastK;
+    if (this.coastHalo) {
+      this.coastHalo.material.opacity = coastK;
+      this.coastHalo.object.visible = coastK > 0.01;
+    }
+    if (this.landMesh) {
+      const lm = this.landMesh.material as THREE.MeshBasicMaterial;
+      lm.opacity = coastK;
+      // tilted, the raised relief is drawn over the flat chart: the flat tone steps back so the two do not add up
+      lm.color.setScalar(1 - 0.5 * this.tiltAmt);
+    }
     this.facilityLayer?.setView(this.kPx, this.input?.showFacilities !== false);
     this.osintLayer?.setView(this.kPx, true);
 
@@ -1474,8 +1628,9 @@ export class TacticalPlot {
       this.reliefWire.visible = vis;
       this.relief.scale.z = Math.max(0.001, t);
       this.reliefWire.scale.z = Math.max(0.001, t);
-      (this.relief.material as THREE.MeshBasicMaterial).opacity = Math.min(1, t * 1.2) * 0.78;
-      (this.reliefWire.material as LineMaterial).opacity = t * 0.28;
+      (this.relief.material as THREE.MeshBasicMaterial).opacity = Math.min(1, t * 1.2) * 0.5;
+      // the mesh lines stay a hint (Ray: the green grid was "a bit too much"); the lit relief carries the shape
+      (this.reliefWire.material as LineMaterial).opacity = t * 0.14;
     }
 
     const hash = `${this.target.x.toFixed(2)},${this.target.y.toFixed(2)},${this.dist.toFixed(2)},${t.toFixed(3)},${this.W},${this.H}`;
@@ -1602,8 +1757,15 @@ export class TacticalPlot {
         for (let i = 0; i < xy.length; i++) {
           const [x, y] = xy[i];
           const [nx, ny] = xy[(i + 1) % xy.length];
-          dashed.seg(x, y, 0, nx, ny, 0, C.hi, 0.95);
-          mark(x, y, 0, C.hi, 1);
+          dashed.seg(x, y, 0, nx, ny, 0, C.hi, 0.8);
+          // a solid bracket at each corner, running a short way along both edges
+          const [qx, qy] = xy[(i + xy.length - 1) % xy.length];
+          const arm = 16 * this.pxAt(x, y);
+          for (const [ox, oy] of [[nx, ny], [qx, qy]]) {
+            const len = Math.hypot(ox - x, oy - y) || 1;
+            const k = Math.min(arm, len / 3) / len;
+            solid.seg(x, y, 0, x + (ox - x) * k, y + (oy - y) * k, 0, C.hi, 1);
+          }
           cx += x / xy.length;
           top = Math.max(top, y);
         }
@@ -1624,7 +1786,7 @@ export class TacticalPlot {
           this.placeRingLabel(t.pos.x, t.pos.y, pl.sensorRangeKm, `SNS ${Math.round(pl.sensorRangeKm / KM_PER_NM)}NM`, friendly);
         }
         if (pl?.weaponRangeKm) {
-          solid.circle(t.pos.x, t.pos.y, 0, pl.weaponRangeKm, col, 0.6, 120);
+          solid.circle(t.pos.x, t.pos.y, 0, pl.weaponRangeKm, col, 0.5, 120);
           this.placeRingLabel(t.pos.x, t.pos.y, pl.weaponRangeKm, `WPN ${Math.round(pl.weaponRangeKm / KM_PER_NM)}NM`, friendly);
         }
         if (id === input.selectedUnitId) this.bearingRose(thin, t.pos.x, t.pos.y, col);
@@ -1635,7 +1797,7 @@ export class TacticalPlot {
         for (const t of this.tracks.values()) {
           if (!t.contact || t.contact.positionUncertainty <= 0.5) continue;
           const known = t.contact.classification === "classified" || t.contact.classification === "tracked";
-          const col = known ? C.alarm : C.dim;
+          const col = known ? C.alarm : C.cautionDim;
           disc(t.pos.x, t.pos.y, t.contact.positionUncertainty, col, 0.05 * t.alpha);
           dr.uncertaintyDiscs++;
           dashed.circle(t.pos.x, t.pos.y, 0, t.contact.positionUncertainty, col, 0.55 * t.alpha, 48);
@@ -1652,8 +1814,12 @@ export class TacticalPlot {
         let px = t.pos.x, py = t.pos.y;
         path.points.forEach((p, i) => {
           const x = this.proj.x(p.lng), y = this.proj.y(p.lat);
-          dashed.seg(px, py, 0, x, y, 0, C.phosphor, 0.9);
-          mark(x, y, 0, C.phosphor, 0.95);
+          dashed.seg(px, py, 0, x, y, 0, C.phosphor, 0.85);
+          // a diamond at each turn point; the last one, where the unit stops, is doubled
+          const d = 5 * this.pxAt(x, y);
+          solid.polyline([x, y + d, x + d, y, x, y - d, x - d, y], 0, C.phosphor, 1, true);
+          if (i === path.points.length - 1) solid.polyline([x, y + d * 1.9, x + d * 1.9, y, x, y - d * 1.9, x - d * 1.9, y], 0, C.phosphor, 0.55, true);
+          else dot(x, y, 0, C.phosphor, 0.9);
           this.placeNear(`WP${i + 1}`, "tx-wp-label", x, y, 5);
           px = x; py = y;
         });
@@ -1663,29 +1829,44 @@ export class TacticalPlot {
       for (const t of this.tracks.values()) {
         const h = t.history;
         const n = h.length / 2;
-        if (!n) continue;
-        const col = t.kind === "weapon" ? (t.weapon?.launchedBySide === input.playerSide ? C.phosphor : C.alarm) : t.contact ? (t.contact.classification === "classified" || t.contact.classification === "tracked" ? C.alarm : C.dim) : t.unit && t.unit.side !== input.playerSide ? C.alarm : C.phosphor;
+        if (!n || t.kind === "weapon") continue;
+        const col = t.contact ? (t.contact.classification === "classified" || t.contact.classification === "tracked" ? C.alarm : C.caution) : t.unit && t.unit.side !== input.playerSide ? C.alarm : C.phosphor;
         for (let i = 0; i < n; i++) {
-          const a = (0.2 + 0.6 * ((i + 1) / n)) * t.alpha * (t.kind === "weapon" ? 0.75 : 1);
+          const a = (0.2 + 0.6 * ((i + 1) / n)) * t.alpha;
           dot(h[i * 2], h[i * 2 + 1], 0, col, a);
         }
       }
 
-      // weapons: head, line to target, flight trail
+      // weapons: a dart on its heading, the smoke of where it has been, a quiet line to what it is going for
       for (const w of this.weaponLines(input)) {
         const t = this.tracks.get(`weapon:${w.weapon.id}`);
         if (!t) continue;
         const col = w.friendly ? C.phosphor : C.alarm;
         if (w.target) {
           dashed.breakRun();
-          dashed.seg(t.pos.x, t.pos.y, 0, w.target.x, w.target.y, 0, col, 0.55);
+          dashed.seg(t.pos.x, t.pos.y, 0, w.target.x, w.target.y, 0, col, 0.3);
           dr.weaponLines++;
         }
-        mark(t.pos.x, t.pos.y, 0, C.hi, 1);
         dr.weaponHeads++;
+        const px = this.pxAt(t.pos.x, t.pos.y);
         const dir = THREE.MathUtils.degToRad(w.weapon.heading);
-        const L = 10 * this.pxAt(t.pos.x, t.pos.y);
-        solid.seg(t.pos.x, t.pos.y, 0, t.pos.x - Math.sin(dir) * L, t.pos.y - Math.cos(dir) * L, 0, col, 0.9);
+        const fx = Math.sin(dir), fy = Math.cos(dir), rx = fy, ry = -fx;
+        const at = (f: number, r: number): [number, number] => [t.pos.x + (fx * f + rx * r) * px, t.pos.y + (fy * f + ry * r) * px];
+        const [nx, ny] = at(8, 0), [lx, ly] = at(-5, -4.5), [qx, qy] = at(-1.5, 0), [ex, ey] = at(-5, 4.5);
+        solid.polyline([nx, ny, lx, ly, qx, qy, ex, ey], 0, C.hi, 1, true);
+        solid.seg(nx, ny, 0, qx, qy, 0, col, 1);
+        // trail: newest sample first, thinning out behind
+        const h = t.history, n = h.length / 2;
+        let tx = qx, ty = qy;
+        for (let i = n - 1; i >= 0; i--) {
+          const a = 0.85 * ((i + 1) / n);
+          (i >= n - 3 ? solid : thin).seg(tx, ty, 0, h[i * 2], h[i * 2 + 1], 0, col, a);
+          tx = h[i * 2]; ty = h[i * 2 + 1];
+        }
+        if (!n) {
+          const [bx, by] = at(-16, 0);
+          solid.seg(qx, qy, 0, bx, by, 0, col, 0.8);
+        }
       }
 
       // unit and contact glyphs, leaders, drop lines, sweeps
@@ -1698,7 +1879,7 @@ export class TacticalPlot {
         if (t.disp.x !== 0 || t.disp.y !== 0) thin.seg(t.pos.x, t.pos.y, t.z, gx, gy, t.z, C.dim, 0.5);
         const pulse = t.paintT ? Math.max(0, 1 - (now - t.paintT) / 350) : 0;
         const s = this.spriteK * (1 + pulse * 0.25);
-        t.sprite.scale.set(t.spriteW * s, t.spriteH * s, 1);
+        t.sprite.scale.set(GLYPH_PX * s, GLYPH_PX * s, 1);
         (t.sprite.material as THREE.SpriteMaterial).opacity = t.alpha;
         if (t.sprite.visible && t.alpha > 0) {
           if (t.kind === "unit") dr.unitSprites++;
@@ -1708,16 +1889,17 @@ export class TacticalPlot {
         const friendly = t.unit?.side === input.playerSide;
         const hostileUnit = !!t.unit && !friendly;
         const col = t.contact
-          ? (t.contact.classification === "classified" || t.contact.classification === "tracked" ? C.alarm : C.dim)
+          ? (t.contact.classification === "classified" || t.contact.classification === "tracked" ? C.alarm : C.caution)
           : hostileUnit ? C.alarm : C.phosphor;
 
         // course leader
         const hdg = t.unit ? t.unit.heading : t.contact?.estimatedHeading;
         const spd = t.unit ? t.unit.speed : t.contact?.estimatedSpeed ?? 0;
         if (hdg !== undefined && spd > 0) {
-          const L = (14 + Math.min(26, spd * 0.06)) * px;
+          // the leader starts at the frame, so the glyph's plate never swallows a slow ship's course
+          const L0 = 19 * px, L = (29 + Math.min(30, spd * 0.07)) * px;
           const a = THREE.MathUtils.degToRad(hdg);
-          solid.seg(gx, gy, t.z, gx + Math.sin(a) * L, gy + Math.cos(a) * L, t.z, col, 0.85 * t.alpha);
+          solid.seg(gx + Math.sin(a) * L0, gy + Math.cos(a) * L0, t.z, gx + Math.sin(a) * L, gy + Math.cos(a) * L, t.z, col, 0.9 * t.alpha);
         }
         if (t.z > 0.01) thin.seg(gx, gy, 0, gx, gy, t.z, col, 0.45);
 
@@ -1726,7 +1908,7 @@ export class TacticalPlot {
           // with S on, friendly ships sweep their full radar range, faintly
           const pl = getPlatform(t.unit.platformId);
           const big = input.showSensorCoverage && friendly && pl?.dimension === "sea" ? pl.sensorRangeKm : undefined;
-          const radius = big ?? 26 * px;
+          const radius = big ?? 34 * px;
           this.sweep(t, radius, sweepAngle + (parseInt(trackNumber(t.id), 10) % 360) * 0.0174533, friendly ? C.phosphor : C.alarm, big ? 0.2 * coverageShare : 0.75);
           usedSweeps.add(t.key);
         }
@@ -1737,9 +1919,9 @@ export class TacticalPlot {
 
       // selection reticle and hover bracket
       const sel = input.selectedUnitId ? unitTrack(input.selectedUnitId) : undefined;
-      if (sel) this.reticle(solid, sel, 17, C.hi, 1);
+      if (sel) this.reticle(solid, sel, 25, C.hi, 1);
       const hov = this.hoverKey ? this.tracks.get(this.hoverKey) : undefined;
-      if (hov && hov !== sel) this.reticle(thin, hov, 15, C.phosphor, 0.6);
+      if (hov && hov !== sel) this.reticle(thin, hov, 23, C.phosphor, 0.7);
 
       // measurement
       if (input.measureStart) {
@@ -1755,29 +1937,69 @@ export class TacticalPlot {
         }
       }
 
-      // effects: short, sharp, then gone
+      // effects: each plays once and is gone. Nothing here repeats, blinks or strobes.
       this.effects = this.effects.filter((e) => {
-        const life = e.kind === "kill" ? 1400 : e.kind === "hit" ? 900 : 650;
-        const k = (now - e.t0) / life;
+        const k = (now - e.t0) / EFFECT_LIFE[e.kind];
         if (k >= 1) return false;
+        if (k < 0) return true;
         const px = this.pxAt(e.x, e.y);
         const ease = 1 - Math.pow(1 - k, 3);
         const fade = 1 - k;
-        if (e.kind === "intercept") {
+        if (e.kind === "launch") {
+          // a flare at the rail: a ring opening, and a short blast back along the launch heading
+          const col = e.friendly ? C.phosphor : C.alarm;
+          solid.circle(e.x, e.y, 0, (3 + 15 * ease) * px, col, fade * 0.9, 28);
+          const d = e.dir ?? 0;
+          for (const off of [-0.5, 0, 0.5]) {
+            const a = d + Math.PI + off;
+            const r0 = (4 + 10 * ease) * px, r1 = r0 + 9 * px * fade;
+            solid.seg(e.x + Math.sin(a) * r0, e.y + Math.cos(a) * r0, 0, e.x + Math.sin(a) * r1, e.y + Math.cos(a) * r1, 0, C.hi, fade);
+          }
+        } else if (e.kind === "intercept") {
           solid.circle(e.x, e.y, 0, (4 + 16 * ease) * px, C.hi, fade, 24);
-          const s = 6 * px * (1 - ease * 0.5);
+          const s = 7 * px * (1 - ease * 0.4);
           solid.seg(e.x - s, e.y - s, 0, e.x + s, e.y + s, 0, C.hi, fade);
           solid.seg(e.x - s, e.y + s, 0, e.x + s, e.y - s, 0, C.hi, fade);
-        } else {
-          const big = e.kind === "kill" ? 1.6 : 1;
-          solid.circle(e.x, e.y, 0, (6 + 34 * ease) * px * big, C.alarm, fade, 40);
-          solid.circle(e.x, e.y, 0, (3 + 18 * ease) * px * big, C.hi, fade * 0.8, 32);
-          for (let i = 0; i < 8; i++) {
-            const a = (i / 8) * Math.PI * 2 + 0.39;
-            const r0 = (8 + 20 * ease) * px * big, r1 = r0 + 8 * px * big * fade;
-            solid.seg(e.x + Math.sin(a) * r0, e.y + Math.cos(a) * r0, 0, e.x + Math.sin(a) * r1, e.y + Math.cos(a) * r1, 0, C.alarm, fade);
+          for (let i = 0; i < 6; i++) {
+            const a = (i / 6) * Math.PI * 2 + 0.5;
+            const r0 = (9 + 14 * ease) * px, r1 = r0 + 4 * px * fade;
+            thin.seg(e.x + Math.sin(a) * r0, e.y + Math.cos(a) * r0, 0, e.x + Math.sin(a) * r1, e.y + Math.cos(a) * r1, 0, C.hi, fade * 0.8);
           }
-          if (k < 0.12) mark(e.x, e.y, 0, C.hi, 1 - k / 0.12);
+        } else if (e.kind === "wreck") {
+          // where a unit was lost: a small broken ring and cross that stays a while, then fades out once
+          if (k < 0.03) return true;
+          const a = Math.min(1, (1 - k) / 0.3) * 0.75;
+          const r = 9 * px;
+          for (let q = 0; q < 4; q++) {
+            const a0 = q * (Math.PI / 2) + 0.35;
+            let lx = e.x + Math.sin(a0) * r, ly = e.y + Math.cos(a0) * r;
+            for (let i = 1; i <= 5; i++) {
+              const an = a0 + (i / 5) * (Math.PI / 2 - 0.7);
+              const x = e.x + Math.sin(an) * r, y = e.y + Math.cos(an) * r;
+              thin.seg(lx, ly, 0, x, y, 0, C.alarm, a);
+              lx = x; ly = y;
+            }
+          }
+          const c = 4.5 * px;
+          solid.seg(e.x - c, e.y - c, 0, e.x + c, e.y + c, 0, C.alarm, a);
+          solid.seg(e.x - c, e.y + c, 0, e.x + c, e.y - c, 0, C.alarm, a);
+        } else {
+          const big = e.kind === "kill" ? 1.7 : 1;
+          // the hot core: bright for the first third, then gone
+          if (k < 0.34) disc(e.x, e.y, (5 + 9 * ease) * px * big, C.hi, (1 - k / 0.34) * 0.55);
+          disc(e.x, e.y, (8 + 30 * ease) * px * big, C.alarm, fade * fade * 0.16);
+          // shock front, and a second, slower one behind it
+          solid.circle(e.x, e.y, 0, (6 + 38 * ease) * px * big, C.alarm, fade, 48);
+          solid.circle(e.x, e.y, 0, (3 + 20 * ease) * px * big, C.hi, fade * 0.85, 36);
+          if (e.kind === "kill") solid.circle(e.x, e.y, 0, (4 + 62 * ease) * px, C.alarm, fade * 0.5, 56);
+          // debris: streaks of uneven length thrown outward
+          const n = e.kind === "kill" ? 14 : 10;
+          for (let i = 0; i < n; i++) {
+            const a = (i / n) * Math.PI * 2 + DEBRIS[i] * 0.5;
+            const reach = 0.55 + DEBRIS[(i + 5) % DEBRIS.length] * 0.75;
+            const r0 = (9 + 30 * ease * reach) * px * big, r1 = r0 + (4 + 9 * reach) * px * big * fade;
+            solid.seg(e.x + Math.sin(a) * r0, e.y + Math.cos(a) * r0, 0, e.x + Math.sin(a) * r1, e.y + Math.cos(a) * r1, 0, i % 3 === 0 ? C.hi : C.alarm, fade);
+          }
         }
         return true;
       });
@@ -1873,7 +2095,7 @@ export class TacticalPlot {
 
   private reticle(batch: LineBatch, t: Track, half: number, col: THREE.Color, alpha: number) {
     const px = this.pxAt(t.pos.x, t.pos.y, t.z);
-    const h = half * px, a = 6 * px;
+    const h = half * px, a = 8 * px;
     const x = t.pos.x + t.disp.x, y = t.pos.y + t.disp.y;
     const z = t.z;
     for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {

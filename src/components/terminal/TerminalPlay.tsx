@@ -895,6 +895,9 @@ function TerminalPlayView({
             {autopauseEvent.reason.toUpperCase()}
           </span>
         )}
+        {isWeGo && wego && phase === "resolving" && !ended && (
+          <span className="tx-top-progress" aria-hidden="true" style={{ transform: `scaleX(${Math.min(1, Math.max(0, 1 - wego.remainingMs / wego.turnLengthMs)).toFixed(4)})` }} />
+        )}
         <span className="tx-top-right">
           <Cmd onClick={handleSave} testId="cmd-save" ariaLabel="Save battle to a file">SAVE BATTLE</Cmd>
           <Cmd onClick={openLoad} testId="cmd-load" ariaLabel="Load battle from a file">LOAD BATTLE</Cmd>
@@ -982,6 +985,10 @@ function TerminalPlayView({
               <>
                 <div className="tx-mission-line" data-testid="turn-remaining">
                   {clockOf(wego.remainingMs)} OF {wego.turnMinutes}:00 LEFT{gameState.isPaused ? "  //  PAUSED" : ""}
+                </div>
+                {/* the turn resolving, drawn: the bar fills as the burst runs out (no text, so nothing new to read) */}
+                <div className="tx-turn-bar" aria-hidden="true" data-testid="turn-bar">
+                  <span style={{ transform: `scaleX(${Math.min(1, Math.max(0, 1 - wego.remainingMs / wego.turnLengthMs)).toFixed(4)})` }} />
                 </div>
                 <div className="tx-mission-line tx-dim">Orders are locked until the turn resolves. You can still look around.</div>
               </>

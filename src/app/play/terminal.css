@@ -1234,3 +1234,381 @@
 .tx-result-actions {
   flex-wrap: wrap;
 }
+
+/* =====================================================================================================
+   SAND-ART1 (Fable art pass, round 1): the drawn finish. Everything below restyles what is already there.
+   No text, control, panel content or key binding changes; box sizes that the plot's label placement
+   measures (.tx-block and the plot labels) are left exactly as they were.
+   ===================================================================================================== */
+
+/* ---- type: one face, made to sit heavier, the way a beam fattens a stroke on a tube ---- */
+.tx-root {
+  --tx-caution: #f5c451; /* unidentified contact: the one hue outside phosphor and alarm (see palette.ts) */
+  --tx-glow: 0 0 1px rgba(76, 245, 142, 0.5), 0 0 7px rgba(76, 245, 142, 0.26);
+  --tx-glow-alarm: 0 0 1px rgba(255, 75, 58, 0.55), 0 0 8px rgba(255, 75, 58, 0.36);
+  text-shadow: var(--tx-glow);
+  -webkit-text-stroke: 0.32px currentColor;
+}
+.tx-alarm,
+.tx-block--hostile,
+.tx-tty-line.is-alarm {
+  text-shadow: var(--tx-glow-alarm);
+}
+.tx-btn.is-on,
+.tx-row.is-on,
+.tx-badge,
+.tx-banner,
+.tx-more.is-on {
+  text-shadow: none;
+  -webkit-text-stroke: 0.2px currentColor;
+}
+
+/* ---- the monitor: scanlines, the dark of the tube edge, rounded glass.
+        All of it is static: nothing here moves, so nothing can shimmer or strobe. The edge falloff is two inset
+        shadows rather than a gradient (a full-screen gradient is dithered by the browser, pixel by pixel). ---- */
+.tx-scan {
+  overflow: hidden;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, 0.2) 2px, rgba(0, 0, 0, 0.2) 3px);
+}
+.tx-scan::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  /* outside the rounded glass is the bezel; inside, the picture dims toward the edge */
+  box-shadow:
+    0 0 0 40px #000,
+    inset 0 0 0 1px rgba(76, 245, 142, 0.12),
+    inset 0 0 70px 6px rgba(0, 0, 0, 0.5),
+    inset 0 0 260px 30px rgba(0, 0, 0, 0.28);
+}
+
+/* ---- panel frames: a double rule with cut corners, like a drawn box rather than a web card ---- */
+.tx-panel {
+  border-color: var(--tx-rule-hi);
+  box-shadow:
+    inset 0 0 0 2px var(--tx-panel),
+    inset 0 0 0 3px rgba(29, 92, 55, 0.7),
+    0 0 0 1px #000,
+    0 0 18px rgba(76, 245, 142, 0.07);
+}
+.tx-panel::before,
+.tx-panel::after {
+  width: 13px;
+  height: 13px;
+}
+.tx-panel::before {
+  border-top: 2px solid var(--tx-hi);
+  border-left: 2px solid var(--tx-hi);
+}
+.tx-panel::after {
+  border-bottom: 2px solid var(--tx-hi);
+  border-right: 2px solid var(--tx-hi);
+}
+
+/* ---- strips top and bottom: a heavy rule with a second line under it ---- */
+.tx-top {
+  border-bottom: 1px solid var(--tx-rule-hi);
+  box-shadow: 0 2px 0 var(--tx-field), 0 3px 0 rgba(29, 92, 55, 0.75);
+  background: linear-gradient(to bottom, #03110a, var(--tx-panel));
+}
+.tx-cmd {
+  border-top: 1px solid var(--tx-rule-hi);
+  box-shadow: 0 -2px 0 var(--tx-field), 0 -3px 0 rgba(29, 92, 55, 0.75);
+  background: linear-gradient(to top, #03110a, var(--tx-panel));
+}
+.tx-brand {
+  /* stays the phosphor primary (tests/design-system.spec.ts holds it there); the weight comes from the glow */
+  text-shadow: 0 0 2px rgba(76, 245, 142, 0.9), 0 0 12px rgba(76, 245, 142, 0.5);
+}
+.tx-clock {
+  font-weight: 700;
+}
+.tx-rule-v {
+  background: var(--tx-rule-hi);
+  opacity: 0.7;
+}
+
+/* ---- type hierarchy: title bars, section heads, tags ---- */
+.tx-mission-head,
+.tx-briefing-head,
+.tx-tty-head,
+.tx-popover-head {
+  background: linear-gradient(to right, rgba(76, 245, 142, 0.13), rgba(76, 245, 142, 0.03));
+  border-bottom: 1px solid var(--tx-rule-hi);
+  font-weight: 700;
+}
+.tx-mission-head {
+  margin: -8px -10px 3px;
+  padding: 4px 10px 2px;
+}
+.tx-briefing-mission .tx-mission-head,
+.tx-briefing-mode .tx-mission-head {
+  margin: 0 0 4px;
+  padding: 2px 8px;
+}
+.tx-popover-head {
+  margin: -10px -12px 8px;
+  padding: 6px 12px;
+}
+.tx-section-head {
+  font-weight: 700;
+  color: var(--tx-phosphor);
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+  border-bottom: 1px dashed var(--tx-rule);
+}
+.tx-section-head::before {
+  color: var(--tx-dim);
+}
+.tx-mission-line b,
+.tx-briefing-mission b,
+.tx-result-facts b,
+.tx-review-body b,
+.tx-rec-force b {
+  color: var(--tx-hi);
+}
+.tx-mission-status {
+  padding: 0 6px;
+  background: var(--tx-hi);
+  color: var(--tx-field);
+  text-shadow: none;
+  -webkit-text-stroke: 0.2px currentColor;
+}
+.tx-mission-status.is-complete {
+  background: var(--tx-phosphor);
+  color: var(--tx-field);
+}
+.tx-mission-status.is-failed {
+  background: var(--tx-alarm);
+  color: var(--tx-field);
+}
+.tx-tab {
+  font-weight: 700;
+  border-bottom: 2px solid transparent;
+}
+.tx-tab.is-on {
+  color: var(--tx-hi);
+  background: linear-gradient(to top, rgba(76, 245, 142, 0.16), rgba(76, 245, 142, 0));
+  border-bottom-color: var(--tx-phosphor);
+}
+.tx-tabs {
+  border-bottom-color: var(--tx-rule-hi);
+}
+
+/* ---- keys and buttons: a key cap with a lip; lit when on, plainly dead when disabled ---- */
+.tx-btn {
+  border-color: var(--tx-rule-hi);
+  background: linear-gradient(to bottom, rgba(76, 245, 142, 0.09), rgba(76, 245, 142, 0.02));
+  box-shadow: inset 0 -2px 0 rgba(76, 245, 142, 0.16);
+  font-weight: 700;
+}
+.tx-btn:hover {
+  background: linear-gradient(to bottom, rgba(76, 245, 142, 0.2), rgba(76, 245, 142, 0.07));
+}
+.tx-btn.is-on {
+  background: var(--tx-phosphor);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.28), 0 0 12px rgba(76, 245, 142, 0.5);
+}
+.tx-btn.is-alarm.is-on {
+  background: var(--tx-alarm);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.28), 0 0 12px rgba(255, 75, 58, 0.5);
+}
+.tx-btn:disabled {
+  color: var(--tx-dim);
+  border-style: dashed;
+  border-color: var(--tx-rule);
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.6;
+  cursor: default;
+}
+.tx-cap {
+  background: rgba(76, 245, 142, 0.12) !important;
+  color: var(--tx-phosphor) !important;
+  border-color: var(--tx-rule-hi) !important;
+  box-shadow: inset 0 -2px 0 rgba(76, 245, 142, 0.22);
+  font-weight: 700;
+}
+.tx-row.is-on {
+  box-shadow: 0 0 10px rgba(76, 245, 142, 0.35);
+  font-weight: 700;
+}
+.tx-row-mark {
+  color: var(--tx-phosphor);
+}
+.tx-row.is-on .tx-row-mark {
+  color: inherit;
+}
+
+/* ---- teletype: the line being printed is the bright one; older traffic sinks back ---- */
+.tx-tty {
+  background: linear-gradient(to bottom, var(--tx-panel), #010704);
+}
+.tx-tty-line {
+  color: var(--tx-dim);
+}
+.tx-tty-line:nth-last-child(2) {
+  color: var(--tx-text);
+}
+.tx-tty-line:last-child {
+  color: var(--tx-hi);
+}
+.tx-tty-line.is-alarm,
+.tx-tty-line.is-alarm:last-child {
+  color: var(--tx-alarm);
+}
+/* the print head: a steady block after the newest line (it does not blink) */
+.tx-tty-line:last-child::after {
+  content: "";
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  margin-left: 4px;
+  vertical-align: -0.14em;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* ---- the plot's data blocks and labels: colour says whose it is; sizes are untouched ---- */
+.tx-block {
+  background: rgba(2, 6, 4, 0.94);
+  box-shadow: -2px 0 0 currentColor;
+  font-weight: 700;
+}
+.tx-block--unknown {
+  color: var(--tx-caution);
+  text-shadow: 0 0 1px rgba(245, 196, 81, 0.5), 0 0 7px rgba(245, 196, 81, 0.3);
+}
+.tx-block--neutral {
+  color: var(--tx-dim);
+}
+.tx-block.is-selected {
+  outline: 1px solid var(--tx-hi);
+  box-shadow: -2px 0 0 currentColor, 0 0 12px rgba(76, 245, 142, 0.45);
+}
+.tx-leader {
+  stroke-width: 1.2;
+}
+.tx-leader--unknown {
+  stroke: var(--tx-caution);
+}
+.tx-grid-label {
+  color: var(--tx-dim);
+  background: rgba(2, 6, 4, 0.78);
+}
+.tx-obj-label {
+  border: 1px solid var(--tx-hi);
+  box-shadow: 0 0 10px rgba(207, 255, 224, 0.3);
+}
+.tx-fac-label {
+  background: rgba(2, 6, 4, 0.86);
+}
+.tx-ring-label,
+.tx-wp-label {
+  font-weight: 700;
+}
+.tx-credit {
+  color: var(--tx-dim);
+}
+
+/* ---- briefing, turn review, debrief ---- */
+.tx-briefing-title {
+  font-size: 18px;
+  letter-spacing: 0.16em;
+  text-shadow: 0 0 2px rgba(207, 255, 224, 0.7), 0 0 12px rgba(76, 245, 142, 0.45);
+}
+.tx-briefing-mission,
+.tx-briefing-mode {
+  border-top: 0;
+}
+.tx-briefing-foot {
+  border-top: 1px dashed var(--tx-rule-hi);
+}
+.tx-result-backdrop {
+  background: radial-gradient(ellipse at center, rgba(0, 8, 4, 0.62) 0%, rgba(0, 0, 0, 0.86) 100%);
+}
+.tx-result-title {
+  font-size: 30px;
+  letter-spacing: 0.34em;
+  padding: 10px 0 10px 0.34em;
+  margin-bottom: 14px;
+  color: var(--tx-hi);
+  border-top: 3px double var(--tx-phosphor);
+  border-bottom: 3px double var(--tx-phosphor);
+  text-shadow: 0 0 2px rgba(207, 255, 224, 0.9), 0 0 18px rgba(76, 245, 142, 0.6);
+}
+.tx-result-title.tx-alarm {
+  border-color: var(--tx-alarm);
+  text-shadow: 0 0 2px rgba(255, 160, 150, 0.9), 0 0 18px rgba(255, 75, 58, 0.65);
+}
+.tx-result-record {
+  border-top: 1px dashed var(--tx-rule-hi);
+}
+.tx-modal-head {
+  text-shadow: 0 0 2px rgba(76, 245, 142, 0.8), 0 0 12px rgba(76, 245, 142, 0.4);
+}
+
+/* ---- one word alone on a last line: these blocks re-break so the last line carries at least two.
+        The words are unchanged; only where the line turns moves. (Listed in docs/art-fable-r1/REPORT.md.) ---- */
+.tx-mission-line,
+.tx-briefing-text,
+.tx-briefing-mission > div,
+.tx-briefing-mode-text,
+.tx-result > p,
+.tx-result-facts > div,
+.tx-rec-force,
+.tx-rec-empty,
+.tx-modal-text,
+.tx-modal-note,
+.tx-credit,
+.tx-review-body > div {
+  text-wrap: pretty;
+}
+/* a weapon row or debrief record line that needs two lines splits them evenly (the old break left "68)" alone) */
+.tx-wif-row,
+.tx-result-line {
+  text-wrap: balance;
+}
+/* record entries: the engine's last-line rule ignores a long last word ("WEAPONS-FREE." sat alone), so entries
+   of up to six lines break evenly instead; longer ones are left as they were */
+.tx-rec-text {
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+/* help rows (shared panel): same last-line rule */
+.tx-root .space-y-1 > div {
+  text-wrap: pretty;
+}
+
+/* ---- a turn resolving: a bar in the turn panel and a hairline under the top strip fill as the burst runs.
+        They move at the pace of the clock (a linear ease between state updates); nothing pulses. ---- */
+.tx-turn-bar {
+  position: relative;
+  height: 8px;
+  margin: 5px 0 6px;
+  border: 1px solid var(--tx-rule-hi);
+  background: repeating-linear-gradient(to right, rgba(76, 245, 142, 0.16) 0 1px, transparent 1px 10%);
+  overflow: hidden;
+}
+.tx-turn-bar > span,
+.tx-top-progress {
+  display: block;
+  transform-origin: left center;
+  transition: transform 260ms linear;
+  background: var(--tx-phosphor);
+}
+.tx-turn-bar > span {
+  position: absolute;
+  inset: 0;
+  box-shadow: 0 0 8px rgba(76, 245, 142, 0.6);
+}
+.tx-top-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 2px;
+  box-shadow: 0 0 6px rgba(76, 245, 142, 0.7);
+  pointer-events: none;
+}

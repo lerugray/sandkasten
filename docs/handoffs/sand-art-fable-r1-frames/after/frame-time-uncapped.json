@@ -1,0 +1,17 @@
+{
+ "frame_ms": {
+  "n": 629,
+  "mean": 15.17,
+  "p50": 2.9,
+  "p95": 20,
+  "max": 695.6
+ },
+ "callback_ms": {
+  "n": 630,
+  "mean": 14.8,
+  "p50": 2.4,
+  "p95": 4.4,
+  "max": 706.7
+ },
+ "renderer": "ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)"
+}
