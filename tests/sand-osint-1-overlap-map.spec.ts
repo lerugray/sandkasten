@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { findOverlaps } from "./helpers/overlap";
-import { collectMapBoxes, outlineWaterShare, walkMapViews } from "./helpers/mapViews";
+import { collectMapBoxes, outlineWaterShare, stubTileHost, walkMapViews } from "./helpers/mapViews";
 import facilityData from "../data/facilities/hormuz.json";
 
 const DENSE = new Set(["qeshm", "dhafra", "udeid"]);
@@ -13,13 +13,15 @@ const polygon = (id: string) => (facilityData.facilities as unknown as { id: str
 /**
  * SAND-OSINT-1: on the MapLibre /map view no site label, unit symbol, OSINT / facility icon or piece of footer chrome
  * overlaps another, in every view the walk visits, at both review viewports.
- * Run with SAND_E2E_GPU=1.
+ * Run with SAND_E2E_GPU=1. On a machine that cannot reach the tile server set SAND_E2E_STUB_TILES=1: the tile host is
+ * then answered locally with empty tiles (the outline-on-land check has no base-map water to test against and passes).
  */
 
 for (const [w, h] of [[1440, 900], [1920, 1080]]) {
   test(`/map has zero overlaps at ${w}x${h}`, async ({ page }) => {
     test.setTimeout(240_000);
     await page.setViewportSize({ width: w, height: h });
+    if (process.env.SAND_E2E_STUB_TILES) await stubTileHost(page);
     const failures: string[] = [];
     await walkMapViews(page, async (view) => {
       let boxes = await collectMapBoxes(page);

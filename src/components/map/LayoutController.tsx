@@ -2,10 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import type maplibregl from "maplibre-gl";
-import { computeMapLayout, type MapLayout } from "@/lib/map/mapLayout";
+import { computeMapLayout, drawnFacilityKey, type MapLayout } from "@/lib/map/mapLayout";
 import { unitFrame } from "@/lib/map/unitSymbol";
 import { LABEL_EM } from "@/lib/osint/labelLayout";
 import type { OsintSite } from "@/lib/osint/sites";
+import type { Facility } from "@/lib/facilities/facilities";
 import type { Unit } from "@/types/game";
 
 const SRC = "map-tethers-src";
@@ -17,6 +18,8 @@ interface Props {
   units: Unit[];
   playerSide: string;
   sites: OsintSite[];
+  /** the facilities the FacilityLayer draws: from z9 their symbols are layout obstacles straight from this list */
+  facilities?: Facility[];
   onLayout: (layout: MapLayout) => void;
 }
 
@@ -36,13 +39,16 @@ function lines(map: maplibregl.Map, tethers: MapLayout["tethers"]) {
 }
 
 /**
- * Solves one layout for the unit symbols, OSINT symbols and OSINT labels (see computeMapLayout) whenever the map
- * settles or the inputs change, and draws the leader lines for anything that had to leave its true spot.
+ * Solves one layout for the unit symbols, OSINT symbols and OSINT labels (see computeMapLayout) whenever the view
+ * changes, the facility symbols on screen change, the map settles or the inputs change, and draws the leader lines for
+ * anything that had to leave its true spot.
  * It renders nothing; UnitLayer and OsintLayer read the layout it reports.
  */
-export function LayoutController({ map, units, playerSide, sites, onLayout }: Props) {
+export function LayoutController({ map, units, playerSide, sites, facilities, onLayout }: Props) {
   const unitsRef = useRef(units);
   unitsRef.current = units;
+  const facilitiesRef = useRef(facilities);
+  facilitiesRef.current = facilities;
   const sitesRef = useRef(sites);
   sitesRef.current = sites;
   const sideRef = useRef(playerSide);
@@ -87,7 +93,7 @@ export function LayoutController({ map, units, playerSide, sites, onLayout }: Pr
           const f = unitFrame(u, sideRef.current);
           return { id: u.id, lng: u.position.lng, lat: u.position.lat, w: f.w, h: f.h };
         });
-      const layout = computeMapLayout(map, { units: live, sites: sitesRef.current, textWidth: (t) => measure.measureText(t).width });
+      const layout = computeMapLayout(map, { units: live, sites: sitesRef.current, textWidth: (t) => measure.measureText(t).width, facilities: facilitiesRef.current });
       const tk = JSON.stringify(layout.tethers.map(([a, b]) => [a[0].toFixed(1), a[1].toFixed(1), b[0].toFixed(1), b[1].toFixed(1)]));
       // only touch the source when the lines moved: setData re-renders, which would fire `idle` and loop
       if (tk !== tetherKeyRef.current && ensureLayers()) {
@@ -108,14 +114,34 @@ export function LayoutController({ map, units, playerSide, sites, onLayout }: Pr
       tetherKeyRef.current = "";
       schedule();
     };
+    // `idle` only comes once every base-map tile of a new view has arrived and been placed, which takes seconds on a slow
+    // connection or machine. The facility symbols are on screen long before that, so the layout is re-solved as soon as
+    // the set of them changes (checked a few times a second while the map is drawing), not when the map finally rests.
+    let drawnKey = "";
+    let lastCheck = 0;
+    const onRender = () => {
+      if (map.isMoving()) return;
+      const now = performance.now();
+      if (now - lastCheck < 200) return;
+      lastCheck = now;
+      const k = drawnFacilityKey(map, !!facilitiesRef.current);
+      if (k === drawnKey) return;
+      drawnKey = k;
+      schedule();
+    };
     map.on("idle", schedule);
     map.on("zoomend", schedule);
+    // a pan brings new symbols into view without a zoom
+    map.on("moveend", schedule);
+    map.on("render", onRender);
     map.on("style.load", onStyle);
     schedule();
     return () => {
       if (timer) clearTimeout(timer);
       map.off("idle", schedule);
       map.off("zoomend", schedule);
+      map.off("moveend", schedule);
+      map.off("render", onRender);
       map.off("style.load", onStyle);
       for (const id of [LINE, CASING]) if (map.getLayer(id)) map.removeLayer(id);
       if (map.getSource(SRC)) map.removeSource(SRC);
@@ -127,7 +153,7 @@ export function LayoutController({ map, units, playerSide, sites, onLayout }: Pr
   const siteKey = sites.map((s) => s.id).join(",");
   useEffect(() => {
     runRef.current();
-  }, [unitKey, siteKey, playerSide]);
+  }, [unitKey, siteKey, playerSide, facilities]);
 
   return null;
 }

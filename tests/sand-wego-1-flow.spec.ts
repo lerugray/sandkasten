@@ -285,8 +285,8 @@ test.describe("SAND-WEGO-1: the turn loop and the command lock", () => {
   });
 });
 
-test.describe("SAND-WEGO-1: two real victories through the ordinary UI (GOD off)", () => {
-  test("plan A: the carrier alone, flank, straight at the gate (with a queued ENGAGE)", async ({ browser }, info) => {
+test.describe("SAND-WEGO-1: carrier-alone loses; escorted dog-leg wins (GOD off)", () => {
+  test("plan A: the carrier alone, flank, straight at the gate (with a queued ENGAGE) — real DEFEAT", async ({ browser }, info) => {
     test.setTimeout(900_000);
     mkdirSync(OUT, { recursive: true });
     const ctx = await browser.newContext({ viewport: SIZES[0], deviceScaleFactor: 2 });
@@ -313,9 +313,10 @@ test.describe("SAND-WEGO-1: two real victories through the ordinary UI (GOD off)
       await shotBoth(page, "2-planning-orders-gate");
 
       const run = await playOut(page, 5, true);
-      await expect(page.getByTestId("result-title")).toContainText(/VICTORY|COMPLETE/i, { timeout: 30_000 });
-      await expect(page.getByTestId("result-deciding")).toContainText(/Nimitz/);
-      await expect(page.getByTestId("mission-status")).toHaveAttribute("data-status", "complete");
+      await expect(page.getByTestId("result-title")).toContainText(/DEFEAT/i, { timeout: 30_000 });
+      await expect(page.getByTestId("result-deciding")).toContainText(/Nimitz/i);
+      await expect(page.getByTestId("result-deciding")).toContainText(/destroyed/i);
+      await expect(page.getByTestId("mission-status")).toHaveAttribute("data-status", "failed");
       await expect(page.getByTestId("result-turns")).toBeVisible();
       expect(run.queued.length).toBe(1);
       const record = await page.getByTestId("result-record").innerText();
@@ -332,8 +333,8 @@ test.describe("SAND-WEGO-1: two real victories through the ordinary UI (GOD off)
         godMode: await page.getByLabel("Toggle god mode").getAttribute("data-active"),
         state: await wegoState(page),
       };
-      writeFileSync(path.join(OUT, "victory-A-direct-flank.json"), JSON.stringify(result, null, 2));
-      await shotBoth(page, "5-victory-debrief-A");
+      writeFileSync(path.join(OUT, "defeat-A-direct-flank.json"), JSON.stringify(result, null, 2));
+      await shotBoth(page, "5-defeat-debrief-A");
       await expect(page.getByTestId("sim-state")).toContainText(/ENDED/);
       await expect(page.getByTestId("sim-state")).not.toContainText(/HOLD/);
       // clean replay

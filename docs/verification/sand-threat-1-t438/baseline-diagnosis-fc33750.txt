@@ -1,0 +1,811 @@
+===== PLAN nothing =====
+T+0m CVN 57.50,25.20 spd 20 dmg 0 undamaged
+   Iran contacts:  | on CVN: none
+   ir-fac-1  undamaged  pos 56.30,26.90 spd  15 thr 2 wp - (0) roe weapons-free radar on rngCVN 224km fired -
+   ir-fac-2  undamaged  pos 56.10,26.80 spd  15 thr 2 wp - (0) roe weapons-free radar on rngCVN 226km fired -
+   ir-fac-3  undamaged  pos 56.50,27.00 spd  12 thr 2 wp - (0) roe weapons-free radar on rngCVN 224km fired -
+   ir-pc-1   undamaged  pos 55.80,26.60 spd  10 thr 2 wp - (0) roe weapons-free radar on rngCVN 231km fired -
+   ir-pc-2   undamaged  pos 56.40,26.50 spd  10 thr 2 wp - (0) roe weapons-free radar on rngCVN 182km fired -
+   ir-ff-1   undamaged  pos 55.50,27.30 spd  12 thr 2 wp - (0) roe weapons-free radar on rngCVN 307km fired -
+   ir-f4-1   undamaged  pos 55.00,27.50 spd 400 thr 2 wp - (0) roe weapons-free radar on rngCVN 357km fired -
+   ir-f14-1  undamaged  pos 55.30,27.80 spd 420 thr 2 wp - (0) roe weapons-free radar on rngCVN 363km fired -
+   ir-f4-2   undamaged  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 255km fired -
+   [T+3.7m] launch: Tomcat 401 launched 2× AIM-54A Phoenix at Hornet 102
+   [T+3.8m] launch: Hornet 102 launched 2× AGM-84 Harpoon at Kaman 202
+   [T+4.5m] hit: AGM-84 Harpoon hit Kaman 202!
+   [T+4.5m] destroyed: Kaman 202 has been destroyed!
+   [T+5.1m] launch: Tomcat 401 launched 2× AIM-54A Phoenix at Hornet 101
+   [T+5.2m] launch: Hornet 101 launched 2× AGM-84 Harpoon at Sina 103
+   [T+6.1m] launch: Hornet 101 launched 2× AIM-120C AMRAAM at Phantom 302 (alert)
+   [T+6.1m] launch: Phantom 302 (alert) launched 2× AIM-7E Sparrow at Hornet 102
+   [T+6.2m] launch: Hornet 102 launched 2× AIM-120C AMRAAM at Phantom 302 (alert)
+   [T+6.5m] hit: AIM-54A Phoenix hit Hornet 101!
+   [T+6.5m] destroyed: Hornet 101 has been destroyed!
+   [T+6.5m] hit: AIM-54A Phoenix hit Hornet 101!
+   [T+6.7m] launch: Phantom 302 (alert) launched 2× AIM-7E Sparrow at Hornet 102
+   [T+6.8m] launch: Hornet 102 launched 2× AIM-120C AMRAAM at Phantom 302 (alert)
+   [T+6.9m] hit: AIM-120C AMRAAM hit Phantom 302 (alert)!
+   [T+6.9m] destroyed: Phantom 302 (alert) has been destroyed!
+   [T+7.7m] hit: AGM-84 Harpoon hit Sina 103!
+   [T+7.7m] destroyed: Sina 103 has been destroyed!
+   [T+7.7m] hit: AGM-84 Harpoon hit Sina 103!
+   [T+8.8m] launch: Phantom 301 launched 2× AIM-7E Sparrow at Hornet 102
+   [T+8.9m] launch: Hornet 102 launched 2× AIM-120C AMRAAM at Phantom 301
+   [T+9.4m] hit: AIM-120C AMRAAM hit Phantom 301!
+   [T+9.4m] destroyed: Phantom 301 has been destroyed!
+   [T+9.4m] hit: AIM-120C AMRAAM hit Phantom 301!
+   [T+9.7m] launch: Tomcat 401 launched 2× AIM-7E Sparrow at Hornet 102
+   [T+12.8m] launch: Tomcat 401 launched 2× AIM-9P Sidewinder at Hornet 102
+T+20m CVN 57.41,25.28 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar us-e2c-1:unknown/esm | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.33,26.97 spd  25 thr 3 wp 56.20,28.10 (1) roe weapons-free radar on rngCVN 217km fired -
+   ir-fac-2  undamaged  pos 56.16,26.87 spd  25 thr 3 wp 56.22,28.01 (1) roe weapons-free radar on rngCVN 217km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 209km fired -
+   ir-pc-1   undamaged  pos 55.89,26.68 spd  25 thr 3 wp 56.28,27.74 (1) roe weapons-free radar on rngCVN 218km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 168km fired -
+   ir-ff-1   undamaged  pos 55.58,27.26 spd  15 thr 2 wp 56.36,27.00 (1) roe weapons-free radar on rngCVN 286km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 248km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 56.13,28.48 spd 550 thr 4 wp 56.11,28.55 (1) roe weapons-free radar on rngCVN 378km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 243km fired AIM-7E Sx4
+T+40m CVN 57.33,25.36 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar us-e2c-1:unknown/esm | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.31,27.10 spd  25 thr 3 wp 56.20,28.10 (1) roe weapons-free radar on rngCVN 219km fired -
+   ir-fac-2  undamaged  pos 56.17,27.01 spd  25 thr 3 wp 56.22,28.01 (1) roe weapons-free radar on rngCVN 217km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 197km fired -
+   ir-pc-1   undamaged  pos 55.94,26.81 spd  25 thr 3 wp 56.28,27.74 (1) roe weapons-free radar on rngCVN 213km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 156km fired -
+   ir-ff-1   undamaged  pos 55.67,27.24 spd  15 thr 2 wp 56.35,27.14 (1) roe weapons-free radar on rngCVN 267km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 236km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 55.61,31.01 spd 550 thr 4 wp 55.61,31.01 (1) roe weapons-free radar on rngCVN 650km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 231km fired AIM-7E Sx4
+T+60m CVN 57.24,25.44 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar us-e2c-1:unknown/esm | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.30,27.24 spd  25 thr 3 wp 56.20,28.10 (1) roe weapons-free radar on rngCVN 222km fired -
+   ir-fac-2  undamaged  pos 56.18,27.15 spd  25 thr 3 wp 56.22,28.01 (1) roe weapons-free radar on rngCVN 218km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 186km fired -
+   ir-pc-1   undamaged  pos 55.98,26.94 spd  25 thr 3 wp 56.28,27.74 (1) roe weapons-free radar on rngCVN 209km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 144km fired -
+   ir-ff-1   undamaged  pos 55.77,27.24 spd  15 thr 2 wp 56.33,27.28 (1) roe weapons-free radar on rngCVN 248km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 224km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 55.10,33.47 spd 550 thr 4 wp 55.10,33.48 (1) roe weapons-free radar on rngCVN 917km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 219km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.28,27.12 spd  15 thr 2 wp 56.30,27.00 (4) roe weapons-free radar on rngCVN 210km fired -
+   ir-bog-2  undamaged  pos 56.30,27.09 spd  15 thr 2 wp 56.30,27.00 (4) roe weapons-free radar on rngCVN 206km fired -
+T+80m CVN 57.15,25.51 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar us-e2c-1:unknown/esm | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.28,27.38 spd  25 thr 3 wp 56.20,28.10 (1) roe weapons-free radar on rngCVN 225km fired -
+   ir-fac-2  undamaged  pos 56.18,27.29 spd  25 thr 3 wp 56.22,28.01 (1) roe weapons-free radar on rngCVN 220km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 174km fired -
+   ir-pc-1   undamaged  pos 56.03,27.07 spd  25 thr 3 wp 56.28,27.74 (1) roe weapons-free radar on rngCVN 206km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 132km fired -
+   ir-ff-1   undamaged  pos 55.86,27.26 spd  15 thr 2 wp 56.32,27.42 (1) roe weapons-free radar on rngCVN 233km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 211km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 54.57,35.93 spd 550 thr 4 wp 54.57,35.94 (1) roe weapons-free radar on rngCVN 1184km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 208km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.29,27.04 spd  15 thr 2 wp 56.30,27.00 (4) roe weapons-free radar on rngCVN 190km fired -
+   ir-bog-2  undamaged  pos 56.30,27.01 spd  15 thr 2 wp 56.30,27.00 (4) roe weapons-free radar on rngCVN 186km fired -
+T+100m CVN 57.07,25.59 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.27,27.52 spd  25 thr 3 wp 56.20,28.10 (1) roe weapons-free radar on rngCVN 228km fired -
+   ir-fac-2  undamaged  pos 56.19,27.43 spd  25 thr 3 wp 56.22,28.01 (1) roe weapons-free radar on rngCVN 222km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 163km fired -
+   ir-pc-1   undamaged  pos 56.08,27.21 spd  25 thr 3 wp 56.28,27.74 (1) roe weapons-free radar on rngCVN 204km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 120km fired -
+   ir-ff-1   undamaged  pos 55.94,27.30 spd  15 thr 2 wp 56.30,27.55 (1) roe weapons-free radar on rngCVN 220km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 200km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 54.03,38.39 spd 550 thr 4 wp 54.03,38.40 (1) roe weapons-free radar on rngCVN 1451km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 196km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.32,26.96 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 169km fired -
+   ir-bog-2  undamaged  pos 56.34,26.93 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 165km fired -
+T+120m CVN 56.98,25.67 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.25,27.66 spd  25 thr 3 wp 56.20,28.10 (1) roe weapons-free radar on rngCVN 232km fired -
+   ir-fac-2  undamaged  pos 56.20,27.57 spd  25 thr 3 wp 56.22,28.01 (1) roe weapons-free radar on rngCVN 225km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 152km fired -
+   ir-pc-1   undamaged  pos 56.13,27.34 spd  25 thr 3 wp 56.28,27.74 (1) roe weapons-free radar on rngCVN 204km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 108km fired -
+   ir-ff-1   undamaged  pos 56.00,27.36 spd  15 thr 2 wp 56.29,27.69 (1) roe weapons-free radar on rngCVN 211km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 188km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 53.47,40.84 spd 550 thr 4 wp 53.46,40.86 (1) roe weapons-free radar on rngCVN 1718km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 184km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.36,26.88 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 148km fired -
+   ir-bog-2  undamaged  pos 56.37,26.85 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 145km fired -
+T+140m CVN 56.89,25.75 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.24,27.80 spd  25 thr 3 wp 56.20,28.10 (1) roe weapons-free radar on rngCVN 237km fired -
+   ir-fac-2  undamaged  pos 56.21,27.71 spd  25 thr 3 wp 56.22,28.01 (1) roe weapons-free radar on rngCVN 228km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 141km fired -
+   ir-pc-1   undamaged  pos 56.18,27.47 spd  25 thr 3 wp 56.28,27.74 (1) roe weapons-free radar on rngCVN 204km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 96km fired -
+   ir-ff-1   undamaged  pos 56.05,27.43 spd  15 thr 2 wp 56.27,27.83 (1) roe weapons-free radar on rngCVN 205km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 176km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 52.88,43.31 spd 550 thr 4 wp 52.88,43.32 (1) roe weapons-free radar on rngCVN 1986km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 172km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.40,26.81 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 127km fired -
+   ir-bog-2  undamaged  pos 56.41,26.78 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 124km fired -
+T+160m CVN 56.80,25.83 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.22,27.93 spd  25 thr 3 wp 56.20,28.10 (1) roe weapons-free radar on rngCVN 241km fired -
+   ir-fac-2  undamaged  pos 56.21,27.85 spd  25 thr 3 wp 56.22,28.01 (1) roe weapons-free radar on rngCVN 232km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 130km fired -
+   ir-pc-1   undamaged  pos 56.23,27.60 spd  25 thr 3 wp 56.28,27.74 (1) roe weapons-free radar on rngCVN 205km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 84km fired -
+   ir-ff-1   undamaged  pos 56.09,27.51 spd  15 thr 2 wp 56.25,27.97 (1) roe weapons-free radar on rngCVN 200km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 164km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 52.28,45.75 spd 550 thr 4 wp 52.27,45.78 (1) roe weapons-free radar on rngCVN 2251km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 161km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.44,26.73 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 107km fired -
+   ir-bog-2  undamaged  pos 56.45,26.70 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 103km fired -
+T+180m CVN 56.72,25.91 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.21,28.07 spd  25 thr 3 wp 56.20,28.10 (1) roe weapons-free radar on rngCVN 246km fired -
+   ir-fac-2  undamaged  pos 56.22,27.98 spd  25 thr 3 wp 56.22,28.01 (1) roe weapons-free radar on rngCVN 236km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 120km fired -
+   ir-pc-1   undamaged  pos 56.27,27.73 spd  25 thr 3 wp 56.28,27.74 (1) roe weapons-free radar on rngCVN 208km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 72km fired -
+   ir-ff-1   undamaged  pos 56.11,27.59 spd  15 thr 2 wp 56.24,28.11 (1) roe weapons-free radar on rngCVN 196km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 152km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 51.64,48.20 spd 550 thr 4 wp 51.63,48.24 (1) roe weapons-free radar on rngCVN 2518km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 150km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.47,26.65 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 87km fired -
+   ir-bog-2  undamaged  pos 56.49,26.62 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 83km fired -
+T+200m CVN 56.63,25.99 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/visual | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.22,28.04 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 232km fired -
+   ir-fac-2  undamaged  pos 56.24,27.94 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 221km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 110km fired -
+   ir-pc-1   undamaged  pos 56.28,27.66 spd  15 thr 2 wp 56.40,26.30 (3) roe weapons-free radar on rngCVN 190km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 61km fired -
+   ir-ff-1   undamaged  pos 56.12,27.67 spd  15 thr 2 wp 56.19,28.00 (1) roe weapons-free radar on rngCVN 194km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 141km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 50.98,50.64 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 2784km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 138km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.48,26.58 spd  15 thr 2 wp 56.20,26.20 (2) roe weapons-free radar on rngCVN 68km fired -
+   ir-bog-2  undamaged  pos 56.46,26.55 spd  15 thr 2 wp 56.20,26.20 (2) roe weapons-free radar on rngCVN 65km fired -
+T+220m CVN 56.54,26.06 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.23,27.95 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 212km fired -
+   ir-fac-2  undamaged  pos 56.25,27.86 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 201km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 100km fired -
+   ir-pc-1   undamaged  pos 56.29,27.58 spd  15 thr 2 wp 56.40,26.30 (3) roe weapons-free radar on rngCVN 170km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 50km fired -
+   ir-ff-1   undamaged  pos 56.15,27.75 spd  15 thr 2 wp 56.20,27.92 (1) roe weapons-free radar on rngCVN 192km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 129km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 50.27,53.15 spd 550 thr 4 wp 50.26,53.16 (1) roe weapons-free radar on rngCVN 3056km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 127km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.43,26.51 spd  15 thr 2 wp 56.20,26.20 (2) roe weapons-free radar on rngCVN 51km fired -
+   ir-bog-2  undamaged  pos 56.41,26.48 spd  15 thr 2 wp 56.20,26.20 (2) roe weapons-free radar on rngCVN 48km fired -
+T+240m CVN 56.45,26.14 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.25,27.87 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 193km fired -
+   ir-fac-2  undamaged  pos 56.27,27.77 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 182km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 91km fired -
+   ir-pc-1   undamaged  pos 56.30,27.50 spd  15 thr 2 wp 56.40,26.30 (3) roe weapons-free radar on rngCVN 151km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 40km fired -
+   ir-ff-1   undamaged  pos 56.19,27.82 spd  15 thr 2 wp 56.22,27.84 (1) roe weapons-free radar on rngCVN 188km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 118km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 49.52,55.61 spd 550 thr 4 wp 49.52,55.62 (1) roe weapons-free radar on rngCVN 3324km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 116km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.38,26.44 spd  15 thr 2 wp 56.20,26.20 (2) roe weapons-free radar on rngCVN 34km fired -
+   ir-bog-2  undamaged  pos 56.36,26.41 spd  15 thr 2 wp 56.20,26.20 (2) roe weapons-free radar on rngCVN 32km fired -
+T+260m CVN 56.37,26.22 spd 20 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.27,27.79 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 175km fired -
+   ir-fac-2  undamaged  pos 56.29,27.69 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 164km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 83km fired -
+   ir-pc-1   undamaged  pos 56.30,27.41 spd  15 thr 2 wp 56.40,26.30 (3) roe weapons-free radar on rngCVN 133km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 31km fired -
+   ir-ff-1   undamaged  pos 56.23,27.78 spd  15 thr 2 wp 56.24,27.75 (1) roe weapons-free radar on rngCVN 174km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 107km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 48.75,58.01 spd 550 thr 4 wp 48.73,58.08 (1) roe weapons-free radar on rngCVN 3585km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 106km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.33,26.37 spd  15 thr 2 wp 56.20,26.20 (2) roe weapons-free radar on rngCVN 17km fired -
+   ir-bog-2  undamaged  pos 56.31,26.35 spd  15 thr 2 wp 56.20,26.20 (2) roe weapons-free radar on rngCVN 15km fired -
+   [T+267.2m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+267.7m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+268.2m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+268.7m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+269.0m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+269.1m] hit: 107mm MRL (Fadjr-1 rockets) hit USS Nimitz (CVN-68)!
+   [T+269.2m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+269.5m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+269.7m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+270.0m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+270.2m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+270.5m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+270.7m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+271.0m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+271.2m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+271.5m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+271.7m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+271.8m] launch: Kaman 201 launched 4× C-802 Noor at USS Nimitz (CVN-68)
+   [T+271.9m] launch: USS Nimitz (CVN-68) launched Mk 15 Phalanx CIWS at Boghammar 502
+   [T+272.0m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+272.2m] launch: Boghammar 502 launched 12.7mm DShK MG at USS Nimitz (CVN-68)
+   [T+272.3m] hit: 12.7mm DShK MG hit USS Nimitz (CVN-68)!
+   [T+272.4m] launch: USS Nimitz (CVN-68) launched Mk 15 Phalanx CIWS at Boghammar 502
+   [T+272.5m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+272.7m] launch: Boghammar 502 launched 12.7mm DShK MG at USS Nimitz (CVN-68)
+   [T+272.9m] launch: USS Nimitz (CVN-68) launched Mk 15 Phalanx CIWS at Boghammar 502
+   [T+273.0m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+273.2m] launch: Boghammar 502 launched 12.7mm DShK MG at USS Nimitz (CVN-68)
+   [T+273.3m] hit: 12.7mm DShK MG hit USS Nimitz (CVN-68)!
+   [T+273.4m] launch: USS Nimitz (CVN-68) launched Mk 15 Phalanx CIWS at Boghammar 502
+   [T+273.5m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+273.7m] launch: Boghammar 502 launched 12.7mm DShK MG at USS Nimitz (CVN-68)
+   [T+273.8m] hit: 12.7mm DShK MG hit USS Nimitz (CVN-68)!
+   [T+273.9m] launch: USS Nimitz (CVN-68) launched Mk 15 Phalanx CIWS at Boghammar 502
+   [T+274.0m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+274.2m] launch: Boghammar 502 launched 12.7mm DShK MG at USS Nimitz (CVN-68)
+   [T+274.4m] launch: USS Nimitz (CVN-68) launched Mk 15 Phalanx CIWS at Boghammar 502
+   [T+274.5m] hit: Mk 15 Phalanx CIWS hit Boghammar 502!
+   [T+274.5m] damaged: Boghammar 502 is now mission-kill
+   [T+274.5m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+274.9m] launch: USS Nimitz (CVN-68) launched Mk 15 Phalanx CIWS at Boghammar 502
+   [T+275.0m] hit: Mk 15 Phalanx CIWS hit Boghammar 502!
+   [T+275.0m] destroyed: Boghammar 502 has been destroyed!
+   [T+275.0m] launch: Boghammar 501 launched 12.7mm DShK MG at USS Nimitz (CVN-68)
+   [T+275.4m] launch: USS Nimitz (CVN-68) launched Mk 15 Phalanx CIWS at Boghammar 501
+   [T+275.5m] launch: Boghammar 501 launched 12.7mm DShK MG at USS Nimitz (CVN-68)
+   [T+275.9m] launch: USS Nimitz (CVN-68) launched Mk 15 Phalanx CIWS at Boghammar 501
+   [T+276.0m] launch: Boghammar 501 launched 12.7mm DShK MG at USS Nimitz (CVN-68)
+   [T+276.1m] hit: Mk 15 Phalanx CIWS hit Boghammar 501!
+   [T+276.1m] damaged: Boghammar 501 is now mission-kill
+   [T+276.1m] hit: 12.7mm DShK MG hit USS Nimitz (CVN-68)!
+   [T+276.4m] launch: USS Nimitz (CVN-68) launched Mk 15 Phalanx CIWS at Boghammar 501
+   [T+276.9m] launch: USS Nimitz (CVN-68) launched Mk 15 Phalanx CIWS at Boghammar 501
+   [T+277.1m] hit: Mk 15 Phalanx CIWS hit Boghammar 501!
+   [T+277.1m] destroyed: Boghammar 501 has been destroyed!
+   [T+278.9m] hit: C-802 Noor hit USS Nimitz (CVN-68)!
+T+280m CVN 56.28,26.30 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:classified/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: classified
+   ir-fac-1  undamaged  pos 56.28,27.71 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 157km fired -
+   ir-fac-2  undamaged  pos 56.30,27.61 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 146km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 76km fired -
+   ir-pc-1   undamaged  pos 56.31,27.29 spd  25 thr 3 wp 56.28,26.28 (1) roe weapons-free radar on rngCVN 110km fired C-802 Nox4
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 26km fired -
+   ir-ff-1   undamaged  pos 56.25,27.70 spd  15 thr 2 wp 56.25,27.67 (1) roe weapons-free radar on rngCVN 156km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 96km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 47.88,60.53 spd 550 thr 4 wp 47.87,60.54 (1) roe weapons-free radar on rngCVN 3859km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 96km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 3km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 3km fired 107mm MRx10,12.7mm Dx5
+T+300m CVN 56.19,26.38 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:classified/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: classified
+   ir-fac-1  undamaged  pos 56.30,27.63 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 139km fired -
+   ir-fac-2  undamaged  pos 56.31,27.52 spd  25 thr 3 wp 56.20,26.38 (1) roe weapons-free radar on rngCVN 127km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 71km fired -
+   ir-pc-1   undamaged  pos 56.30,27.15 spd  25 thr 3 wp 56.20,26.38 (1) roe weapons-free radar on rngCVN 86km fired C-802 Nox4
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 26km fired -
+   ir-ff-1   undamaged  pos 56.26,27.62 spd  15 thr 2 wp 56.27,27.59 (1) roe weapons-free radar on rngCVN 138km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 85km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 46.96,62.99 spd 550 thr 4 wp 46.96,63.00 (1) roe weapons-free radar on rngCVN 4127km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 87km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 15km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 16km fired 107mm MRx10,12.7mm Dx5
+   [T+305.3m] launch: Sina 102 launched 4× C-802 Noor at USS Nimitz (CVN-68)
+   [T+319.2m] launch: Sina 101 launched 4× C-802 Noor at USS Nimitz (CVN-68)
+T+320m CVN 56.10,26.46 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:classified/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: classified
+   ir-fac-1  undamaged  pos 56.30,27.52 spd  25 thr 3 wp 56.09,26.46 (1) roe weapons-free radar on rngCVN 119km fired C-802 Nox4
+   ir-fac-2  undamaged  pos 56.29,27.38 spd  25 thr 3 wp 56.09,26.46 (1) roe weapons-free radar on rngCVN 104km fired C-802 Nox4
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 68km fired -
+   ir-pc-1   undamaged  pos 56.27,27.01 spd  25 thr 3 wp 56.09,26.46 (1) roe weapons-free radar on rngCVN 64km fired C-802 Nox4
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 31km fired -
+   ir-ff-1   undamaged  pos 56.27,27.53 spd  15 thr 2 wp 56.25,27.49 (1) roe weapons-free radar on rngCVN 121km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 76km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 45.96,65.45 spd 550 thr 4 wp 45.96,65.46 (1) roe weapons-free radar on rngCVN 4394km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 78km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 27km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 28km fired 107mm MRx10,12.7mm Dx5
+T+340m CVN 56.02,26.53 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:classified/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: classified
+   ir-fac-1  undamaged  pos 56.26,27.38 spd  25 thr 3 wp 56.02,26.54 (1) roe weapons-free radar on rngCVN 97km fired C-802 Nox4
+   ir-fac-2  undamaged  pos 56.26,27.24 spd  25 thr 3 wp 56.02,26.54 (1) roe weapons-free radar on rngCVN 82km fired C-802 Nox4
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 67km fired -
+   ir-pc-1   undamaged  pos 56.21,26.88 spd  25 thr 3 wp 56.02,26.54 (1) roe weapons-free radar on rngCVN 43km fired C-802 Nox4
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 40km fired -
+   ir-ff-1   undamaged  pos 56.25,27.45 spd  15 thr 2 wp 56.22,27.36 (1) roe weapons-free radar on rngCVN 105km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 67km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 44.86,67.91 spd 550 thr 4 wp 44.86,67.92 (1) roe weapons-free radar on rngCVN 4662km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 71km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 39km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 40km fired 107mm MRx10,12.7mm Dx5
+T+360m CVN 55.93,26.61 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:classified/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: classified
+   ir-fac-1  undamaged  pos 56.22,27.25 spd  25 thr 3 wp 55.94,26.61 (1) roe weapons-free radar on rngCVN 76km fired C-802 Nox4
+   ir-fac-2  undamaged  pos 56.20,27.11 spd  25 thr 3 wp 55.94,26.61 (1) roe weapons-free radar on rngCVN 62km fired C-802 Nox4
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 68km fired -
+   ir-pc-1   undamaged  pos 56.12,26.77 spd  25 thr 3 wp 55.94,26.61 (1) roe weapons-free radar on rngCVN 26km fired C-802 Nox4
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 50km fired -
+   ir-ff-1   undamaged  pos 56.22,27.37 spd  15 thr 2 wp 56.17,27.23 (1) roe weapons-free radar on rngCVN 89km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 59km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 43.64,70.37 spd 550 thr 4 wp 43.64,70.38 (1) roe weapons-free radar on rngCVN 4928km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 65km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 52km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 53km fired 107mm MRx10,12.7mm Dx5
+   [T+378.8m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Mahan (DDG-72)
+   [T+378.9m] launch: USS Mahan (DDG-72) launched 6× RGM-84 Harpoon at Kaman 201
+   [T+379.4m] hit: RGM-84 Harpoon hit Kaman 201!
+   [T+379.4m] destroyed: Kaman 201 has been destroyed!
+   [T+379.4m] hit: RGM-84 Harpoon hit Kaman 201!
+   [T+379.4m] hit: RGM-84 Harpoon hit Kaman 201!
+T+380m CVN 55.84,26.69 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:tracked/esm us-cg-1:unknown/esm us-ddg-1:tracked/radar us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: tracked
+   ir-fac-1  undamaged  pos 56.15,27.12 spd  25 thr 3 wp 55.84,26.69 (1) roe weapons-free radar on rngCVN 57km fired C-802 Nox4
+   ir-fac-2  undamaged  pos 56.12,27.00 spd  25 thr 3 wp 55.84,26.69 (1) roe weapons-free radar on rngCVN 44km fired C-802 Nox4
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 71km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 21km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 61km fired -
+   ir-ff-1   undamaged  pos 56.19,27.30 spd  15 thr 2 wp 56.10,27.12 (1) roe weapons-free radar on rngCVN 75km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 53km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 42.28,72.81 spd 550 thr 4 wp 42.26,72.84 (1) roe weapons-free radar on rngCVN 5193km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 61km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 64km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 65km fired 107mm MRx10,12.7mm Dx5
+T+400m CVN 55.75,26.77 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:tracked/esm us-cg-1:unknown/esm us-ddg-1:tracked/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: tracked
+   ir-fac-1  undamaged  pos 56.06,27.01 spd  25 thr 3 wp 55.96,26.67 (1) roe weapons-free radar on rngCVN 40km fired C-802 Nox4
+   ir-fac-2  undamaged  pos 56.05,26.88 spd  25 thr 3 wp 55.96,26.67 (1) roe weapons-free radar on rngCVN 32km fired C-802 Nox4
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 76km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 31km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 72km fired -
+   ir-ff-1   undamaged  pos 56.14,27.22 spd  15 thr 2 wp 56.01,26.99 (1) roe weapons-free radar on rngCVN 63km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 50km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 40.68,75.29 spd 550 thr 4 wp 40.68,75.30 (1) roe weapons-free radar on rngCVN 5461km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 59km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 76km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 77km fired 107mm MRx10,12.7mm Dx5
+T+420m CVN 55.67,26.85 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:tracked/esm us-cg-1:unknown/esm us-ddg-1:tracked/radar us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: tracked
+   ir-fac-1  undamaged  pos 55.99,26.89 spd  25 thr 3 wp 55.87,26.74 (1) roe weapons-free radar on rngCVN 33km fired C-802 Nox4
+   ir-fac-2  undamaged  pos 55.95,26.78 spd  25 thr 3 wp 55.87,26.74 (1) roe weapons-free radar on rngCVN 29km fired C-802 Nox4
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 82km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 43km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 84km fired -
+   ir-ff-1   undamaged  pos 56.10,27.15 spd  15 thr 2 wp 55.94,26.88 (1) roe weapons-free radar on rngCVN 55km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 49km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 38.82,77.75 spd 550 thr 4 wp 38.81,77.76 (1) roe weapons-free radar on rngCVN 5726km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 60km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 89km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 90km fired 107mm MRx10,12.7mm Dx5
+T+440m CVN 55.58,26.93 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:tracked/esm us-cg-1:unknown/esm us-ddg-1:tracked/radar us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: tracked
+   ir-fac-1  undamaged  pos 55.86,26.83 spd  25 thr 3 wp 55.78,26.82 (1) roe weapons-free radar on rngCVN 30km fired C-802 Nox4
+   ir-fac-2  undamaged  pos 55.81,26.81 spd  25 thr 3 wp 55.78,26.82 (1) roe weapons-free radar on rngCVN 26km fired C-802 Nox4
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 90km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 55km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 96km fired -
+   ir-ff-1   undamaged  pos 56.05,27.08 spd  15 thr 2 wp 55.82,26.86 (1) roe weapons-free radar on rngCVN 50km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 51km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 36.54,80.21 spd 550 thr 4 wp 36.53,80.22 (1) roe weapons-free radar on rngCVN 5991km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 63km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 101km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 102km fired 107mm MRx10,12.7mm Dx5
+   [T+444.2m] launch: Sina 102 launched 23mm ZU-23-2 at USS Mahan (DDG-72)
+   [T+444.3m] launch: USS Mahan (DDG-72) launched 2× RGM-84 Harpoon at Sina 102
+   [T+444.4m] hit: RGM-84 Harpoon hit Sina 102!
+   [T+444.4m] destroyed: Sina 102 has been destroyed!
+   [T+444.4m] hit: RGM-84 Harpoon hit Sina 102!
+T+460m CVN 55.49,27.01 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:tracked/esm us-cg-1:unknown/esm us-ddg-1:tracked/visual us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/visual | on CVN: tracked
+   ir-fac-1  undamaged  pos 55.72,26.88 spd  25 thr 3 wp 55.69,26.91 (1) roe weapons-free radar on rngCVN 27km fired C-802 Nox4
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 35km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 99km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 67km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 108km fired -
+   ir-ff-1   undamaged  pos 55.97,27.03 spd  15 thr 2 wp 55.72,26.93 (1) roe weapons-free radar on rngCVN 48km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 57km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 33.60,82.67 spd 550 thr 4 wp 33.59,82.68 (1) roe weapons-free radar on rngCVN 6253km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 69km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 114km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 114km fired 107mm MRx10,12.7mm Dx5
+   [T+467.9m] launch: Sina 101 launched 23mm ZU-23-2 at USS Mahan (DDG-72)
+   [T+468.0m] launch: USS Mahan (DDG-72) launched 4× RIM-66M SM-2MR at Sina 101
+   [T+468.1m] hit: RIM-66M SM-2MR hit Sina 101!
+   [T+468.1m] damaged: Sina 101 is now mission-kill
+   [T+468.1m] hit: RIM-66M SM-2MR hit Sina 101!
+   [T+468.1m] destroyed: Sina 101 has been destroyed!
+T+480m CVN 55.40,27.08 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:tracked/esm us-cg-1:unknown/esm us-ddg-1:tracked/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: tracked
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 33km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 47km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 108km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 79km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 120km fired -
+   ir-ff-1   undamaged  pos 55.88,27.01 spd  15 thr 2 wp 55.67,26.96 (1) roe weapons-free radar on rngCVN 49km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 64km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 29.46,85.13 spd 550 thr 4 wp 29.44,85.14 (1) roe weapons-free radar on rngCVN 6512km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 76km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 126km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 127km fired 107mm MRx10,12.7mm Dx5
+T+500m CVN 55.31,27.16 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:tracked/esm us-cg-1:unknown/esm us-ddg-1:tracked/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: tracked
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 45km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 59km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 118km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 91km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 132km fired -
+   ir-ff-1   undamaged  pos 55.79,26.99 spd  15 thr 2 wp 55.67,26.96 (1) roe weapons-free radar on rngCVN 51km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 72km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos 22.33,87.59 spd 550 thr 4 wp 22.29,87.60 (1) roe weapons-free radar on rngCVN 6764km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 84km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 138km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 139km fired 107mm MRx10,12.7mm Dx5
+T+520m CVN 55.22,27.24 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:tracked/esm us-cg-1:unknown/esm us-ddg-1:tracked/esm us-ddg-2:unknown/esm us-ffg-1:unknown/esm us-fa18-2:tracked/radar | on CVN: tracked
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 57km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 72km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 129km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 103km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 144km fired -
+   ir-ff-1   undamaged  pos 55.70,26.97 spd  15 thr 2 wp 55.67,26.96 (1) roe weapons-free radar on rngCVN 56km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 82km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos -1733.14,90.00 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 6978km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 93km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 151km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 151km fired 107mm MRx10,12.7mm Dx5
+T+540m CVN 55.14,27.32 spd 20 dmg 180 undamaged
+   Iran contacts: us-cvn-1:tracked/esm us-cg-1:unknown/esm us-ddg-1:tracked/esm us-ddg-2:unknown/esm us-ffg-1:tracked/radar us-fa18-2:tracked/radar | on CVN: tracked
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 69km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 84km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 139km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 116km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 156km fired -
+   ir-ff-1   undamaged  pos 55.67,26.96 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 66km fired -
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 92km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos -65723.75,89.99 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 6970km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 103km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 163km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 164km fired 107mm MRx10,12.7mm Dx5
+   [T+543.7m] launch: Bayandor (FF-81) launched 76mm Fajr-27 (OTO Melara type, approx.) at USS Nitze (DDG-94)
+   [T+543.8m] launch: USS Nitze (DDG-94) launched 8× RGM-84 Harpoon at Bayandor (FF-81)
+   [T+544.4m] launch: Bayandor (FF-81) launched 76mm Fajr-27 (OTO Melara type, approx.) at USS Nitze (DDG-94)
+   [T+544.4m] hit: RGM-84 Harpoon hit Bayandor (FF-81)!
+   [T+544.4m] damaged: Bayandor (FF-81) is now damaged
+   [T+544.4m] hit: RGM-84 Harpoon hit Bayandor (FF-81)!
+   [T+544.4m] destroyed: Bayandor (FF-81) has been destroyed!
+   [T+544.4m] hit: RGM-84 Harpoon hit Bayandor (FF-81)!
+   [T+544.4m] hit: RGM-84 Harpoon hit Bayandor (FF-81)!
+   [T+544.4m] hit: RGM-84 Harpoon hit Bayandor (FF-81)!
+   [T+544.4m] hit: RGM-84 Harpoon hit Bayandor (FF-81)!
+   [T+544.4m] hit: RGM-84 Harpoon hit Bayandor (FF-81)!
+   [T+544.4m] hit: RGM-84 Harpoon hit Bayandor (FF-81)!
+   [T+545.0m] hit: 76mm Fajr-27 (OTO Melara type, approx.) hit USS Nitze (DDG-94)!
+T+560m CVN 55.05,27.40 spd 20 dmg 180 undamaged
+   Iran contacts: us-fa18-2:tracked/radar | on CVN: none
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 82km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 96km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 150km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 128km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 168km fired -
+   ir-ff-1   destroyed  pos 55.67,26.96 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 79km fired 76mm Fajx2
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 103km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos -129723.75,90.00 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 6961km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 113km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 175km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 176km fired 107mm MRx10,12.7mm Dx5
+T+580m CVN 54.96,27.48 spd 20 dmg 180 undamaged
+   Iran contacts: us-fa18-2:tracked/radar | on CVN: none
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 94km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 109km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 161km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 140km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 181km fired -
+   ir-ff-1   destroyed  pos 55.67,26.96 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 91km fired 76mm Fajx2
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 114km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos -193723.75,90.00 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 6952km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 124km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 188km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 188km fired 107mm MRx10,12.7mm Dx5
+T+600m CVN 54.87,27.56 spd 20 dmg 180 undamaged
+   Iran contacts: us-fa18-2:tracked/radar | on CVN: none
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 106km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 121km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 173km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 152km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 193km fired -
+   ir-ff-1   destroyed  pos 55.67,26.96 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 103km fired 76mm Fajx2
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 125km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos -257723.75,90.00 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 6943km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 135km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 200km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 201km fired 107mm MRx10,12.7mm Dx5
+T+620m CVN 54.78,27.63 spd 20 dmg 180 undamaged
+   Iran contacts: us-fa18-2:tracked/radar | on CVN: none
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 119km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 133km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 184km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 165km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 205km fired -
+   ir-ff-1   destroyed  pos 55.67,26.96 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 115km fired 76mm Fajx2
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 136km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos -321723.75,89.99 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 6935km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 146km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 212km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 213km fired 107mm MRx10,12.7mm Dx5
+T+640m CVN 54.69,27.71 spd 20 dmg 180 undamaged
+   Iran contacts: us-fa18-2:tracked/radar | on CVN: none
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 131km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 146km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 196km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 177km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 217km fired -
+   ir-ff-1   destroyed  pos 55.67,26.96 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 128km fired 76mm Fajx2
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 148km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos -385723.75,90.00 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 6926km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 157km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 225km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 225km fired 107mm MRx10,12.7mm Dx5
+T+660m CVN 54.60,27.79 spd 20 dmg 180 undamaged
+   Iran contacts: us-fa18-2:tracked/radar | on CVN: none
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 143km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 158km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 207km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 189km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 230km fired -
+   ir-ff-1   destroyed  pos 55.67,26.96 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 140km fired 76mm Fajx2
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 159km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos -449723.75,90.00 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 6918km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 169km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 237km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 238km fired 107mm MRx10,12.7mm Dx5
+T+680m CVN 54.52,27.87 spd 20 dmg 180 undamaged
+   Iran contacts: us-fa18-2:tracked/radar | on CVN: none
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 156km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 170km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 219km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 202km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 242km fired -
+   ir-ff-1   destroyed  pos 55.67,26.96 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 152km fired 76mm Fajx2
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 171km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos -513723.75,90.00 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 6908km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 181km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 249km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 250km fired 107mm MRx10,12.7mm Dx5
+T+700m CVN 54.43,27.95 spd 20 dmg 180 undamaged
+   Iran contacts: us-fa18-2:tracked/radar | on CVN: none
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 168km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 183km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 231km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 214km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 254km fired -
+   ir-ff-1   destroyed  pos 55.67,26.96 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 165km fired 76mm Fajx2
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 183km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos -575803.75,90.00 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 6900km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 192km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 262km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 263km fired 107mm MRx10,12.7mm Dx5
+T+720m CVN 54.34,28.03 spd 20 dmg 180 undamaged
+   Iran contacts: us-fa18-2:tracked/radar | on CVN: none
+   ir-fac-1  destroyed  pos 55.67,26.92 spd  25 thr 3 wp 55.66,26.94 (1) roe weapons-free radar on rngCVN 180km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-2  destroyed  pos 55.78,26.83 spd  25 thr 3 wp 55.76,26.84 (1) roe weapons-free radar on rngCVN 195km fired C-802 Nox4,23mm ZU-x1
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.43,26.97 (1) roe weapons-free radar on rngCVN 243km fired -
+   ir-pc-1   destroyed  pos 56.05,26.67 spd  25 thr 3 wp 56.05,26.59 (1) roe weapons-free radar on rngCVN 226km fired C-802 Nox4,76mm OTOx1
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.50,26.62 (1) roe weapons-free radar on rngCVN 266km fired -
+   ir-ff-1   destroyed  pos 55.67,26.96 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 177km fired 76mm Fajx2
+   ir-f4-1   destroyed  pos 56.04,27.13 spd 550 thr 4 wp 56.37,27.23 (1) roe weapons-free radar on rngCVN 195km fired AIM-7E Sx2
+   ir-f14-1  undamaged  pos -641723.75,90.00 spd   0 thr 4 wp - (0) roe weapons-free radar on rngCVN 6891km fired AIM-54A x4,AIM-7E Sx2,AIM-9P Sx2
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 204km fired AIM-7E Sx4
+   ir-bog-1  destroyed  pos 56.31,26.29 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 274km fired 107mm MRx12,12.7mm Dx3
+   ir-bog-2  destroyed  pos 56.30,26.28 spd  30 thr 4 wp 56.30,27.00 (1) roe weapons-free radar on rngCVN 275km fired 107mm MRx10,12.7mm Dx5
+seed 1: undecided at T+12.00h | CVN dmg 180/3600 undamaged | launches@CVN 33 hits@CVN 6 | US lost [us-fa18-1] | Iran lost 10/11 [ir-fac-1,ir-fac-2,ir-fac-3,ir-pc-1,ir-pc-2,ir-ff-1,ir-f4-1,ir-f4-2,ir-bog-1,ir-bog-2]
+seed 2: undecided at T+48.00h | CVN dmg 0/3600 undamaged | launches@CVN 0 hits@CVN 0 | US lost [us-fa18-1,us-fa18-2] | Iran lost 9/11 [ir-fac-1,ir-fac-2,ir-fac-3,ir-pc-1,ir-pc-2,ir-ff-1,ir-f4-2,ir-bog-1,ir-bog-2]
+seed 3: undecided at T+48.00h | CVN dmg 356/3600 undamaged | launches@CVN 31 hits@CVN 7 | US lost [] | Iran lost 9/11 [ir-fac-1,ir-fac-2,ir-fac-3,ir-pc-1,ir-pc-2,ir-ff-1,ir-f4-1,ir-f14-1,ir-f4-2]
+seed 4: undecided at T+48.00h | CVN dmg 359/3600 undamaged | launches@CVN 25 hits@CVN 7 | US lost [] | Iran lost 9/11 [ir-fac-1,ir-fac-2,ir-fac-3,ir-pc-1,ir-pc-2,ir-ff-1,ir-f4-1,ir-f14-1,ir-f4-2]
+seed 5: undecided at T+48.00h | CVN dmg 444/3600 undamaged | launches@CVN 172 hits@CVN 51 | US lost [] | Iran lost 8/11 [ir-fac-1,ir-fac-2,ir-fac-3,ir-pc-1,ir-pc-2,ir-ff-1,ir-f4-1,ir-f4-2]
+===== PLAN careless =====
+T+0m CVN 57.50,25.20 spd 20 dmg 0 undamaged
+   Iran contacts:  | on CVN: none
+   ir-fac-1  undamaged  pos 56.30,26.90 spd  15 thr 2 wp - (0) roe weapons-free radar on rngCVN 224km fired -
+   ir-fac-2  undamaged  pos 56.10,26.80 spd  15 thr 2 wp - (0) roe weapons-free radar on rngCVN 226km fired -
+   ir-fac-3  undamaged  pos 56.50,27.00 spd  12 thr 2 wp - (0) roe weapons-free radar on rngCVN 224km fired -
+   ir-pc-1   undamaged  pos 55.80,26.60 spd  10 thr 2 wp - (0) roe weapons-free radar on rngCVN 231km fired -
+   ir-pc-2   undamaged  pos 56.40,26.50 spd  10 thr 2 wp - (0) roe weapons-free radar on rngCVN 182km fired -
+   ir-ff-1   undamaged  pos 55.50,27.30 spd  12 thr 2 wp - (0) roe weapons-free radar on rngCVN 307km fired -
+   ir-f4-1   undamaged  pos 55.00,27.50 spd 400 thr 2 wp - (0) roe weapons-free radar on rngCVN 357km fired -
+   ir-f14-1  undamaged  pos 55.30,27.80 spd 420 thr 2 wp - (0) roe weapons-free radar on rngCVN 363km fired -
+   ir-f4-2   undamaged  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 255km fired -
+   [T+4.0m] launch: Tomcat 401 launched 2× AIM-54A Phoenix at Hornet 102
+   [T+4.0m] launch: Hornet 102 launched 2× AGM-84 Harpoon at Kaman 202
+   [T+4.8m] hit: AGM-84 Harpoon hit Kaman 202!
+   [T+4.8m] destroyed: Kaman 202 has been destroyed!
+   [T+4.8m] hit: AGM-84 Harpoon hit Kaman 202!
+   [T+4.8m] launch: Tomcat 401 launched 2× AIM-54A Phoenix at Hornet 101
+   [T+5.0m] launch: Hornet 101 launched 2× AGM-84 Harpoon at Sina 103
+   [T+6.1m] launch: Hornet 101 launched 2× AIM-120C AMRAAM at Phantom 302 (alert)
+   [T+6.1m] launch: Phantom 302 (alert) launched 2× AIM-7E Sparrow at Hornet 102
+   [T+6.2m] launch: Hornet 102 launched 2× AIM-120C AMRAAM at Phantom 302 (alert)
+   [T+6.3m] hit: AIM-54A Phoenix hit Hornet 101!
+   [T+6.3m] destroyed: Hornet 101 has been destroyed!
+   [T+6.7m] launch: Phantom 302 (alert) launched 2× AIM-7E Sparrow at Hornet 102
+   [T+6.8m] hit: AIM-120C AMRAAM hit Phantom 302 (alert)!
+   [T+6.8m] destroyed: Phantom 302 (alert) has been destroyed!
+   [T+7.2m] hit: AIM-7E Sparrow hit Hornet 102!
+   [T+7.2m] destroyed: Hornet 102 has been destroyed!
+   [T+7.2m] hit: AIM-7E Sparrow hit Hornet 102!
+   [T+7.7m] hit: AGM-84 Harpoon hit Sina 103!
+   [T+7.7m] destroyed: Sina 103 has been destroyed!
+   [T+7.7m] hit: AGM-84 Harpoon hit Sina 103!
+T+20m CVN 57.40,25.34 spd 30 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/radar us-ffg-1:unknown/esm us-e2c-1:unknown/radar | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.42,26.92 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 201km fired -
+   ir-fac-2  undamaged  pos 56.23,26.83 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 203km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 202km fired -
+   ir-pc-1   undamaged  pos 55.93,26.65 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 206km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.49,26.67 (1) roe weapons-free radar on rngCVN 162km fired -
+   ir-ff-1   undamaged  pos 55.58,27.26 spd  15 thr 2 wp 56.46,26.91 (1) roe weapons-free radar on rngCVN 280km fired -
+   ir-f4-1   undamaged  pos 55.94,27.02 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 237km fired -
+   ir-f14-1  undamaged  pos 55.84,27.06 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 247km fired AIM-54A x4
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 237km fired AIM-7E Sx4
+T+40m CVN 57.30,25.48 spd 30 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/radar us-ffg-1:unknown/esm us-e2c-1:unknown/esm | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.45,26.86 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 175km fired -
+   ir-fac-2  undamaged  pos 56.37,26.90 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 183km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 184km fired -
+   ir-pc-1   undamaged  pos 56.06,26.72 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 185km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.49,26.67 (1) roe weapons-free radar on rngCVN 144km fired -
+   ir-ff-1   undamaged  pos 55.67,27.22 spd  15 thr 2 wp 56.42,26.82 (1) roe weapons-free radar on rngCVN 253km fired -
+   ir-f4-1   undamaged  pos 55.93,27.03 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 220km fired -
+   ir-f14-1  undamaged  pos 55.83,27.07 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 230km fired AIM-54A x4
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 218km fired AIM-7E Sx4
+T+60m CVN 57.20,25.62 spd 30 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/radar us-cg-1:unknown/radar us-ddg-1:unknown/esm us-ddg-2:unknown/radar us-ffg-1:unknown/esm us-e2c-1:unknown/esm | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.47,26.78 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 148km fired -
+   ir-fac-2  undamaged  pos 56.44,26.89 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 160km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 165km fired -
+   ir-pc-1   undamaged  pos 56.19,26.79 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 165km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.49,26.67 (1) roe weapons-free radar on rngCVN 125km fired -
+   ir-ff-1   undamaged  pos 55.74,27.18 spd  15 thr 2 wp 56.44,26.74 (1) roe weapons-free radar on rngCVN 226km fired -
+   ir-f4-1   undamaged  pos 55.91,27.04 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 204km fired -
+   ir-f14-1  undamaged  pos 55.81,27.08 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 213km fired AIM-54A x4
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 200km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.28,27.12 spd  15 thr 2 wp 56.30,27.00 (4) roe weapons-free radar on rngCVN 190km fired -
+   ir-bog-2  undamaged  pos 56.30,27.09 spd  15 thr 2 wp 56.30,27.00 (4) roe weapons-free radar on rngCVN 186km fired -
+T+80m CVN 57.10,25.76 spd 30 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/radar us-cg-1:unknown/radar us-ddg-1:unknown/esm us-ddg-2:unknown/radar us-ffg-1:unknown/esm us-e2c-1:unknown/esm | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.48,26.70 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 121km fired -
+   ir-fac-2  undamaged  pos 56.46,26.81 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 133km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 147km fired -
+   ir-pc-1   undamaged  pos 56.33,26.87 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 145km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.49,26.67 (1) roe weapons-free radar on rngCVN 107km fired -
+   ir-ff-1   undamaged  pos 55.82,27.13 spd  15 thr 2 wp 56.45,26.66 (1) roe weapons-free radar on rngCVN 198km fired -
+   ir-f4-1   undamaged  pos 55.89,27.04 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 187km fired -
+   ir-f14-1  undamaged  pos 55.79,27.08 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 197km fired AIM-54A x4
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 181km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.29,27.04 spd  15 thr 2 wp 56.30,27.00 (4) roe weapons-free radar on rngCVN 163km fired -
+   ir-bog-2  undamaged  pos 56.30,27.00 spd  15 thr 2 wp 56.30,27.00 (4) roe weapons-free radar on rngCVN 160km fired -
+T+100m CVN 57.00,25.90 spd 30 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/radar us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:unknown/radar us-ffg-1:unknown/esm us-e2c-1:unknown/esm | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.50,26.61 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 94km fired -
+   ir-fac-2  undamaged  pos 56.48,26.73 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 106km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 129km fired -
+   ir-pc-1   undamaged  pos 56.44,26.92 spd  15 thr 2 wp 56.40,26.30 (3) roe weapons-free radar on rngCVN 126km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.49,26.67 (1) roe weapons-free radar on rngCVN 89km fired -
+   ir-ff-1   undamaged  pos 55.89,27.07 spd  15 thr 2 wp 56.47,26.58 (1) roe weapons-free radar on rngCVN 171km fired -
+   ir-f4-1   undamaged  pos 55.88,27.05 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 170km fired -
+   ir-f14-1  undamaged  pos 55.78,27.09 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 180km fired AIM-54A x4
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 163km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.32,26.96 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 136km fired -
+   ir-bog-2  undamaged  pos 56.34,26.93 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 132km fired -
+T+120m CVN 56.90,26.04 spd 30 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/radar us-ddg-1:unknown/esm us-ddg-2:unknown/radar us-ffg-1:unknown/esm | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.46,26.54 spd  15 thr 2 wp 56.20,26.20 (3) roe weapons-free radar on rngCVN 71km fired -
+   ir-fac-2  undamaged  pos 56.49,26.64 spd  15 thr 2 wp 56.50,26.60 (4) roe weapons-free radar on rngCVN 78km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 110km fired -
+   ir-pc-1   undamaged  pos 56.43,26.83 spd  15 thr 2 wp 56.40,26.30 (3) roe weapons-free radar on rngCVN 100km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.49,26.67 (1) roe weapons-free radar on rngCVN 70km fired -
+   ir-ff-1   undamaged  pos 55.95,27.01 spd  15 thr 2 wp 56.41,26.53 (1) roe weapons-free radar on rngCVN 143km fired -
+   ir-f4-1   undamaged  pos 55.86,27.06 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 153km fired -
+   ir-f14-1  undamaged  pos 55.76,27.10 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 163km fired AIM-54A x4
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 144km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.36,26.88 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 108km fired -
+   ir-bog-2  undamaged  pos 56.37,26.85 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 104km fired -
+T+140m CVN 56.80,26.18 spd 30 dmg 0 undamaged
+   Iran contacts: us-cvn-1:unknown/esm us-cg-1:unknown/radar us-ddg-1:unknown/radar us-ddg-2:unknown/esm us-ffg-1:unknown/esm | on CVN: unknown
+   ir-fac-1  undamaged  pos 56.41,26.47 spd  15 thr 2 wp 56.20,26.20 (3) roe weapons-free radar on rngCVN 51km fired -
+   ir-fac-2  undamaged  pos 56.48,26.57 spd  15 thr 2 wp 56.20,26.20 (3) roe weapons-free radar on rngCVN 54km fired -
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 92km fired -
+   ir-pc-1   undamaged  pos 56.43,26.75 spd  15 thr 2 wp 56.40,26.30 (3) roe weapons-free radar on rngCVN 74km fired -
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.49,26.67 (1) roe weapons-free radar on rngCVN 52km fired -
+   ir-ff-1   undamaged  pos 56.01,26.94 spd  15 thr 2 wp 56.36,26.47 (1) roe weapons-free radar on rngCVN 116km fired -
+   ir-f4-1   undamaged  pos 55.84,27.06 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 137km fired -
+   ir-f14-1  undamaged  pos 55.74,27.10 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 147km fired AIM-54A x4
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 126km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.40,26.80 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 80km fired -
+   ir-bog-2  undamaged  pos 56.41,26.78 spd  15 thr 2 wp 56.50,26.60 (3) roe weapons-free radar on rngCVN 77km fired -
+   [T+152.8m] launch: Sina 101 launched 4× C-802 Noor at USS Nimitz (CVN-68)
+   [T+152.8m] launch: Sina 102 launched 4× C-802 Noor at USS Nimitz (CVN-68)
+   [T+152.8m] launch: Kaman 201 launched 4× C-802 Noor at USS Nimitz (CVN-68)
+   [T+155.1m] hit: C-802 Noor hit USS Nimitz (CVN-68)!
+   [T+155.1m] hit: C-802 Noor hit USS Nimitz (CVN-68)!
+T+160m CVN 56.69,26.32 spd 30 dmg 334 undamaged
+   Iran contacts: us-cvn-1:detected/esm us-cg-1:unknown/esm us-ddg-1:unknown/radar us-ddg-2:unknown/esm us-ffg-1:unknown/esm | on CVN: detected
+   ir-fac-1  undamaged  pos 56.42,26.41 spd  25 thr 3 wp 56.69,26.32 (1) roe weapons-free radar on rngCVN 29km fired C-802 Nox4
+   ir-fac-2  undamaged  pos 56.48,26.49 spd  25 thr 3 wp 56.69,26.32 (1) roe weapons-free radar on rngCVN 28km fired C-802 Nox4
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 74km fired -
+   ir-pc-1   undamaged  pos 56.45,26.65 spd  25 thr 3 wp 56.69,26.32 (1) roe weapons-free radar on rngCVN 45km fired C-802 Nox4
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.49,26.67 (1) roe weapons-free radar on rngCVN 34km fired -
+   ir-ff-1   undamaged  pos 56.06,26.87 spd  15 thr 2 wp 56.44,26.37 (1) roe weapons-free radar on rngCVN 88km fired -
+   ir-f4-1   undamaged  pos 55.83,27.07 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 120km fired -
+   ir-f14-1  undamaged  pos 55.73,27.11 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 130km fired AIM-54A x4
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 107km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.45,26.71 spd  25 thr 3 wp 56.69,26.32 (1) roe weapons-free radar on rngCVN 50km fired -
+   ir-bog-2  undamaged  pos 56.46,26.68 spd  25 thr 3 wp 56.69,26.32 (1) roe weapons-free radar on rngCVN 47km fired -
+   [T+176.3m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+176.8m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+177.3m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+177.8m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+178.3m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+178.3m] hit: 23mm ZU-23-2 hit USS Nimitz (CVN-68)!
+   [T+178.8m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+179.3m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+179.3m] hit: 23mm ZU-23-2 hit USS Nimitz (CVN-68)!
+   [T+179.8m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+179.8m] hit: 23mm ZU-23-2 hit USS Nimitz (CVN-68)!
+T+180m CVN 56.59,26.46 spd 30 dmg 343 undamaged
+   Iran contacts: us-cvn-1:tracked/visual us-cg-1:unknown/esm us-ddg-1:unknown/esm us-ddg-2:detected/esm us-ffg-1:unknown/esm | on CVN: tracked
+   ir-fac-1  undamaged  pos 56.57,26.42 spd  25 thr 3 wp 56.59,26.46 (1) roe weapons-free radar on rngCVN 5km fired C-802 Nox4
+   ir-fac-2  undamaged  pos 56.60,26.45 spd  25 thr 3 wp 56.59,26.46 (1) roe weapons-free radar on rngCVN 1km fired C-802 Nox4,23mm ZU-x8
+   ir-fac-3  destroyed  pos 56.49,26.96 spd  25 thr 3 wp 56.44,26.93 (1) roe weapons-free radar on rngCVN 57km fired -
+   ir-pc-1   undamaged  pos 56.54,26.54 spd  25 thr 3 wp 56.59,26.46 (1) roe weapons-free radar on rngCVN 11km fired C-802 Nox4
+   ir-pc-2   destroyed  pos 56.41,26.50 spd  25 thr 3 wp 56.49,26.67 (1) roe weapons-free radar on rngCVN 18km fired -
+   ir-ff-1   undamaged  pos 56.12,26.81 spd  15 thr 2 wp 56.62,26.43 (1) roe weapons-free radar on rngCVN 61km fired -
+   ir-f4-1   undamaged  pos 55.81,27.08 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 104km fired -
+   ir-f14-1  undamaged  pos 55.71,27.12 spd 350 thr 2 wp 56.00,27.00 (1) roe weapons-free radar on rngCVN 115km fired AIM-54A x4
+   ir-f4-2   destroyed  pos 56.16,27.16 spd   0 thr 2 wp - (0) roe weapons-free radar on rngCVN 89km fired AIM-7E Sx4
+   ir-bog-1  undamaged  pos 56.52,26.59 spd  25 thr 3 wp 56.59,26.46 (1) roe weapons-free radar on rngCVN 16km fired -
+   ir-bog-2  undamaged  pos 56.54,26.56 spd  25 thr 3 wp 56.59,26.46 (1) roe weapons-free radar on rngCVN 13km fired -
+   [T+180.3m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+180.5m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+   [T+180.8m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+180.8m] hit: 23mm ZU-23-2 hit USS Nimitz (CVN-68)!
+   [T+181.1m] hit: 76mm OTO Melara Compact (76/62 family) hit USS Nimitz (CVN-68)!
+   [T+181.1m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+   [T+181.3m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+181.7m] hit: 76mm OTO Melara Compact (76/62 family) hit USS Nimitz (CVN-68)!
+   [T+181.7m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+   [T+181.8m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+182.2m] hit: 76mm OTO Melara Compact (76/62 family) hit USS Nimitz (CVN-68)!
+   [T+182.2m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+   [T+182.3m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+182.6m] hit: 76mm OTO Melara Compact (76/62 family) hit USS Nimitz (CVN-68)!
+   [T+182.7m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+   [T+182.8m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+182.9m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+183.1m] hit: 76mm OTO Melara Compact (76/62 family) hit USS Nimitz (CVN-68)!
+   [T+183.2m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+   [T+183.3m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+183.4m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+183.5m] hit: 76mm OTO Melara Compact (76/62 family) hit USS Nimitz (CVN-68)!
+   [T+183.7m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+   [T+183.8m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+183.9m] hit: 23mm ZU-23-2 hit USS Nimitz (CVN-68)!
+   [T+183.9m] hit: 76mm OTO Melara Compact (76/62 family) hit USS Nimitz (CVN-68)!
+   [T+183.9m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+184.2m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+   [T+184.3m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+184.4m] hit: 76mm OTO Melara Compact (76/62 family) hit USS Nimitz (CVN-68)!
+   [T+184.4m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+184.7m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+   [T+184.8m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+184.8m] hit: 107mm MRL (Fadjr-1 rockets) hit USS Nimitz (CVN-68)!
+   [T+184.9m] hit: 76mm OTO Melara Compact (76/62 family) hit USS Nimitz (CVN-68)!
+   [T+184.9m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+185.0m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+185.2m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+   [T+185.3m] hit: 107mm MRL (Fadjr-1 rockets) hit USS Nimitz (CVN-68)!
+   [T+185.3m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+185.4m] hit: 23mm ZU-23-2 hit USS Nimitz (CVN-68)!
+   [T+185.4m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+185.5m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+185.7m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+   [T+185.8m] launch: Sina 102 launched 23mm ZU-23-2 at USS Nimitz (CVN-68)
+   [T+185.9m] launch: Boghammar 502 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+186.0m] launch: Boghammar 501 launched 107mm MRL (Fadjr-1 rockets) at USS Nimitz (CVN-68)
+   [T+186.2m] launch: Kaman 201 launched 76mm OTO Melara Compact (76/62 family) at USS Nimitz (CVN-68)
+seed 1: victory at T+3.10h | CVN dmg 497/3600 undamaged | launches@CVN 46 hits@CVN 19 | US lost [us-fa18-1,us-fa18-2] | Iran lost 3/11 [ir-fac-3,ir-pc-2,ir-f4-2]
+seed 2: victory at T+3.10h | CVN dmg 0/3600 undamaged | launches@CVN 0 hits@CVN 0 | US lost [us-fa18-2] | Iran lost 5/11 [ir-fac-3,ir-pc-2,ir-f4-1,ir-f14-1,ir-f4-2]
+seed 3: victory at T+3.10h | CVN dmg 0/3600 undamaged | launches@CVN 0 hits@CVN 0 | US lost [us-fa18-2] | Iran lost 4/11 [ir-fac-3,ir-pc-2,ir-f4-1,ir-f4-2]
+seed 4: victory at T+3.10h | CVN dmg 0/3600 undamaged | launches@CVN 0 hits@CVN 0 | US lost [us-fa18-2] | Iran lost 4/11 [ir-fac-3,ir-pc-2,ir-f4-1,ir-f4-2]
+seed 5: victory at T+3.10h | CVN dmg 615/3600 damaged | launches@CVN 58 hits@CVN 23 | US lost [us-fa18-1,us-fa18-2] | Iran lost 2/11 [ir-fac-3,ir-pc-2]

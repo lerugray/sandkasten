@@ -1,0 +1,8 @@
+# Saves made on main e3697c0d (docs/verification/sand-save-1-s409/files), parsed by this branch
+format sandkasten-battle-save version 1
+hormuz revision now sand-rules-1.7e5cbf79.ba5c1736
+snapshot revision now sand-rules-1.7e5cbf79.cbc0f6b9
+good: file revision sand-rules-1.7e5cbf79.e2c9e818 format sandkasten-battle-save v1 -> REFUSED: configRevision: this save was made with different rules or platform data than this version of the game, so it cannot be resumed here
+hormuz-early: file revision sand-rules-1.7e5cbf79.e2c9e818 format sandkasten-battle-save v1 -> REFUSED: configRevision: this save was made with different rules or platform data than this version of the game, so it cannot be resumed here
+defeat-fixture: file revision sand-rules-1.7e5cbf79.e2c9e818 format sandkasten-battle-save v1 -> REFUSED: configRevision: this save was made with different rules or platform data than this version of the game, so it cannot be resumed here
+snapshot: file revision sand-rules-1.7e5cbf79.cbc0f6b9 format sandkasten-battle-save v1 -> LOADS

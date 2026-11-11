@@ -321,7 +321,14 @@ export function TacticalMap({
               unitPositions={obstaclePositions}
             />
           )}
-          <LayoutController map={mapRef.current} units={visibleUnits} playerSide={scenario.playerSide} sites={hasOsint ? osintVisible : []} onLayout={setLayout} />
+          <LayoutController
+            map={mapRef.current}
+            units={visibleUnits}
+            playerSide={scenario.playerSide}
+            sites={hasOsint ? osintVisible : []}
+            facilities={hasFacilities ? scenario.facilities : undefined}
+            onLayout={setLayout}
+          />
           {hasOsint && (
             <OsintLayer
               map={mapRef.current}

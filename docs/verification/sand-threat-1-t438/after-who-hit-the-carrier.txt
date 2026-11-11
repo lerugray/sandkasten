@@ -1,0 +1,27 @@
+# Which Iranian weapons hit the carrier, shipped scenario after SAND-THREAT-1, continuous 60x, seeds 1-5
+# dogleg4 = Nimitz alone on the southern dog-leg at FULL, no other orders (shows the Sina and Boghammar boats at the gate)
+nothing seed 1: defeat | hits: C-802 Noor x6 (first T+102m), 76mm OTO Melara Compact (76/62 family) x126 (first T+113m) | rounds fired at CVN: C-802 Noor 28, 76mm OTO Melara Compact (76/62 family) 212
+nothing seed 2: defeat | hits: C-802 Noor x6 (first T+102m), 76mm OTO Melara Compact (76/62 family) x126 (first T+113m) | rounds fired at CVN: C-802 Noor 24, 76mm OTO Melara Compact (76/62 family) 210
+nothing seed 3: defeat | hits: C-802 Noor x5 (first T+102m), 76mm OTO Melara Compact (76/62 family) x137 (first T+114m) | rounds fired at CVN: C-802 Noor 24, 76mm OTO Melara Compact (76/62 family) 225
+nothing seed 4: defeat | hits: C-802 Noor x6 (first T+102m), 76mm OTO Melara Compact (76/62 family) x126 (first T+112m) | rounds fired at CVN: C-802 Noor 24, 76mm OTO Melara Compact (76/62 family) 256
+nothing seed 5: defeat | hits: C-802 Noor x3 (first T+102m), 76mm OTO Melara Compact (76/62 family) x159 (first T+113m) | rounds fired at CVN: C-802 Noor 24, 76mm OTO Melara Compact (76/62 family) 262
+careless seed 1: defeat | hits: C-802 Noor x6 (first T+46m), 76mm OTO Melara Compact (76/62 family) x126 (first T+52m) | rounds fired at CVN: C-802 Noor 24, 76mm OTO Melara Compact (76/62 family) 209
+careless seed 2: defeat | hits: C-802 Noor x4 (first T+46m), 76mm OTO Melara Compact (76/62 family) x149 (first T+52m) | rounds fired at CVN: C-802 Noor 24, 76mm OTO Melara Compact (76/62 family) 228
+careless seed 3: defeat | hits: C-802 Noor x3 (first T+46m), 76mm OTO Melara Compact (76/62 family) x159 (first T+52m) | rounds fired at CVN: C-802 Noor 24, 76mm OTO Melara Compact (76/62 family) 257
+careless seed 4: defeat | hits: C-802 Noor x4 (first T+46m), 76mm OTO Melara Compact (76/62 family) x148 (first T+52m) | rounds fired at CVN: C-802 Noor 24, 76mm OTO Melara Compact (76/62 family) 238
+careless seed 5: defeat | hits: C-802 Noor x3 (first T+46m), 76mm OTO Melara Compact (76/62 family) x159 (first T+52m) | rounds fired at CVN: C-802 Noor 24, 76mm OTO Melara Compact (76/62 family) 253
+dogleg4 seed 1: victory | hits: 23mm ZU-23-2 x24 (first T+192m), 12.7mm DShK MG x10 (first T+220m) | rounds fired at CVN: 23mm ZU-23-2 93, 107mm MRL (Fadjr-1 rockets) 18, 12.7mm DShK MG 30
+dogleg4 seed 2: victory | hits: 12.7mm DShK MG x16 (first T+223m) | rounds fired at CVN: 107mm MRL (Fadjr-1 rockets) 22, 12.7mm DShK MG 71
+dogleg4 seed 3: victory | hits: 107mm MRL (Fadjr-1 rockets) x4 (first T+219m) | rounds fired at CVN: 107mm MRL (Fadjr-1 rockets) 20, 12.7mm DShK MG 2
+dogleg4 seed 4: victory | hits: 107mm MRL (Fadjr-1 rockets) x3 (first T+217m), 12.7mm DShK MG x14 (first T+223m) | rounds fired at CVN: 107mm MRL (Fadjr-1 rockets) 22, 12.7mm DShK MG 34
+dogleg4 seed 5: victory | hits: 23mm ZU-23-2 x16 (first T+205m), 107mm MRL (Fadjr-1 rockets) x3 (first T+212m), 12.7mm DShK MG x11 (first T+216m) | rounds fired at CVN: 23mm ZU-23-2 58, 107mm MRL (Fadjr-1 rockets) 20, 12.7mm DShK MG 47
+dogleg4flank seed 1: victory | hits: 23mm ZU-23-2 x6 (first T+171m), 107mm MRL (Fadjr-1 rockets) x2 (first T+192m), 12.7mm DShK MG x1 (first T+198m) | rounds fired at CVN: 23mm ZU-23-2 23, 107mm MRL (Fadjr-1 rockets) 16, 12.7mm DShK MG 6
+dogleg4flank seed 2: victory | hits: 107mm MRL (Fadjr-1 rockets) x3 (first T+192m), 12.7mm DShK MG x1 (first T+198m) | rounds fired at CVN: C-802 Noor 4, 23mm ZU-23-2 13, 107mm MRL (Fadjr-1 rockets) 17, 12.7mm DShK MG 4
+dogleg4flank seed 3: victory | hits: 107mm MRL (Fadjr-1 rockets) x3 (first T+192m) | rounds fired at CVN: 107mm MRL (Fadjr-1 rockets) 16, 12.7mm DShK MG 11
+dogleg4flank seed 4: victory | hits: 107mm MRL (Fadjr-1 rockets) x5 (first T+190m), 12.7mm DShK MG x1 (first T+199m) | rounds fired at CVN: 107mm MRL (Fadjr-1 rockets) 18, 12.7mm DShK MG 9
+dogleg4flank seed 5: victory | hits: 107mm MRL (Fadjr-1 rockets) x3 (first T+197m), 12.7mm DShK MG x1 (first T+199m) | rounds fired at CVN: 107mm MRL (Fadjr-1 rockets) 15, 12.7mm DShK MG 1
+oldB seed 1: victory | hits: none | rounds fired at CVN: none
+oldB seed 2: victory | hits: none | rounds fired at CVN: none
+oldB seed 3: victory | hits: none | rounds fired at CVN: none
+oldB seed 4: victory | hits: 76mm OTO Melara Compact (76/62 family) x20 (first T+151m) | rounds fired at CVN: 76mm OTO Melara Compact (76/62 family) 44
+oldB seed 5: victory | hits: none | rounds fired at CVN: none
