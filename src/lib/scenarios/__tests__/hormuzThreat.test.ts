@@ -31,12 +31,27 @@ afterEach(() => {
 
 type Plan = (s: SimulationSession) => void;
 
-/** Give the orders, press play at 60x and let the clock run until the scenario's own rules end it (or `maxHours` pass). */
-function play(plan: Plan, seed: number, maxHours = 12) {
+/**
+ * How a machine delivers frames: the real milliseconds between two ticks of the 50 ms loop (`useSimulation`), drawn from
+ * its own seeded stream so the dice of the game are untouched. A fast machine gives 50; a slow one gives more, up to the
+ * engine's 2 s clamp, and the engine then cuts the tick into game steps of 2.5 to 5 s.
+ */
+type Frames = (rng: () => number) => number;
+const STEADY_50_MS: Frames = () => 50;
+
+type PlayOpts = { maxHours?: number; frames?: Frames; autopause?: boolean };
+
+/**
+ * Give the orders, press play at 60x and let the clock run until the scenario's own rules end it (or `maxHours` pass).
+ * With `autopause` the default autopause stays on and play is pressed again at once every time it stops the clock.
+ */
+function play(plan: Plan, seed: number, opts: PlayOpts = {}) {
+  const { maxHours = 12, frames = STEADY_50_MS, autopause = false } = opts;
+  const frameRng = seeded(seed * 104729 + 17);
   // Replaced directly, not spied on: a spy would record millions of calls over a run this long.
   Math.random = seeded(seed * 7919);
   const s = new SimulationSession(demoScenarioConfig);
-  s.autopausePrefs = { ...DEFAULT_AUTOPAUSE, enabled: false };
+  s.autopausePrefs = { ...DEFAULT_AUTOPAUSE, enabled: autopause };
   plan(s);
   s.setSpeed(60);
   s.togglePause();
@@ -44,7 +59,8 @@ function play(plan: Plan, seed: number, maxHours = 12) {
   let firstShipContact: string | undefined;
   const ships = new Set(demoScenario.sides[0].units.filter((u) => u.altitude === undefined).map((u) => u.id));
   while (!s.ended && s.snapshot().gameState.simTime - START < maxHours * 3.6e6) {
-    s.tick(50);
+    s.tick(frames(frameRng));
+    if (autopause && !s.ended && s.snapshot().gameState.isPaused) s.togglePause();
     if (!firstShipContact) {
       firstShipContact = (s.snapshot().gameState.sideContacts["Iran"] ?? []).find(
         (c) => c.classification !== "unknown" && ships.has(c.actualUnitId),
@@ -178,6 +194,44 @@ describe("SAND-THREAT-1: two different sensible plans still win", () => {
     expect(b.result).toBe("victory");
     expect(Math.abs(a.hours - b.hours)).toBeGreaterThan(1);
   }, 120_000);
+});
+
+// SAND-THREAT-1 FIX3. The browser does not tick every 50 ms on a slow machine: the tick carries the real time since the
+// last one, so the game step varies with the frame rate. These proofs run the same plans the way slow and uneven machines
+// deliver frames, over 20 dice seeds, and require the same outcome: who wins must not depend on the machine.
+describe("SAND-THREAT-1 FIX3: the outcome does not depend on the machine's frame time", () => {
+  const TWENTY = Array.from({ length: 20 }, (_, i) => i + 1);
+  const MACHINES: [string, Frames, boolean][] = [
+    ["a stalled machine, every frame at the 2 s clamp (24 game steps of 5 s per tick)", () => 2000, false],
+    ["an uneven machine, frames of 50 to 400 ms, autopause on and resumed at once", (r) => 50 + r() * 350, true],
+    ["a slow machine, frames of 200 to 2000 ms, autopause on and resumed at once", (r) => 200 + r() * 1800, true],
+  ];
+
+  for (const [machine, frames, autopause] of MACHINES) {
+    it(`do-nothing loses in at least 19 of 20 seeds on ${machine}`, () => {
+      const runs = TWENTY.map((seed) => play(doNothing, seed, { frames, autopause }));
+      const lost = runs.filter((r) => r.result === "defeat");
+      expect(lost.length).toBeGreaterThanOrEqual(19);
+      for (const r of lost) {
+        expect(r.decidedBy).toBe("Carrier Lost");
+        expect(r.carrier.damageState).toBe("destroyed");
+        expect(r.iranianHits).toBeGreaterThan(50);
+        // the same window as on a fast machine (T+2.1 to 2.6 h): the e2e proof waits on the game clock up to T+4 h
+        expect(r.hours).toBeGreaterThan(1.8);
+        expect(r.hours).toBeLessThan(3);
+      }
+    }, 120_000);
+  }
+
+  it("both sensible plans still win in at least 3 of 5 seeds on a stalled machine and on a slow, uneven one", () => {
+    for (const [, frames, autopause] of [MACHINES[0], MACHINES[2]]) {
+      for (const plan of [escortScreenForwardRoeFree, southernDoglegWithAirSupport]) {
+        const runs = SEEDS.map((seed) => play(plan, seed, { frames, autopause }));
+        expect(count(runs, (r) => r.result === "victory")).toBeGreaterThanOrEqual(3);
+        for (const r of runs.filter((x) => x.result === "victory")) expect(r.decidedBy).toBe("Transit Complete");
+      }
+    }
+  }, 240_000);
 });
 
 describe("SAND-THREAT-1: the picket line is scenario data, laid against the strike group's base course", () => {

@@ -1,0 +1,17 @@
+fixed 50 ms (3.0 s step), autopause off [unit proof] | defeat 20/20 | T+h min 2.11 med 2.26 max 2.33 | pauses med 0 | not-defeat: none
+fixed 50 ms, autopause on + resume | defeat 20/20 | T+h min 2.11 med 2.26 max 2.33 | pauses med 177 | not-defeat: none
+fixed 60 ms (3.6 s) | defeat 20/20 | T+h min 2.22 med 2.31 max 2.52 | pauses med 0 | not-defeat: none
+fixed 83 ms (4.98 s) | defeat 20/20 | T+h min 2.20 med 2.31 max 2.42 | pauses med 0 | not-defeat: none
+fixed 84 ms (2x2.52 s) | defeat 20/20 | T+h min 2.19 med 2.28 max 2.36 | pauses med 0 | not-defeat: none
+fixed 100 ms (2x3 s) | defeat 20/20 | T+h min 2.11 med 2.26 max 2.33 | pauses med 0 | not-defeat: none
+fixed 150 ms (2x4.5 s) | defeat 20/20 | T+h min 2.18 med 2.29 max 2.38 | pauses med 0 | not-defeat: none
+fixed 250 ms (3x5 s) | defeat 20/20 | T+h min 2.18 med 2.26 max 2.40 | pauses med 0 | not-defeat: none
+fixed 500 ms (6x5 s) | defeat 20/20 | T+h min 2.18 med 2.26 max 2.40 | pauses med 0 | not-defeat: none
+fixed 1000 ms (12x5 s) | defeat 20/20 | T+h min 2.18 med 2.26 max 2.40 | pauses med 0 | not-defeat: none
+fixed 2000 ms (24x5 s, clamp) | defeat 20/20 | T+h min 2.18 med 2.26 max 2.40 | pauses med 0 | not-defeat: none
+fixed 5000 ms (clamped to 2000) | defeat 20/20 | T+h min 2.18 med 2.26 max 2.40 | pauses med 0 | not-defeat: none
+jitter 50-120 ms | defeat 20/20 | T+h min 2.21 med 2.30 max 2.41 | pauses med 0 | not-defeat: none
+jitter 50-400 ms | defeat 20/20 | T+h min 2.27 med 2.33 max 2.40 | pauses med 0 | not-defeat: none
+jitter 200-2000 ms | defeat 20/20 | T+h min 2.22 med 2.31 max 2.44 | pauses med 0 | not-defeat: none
+jitter 50-400 ms, autopause on | defeat 20/20 | T+h min 2.27 med 2.33 max 2.40 | pauses med 84 | not-defeat: none
+jitter 200-2000 ms, autopause on | defeat 20/20 | T+h min 2.22 med 2.31 max 2.44 | pauses med 28 | not-defeat: none
