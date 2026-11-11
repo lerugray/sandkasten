@@ -123,6 +123,76 @@ function Cmd({
  * view with a fresh one built on the restored session, so no selection, order mode, dialog, God mode, timer or media
  * callback of the discarded run can survive into the loaded one.
  */
+/**
+ * `text` with its line turns written in as newlines, taken at spaces only, for a line of `cols` characters whose
+ * first line already holds `lead` of them. Fewest lines first, then the narrowest measure that keeps that count, so
+ * a second line is not left with one word. The browser's own wrap also turns after a hyphen, which split "C-802",
+ * "(CVN-68)" and the "->" of a weapon row, and no CSS wrap mode forbids that turn; so the turns are chosen here.
+ * The words are untouched. Before the first measurement (`cols` 0) the text is returned as it came.
+ */
+function turnAtSpaces(text: string, cols: number, lead = 0): string {
+  if (cols <= lead) return text;
+  const words = text.split(/\s+/).filter(Boolean);
+  const lay = (width: number) => {
+    const lines: string[] = [];
+    let line = "";
+    let room = width - lead;
+    let fits = true;
+    for (const w of words) {
+      if (line && line.length + 1 + w.length > room) {
+        lines.push(line);
+        line = w;
+        room = width;
+      } else line = line ? `${line} ${w}` : w;
+      if (line.length > room) fits = false;
+    }
+    lines.push(line);
+    return { lines, fits };
+  };
+  let { lines } = lay(cols);
+  if (lines.length === 1) return text;
+  for (let width = cols - 1; width > lead; width--) {
+    const narrower = lay(width);
+    if (!narrower.fits || narrower.lines.length !== lines.length) break;
+    lines = narrower.lines;
+  }
+  return lines.join("\n");
+}
+
+/** What a record line holds ahead of its text, less the tag: "06:00:00Z " and the space after the tag. */
+const RECORD_LEAD = 11;
+
+/**
+ * A block that knows how many characters fit across it (the terminal face is monospace) and hands that count to
+ * its children. The count comes from a hidden probe as wide as the block's content, holding a rule 10ch long; both
+ * are watched, so a resize, a scrollbar or the web font arriving re-measures. The first count lands before paint.
+ * The probe inherits the block's font, so the lines measured for must be set in that same size.
+ */
+function Measured({ children, ...rest }: Omit<React.HTMLAttributes<HTMLDivElement>, "children"> & { children: (cols: number) => React.ReactNode }) {
+  const [cols, setCols] = useState(0);
+  const watch = useRef<ResizeObserver | null>(null);
+  const probe = useCallback((el: HTMLSpanElement | null) => {
+    watch.current?.disconnect();
+    watch.current = null;
+    const rule = el?.firstElementChild;
+    if (!el || !rule) return;
+    const measure = () => {
+      const ch = rule.getBoundingClientRect().width / 10;
+      setCols(ch > 0 ? Math.floor(el.getBoundingClientRect().width / ch) : 0);
+    };
+    measure();
+    watch.current = new ResizeObserver(measure);
+    watch.current.observe(el);
+    watch.current.observe(rule);
+  }, []);
+  return (
+    <div {...rest}>
+      <span className="tx-cols" ref={probe} aria-hidden="true"><i /></span>
+      {children(cols)}
+    </div>
+  );
+}
+
 export function TerminalPlay({ configId = "hormuz" }: { configId?: BuiltinId }) {
   const [run, setRun] = useState<{ configId: BuiltinId; session: SimulationSession | null; epoch: number }>({ configId, session: null, epoch: 0 });
   const loadSession = useCallback((nextId: BuiltinId, session: SimulationSession) => {
@@ -1093,16 +1163,21 @@ function TerminalPlayView({
           {sidebarTab === "combat" && (
             <section className="tx-section">
               {wifRows.length > 0 && (
-                <div className="tx-wif">
-                  <div className="tx-section-head tx-alarm">
-                    <span data-testid="weapons-in-flight-count">Weapons in Flight ({wifRows.length})</span>
-                  </div>
-                  {wifRows.map((w) => (
-                    <div key={w.id} className={`tx-wif-row${w.debug ? " is-god" : ""}`} data-testid="weapon-row">
-                      <span className="tx-alarm">{">>"}</span> {w.debug ? "[GOD] " : ""}{w.label}
-                    </div>
-                  ))}
-                </div>
+                <Measured className="tx-wif">
+                  {(cols) => (
+                    <>
+                      <div className="tx-section-head tx-alarm">
+                        <span data-testid="weapons-in-flight-count">Weapons in Flight ({wifRows.length})</span>
+                      </div>
+                      {/* a row hangs 3ch under its ">> " mark, so the label has cols - 3 on every line */}
+                      {wifRows.map((w) => (
+                        <div key={w.id} className={`tx-wif-row${w.debug ? " is-god" : ""}`} data-testid="weapon-row">
+                          <span className="tx-alarm">{">>"}</span> {w.debug ? "[GOD] " : ""}<span className="tx-turns">{turnAtSpaces(w.label, cols - 3, w.debug ? 6 : 0)}</span>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </Measured>
               )}
               <CombatRecord
                 rows={record}
@@ -1337,11 +1412,13 @@ function TerminalPlayView({
                 : `SHOWING LATEST 5 OF ${review.record.length} THIS TURN  //  ${review.record.length - 5} EARLIER NOT SHOWN HERE`}
             </div>
             {review.record.length === 0 && <div className="tx-dim">NOTHING OBSERVED THIS TURN</div>}
-            {review.record.slice(-5).map((l) => (
-              <div key={l.id} className={`tx-result-line${l.alarm ? " is-alarm" : ""}`}>
-                {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag} {l.text}
-              </div>
-            ))}
+            <Measured>
+              {(cols) => review.record.slice(-5).map((l) => (
+                <div key={l.id} className={`tx-result-line${l.alarm ? " is-alarm" : ""}`}>
+                  {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag} <span className="tx-turns">{turnAtSpaces(l.text, cols, RECORD_LEAD + l.tag.length)}</span>
+                </div>
+              ))}
+            </Measured>
             <div className="tx-dim" data-testid="review-contacts">CONTACTS HELD {gameState.contacts.length}  //  HOSTILE KILLS CONFIRMED {review.kills}</div>
           </div>
           <div className="tx-briefing-foot">
@@ -1519,11 +1596,13 @@ function TerminalPlayView({
             <div className="tx-result-record" data-testid="result-record">
               <div className="tx-section-head">Record</div>
               {debrief.record.length === 0 && <div className="tx-dim">NO TRAFFIC RECORDED</div>}
-              {debrief.record.map((l) => (
-                <div key={l.id} className={`tx-result-line${l.alarm ? " is-alarm" : ""}`}>
-                  {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag} {l.text}
-                </div>
-              ))}
+              <Measured>
+                {(cols) => debrief.record.map((l) => (
+                  <div key={l.id} className={`tx-result-line${l.alarm ? " is-alarm" : ""}`}>
+                    {new Date(l.time).toISOString().slice(11, 19)}Z {l.tag} <span className="tx-turns">{turnAtSpaces(l.text, cols, RECORD_LEAD + l.tag.length)}</span>
+                  </div>
+                ))}
+              </Measured>
               <div className="tx-dim" data-testid="result-record-count">
                 {debrief.total <= debrief.record.length
                   ? `ALL ${debrief.total} OF ${debrief.total} ENTRIES SHOWN`

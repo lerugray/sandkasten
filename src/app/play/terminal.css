@@ -1565,10 +1565,27 @@
 .tx-review-body > div {
   text-wrap: pretty;
 }
-/* a weapon row or debrief record line that needs two lines splits them evenly (the old break left "68)" alone) */
-.tx-wif-row,
-.tx-result-line {
-  text-wrap: balance;
+/* a weapon row or a debrief / turn-review record line that needs two lines splits them evenly (the old break left
+   "68)" alone). The browser's balanced wrap did that by turning after a hyphen ("WEAPON -" / "> USS NIMITZ",
+   "4x C-" / "802 NOOR"), and no wrap mode forbids that turn, so TerminalPlay writes these lines' turns into the text
+   at spaces only (turnAtSpaces) and they are honoured here. .tx-cols is the hidden probe it measures the line with. */
+.tx-turns {
+  white-space: pre-line;
+}
+.tx-cols,
+.tx-cols > i {
+  display: block;
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.tx-cols > i {
+  width: 10ch;
+}
+/* a weapon's second line hangs under its name, clear of the ">>" column: one mark, one weapon */
+.tx-wif-row {
+  padding-left: 3ch;
+  text-indent: -3ch;
 }
 /* record entries: the engine's last-line rule ignores a long last word ("WEAPONS-FREE." sat alone), so entries
    of up to six lines break evenly instead; longer ones are left as they were */
@@ -1579,6 +1596,11 @@
 /* help rows (shared panel): same last-line rule */
 .tx-root .space-y-1 > div {
   text-wrap: pretty;
+}
+/* a help row of key chips that needs two lines splits them evenly instead: the last-line rule turned between the
+   X chip and its "Weapons hold"; an even split turns before the F chip, so every key stays with what it does */
+.tx-root .space-y-1 > div:has(> kbd) {
+  text-wrap: balance;
 }
 
 /* ---- a turn resolving: a bar in the turn panel and a hairline under the top strip fill as the burst runs.
