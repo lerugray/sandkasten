@@ -1,0 +1,157 @@
+{
+ "comparison": "BEFORE vs CONTROL, same untouched product tree",
+ "poses": {
+  "00-briefing-1920": {
+   "changed_pixels": 9,
+   "max_error": 1,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "01-cold-chart-1920": {
+   "changed_pixels": 8,
+   "max_error": 1,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "02-bandar-abbas-crowded-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "03-bandar-abbas-close-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "04-ad-selected-rings-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "05-bushehr-nuclear-wide-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "06-bushehr-nuclear-close-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "07-radar-khalij-fars-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "08-barakah-nuclear-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "08b-barakah-nuc-off-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "09-udeid-radar-ad-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "10-kish-two-runways-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "11-fujairah-construction-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "12-havadarya-panel-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "13-bandar-abbas-tilt-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "14-bandar-abbas-osint-off-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "15-control-no-glyphs-1920": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "01-cold-chart-1440": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "02-bandar-abbas-crowded-1440": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "05-bushehr-nuclear-wide-1440": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "06-bushehr-nuclear-close-1440": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "01-cold-chart-1280": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "02-bandar-abbas-crowded-1280": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "05-bushehr-nuclear-wide-1280": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  },
+  "06-bushehr-nuclear-close-1280": {
+   "changed_pixels": 0,
+   "max_error": 0,
+   "state_fields_differing": [],
+   "dom_differences": 0
+  }
+ },
+ "total_changed_pixels": 17,
+ "max_error": 1
+}

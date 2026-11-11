@@ -1,0 +1,160 @@
+{
+ "protected-geometry.png": [
+  {
+   "title": "Kish: both runways and their end labels (airfield symbol withdrawn)",
+   "pose": "10-kish-two-runways-1920",
+   "box_css": [
+    880.4100524161611,
+    308.7416321103748,
+    520,
+    300
+   ],
+   "protected_pixels": 621074,
+   "protected_changed_pixels": 17894,
+   "protected_max_error": 5,
+   "redrawn_sprite_pixels_in_crop": 2926
+  },
+  {
+   "title": "Fujairah: runway and construction strip",
+   "pose": "11-fujairah-construction-1920",
+   "box_css": [
+    880.4019704006382,
+    309.2692908379261,
+    520,
+    300
+   ],
+   "protected_pixels": 621316,
+   "protected_changed_pixels": 0,
+   "protected_max_error": 0,
+   "redrawn_sprite_pixels_in_crop": 2684
+  },
+  {
+   "title": "Havadarya: co-located true-position dot under the S-300 symbol, runway, outlines",
+   "pose": "03-bandar-abbas-close-1920",
+   "box_css": [
+    1039.6197467629636,
+    377.6886740748453,
+    200,
+    150
+   ],
+   "protected_pixels": 118064,
+   "protected_changed_pixels": 0,
+   "protected_max_error": 0,
+   "redrawn_sprite_pixels_in_crop": 1936
+  },
+  {
+   "title": "Bandar Abbas: estimated (dashed) AD ring crossing the chart",
+   "pose": "02-bandar-abbas-crowded-1920",
+   "box_css": [
+    760,
+    90,
+    520,
+    160
+   ],
+   "protected_pixels": 332800,
+   "protected_changed_pixels": 1149,
+   "protected_max_error": 1,
+   "redrawn_sprite_pixels_in_crop": 0
+  },
+  {
+   "title": "Bushehr: measured (solid) nuclear ring, estimated Tor ring, co-located dot",
+   "pose": "06-bushehr-nuclear-close-1920",
+   "box_css": [
+    309.6418140983445,
+    306.99999999999625,
+    420,
+    300
+   ],
+   "protected_pixels": 500128,
+   "protected_changed_pixels": 83065,
+   "protected_max_error": 6,
+   "redrawn_sprite_pixels_in_crop": 3872
+  }
+ ],
+ "protected-units-labels.png": [
+  {
+   "title": "cold chart: unit glyph us-cvn-1 with its data block",
+   "pose": "01-cold-chart-1920",
+   "box_css": [
+    1003.1922006116413,
+    681.5044076337075,
+    119.72000000000003,
+    119.72000000000003
+   ],
+   "protected_pixels": 57121,
+   "protected_changed_pixels": 159,
+   "protected_max_error": 1,
+   "redrawn_sprite_pixels_in_crop": 0
+  },
+  {
+   "title": "cold chart: unit glyph us-cg-1 with its data block",
+   "pose": "01-cold-chart-1920",
+   "box_css": [
+    939.6286163099865,
+    646.229407633707,
+    119.72000000000003,
+    119.72000000000003
+   ],
+   "protected_pixels": 57121,
+   "protected_changed_pixels": 164,
+   "protected_max_error": 1,
+   "redrawn_sprite_pixels_in_crop": 0
+  },
+  {
+   "title": "cold chart: unit glyph us-ddg-1 with its data block",
+   "pose": "01-cold-chart-1920",
+   "box_css": [
+    1066.7557849132959,
+    716.7794076337067,
+    119.72000000000003,
+    119.72000000000003
+   ],
+   "protected_pixels": 57121,
+   "protected_changed_pixels": 87,
+   "protected_max_error": 1,
+   "redrawn_sprite_pixels_in_crop": 0
+  },
+  {
+   "title": "label 'HAVADARYA AIRPORT' beside the Havadarya airbase symbol",
+   "pose": "02-bandar-abbas-crowded-1920",
+   "box_css": [
+    953,
+    422,
+    193.171875,
+    74
+   ],
+   "protected_pixels": 55588,
+   "protected_changed_pixels": 11842,
+   "protected_max_error": 5,
+   "redrawn_sprite_pixels_in_crop": 1540
+  },
+  {
+   "title": "label 'KHALIJ FARS' beside the radar symbol",
+   "pose": "02-bandar-abbas-crowded-1920",
+   "box_css": [
+    1027,
+    731,
+    148.28125,
+    74
+   ],
+   "protected_pixels": 41652,
+   "protected_changed_pixels": 8246,
+   "protected_max_error": 3,
+   "redrawn_sprite_pixels_in_crop": 2304
+  },
+  {
+   "title": "selected S-300: selection ring, panel edge, units",
+   "pose": "04-ad-selected-rings-1920",
+   "box_css": [
+    929.9674068653967,
+    302.97331492070106,
+    420,
+    260
+   ],
+   "protected_pixels": 426840,
+   "protected_changed_pixels": 63569,
+   "protected_max_error": 5,
+   "redrawn_sprite_pixels_in_crop": 9960
+  }
+ ]
+}

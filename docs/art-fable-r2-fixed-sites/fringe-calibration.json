@@ -1,0 +1,467 @@
+{
+ "method": "BEFORE 08-barakah-nuclear vs BEFORE 08b-barakah-nuc-off: one isolated coalition-tint (brightest) 22 px symbol with its true-position dot removed; distances are from the sprite square edge, CSS px",
+ "icon_centre_device_px": [
+  2279.2875229326046,
+  918.6158053885921
+ ],
+ "profile": [
+  {
+   "from_px": 0,
+   "to_px": 4,
+   "pixels": 568,
+   "changed": 568,
+   "max_error": 77
+  },
+  {
+   "from_px": 4,
+   "to_px": 8,
+   "pixels": 1012,
+   "changed": 1012,
+   "max_error": 44
+  },
+  {
+   "from_px": 8,
+   "to_px": 12,
+   "pixels": 2208,
+   "changed": 2208,
+   "max_error": 31
+  },
+  {
+   "from_px": 12,
+   "to_px": 16,
+   "pixels": 2720,
+   "changed": 2720,
+   "max_error": 21
+  },
+  {
+   "from_px": 16,
+   "to_px": 20,
+   "pixels": 3232,
+   "changed": 3213,
+   "max_error": 17
+  },
+  {
+   "from_px": 20,
+   "to_px": 24,
+   "pixels": 3744,
+   "changed": 3620,
+   "max_error": 15
+  },
+  {
+   "from_px": 24,
+   "to_px": 28,
+   "pixels": 3944,
+   "changed": 3735,
+   "max_error": 12
+  },
+  {
+   "from_px": 28,
+   "to_px": 32,
+   "pixels": 4384,
+   "changed": 4108,
+   "max_error": 11
+  },
+  {
+   "from_px": 32,
+   "to_px": 36,
+   "pixels": 4896,
+   "changed": 4706,
+   "max_error": 9
+  },
+  {
+   "from_px": 36,
+   "to_px": 40,
+   "pixels": 5408,
+   "changed": 5232,
+   "max_error": 8
+  },
+  {
+   "from_px": 40,
+   "to_px": 44,
+   "pixels": 5920,
+   "changed": 5715,
+   "max_error": 7
+  },
+  {
+   "from_px": 44,
+   "to_px": 48,
+   "pixels": 6432,
+   "changed": 6256,
+   "max_error": 6
+  },
+  {
+   "from_px": 48,
+   "to_px": 52,
+   "pixels": 6944,
+   "changed": 6719,
+   "max_error": 6
+  },
+  {
+   "from_px": 52,
+   "to_px": 56,
+   "pixels": 7456,
+   "changed": 7252,
+   "max_error": 5
+  },
+  {
+   "from_px": 56,
+   "to_px": 60,
+   "pixels": 7968,
+   "changed": 7757,
+   "max_error": 5
+  },
+  {
+   "from_px": 60,
+   "to_px": 64,
+   "pixels": 8480,
+   "changed": 8272,
+   "max_error": 5
+  },
+  {
+   "from_px": 64,
+   "to_px": 68,
+   "pixels": 8992,
+   "changed": 8791,
+   "max_error": 4
+  },
+  {
+   "from_px": 68,
+   "to_px": 72,
+   "pixels": 9504,
+   "changed": 9368,
+   "max_error": 4
+  },
+  {
+   "from_px": 72,
+   "to_px": 76,
+   "pixels": 10016,
+   "changed": 9791,
+   "max_error": 4
+  },
+  {
+   "from_px": 76,
+   "to_px": 80,
+   "pixels": 10528,
+   "changed": 10271,
+   "max_error": 4
+  },
+  {
+   "from_px": 80,
+   "to_px": 84,
+   "pixels": 11040,
+   "changed": 10775,
+   "max_error": 4
+  },
+  {
+   "from_px": 84,
+   "to_px": 88,
+   "pixels": 11552,
+   "changed": 11292,
+   "max_error": 4
+  },
+  {
+   "from_px": 88,
+   "to_px": 92,
+   "pixels": 12064,
+   "changed": 11823,
+   "max_error": 3
+  },
+  {
+   "from_px": 92,
+   "to_px": 96,
+   "pixels": 12600,
+   "changed": 12300,
+   "max_error": 3
+  },
+  {
+   "from_px": 96,
+   "to_px": 100,
+   "pixels": 13184,
+   "changed": 13006,
+   "max_error": 3
+  },
+  {
+   "from_px": 100,
+   "to_px": 104,
+   "pixels": 13696,
+   "changed": 13462,
+   "max_error": 3
+  },
+  {
+   "from_px": 104,
+   "to_px": 108,
+   "pixels": 14208,
+   "changed": 14038,
+   "max_error": 3
+  },
+  {
+   "from_px": 108,
+   "to_px": 112,
+   "pixels": 14720,
+   "changed": 14599,
+   "max_error": 3
+  },
+  {
+   "from_px": 112,
+   "to_px": 116,
+   "pixels": 15232,
+   "changed": 14967,
+   "max_error": 3
+  },
+  {
+   "from_px": 116,
+   "to_px": 120,
+   "pixels": 15744,
+   "changed": 15482,
+   "max_error": 3
+  },
+  {
+   "from_px": 120,
+   "to_px": 124,
+   "pixels": 16256,
+   "changed": 15928,
+   "max_error": 4
+  },
+  {
+   "from_px": 124,
+   "to_px": 128,
+   "pixels": 16768,
+   "changed": 16460,
+   "max_error": 4
+  },
+  {
+   "from_px": 128,
+   "to_px": 132,
+   "pixels": 17280,
+   "changed": 17015,
+   "max_error": 4
+  },
+  {
+   "from_px": 132,
+   "to_px": 136,
+   "pixels": 17792,
+   "changed": 17438,
+   "max_error": 5
+  },
+  {
+   "from_px": 136,
+   "to_px": 140,
+   "pixels": 18308,
+   "changed": 18029,
+   "max_error": 5
+  },
+  {
+   "from_px": 140,
+   "to_px": 144,
+   "pixels": 18980,
+   "changed": 18711,
+   "max_error": 5
+  },
+  {
+   "from_px": 144,
+   "to_px": 148,
+   "pixels": 19712,
+   "changed": 19440,
+   "max_error": 6
+  },
+  {
+   "from_px": 148,
+   "to_px": 152,
+   "pixels": 20224,
+   "changed": 19979,
+   "max_error": 6
+  },
+  {
+   "from_px": 152,
+   "to_px": 156,
+   "pixels": 20736,
+   "changed": 20492,
+   "max_error": 7
+  },
+  {
+   "from_px": 156,
+   "to_px": 160,
+   "pixels": 21248,
+   "changed": 21013,
+   "max_error": 7
+  },
+  {
+   "from_px": 160,
+   "to_px": 164,
+   "pixels": 21760,
+   "changed": 21551,
+   "max_error": 8
+  },
+  {
+   "from_px": 164,
+   "to_px": 168,
+   "pixels": 22272,
+   "changed": 22111,
+   "max_error": 9
+  },
+  {
+   "from_px": 168,
+   "to_px": 172,
+   "pixels": 22784,
+   "changed": 22585,
+   "max_error": 9
+  },
+  {
+   "from_px": 172,
+   "to_px": 176,
+   "pixels": 23296,
+   "changed": 23013,
+   "max_error": 10
+  },
+  {
+   "from_px": 176,
+   "to_px": 180,
+   "pixels": 23808,
+   "changed": 23647,
+   "max_error": 11
+  },
+  {
+   "from_px": 180,
+   "to_px": 184,
+   "pixels": 24320,
+   "changed": 24223,
+   "max_error": 12
+  },
+  {
+   "from_px": 184,
+   "to_px": 188,
+   "pixels": 24832,
+   "changed": 24750,
+   "max_error": 13
+  },
+  {
+   "from_px": 188,
+   "to_px": 192,
+   "pixels": 25344,
+   "changed": 25286,
+   "max_error": 15
+  },
+  {
+   "from_px": 192,
+   "to_px": 196,
+   "pixels": 25880,
+   "changed": 25854,
+   "max_error": 18
+  },
+  {
+   "from_px": 196,
+   "to_px": 200,
+   "pixels": 26752,
+   "changed": 26690,
+   "max_error": 21
+  },
+  {
+   "from_px": 200,
+   "to_px": 204,
+   "pixels": 27264,
+   "changed": 27183,
+   "max_error": 24
+  },
+  {
+   "from_px": 204,
+   "to_px": 208,
+   "pixels": 27776,
+   "changed": 27734,
+   "max_error": 29
+  },
+  {
+   "from_px": 208,
+   "to_px": 212,
+   "pixels": 28288,
+   "changed": 28228,
+   "max_error": 36
+  },
+  {
+   "from_px": 212,
+   "to_px": 216,
+   "pixels": 28800,
+   "changed": 28742,
+   "max_error": 51
+  },
+  {
+   "from_px": 216,
+   "to_px": 220,
+   "pixels": 29312,
+   "changed": 29250,
+   "max_error": 83
+  },
+  {
+   "from_px": 220,
+   "to_px": 224,
+   "pixels": 29824,
+   "changed": 29761,
+   "max_error": 252
+  },
+  {
+   "from_px": 224,
+   "to_px": 228,
+   "pixels": 30336,
+   "changed": 30285,
+   "max_error": 252
+  },
+  {
+   "from_px": 228,
+   "to_px": 232,
+   "pixels": 30848,
+   "changed": 30800,
+   "max_error": 252
+  },
+  {
+   "from_px": 232,
+   "to_px": 236,
+   "pixels": 31360,
+   "changed": 31331,
+   "max_error": 252
+  },
+  {
+   "from_px": 236,
+   "to_px": 240,
+   "pixels": 31872,
+   "changed": 31872,
+   "max_error": 252
+  },
+  {
+   "from_px": 240,
+   "to_px": 244,
+   "pixels": 32384,
+   "changed": 32378,
+   "max_error": 252
+  },
+  {
+   "from_px": 244,
+   "to_px": 248,
+   "pixels": 32896,
+   "changed": 32830,
+   "max_error": 252
+  },
+  {
+   "from_px": 248,
+   "to_px": 252,
+   "pixels": 33408,
+   "changed": 33363,
+   "max_error": 252
+  },
+  {
+   "from_px": 252,
+   "to_px": 256,
+   "pixels": 33920,
+   "changed": 33876,
+   "max_error": 252
+  },
+  {
+   "from_px": 256,
+   "to_px": 260,
+   "pixels": 34432,
+   "changed": 34411,
+   "max_error": 252
+  }
+ ],
+ "fringe_css_px": null,
+ "max_error_in_fringe": 252,
+ "changed_in_fringe": 1129197
+}

@@ -1,0 +1,3918 @@
+{
+ "comparison": "BEFORE vs AFTER",
+ "changed_kinds": [
+  "airbase",
+  "radar"
+ ],
+ "criteria": "fixed before AFTER was captured, see REPORT.md: state/rect/text identical; frames with no changed-kind symbol on the canvas pixel-identical (noise floor); elsewhere changes outside the changed sprite squares (+1 px) stay under the whole-symbol glow envelope by distance",
+ "envelope_per_4px_band_to_116px_then_flat": [
+  77,
+  44,
+  31,
+  21,
+  17,
+  15,
+  12,
+  11,
+  9,
+  8,
+  7,
+  6,
+  6,
+  5,
+  5,
+  5,
+  4,
+  4,
+  4,
+  4,
+  4,
+  4,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3
+ ],
+ "noise_floor": {
+  "total_changed_pixels": 17,
+  "max_error": 1
+ },
+ "layers_off_control_total_changed_pixels": 0,
+ "frames_with_no_changed_symbol": {
+  "15-control-no-glyphs-1920": 0
+ },
+ "frames_failing": [],
+ "text_and_rectangles_identical": true,
+ "outside_interior_changed_pixels_all_frames": 2920587,
+ "outside_interior_max_error_all_frames": 8,
+ "verdict": "PASS",
+ "poses": {
+  "00-briefing-1920": {
+   "changed_kind_symbols_on_canvas": 56,
+   "of_which_listed_visible": 29,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 9,
+    "max_error": 1
+   },
+   "total_changed_pixels": 287958,
+   "max_error": 204,
+   "interior": {
+    "pixels": 97193,
+    "changed": 32930,
+    "max_error": 204
+   },
+   "outside_interior": {
+    "pixels": 8197207,
+    "changed": 255028,
+    "max_error": 6
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 183280,
+     "changed": 40908,
+     "max_error": 6,
+     "mean_error": 0.28378
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 788312,
+     "changed": 89742,
+     "max_error": 3,
+     "mean_error": 0.11805
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 2581205,
+     "changed": 109012,
+     "max_error": 1,
+     "mean_error": 0.04223
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2260884,
+     "changed": 15353,
+     "max_error": 1,
+     "mean_error": 0.00679
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 36,
+     "regions_changed": 27,
+     "changed_pixels": 4154,
+     "max_error": 2
+    },
+    "block": {
+     "regions": 8,
+     "regions_changed": 7,
+     "changed_pixels": 196,
+     "max_error": 1
+    },
+    "unit": {
+     "regions": 8,
+     "regions_changed": 7,
+     "changed_pixels": 159,
+     "max_error": 1
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 689,
+     "max_error": 1
+    },
+    "icon-unchanged:port": {
+     "regions": 8,
+     "regions_changed": 8,
+     "changed_pixels": 1518,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 1422,
+     "max_error": 2
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 170,
+     "regions_changed": 40,
+     "changed_pixels": 8223,
+     "max_error": 2
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "label",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 188,
+     "max_error": 2
+    },
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-3khordad-qeshm",
+     "changed_pixels": 1422,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "QESHM AIR BASE",
+     "changed_pixels": 306,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "TONB-E BOZORG AIRPORT",
+     "changed_pixels": 724,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "AL MAKTOUM INTL",
+     "changed_pixels": 752,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "056\u00b030'E",
+     "changed_pixels": 83,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "057\u00b000'E",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "25\u00b030'N",
+     "changed_pixels": 57,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "26\u00b000'N",
+     "changed_pixels": 224,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "26\u00b030'N",
+     "changed_pixels": 5,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "27\u00b000'N",
+     "changed_pixels": 7,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "3RD KHORDAD",
+     "changed_pixels": 178,
+     "max_error": 1
+    }
+   ]
+  },
+  "01-cold-chart-1920": {
+   "changed_kind_symbols_on_canvas": 56,
+   "of_which_listed_visible": 29,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 8,
+    "max_error": 1
+   },
+   "total_changed_pixels": 288314,
+   "max_error": 204,
+   "interior": {
+    "pixels": 97193,
+    "changed": 33064,
+    "max_error": 204
+   },
+   "outside_interior": {
+    "pixels": 8197207,
+    "changed": 255250,
+    "max_error": 6
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 183280,
+     "changed": 40950,
+     "max_error": 6,
+     "mean_error": 0.28406
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 788312,
+     "changed": 89859,
+     "max_error": 3,
+     "mean_error": 0.11819
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 2581205,
+     "changed": 108726,
+     "max_error": 1,
+     "mean_error": 0.04212
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2260884,
+     "changed": 15680,
+     "max_error": 1,
+     "mean_error": 0.00694
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 36,
+     "regions_changed": 27,
+     "changed_pixels": 4240,
+     "max_error": 2
+    },
+    "block": {
+     "regions": 8,
+     "regions_changed": 8,
+     "changed_pixels": 191,
+     "max_error": 1
+    },
+    "unit": {
+     "regions": 8,
+     "regions_changed": 6,
+     "changed_pixels": 169,
+     "max_error": 1
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 689,
+     "max_error": 1
+    },
+    "icon-unchanged:port": {
+     "regions": 8,
+     "regions_changed": 8,
+     "changed_pixels": 1511,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 1423,
+     "max_error": 2
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 144,
+     "regions_changed": 41,
+     "changed_pixels": 8320,
+     "max_error": 2
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "label",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 188,
+     "max_error": 2
+    },
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-3khordad-qeshm",
+     "changed_pixels": 1423,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "QESHM AIR BASE",
+     "changed_pixels": 305,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "TONB-E BOZORG AIRPORT",
+     "changed_pixels": 732,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "AL MAKTOUM INTL",
+     "changed_pixels": 754,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "056\u00b030'E",
+     "changed_pixels": 83,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "057\u00b000'E",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "25\u00b030'N",
+     "changed_pixels": 62,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "26\u00b000'N",
+     "changed_pixels": 217,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "26\u00b030'N",
+     "changed_pixels": 5,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "27\u00b000'N",
+     "changed_pixels": 7,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "3RD KHORDAD",
+     "changed_pixels": 178,
+     "max_error": 1
+    }
+   ]
+  },
+  "02-bandar-abbas-crowded-1920": {
+   "changed_kind_symbols_on_canvas": 5,
+   "of_which_listed_visible": 3,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 105358,
+   "max_error": 218,
+   "interior": {
+    "pixels": 10048,
+    "changed": 5804,
+    "max_error": 218
+   },
+   "outside_interior": {
+    "pixels": 8284352,
+    "changed": 99554,
+    "max_error": 5
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 19456,
+     "changed": 9838,
+     "max_error": 5,
+     "mean_error": 0.69033
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 99908,
+     "changed": 26321,
+     "max_error": 3,
+     "mean_error": 0.27093
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 757173,
+     "changed": 43375,
+     "max_error": 1,
+     "mean_error": 0.05729
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2990477,
+     "changed": 19832,
+     "max_error": 1,
+     "mean_error": 0.00663
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 19,
+     "regions_changed": 10,
+     "changed_pixels": 1913,
+     "max_error": 2
+    },
+    "icon-unchanged:heliport": {
+     "regions": 4,
+     "regions_changed": 4,
+     "changed_pixels": 809,
+     "max_error": 1
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 40,
+     "max_error": 1
+    },
+    "icon-unchanged:port": {
+     "regions": 3,
+     "regions_changed": 3,
+     "changed_pixels": 498,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 1947,
+     "max_error": 2
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 114,
+     "regions_changed": 14,
+     "changed_pixels": 4023,
+     "max_error": 2
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "label",
+     "id": "HAVADARYA AIRPORT",
+     "changed_pixels": 277,
+     "max_error": 2
+    },
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-s300-bandar-abbas",
+     "changed_pixels": 1947,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "S-300PMU-2",
+     "changed_pixels": 485,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "QESHM BLUE SKY TOURISM",
+     "changed_pixels": 353,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "SHAHID BAHONAR PORT",
+     "changed_pixels": 1192,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "S-300PMU-2",
+     "changed_pixels": 271,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 105,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BANDAR ABBAS NAVAL",
+     "changed_pixels": 7,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "PORT OF SHAHID RAJAEE",
+     "changed_pixels": 383,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "QESHM BLUE SKY TOURISM",
+     "changed_pixels": 207,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "NAVY SPECIALIZED HOSP",
+     "changed_pixels": 41,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "KHALIJ-E FARS HOSP",
+     "changed_pixels": 90,
+     "max_error": 1
+    }
+   ]
+  },
+  "03-bandar-abbas-close-1920": {
+   "changed_kind_symbols_on_canvas": 2,
+   "of_which_listed_visible": 0,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 0,
+   "max_error": 0,
+   "interior": {
+    "pixels": 3872,
+    "changed": 0,
+    "max_error": 0
+   },
+   "outside_interior": {
+    "pixels": 8290528,
+    "changed": 0,
+    "max_error": 0
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 7680,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 42240,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 324940,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2053850,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 15,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:heliport": {
+     "regions": 4,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:port": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:ad": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 110,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    }
+   },
+   "protected_regions_changed_worst": []
+  },
+  "04-ad-selected-rings-1920": {
+   "changed_kind_symbols_on_canvas": 54,
+   "of_which_listed_visible": 30,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 394033,
+   "max_error": 214,
+   "interior": {
+    "pixels": 97778,
+    "changed": 33548,
+    "max_error": 214
+   },
+   "outside_interior": {
+    "pixels": 8196622,
+    "changed": 360485,
+    "max_error": 5
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 183672,
+     "changed": 44069,
+     "max_error": 5,
+     "mean_error": 0.33549
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 856539,
+     "changed": 119330,
+     "max_error": 3,
+     "mean_error": 0.14614
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 3378303,
+     "changed": 174038,
+     "max_error": 1,
+     "mean_error": 0.05152
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 3041289,
+     "changed": 23045,
+     "max_error": 1,
+     "mean_error": 0.00758
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 32,
+     "regions_changed": 29,
+     "changed_pixels": 5694,
+     "max_error": 4
+    },
+    "block": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 67,
+     "max_error": 1
+    },
+    "unit": {
+     "regions": 3,
+     "regions_changed": 3,
+     "changed_pixels": 63,
+     "max_error": 1
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 1226,
+     "max_error": 2
+    },
+    "icon-unchanged:port": {
+     "regions": 5,
+     "regions_changed": 5,
+     "changed_pixels": 964,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 3369,
+     "max_error": 2
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 170,
+     "regions_changed": 35,
+     "changed_pixels": 11826,
+     "max_error": 4
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "label",
+     "id": "TONB-E KOCHAK AIRPORT",
+     "changed_pixels": 560,
+     "max_error": 4
+    },
+    {
+     "kind": "dom-text",
+     "id": "OGHAB 44 AIRBASE",
+     "changed_pixels": 1417,
+     "max_error": 4
+    },
+    {
+     "kind": "label",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 197,
+     "max_error": 3
+    },
+    {
+     "kind": "dom-text",
+     "id": "TONB-E KOCHAK AIRPORT",
+     "changed_pixels": 951,
+     "max_error": 3
+    },
+    {
+     "kind": "icon-unchanged:naval_base",
+     "id": "osint-ir-bandar-abbas",
+     "changed_pixels": 1226,
+     "max_error": 2
+    },
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-3khordad-qeshm",
+     "changed_pixels": 1354,
+     "max_error": 2
+    },
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-s300-bandar-abbas",
+     "changed_pixels": 2015,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "S-300PMU-2",
+     "changed_pixels": 524,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "QESHM AIR BASE",
+     "changed_pixels": 453,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "TONB-E BOZORG AIRPORT",
+     "changed_pixels": 2416,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "HAVADARYA AIRPORT",
+     "changed_pixels": 650,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "BANDAR LENGEH INTL",
+     "changed_pixels": 679,
+     "max_error": 2
+    }
+   ]
+  },
+  "05-bushehr-nuclear-wide-1920": {
+   "changed_kind_symbols_on_canvas": 17,
+   "of_which_listed_visible": 13,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 279466,
+   "max_error": 100,
+   "interior": {
+    "pixels": 29614,
+    "changed": 17056,
+    "max_error": 100
+   },
+   "outside_interior": {
+    "pixels": 8264786,
+    "changed": 262410,
+    "max_error": 6
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 57488,
+     "changed": 22317,
+     "max_error": 6,
+     "mean_error": 0.63959
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 300949,
+     "changed": 73488,
+     "max_error": 4,
+     "mean_error": 0.27845
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 1645133,
+     "changed": 131796,
+     "max_error": 2,
+     "mean_error": 0.08011
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 3578603,
+     "changed": 34761,
+     "max_error": 1,
+     "mean_error": 0.00971
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 21,
+     "regions_changed": 19,
+     "changed_pixels": 4195,
+     "max_error": 4
+    },
+    "icon-unchanged:heliport": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 292,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 1127,
+     "max_error": 1
+    },
+    "icon-unchanged:nuclear": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 386,
+     "max_error": 1
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 116,
+     "regions_changed": 22,
+     "changed_pixels": 7152,
+     "max_error": 4
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "label",
+     "id": "AB PAKHSH AIRPORT",
+     "changed_pixels": 704,
+     "max_error": 4
+    },
+    {
+     "kind": "dom-text",
+     "id": "CHOGHADAK AIRPORT",
+     "changed_pixels": 1643,
+     "max_error": 4
+    },
+    {
+     "kind": "dom-text",
+     "id": "HOSEYNAKI MILITARY",
+     "changed_pixels": 1272,
+     "max_error": 3
+    },
+    {
+     "kind": "dom-text",
+     "id": "AB PAKHSH AIRPORT",
+     "changed_pixels": 956,
+     "max_error": 3
+    },
+    {
+     "kind": "dom-text",
+     "id": "052\u00b030'E",
+     "changed_pixels": 391,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "051\u00b030'E",
+     "changed_pixels": 10,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "052\u00b000'E",
+     "changed_pixels": 5,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "052\u00b030'E",
+     "changed_pixels": 278,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "S-300PMU-2",
+     "changed_pixels": 173,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "TOR-M1",
+     "changed_pixels": 172,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BUSHEHR NPP",
+     "changed_pixels": 158,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "SEPEHR",
+     "changed_pixels": 6,
+     "max_error": 1
+    }
+   ]
+  },
+  "06-bushehr-nuclear-close-1920": {
+   "changed_kind_symbols_on_canvas": 6,
+   "of_which_listed_visible": 4,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 220318,
+   "max_error": 92,
+   "interior": {
+    "pixels": 11088,
+    "changed": 7007,
+    "max_error": 92
+   },
+   "outside_interior": {
+    "pixels": 8283312,
+    "changed": 213311,
+    "max_error": 6
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 21440,
+     "changed": 12444,
+     "max_error": 6,
+     "mean_error": 1.1382
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 106876,
+     "changed": 52423,
+     "max_error": 3,
+     "mean_error": 0.54736
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 679656,
+     "changed": 113663,
+     "max_error": 1,
+     "mean_error": 0.16724
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2913517,
+     "changed": 34284,
+     "max_error": 1,
+     "mean_error": 0.01177
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 12,
+     "regions_changed": 11,
+     "changed_pixels": 2576,
+     "max_error": 2
+    },
+    "icon-unchanged:heliport": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 837,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 1036,
+     "max_error": 1
+    },
+    "icon-unchanged:nuclear": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 526,
+     "max_error": 1
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 107,
+     "regions_changed": 11,
+     "changed_pixels": 4702,
+     "max_error": 3
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "dom-text",
+     "id": "CHOGHADAK AIRPORT",
+     "changed_pixels": 786,
+     "max_error": 3
+    },
+    {
+     "kind": "dom-text",
+     "id": "HOSEYNAKI MILITARY",
+     "changed_pixels": 1081,
+     "max_error": 3
+    },
+    {
+     "kind": "dom-text",
+     "id": "BAHREGAN AIR BASE",
+     "changed_pixels": 1271,
+     "max_error": 3
+    },
+    {
+     "kind": "label",
+     "id": "BUSHEHR AIRPORT",
+     "changed_pixels": 522,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "051\u00b045'E",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "052\u00b000'E",
+     "changed_pixels": 3,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "S-300PMU-2",
+     "changed_pixels": 21,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "TOR-M1",
+     "changed_pixels": 11,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BUSHEHR NPP",
+     "changed_pixels": 13,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "CHOGHADAK AIRPORT",
+     "changed_pixels": 420,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "HOSEYNAKI MILITARY",
+     "changed_pixels": 628,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BAHREGAN AIR BASE",
+     "changed_pixels": 848,
+     "max_error": 1
+    }
+   ]
+  },
+  "07-radar-khalij-fars-1920": {
+   "changed_kind_symbols_on_canvas": 5,
+   "of_which_listed_visible": 2,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 63372,
+   "max_error": 218,
+   "interior": {
+    "pixels": 10048,
+    "changed": 3824,
+    "max_error": 218
+   },
+   "outside_interior": {
+    "pixels": 8284352,
+    "changed": 59548,
+    "max_error": 4
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 19456,
+     "changed": 5870,
+     "max_error": 4,
+     "mean_error": 0.37115
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 106304,
+     "changed": 14821,
+     "max_error": 1,
+     "mean_error": 0.13942
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 748944,
+     "changed": 25541,
+     "max_error": 1,
+     "mean_error": 0.0341
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2900314,
+     "changed": 13270,
+     "max_error": 1,
+     "mean_error": 0.00458
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 20,
+     "regions_changed": 6,
+     "changed_pixels": 617,
+     "max_error": 1
+    },
+    "icon-unchanged:heliport": {
+     "regions": 2,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:port": {
+     "regions": 3,
+     "regions_changed": 3,
+     "changed_pixels": 230,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 115,
+     "regions_changed": 8,
+     "changed_pixels": 1375,
+     "max_error": 2
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "dom-text",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 136,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "3RD KHORDAD",
+     "changed_pixels": 124,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 81,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "QESHM INTL",
+     "changed_pixels": 30,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "QESHM NAVAL BASE",
+     "changed_pixels": 239,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BANDAR ABBAS NAVAL",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "QESHM BLUE SKY TOURISM",
+     "changed_pixels": 142,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:port",
+     "id": "port-way-489941811",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:port",
+     "id": "port-node-1589742199",
+     "changed_pixels": 114,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:port",
+     "id": "port-node-1589742393",
+     "changed_pixels": 115,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "3RD KHORDAD",
+     "changed_pixels": 231,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "QESHM INTL",
+     "changed_pixels": 47,
+     "max_error": 1
+    }
+   ]
+  },
+  "08-barakah-nuclear-1920": {
+   "changed_kind_symbols_on_canvas": 4,
+   "of_which_listed_visible": 1,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 400,
+   "max_error": 103,
+   "interior": {
+    "pixels": 7744,
+    "changed": 246,
+    "max_error": 103
+   },
+   "outside_interior": {
+    "pixels": 8286656,
+    "changed": 154,
+    "max_error": 1
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 15360,
+     "changed": 40,
+     "max_error": 1,
+     "mean_error": 0.0026
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 80872,
+     "changed": 43,
+     "max_error": 1,
+     "mean_error": 0.00053
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 457685,
+     "changed": 53,
+     "max_error": 1,
+     "mean_error": 0.00012
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2188241,
+     "changed": 15,
+     "max_error": 1,
+     "mean_error": 1e-05
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 23,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:heliport": {
+     "regions": 10,
+     "regions_changed": 1,
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    "icon-unchanged:port": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:nuclear": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 118,
+     "regions_changed": 2,
+     "changed_pixels": 3,
+     "max_error": 1
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "icon-unchanged:heliport",
+     "id": "apt-ae-0098",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "AL HAMRA SEARCH AND",
+     "changed_pixels": 2,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "CAMP AL HAMRA HELIPORT",
+     "changed_pixels": 1,
+     "max_error": 1
+    }
+   ]
+  },
+  "08b-barakah-nuc-off-1920": {
+   "changed_kind_symbols_on_canvas": 4,
+   "of_which_listed_visible": 1,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 648,
+   "max_error": 111,
+   "interior": {
+    "pixels": 7744,
+    "changed": 299,
+    "max_error": 111
+   },
+   "outside_interior": {
+    "pixels": 8286656,
+    "changed": 349,
+    "max_error": 1
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 15360,
+     "changed": 76,
+     "max_error": 1,
+     "mean_error": 0.00495
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 80872,
+     "changed": 118,
+     "max_error": 1,
+     "mean_error": 0.00146
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 457685,
+     "changed": 114,
+     "max_error": 1,
+     "mean_error": 0.00025
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2188241,
+     "changed": 39,
+     "max_error": 1,
+     "mean_error": 2e-05
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 22,
+     "regions_changed": 3,
+     "changed_pixels": 7,
+     "max_error": 1
+    },
+    "icon-unchanged:heliport": {
+     "regions": 10,
+     "regions_changed": 1,
+     "changed_pixels": 3,
+     "max_error": 1
+    },
+    "icon-unchanged:port": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 117,
+     "regions_changed": 3,
+     "changed_pixels": 14,
+     "max_error": 1
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "label",
+     "id": "AL HAMRA SEARCH AND",
+     "changed_pixels": 5,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "AL HAMRA AUXILIARY APT",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BARAKAH ENEC HELIPORT",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:heliport",
+     "id": "apt-ae-0150",
+     "changed_pixels": 3,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "AL HAMRA SEARCH AND",
+     "changed_pixels": 11,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "AL HAMRA AUXILIARY APT",
+     "changed_pixels": 2,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "BARAKAH ENEC HELIPORT",
+     "changed_pixels": 1,
+     "max_error": 1
+    }
+   ]
+  },
+  "09-udeid-radar-ad-1920": {
+   "changed_kind_symbols_on_canvas": 7,
+   "of_which_listed_visible": 3,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 67833,
+   "max_error": 148,
+   "interior": {
+    "pixels": 13920,
+    "changed": 4168,
+    "max_error": 148
+   },
+   "outside_interior": {
+    "pixels": 8280480,
+    "changed": 63665,
+    "max_error": 4
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 25508,
+     "changed": 4658,
+     "max_error": 4,
+     "mean_error": 0.25553
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 126202,
+     "changed": 10292,
+     "max_error": 1,
+     "mean_error": 0.08155
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 912154,
+     "changed": 30768,
+     "max_error": 1,
+     "mean_error": 0.03373
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 3789217,
+     "changed": 17832,
+     "max_error": 1,
+     "mean_error": 0.00471
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 16,
+     "regions_changed": 7,
+     "changed_pixels": 1479,
+     "max_error": 1
+    },
+    "icon-unchanged:heliport": {
+     "regions": 8,
+     "regions_changed": 4,
+     "changed_pixels": 31,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 510,
+     "max_error": 1
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 111,
+     "regions_changed": 9,
+     "changed_pixels": 2250,
+     "max_error": 3
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "dom-text",
+     "id": "MIM-104 PATRIOT",
+     "changed_pixels": 1290,
+     "max_error": 3
+    },
+    {
+     "kind": "dom-text",
+     "id": "AN/TPY-2",
+     "changed_pixels": 581,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "MIM-104 PATRIOT",
+     "changed_pixels": 902,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "AN/TPY-2",
+     "changed_pixels": 406,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "DOHA INTL",
+     "changed_pixels": 4,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "AL UDEID AIR BASE",
+     "changed_pixels": 59,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "MESALEED AIRFIELD",
+     "changed_pixels": 94,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "HAMAD EMERGENCY HELI",
+     "changed_pixels": 6,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "AL RAYYAN AIR DEFENSE",
+     "changed_pixels": 8,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:heliport",
+     "id": "apt-qa-0004",
+     "changed_pixels": 12,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:heliport",
+     "id": "apt-qa-0005",
+     "changed_pixels": 3,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:heliport",
+     "id": "apt-qa-0006",
+     "changed_pixels": 1,
+     "max_error": 1
+    }
+   ]
+  },
+  "10-kish-two-runways-1920": {
+   "changed_kind_symbols_on_canvas": 3,
+   "of_which_listed_visible": 1,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 78973,
+   "max_error": 99,
+   "interior": {
+    "pixels": 5808,
+    "changed": 1929,
+    "max_error": 99
+   },
+   "outside_interior": {
+    "pixels": 8288592,
+    "changed": 77044,
+    "max_error": 5
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 11520,
+     "changed": 3678,
+     "max_error": 5,
+     "mean_error": 0.76276
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 63360,
+     "changed": 17416,
+     "max_error": 3,
+     "mean_error": 0.31829
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 510720,
+     "changed": 37357,
+     "max_error": 1,
+     "mean_error": 0.07315
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2215360,
+     "changed": 18449,
+     "max_error": 1,
+     "mean_error": 0.00833
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 12,
+     "regions_changed": 5,
+     "changed_pixels": 660,
+     "max_error": 1
+    },
+    "icon-unchanged:heliport": {
+     "regions": 3,
+     "regions_changed": 1,
+     "changed_pixels": 17,
+     "max_error": 1
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 107,
+     "regions_changed": 6,
+     "changed_pixels": 973,
+     "max_error": 3
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "dom-text",
+     "id": "KISH ISLAND AIR BASE",
+     "changed_pixels": 914,
+     "max_error": 3
+    },
+    {
+     "kind": "label",
+     "id": "KISH INTL",
+     "changed_pixels": 2,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "KISH ISLAND AIR BASE",
+     "changed_pixels": 648,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "KISH POLICE COMMAND",
+     "changed_pixels": 2,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "27R",
+     "changed_pixels": 5,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "27L",
+     "changed_pixels": 3,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:heliport",
+     "id": "apt-ir-0198",
+     "changed_pixels": 17,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "KISH INTL",
+     "changed_pixels": 4,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "KISH POLICE COMMAND",
+     "changed_pixels": 7,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "27R",
+     "changed_pixels": 7,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "27L",
+     "changed_pixels": 13,
+     "max_error": 1
+    },
+    {
+     "kind": "dom-text",
+     "id": "Facilities \u00a9 OpenStreetMap contributors ",
+     "changed_pixels": 28,
+     "max_error": 1
+    }
+   ]
+  },
+  "11-fujairah-construction-1920": {
+   "changed_kind_symbols_on_canvas": 2,
+   "of_which_listed_visible": 0,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 0,
+   "max_error": 0,
+   "interior": {
+    "pixels": 3872,
+    "changed": 0,
+    "max_error": 0
+   },
+   "outside_interior": {
+    "pixels": 8290528,
+    "changed": 0,
+    "max_error": 0
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 7680,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 42240,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 340480,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 1885454,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 10,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:heliport": {
+     "regions": 6,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 105,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    }
+   },
+   "protected_regions_changed_worst": []
+  },
+  "12-havadarya-panel-1920": {
+   "changed_kind_symbols_on_canvas": 1,
+   "of_which_listed_visible": 0,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 0,
+   "max_error": 0,
+   "interior": {
+    "pixels": 1936,
+    "changed": 0,
+    "max_error": 0
+   },
+   "outside_interior": {
+    "pixels": 8292464,
+    "changed": 0,
+    "max_error": 0
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 3840,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 21120,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 170240,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 1350400,
+     "changed": 0,
+     "max_error": 0,
+     "mean_error": 0.0
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 6,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:heliport": {
+     "regions": 2,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:ad": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 135,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    }
+   },
+   "protected_regions_changed_worst": []
+  },
+  "13-bandar-abbas-tilt-1920": {
+   "changed_kind_symbols_on_canvas": 7,
+   "of_which_listed_visible": 3,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 41641,
+   "max_error": 216,
+   "interior": {
+    "pixels": 13920,
+    "changed": 5061,
+    "max_error": 216
+   },
+   "outside_interior": {
+    "pixels": 8280480,
+    "changed": 36580,
+    "max_error": 5
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 27136,
+     "changed": 6675,
+     "max_error": 5,
+     "mean_error": 0.28991
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 148521,
+     "changed": 12776,
+     "max_error": 2,
+     "mean_error": 0.08637
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 1069042,
+     "changed": 13143,
+     "max_error": 1,
+     "mean_error": 0.01229
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 3438105,
+     "changed": 3979,
+     "max_error": 1,
+     "mean_error": 0.00116
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 22,
+     "regions_changed": 9,
+     "changed_pixels": 191,
+     "max_error": 1
+    },
+    "icon-unchanged:heliport": {
+     "regions": 3,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    "icon-unchanged:port": {
+     "regions": 3,
+     "regions_changed": 3,
+     "changed_pixels": 159,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 117,
+     "regions_changed": 13,
+     "changed_pixels": 446,
+     "max_error": 1
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "label",
+     "id": "055\u00b045'E",
+     "changed_pixels": 5,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "056\u00b000'E",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "S-300PMU-2",
+     "changed_pixels": 3,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 78,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "QESHM INTL",
+     "changed_pixels": 3,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "PORT OF SHAHID RAJAEE",
+     "changed_pixels": 3,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "QESHM BLUE SKY TOURISM",
+     "changed_pixels": 30,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "FIN AGRICULTURAL APT",
+     "changed_pixels": 63,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "FISHING PIER",
+     "changed_pixels": 5,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:naval_base",
+     "id": "osint-ir-bandar-abbas",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:port",
+     "id": "port-way-489941811",
+     "changed_pixels": 4,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:port",
+     "id": "port-node-1589742199",
+     "changed_pixels": 50,
+     "max_error": 1
+    }
+   ]
+  },
+  "14-bandar-abbas-osint-off-1920": {
+   "changed_kind_symbols_on_canvas": 4,
+   "of_which_listed_visible": 2,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 90474,
+   "max_error": 101,
+   "interior": {
+    "pixels": 7744,
+    "changed": 3409,
+    "max_error": 101
+   },
+   "outside_interior": {
+    "pixels": 8286656,
+    "changed": 87065,
+    "max_error": 6
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 15360,
+     "changed": 5099,
+     "max_error": 6,
+     "mean_error": 0.5793
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 78084,
+     "changed": 17434,
+     "max_error": 3,
+     "mean_error": 0.2498
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 607880,
+     "changed": 40803,
+     "max_error": 1,
+     "mean_error": 0.06712
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 3052289,
+     "changed": 23329,
+     "max_error": 1,
+     "mean_error": 0.00764
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 17,
+     "regions_changed": 11,
+     "changed_pixels": 1811,
+     "max_error": 2
+    },
+    "icon-unchanged:heliport": {
+     "regions": 4,
+     "regions_changed": 4,
+     "changed_pixels": 924,
+     "max_error": 1
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 52,
+     "max_error": 1
+    },
+    "icon-unchanged:port": {
+     "regions": 3,
+     "regions_changed": 3,
+     "changed_pixels": 209,
+     "max_error": 1
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 112,
+     "regions_changed": 12,
+     "changed_pixels": 3413,
+     "max_error": 2
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "label",
+     "id": "HAVADARYA AIRPORT",
+     "changed_pixels": 309,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "HAVADARYA AIRPORT",
+     "changed_pixels": 530,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "SHAHID BAHONAR PORT",
+     "changed_pixels": 1559,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "BANDAR ABBAS INTL",
+     "changed_pixels": 6,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BANDAR ABBAS NAVAL",
+     "changed_pixels": 11,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "PORT OF SHAHID RAJAEE",
+     "changed_pixels": 419,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "QESHM BLUE SKY TOURISM",
+     "changed_pixels": 80,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BAHMAN PORT",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "FISHING PIER",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "NAVY SPECIALIZED HOSP",
+     "changed_pixels": 40,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "KHALIJ-E FARS HOSP",
+     "changed_pixels": 102,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "SHAHID MOHAMMADI HOSP",
+     "changed_pixels": 13,
+     "max_error": 1
+    }
+   ]
+  },
+  "15-control-no-glyphs-1920": {
+   "changed_kind_symbols_on_canvas": 0,
+   "of_which_listed_visible": 0,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 0,
+   "max_error": 0,
+   "interior": {
+    "pixels": 0,
+    "changed": 0,
+    "max_error": 0
+   },
+   "outside_interior": {
+    "pixels": 8294400,
+    "changed": 0,
+    "max_error": 0
+   },
+   "bands_css_px": [],
+   "pass": true,
+   "protected_by_kind": {
+    "block": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "unit": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 146,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    }
+   },
+   "protected_regions_changed_worst": []
+  },
+  "01-cold-chart-1440": {
+   "changed_kind_symbols_on_canvas": 55,
+   "of_which_listed_visible": 20,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 148806,
+   "max_error": 203,
+   "interior": {
+    "pixels": 96673,
+    "changed": 20907,
+    "max_error": 203
+   },
+   "outside_interior": {
+    "pixels": 5087327,
+    "changed": 127899,
+    "max_error": 7
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 176743,
+     "changed": 27406,
+     "max_error": 7,
+     "mean_error": 0.20266
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 650663,
+     "changed": 49694,
+     "max_error": 3,
+     "mean_error": 0.07887
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 1710730,
+     "changed": 46907,
+     "max_error": 1,
+     "mean_error": 0.02742
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 1344352,
+     "changed": 3862,
+     "max_error": 1,
+     "mean_error": 0.00287
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 20,
+     "regions_changed": 15,
+     "changed_pixels": 1375,
+     "max_error": 1
+    },
+    "block": {
+     "regions": 8,
+     "regions_changed": 7,
+     "changed_pixels": 180,
+     "max_error": 1
+    },
+    "unit": {
+     "regions": 8,
+     "regions_changed": 8,
+     "changed_pixels": 241,
+     "max_error": 1
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 3,
+     "regions_changed": 3,
+     "changed_pixels": 355,
+     "max_error": 2
+    },
+    "icon-unchanged:port": {
+     "regions": 3,
+     "regions_changed": 3,
+     "changed_pixels": 379,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 3,
+     "regions_changed": 3,
+     "changed_pixels": 1688,
+     "max_error": 3
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 127,
+     "regions_changed": 29,
+     "changed_pixels": 3113,
+     "max_error": 2
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-3khordad-qeshm",
+     "changed_pixels": 1455,
+     "max_error": 3
+    },
+    {
+     "kind": "icon-unchanged:naval_base",
+     "id": "osint-ir-bandar-abbas",
+     "changed_pixels": 247,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "QESHM AIR BASE",
+     "changed_pixels": 320,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "057\u00b000'E",
+     "changed_pixels": 25,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "057\u00b030'E",
+     "changed_pixels": 13,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "058\u00b000'E",
+     "changed_pixels": 4,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "25\u00b000'N",
+     "changed_pixels": 20,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "25\u00b030'N",
+     "changed_pixels": 122,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "26\u00b030'N",
+     "changed_pixels": 325,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "3RD KHORDAD",
+     "changed_pixels": 192,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 108,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "QESHM AIR BASE",
+     "changed_pixels": 177,
+     "max_error": 1
+    }
+   ]
+  },
+  "02-bandar-abbas-crowded-1440": {
+   "changed_kind_symbols_on_canvas": 5,
+   "of_which_listed_visible": 3,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 107015,
+   "max_error": 225,
+   "interior": {
+    "pixels": 10048,
+    "changed": 5439,
+    "max_error": 225
+   },
+   "outside_interior": {
+    "pixels": 5173952,
+    "changed": 101576,
+    "max_error": 8
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 19456,
+     "changed": 8409,
+     "max_error": 8,
+     "mean_error": 1.02195
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 103188,
+     "changed": 27898,
+     "max_error": 3,
+     "mean_error": 0.30868
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 736514,
+     "changed": 48185,
+     "max_error": 1,
+     "mean_error": 0.06542
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2458865,
+     "changed": 16989,
+     "max_error": 1,
+     "mean_error": 0.00691
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 17,
+     "regions_changed": 13,
+     "changed_pixels": 2594,
+     "max_error": 1
+    },
+    "icon-unchanged:heliport": {
+     "regions": 3,
+     "regions_changed": 3,
+     "changed_pixels": 242,
+     "max_error": 1
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 86,
+     "max_error": 1
+    },
+    "icon-unchanged:port": {
+     "regions": 3,
+     "regions_changed": 3,
+     "changed_pixels": 323,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 1992,
+     "max_error": 2
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 111,
+     "regions_changed": 16,
+     "changed_pixels": 4737,
+     "max_error": 5
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "dom-text",
+     "id": "HAVADARYA AIRPORT",
+     "changed_pixels": 1799,
+     "max_error": 5
+    },
+    {
+     "kind": "dom-text",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 391,
+     "max_error": 3
+    },
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-s300-bandar-abbas",
+     "changed_pixels": 1992,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "056\u00b000'E",
+     "changed_pixels": 2,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "S-300PMU-2",
+     "changed_pixels": 287,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 284,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "HAVADARYA AIRPORT",
+     "changed_pixels": 1056,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BANDAR ABBAS INTL",
+     "changed_pixels": 2,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BANDAR ABBAS NAVAL",
+     "changed_pixels": 15,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "PORT OF SHAHID RAJAEE",
+     "changed_pixels": 483,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "QESHM BLUE SKY TOURISM",
+     "changed_pixels": 163,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BAHMAN PORT",
+     "changed_pixels": 70,
+     "max_error": 1
+    }
+   ]
+  },
+  "05-bushehr-nuclear-wide-1440": {
+   "changed_kind_symbols_on_canvas": 13,
+   "of_which_listed_visible": 9,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 255601,
+   "max_error": 98,
+   "interior": {
+    "pixels": 24943,
+    "changed": 15037,
+    "max_error": 98
+   },
+   "outside_interior": {
+    "pixels": 5159057,
+    "changed": 240564,
+    "max_error": 6
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 47352,
+     "changed": 20889,
+     "max_error": 6,
+     "mean_error": 0.74723
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 232006,
+     "changed": 68393,
+     "max_error": 3,
+     "mean_error": 0.33853
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 1288644,
+     "changed": 118894,
+     "max_error": 2,
+     "mean_error": 0.09227
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2256326,
+     "changed": 32257,
+     "max_error": 1,
+     "mean_error": 0.0143
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 17,
+     "regions_changed": 17,
+     "changed_pixels": 3986,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 1686,
+     "max_error": 1
+    },
+    "icon-unchanged:nuclear": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 545,
+     "max_error": 1
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 111,
+     "regions_changed": 19,
+     "changed_pixels": 6885,
+     "max_error": 3
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "dom-text",
+     "id": "CHOGHADAK AIRPORT",
+     "changed_pixels": 1967,
+     "max_error": 3
+    },
+    {
+     "kind": "dom-text",
+     "id": "HOSEYNAKI MILITARY",
+     "changed_pixels": 1361,
+     "max_error": 3
+    },
+    {
+     "kind": "dom-text",
+     "id": "AB PAKHSH AIRPORT",
+     "changed_pixels": 944,
+     "max_error": 3
+    },
+    {
+     "kind": "dom-text",
+     "id": "S-300PMU-2",
+     "changed_pixels": 651,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "051\u00b030'E",
+     "changed_pixels": 20,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "052\u00b000'E",
+     "changed_pixels": 16,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "052\u00b030'E",
+     "changed_pixels": 239,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "S-300PMU-2",
+     "changed_pixels": 306,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "TOR-M1",
+     "changed_pixels": 67,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BUSHEHR NPP",
+     "changed_pixels": 51,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "CHOGHADAK AIRPORT",
+     "changed_pixels": 1113,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "SHIRAZ SHAHID",
+     "changed_pixels": 60,
+     "max_error": 1
+    }
+   ]
+  },
+  "06-bushehr-nuclear-close-1440": {
+   "changed_kind_symbols_on_canvas": 6,
+   "of_which_listed_visible": 4,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 138348,
+   "max_error": 90,
+   "interior": {
+    "pixels": 9856,
+    "changed": 6252,
+    "max_error": 90
+   },
+   "outside_interior": {
+    "pixels": 5174144,
+    "changed": 132096,
+    "max_error": 5
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 20184,
+     "changed": 10047,
+     "max_error": 5,
+     "mean_error": 0.93762
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 102520,
+     "changed": 39135,
+     "max_error": 3,
+     "mean_error": 0.41904
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 607510,
+     "changed": 63300,
+     "max_error": 1,
+     "mean_error": 0.1042
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 2168236,
+     "changed": 19341,
+     "max_error": 1,
+     "mean_error": 0.00892
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 12,
+     "regions_changed": 9,
+     "changed_pixels": 3256,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 1418,
+     "max_error": 1
+    },
+    "icon-unchanged:nuclear": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 447,
+     "max_error": 1
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 106,
+     "regions_changed": 9,
+     "changed_pixels": 5385,
+     "max_error": 4
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "dom-text",
+     "id": "CHOGHADAK AIRPORT",
+     "changed_pixels": 1705,
+     "max_error": 4
+    },
+    {
+     "kind": "dom-text",
+     "id": "HOSEYNAKI MILITARY",
+     "changed_pixels": 1037,
+     "max_error": 3
+    },
+    {
+     "kind": "label",
+     "id": "S-300PMU-2",
+     "changed_pixels": 195,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "TOR-M1",
+     "changed_pixels": 4,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BUSHEHR NPP",
+     "changed_pixels": 41,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "CHOGHADAK AIRPORT",
+     "changed_pixels": 939,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "HOSEYNAKI MILITARY",
+     "changed_pixels": 661,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BAHREGAN AIR BASE",
+     "changed_pixels": 798,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BUSHEHR AIRPORT",
+     "changed_pixels": 593,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "CROP-SPRAYING AIRSTRIP",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "CROP-SPRAYING AIRSTRIP",
+     "changed_pixels": 24,
+     "max_error": 1
+    },
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-s300-bushehr",
+     "changed_pixels": 993,
+     "max_error": 1
+    }
+   ]
+  },
+  "01-cold-chart-1280": {
+   "changed_kind_symbols_on_canvas": 70,
+   "of_which_listed_visible": 26,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 199587,
+   "max_error": 188,
+   "interior": {
+    "pixels": 118333,
+    "changed": 26719,
+    "max_error": 188
+   },
+   "outside_interior": {
+    "pixels": 3568067,
+    "changed": 172868,
+    "max_error": 4
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 199832,
+     "changed": 32444,
+     "max_error": 4,
+     "mean_error": 0.19071
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 690596,
+     "changed": 66979,
+     "max_error": 2,
+     "mean_error": 0.09802
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 1508363,
+     "changed": 63500,
+     "max_error": 1,
+     "mean_error": 0.0421
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 1169276,
+     "changed": 9945,
+     "max_error": 1,
+     "mean_error": 0.00851
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 15,
+     "regions_changed": 14,
+     "changed_pixels": 1348,
+     "max_error": 2
+    },
+    "block": {
+     "regions": 7,
+     "regions_changed": 7,
+     "changed_pixels": 407,
+     "max_error": 1
+    },
+    "unit": {
+     "regions": 8,
+     "regions_changed": 8,
+     "changed_pixels": 720,
+     "max_error": 1
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 135,
+     "max_error": 1
+    },
+    "icon-unchanged:port": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 198,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 1347,
+     "max_error": 2
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 120,
+     "regions_changed": 26,
+     "changed_pixels": 4595,
+     "max_error": 2
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "label",
+     "id": "CHABAHAR KONARAK INTL",
+     "changed_pixels": 335,
+     "max_error": 2
+    },
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-3khordad-qeshm",
+     "changed_pixels": 1347,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "26\u00b030'N",
+     "changed_pixels": 583,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "057\u00b030'E",
+     "changed_pixels": 7,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "058\u00b000'E",
+     "changed_pixels": 7,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "058\u00b030'E",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "059\u00b000'E",
+     "changed_pixels": 3,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "060\u00b000'E",
+     "changed_pixels": 2,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "060\u00b030'E",
+     "changed_pixels": 71,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "25\u00b000'N",
+     "changed_pixels": 60,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "3RD KHORDAD",
+     "changed_pixels": 176,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 54,
+     "max_error": 1
+    }
+   ]
+  },
+  "02-bandar-abbas-crowded-1280": {
+   "changed_kind_symbols_on_canvas": 6,
+   "of_which_listed_visible": 3,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 89158,
+   "max_error": 73,
+   "interior": {
+    "pixels": 10180,
+    "changed": 5323,
+    "max_error": 73
+   },
+   "outside_interior": {
+    "pixels": 3676220,
+    "changed": 83835,
+    "max_error": 4
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 20768,
+     "changed": 6453,
+     "max_error": 4,
+     "mean_error": 0.39128
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 110480,
+     "changed": 22169,
+     "max_error": 2,
+     "mean_error": 0.20258
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 685410,
+     "changed": 43436,
+     "max_error": 1,
+     "mean_error": 0.06337
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 1721421,
+     "changed": 11737,
+     "max_error": 1,
+     "mean_error": 0.00682
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 14,
+     "regions_changed": 12,
+     "changed_pixels": 2199,
+     "max_error": 1
+    },
+    "icon-unchanged:heliport": {
+     "regions": 3,
+     "regions_changed": 3,
+     "changed_pixels": 746,
+     "max_error": 1
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 154,
+     "max_error": 1
+    },
+    "icon-unchanged:port": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 169,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 1880,
+     "max_error": 2
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 109,
+     "regions_changed": 15,
+     "changed_pixels": 6225,
+     "max_error": 4
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "dom-text",
+     "id": "HAVADARYA AIRPORT",
+     "changed_pixels": 1720,
+     "max_error": 4
+    },
+    {
+     "kind": "dom-text",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 521,
+     "max_error": 3
+    },
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-s300-bandar-abbas",
+     "changed_pixels": 1880,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "056\u00b000'E",
+     "changed_pixels": 2,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "056\u00b015'E",
+     "changed_pixels": 7,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "056\u00b030'E",
+     "changed_pixels": 2,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "S-300PMU-2",
+     "changed_pixels": 203,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "KHALIJ FARS",
+     "changed_pixels": 163,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "HAVADARYA AIRPORT",
+     "changed_pixels": 965,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BANDAR ABBAS INTL",
+     "changed_pixels": 85,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BANDAR ABBAS NAVAL",
+     "changed_pixels": 296,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "PORT OF SHAHID RAJAEE",
+     "changed_pixels": 398,
+     "max_error": 1
+    }
+   ]
+  },
+  "05-bushehr-nuclear-wide-1280": {
+   "changed_kind_symbols_on_canvas": 14,
+   "of_which_listed_visible": 9,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 187217,
+   "max_error": 105,
+   "interior": {
+    "pixels": 24176,
+    "changed": 11975,
+    "max_error": 105
+   },
+   "outside_interior": {
+    "pixels": 3662224,
+    "changed": 175242,
+    "max_error": 5
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 45856,
+     "changed": 17903,
+     "max_error": 5,
+     "mean_error": 0.63996
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 229073,
+     "changed": 50452,
+     "max_error": 3,
+     "mean_error": 0.24504
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 1040361,
+     "changed": 88608,
+     "max_error": 1,
+     "mean_error": 0.08517
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 1516059,
+     "changed": 18279,
+     "max_error": 1,
+     "mean_error": 0.01206
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 11,
+     "regions_changed": 11,
+     "changed_pixels": 3398,
+     "max_error": 1
+    },
+    "icon-unchanged:naval_base": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "icon-unchanged:ad": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 1912,
+     "max_error": 2
+    },
+    "icon-unchanged:nuclear": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 417,
+     "max_error": 1
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 106,
+     "regions_changed": 13,
+     "changed_pixels": 6106,
+     "max_error": 4
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "dom-text",
+     "id": "AB PAKHSH AIRPORT",
+     "changed_pixels": 1917,
+     "max_error": 4
+    },
+    {
+     "kind": "dom-text",
+     "id": "HOSEYNAKI MILITARY",
+     "changed_pixels": 1073,
+     "max_error": 3
+    },
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-s300-bushehr",
+     "changed_pixels": 916,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "S-300PMU-2",
+     "changed_pixels": 846,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "CHOGHADAK AIRPORT",
+     "changed_pixels": 934,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "051\u00b030'E",
+     "changed_pixels": 14,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "052\u00b000'E",
+     "changed_pixels": 42,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "052\u00b030'E",
+     "changed_pixels": 315,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "S-300PMU-2",
+     "changed_pixels": 461,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "TOR-M1",
+     "changed_pixels": 89,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BUSHEHR NPP",
+     "changed_pixels": 43,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "CHOGHADAK AIRPORT",
+     "changed_pixels": 488,
+     "max_error": 1
+    }
+   ]
+  },
+  "06-bushehr-nuclear-close-1280": {
+   "changed_kind_symbols_on_canvas": 5,
+   "of_which_listed_visible": 4,
+   "position_fit_residual_px": 0.0,
+   "listed_icon_vs_fit_px": 0.0,
+   "noise_floor": {
+    "changed": 0,
+    "max_error": 0
+   },
+   "total_changed_pixels": 121821,
+   "max_error": 95,
+   "interior": {
+    "pixels": 9680,
+    "changed": 5757,
+    "max_error": 95
+   },
+   "outside_interior": {
+    "pixels": 3676720,
+    "changed": 116064,
+    "max_error": 6
+   },
+   "bands_css_px": [
+    {
+     "from": 0,
+     "to": 8,
+     "pixels": 18166,
+     "changed": 10293,
+     "max_error": 6,
+     "mean_error": 1.17054
+    },
+    {
+     "from": 8,
+     "to": 30,
+     "pixels": 91784,
+     "changed": 34571,
+     "max_error": 4,
+     "mean_error": 0.43356
+    },
+    {
+     "from": 30,
+     "to": 100,
+     "pixels": 460988,
+     "changed": 50633,
+     "max_error": 2,
+     "mean_error": 0.10988
+    },
+    {
+     "from": 100,
+     "to": null,
+     "pixels": 1841276,
+     "changed": 20447,
+     "max_error": 1,
+     "mean_error": 0.0111
+    }
+   ],
+   "pixels_above_whole_symbol_envelope": 0,
+   "pass": true,
+   "protected_by_kind": {
+    "label": {
+     "regions": 11,
+     "regions_changed": 9,
+     "changed_pixels": 4397,
+     "max_error": 1
+    },
+    "icon-unchanged:ad": {
+     "regions": 2,
+     "regions_changed": 2,
+     "changed_pixels": 2706,
+     "max_error": 2
+    },
+    "icon-unchanged:nuclear": {
+     "regions": 1,
+     "regions_changed": 1,
+     "changed_pixels": 1066,
+     "max_error": 1
+    },
+    "scale": {
+     "regions": 1,
+     "regions_changed": 0,
+     "changed_pixels": 0,
+     "max_error": 0
+    },
+    "dom-text": {
+     "regions": 106,
+     "regions_changed": 9,
+     "changed_pixels": 7945,
+     "max_error": 3
+    }
+   },
+   "protected_regions_changed_worst": [
+    {
+     "kind": "dom-text",
+     "id": "CHOGHADAK AIRPORT",
+     "changed_pixels": 1918,
+     "max_error": 3
+    },
+    {
+     "kind": "dom-text",
+     "id": "HOSEYNAKI MILITARY",
+     "changed_pixels": 1940,
+     "max_error": 3
+    },
+    {
+     "kind": "dom-text",
+     "id": "BUSHEHR AIRPORT",
+     "changed_pixels": 1932,
+     "max_error": 3
+    },
+    {
+     "kind": "icon-unchanged:ad",
+     "id": "ad-ir-s300-bushehr",
+     "changed_pixels": 1840,
+     "max_error": 2
+    },
+    {
+     "kind": "dom-text",
+     "id": "BAHREGAN AIR BASE",
+     "changed_pixels": 1021,
+     "max_error": 2
+    },
+    {
+     "kind": "label",
+     "id": "051\u00b030'E",
+     "changed_pixels": 1,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "S-300PMU-2",
+     "changed_pixels": 373,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "TOR-M1",
+     "changed_pixels": 147,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BUSHEHR NPP",
+     "changed_pixels": 105,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "CHOGHADAK AIRPORT",
+     "changed_pixels": 1076,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "HOSEYNAKI MILITARY",
+     "changed_pixels": 1038,
+     "max_error": 1
+    },
+    {
+     "kind": "label",
+     "id": "BAHREGAN AIR BASE",
+     "changed_pixels": 501,
+     "max_error": 1
+    }
+   ]
+  }
+ }
+}

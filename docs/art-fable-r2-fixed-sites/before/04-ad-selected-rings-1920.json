@@ -1,0 +1,2951 @@
+{
+ "pose": "04-ad-selected-rings",
+ "vp": "1920",
+ "note": "ad-ir-s300-bandar-abbas selected at 700 km: estimated dashed rings, selection ring, panel",
+ "host": {
+  "x": 0,
+  "y": 0,
+  "w": 1920,
+  "h": 1080
+ },
+ "dpr": 2,
+ "viewport": {
+  "w": 1920,
+  "h": 1080
+ },
+ "view": {
+  "dist": 700,
+  "tilt": 0,
+  "target": {
+   "x": -32.61556955147987,
+   "y": 72.78159536330806
+  }
+ },
+ "clock": 28500.000000000644,
+ "renderer": {
+  "renderer": "ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)",
+  "vendor": "Google Inc. (Microsoft Corporation)",
+  "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+ },
+ "facilities": {
+  "symbols": 250,
+  "runways": 202,
+  "labels": 17,
+  "total": 597
+ },
+ "osint": {
+  "sites": 14,
+  "rings": 12,
+  "labels": 3,
+  "total": 14
+ },
+ "tracks": {
+  "units": 8,
+  "contacts": 0
+ },
+ "occupancy": [
+  {
+   "kind": "label",
+   "id": "054°30'E",
+   "x": 634,
+   "y": 52,
+   "w": 62,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "055°00'E",
+   "x": 778,
+   "y": 52,
+   "w": 62,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "055°30'E",
+   "x": 921,
+   "y": 52,
+   "w": 62,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "056°00'E",
+   "x": 1064,
+   "y": 52,
+   "w": 62,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "056°30'E",
+   "x": 1208,
+   "y": 52,
+   "w": 62,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "057°00'E",
+   "x": 1351,
+   "y": 52,
+   "w": 62,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "26°00'N",
+   "x": 368,
+   "y": 812,
+   "w": 55,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "26°30'N",
+   "x": 368,
+   "y": 653,
+   "w": 55,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "27°00'N",
+   "x": 368,
+   "y": 493,
+   "w": 55,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "27°30'N",
+   "x": 368,
+   "y": 334,
+   "w": 55,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "28°00'N",
+   "x": 368,
+   "y": 175,
+   "w": 55,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "S-300PMU-2",
+   "x": 1045,
+   "y": 426,
+   "w": 80.8125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "3RD KHORDAD",
+   "x": 1091,
+   "y": 571,
+   "w": 88.28125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "KHALIJ FARS",
+   "x": 1017,
+   "y": 518,
+   "w": 88.28125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "QESHM AIR BASE",
+   "x": 1090,
+   "y": 597,
+   "w": 110.734375,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "OGHAB 44 AIRBASE",
+   "x": 890,
+   "y": 189,
+   "w": 125.6875,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "ABU MUSA ISLAND APT",
+   "x": 739,
+   "y": 813,
+   "w": 148.125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "TONB-E BOZORG AIRPORT",
+   "x": 813,
+   "y": 718,
+   "w": 163.09375,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "HAVADARYA AIRPORT",
+   "x": 1157,
+   "y": 476,
+   "w": 133.171875,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "KISH INTL",
+   "x": 535,
+   "y": 653,
+   "w": 73.328125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "BANDAR ABBAS INTL",
+   "x": 1223,
+   "y": 433,
+   "w": 133.171875,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "BANDAR ABBAS NAVAL",
+   "x": 1181,
+   "y": 455,
+   "w": 140.640625,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "TONB-E KOCHAK AIRPORT",
+   "x": 669,
+   "y": 743,
+   "w": 163.09375,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "BANDAR LENGEH INTL",
+   "x": 683,
+   "y": 631,
+   "w": 140.640625,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "SIRI AIRPORT",
+   "x": 552,
+   "y": 850,
+   "w": 95.765625,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "LAVAN AIRPORT",
+   "x": 356,
+   "y": 563,
+   "w": 103.25,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "LAR AIRPORT",
+   "x": 640,
+   "y": 288,
+   "w": 88.28125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "LAMERD AIRPORT",
+   "x": 368,
+   "y": 384,
+   "w": 110.734375,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "KHASAB AIRPORT",
+   "x": 1104,
+   "y": 746,
+   "w": 110.734375,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "SAQR PORT",
+   "x": 1070,
+   "y": 807,
+   "w": 73.328125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "PORT OF SHAHID RAJAEE",
+   "x": 933,
+   "y": 468,
+   "w": 163.09375,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "TRANSIT GATE",
+   "x": 1227,
+   "y": 565,
+   "w": 116.171875,
+   "h": 16
+  },
+  {
+   "kind": "block",
+   "id": "us-fa18-1",
+   "x": 1336,
+   "y": 798,
+   "w": 129.90625,
+   "h": 31.875
+  },
+  {
+   "kind": "block",
+   "id": "us-fa18-2",
+   "x": 1158,
+   "y": 794,
+   "w": 88.609375,
+   "h": 16.9375
+  },
+  {
+   "kind": "unit",
+   "id": "us-ddg-2",
+   "x": 1392.1318646751336,
+   "y": 1016,
+   "w": 27.720000000000027,
+   "h": 8
+  },
+  {
+   "kind": "unit",
+   "id": "us-fa18-1",
+   "x": 1307.1862179442205,
+   "y": 811.6508465213095,
+   "w": 25.519999999999982,
+   "h": 22.349153478690482
+  },
+  {
+   "kind": "unit",
+   "id": "us-fa18-2",
+   "x": 1249.822453456947,
+   "y": 779.8164744587511,
+   "w": 25.519999999999982,
+   "h": 27.720000000000027
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0123",
+   "x": 1066.609128989202,
+   "y": 593.8961102982896,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0161",
+   "x": 943.3315309178256,
+   "y": 165.69197168482359,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-oiba",
+   "x": 803.1373586991502,
+   "y": 868,
+   "w": 20,
+   "h": 6
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-oibx",
+   "x": 884.2468534959319,
+   "y": 735.4635628604849,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-oikp",
+   "x": 1129.9674068653967,
+   "y": 448.973314920701,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0085",
+   "x": 835.4216853525891,
+   "y": 740.2546358558996,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-oibk",
+   "x": 501.2490753319701,
+   "y": 650.4435053930115,
+   "w": 19.999999999999943,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-oikb",
+   "x": 1188.8513111115847,
+   "y": 429.8726916831667,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-oibl-2",
+   "x": 743.4331526207951,
+   "y": 648.262850906726,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-oibs",
+   "x": 661.5635879445564,
+   "y": 846.7119594703,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-oisl",
+   "x": 616.7911697622379,
+   "y": 284.5806175896517,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ookb",
+   "x": 1149.499768673314,
+   "y": 763.2740702943356,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ae-0171",
+   "x": 945.7436772145148,
+   "y": 1016,
+   "w": 20,
+   "h": 8
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0020",
+   "x": 1405.6375816736672,
+   "y": 693.5249611052709,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0021",
+   "x": 393.67193960075923,
+   "y": 599.1583320002303,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0057",
+   "x": 1150.644175774836,
+   "y": 520.9126289076693,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0064",
+   "x": 244.3282469463637,
+   "y": 44,
+   "w": 20.00000000000003,
+   "h": 8
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0069",
+   "x": 1030.0024426816487,
+   "y": 126.39562281080131,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0072",
+   "x": 1054.095223766303,
+   "y": 302.8408134047358,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0083",
+   "x": 1036.1030790348686,
+   "y": 160.35653092713844,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-oibh-2",
+   "x": 598.233991950606,
+   "y": 431.65541651866914,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-om-0010",
+   "x": 1162.4955295179066,
+   "y": 868,
+   "w": 20,
+   "h": 6
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-om-0012",
+   "x": 1183.0202844514529,
+   "y": 701.3243822605975,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-way-1115832548",
+   "x": 1459.79184353788,
+   "y": 872.8320617476286,
+   "w": 20,
+   "h": 1.167938252371414
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-way-1381828653",
+   "x": 522.1667720522545,
+   "y": 330.48578210386063,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-way-1479278615",
+   "x": 496.27276876269883,
+   "y": 96.78010648100415,
+   "w": 20.000000000000057,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-way-1479278630",
+   "x": 524.0396989627634,
+   "y": 100.61614831454311,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-way-1479282125",
+   "x": 444.8891767232227,
+   "y": 424.4703987441504,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-way-480206700",
+   "x": 1435.822394546872,
+   "y": 397.0132528401943,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "osint-ir-bandar-abbas",
+   "x": 1157.9322420529443,
+   "y": 451.615567801894,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "port-way-1346137201",
+   "x": 1096.799678238855,
+   "y": 824.100004994265,
+   "w": 20,
+   "h": 9.899995005735036
+  },
+  {
+   "kind": "facility-icon",
+   "id": "port-way-489941811",
+   "x": 1098.707023408057,
+   "y": 464.5944412917983,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "port-way-1376727109",
+   "x": 1122.3093443063462,
+   "y": 770.4590880688544,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "port-way-545695462",
+   "x": 923.8507964979468,
+   "y": 1016,
+   "w": 20,
+   "h": 6.30563636325769
+  },
+  {
+   "kind": "facility-icon",
+   "id": "port-way-546091853",
+   "x": 900.0563069886254,
+   "y": 1021.6322836424367,
+   "w": 20,
+   "h": 2.3677163575632676
+  },
+  {
+   "kind": "osint-icon",
+   "id": "ad-ir-3khordad-qeshm",
+   "x": 1065.609128989202,
+   "y": 566.8961102982895,
+   "w": 22,
+   "h": 22
+  },
+  {
+   "kind": "osint-icon",
+   "id": "ad-ir-s300-bandar-abbas",
+   "x": 1128.9674068653967,
+   "y": 421.97331492070106,
+   "w": 22,
+   "h": 22
+  },
+  {
+   "kind": "osint-icon",
+   "id": "radar-ir-khalij-fars",
+   "x": 1108.1730422387604,
+   "y": 514.2843119270095,
+   "w": 22,
+   "h": 22
+  },
+  {
+   "kind": "scale",
+   "id": "25 NM",
+   "x": 1049.109375,
+   "y": 877,
+   "w": 182,
+   "h": 16.796875
+  }
+ ],
+ "labels": [
+  {
+   "text": "S-300PMU-2",
+   "x": 1045,
+   "y": 426,
+   "w": 81,
+   "h": 14
+  },
+  {
+   "text": "3RD KHORDAD",
+   "x": 1091,
+   "y": 571,
+   "w": 88,
+   "h": 14
+  },
+  {
+   "text": "KHALIJ FARS",
+   "x": 1017,
+   "y": 518,
+   "w": 88,
+   "h": 14
+  },
+  {
+   "text": "QESHM AIR BASE",
+   "x": 1090,
+   "y": 597,
+   "w": 111,
+   "h": 14
+  },
+  {
+   "text": "OGHAB 44 AIRBASE",
+   "x": 890,
+   "y": 189,
+   "w": 126,
+   "h": 14
+  },
+  {
+   "text": "ABU MUSA ISLAND APT",
+   "x": 739,
+   "y": 813,
+   "w": 148,
+   "h": 14
+  },
+  {
+   "text": "TONB-E BOZORG AIRPORT",
+   "x": 813,
+   "y": 718,
+   "w": 163,
+   "h": 14
+  },
+  {
+   "text": "HAVADARYA AIRPORT",
+   "x": 1157,
+   "y": 476,
+   "w": 133,
+   "h": 14
+  },
+  {
+   "text": "KISH INTL",
+   "x": 535,
+   "y": 653,
+   "w": 73,
+   "h": 14
+  },
+  {
+   "text": "BANDAR ABBAS INTL",
+   "x": 1223,
+   "y": 433,
+   "w": 133,
+   "h": 14
+  },
+  {
+   "text": "BANDAR ABBAS NAVAL",
+   "x": 1181,
+   "y": 455,
+   "w": 141,
+   "h": 14
+  },
+  {
+   "text": "TONB-E KOCHAK AIRPORT",
+   "x": 669,
+   "y": 743,
+   "w": 163,
+   "h": 14
+  },
+  {
+   "text": "BANDAR LENGEH INTL",
+   "x": 683,
+   "y": 631,
+   "w": 141,
+   "h": 14
+  },
+  {
+   "text": "SIRI AIRPORT",
+   "x": 552,
+   "y": 850,
+   "w": 96,
+   "h": 14
+  },
+  {
+   "text": "LAVAN AIRPORT",
+   "x": 356,
+   "y": 563,
+   "w": 103,
+   "h": 14
+  },
+  {
+   "text": "LAR AIRPORT",
+   "x": 640,
+   "y": 288,
+   "w": 88,
+   "h": 14
+  },
+  {
+   "text": "LAMERD AIRPORT",
+   "x": 368,
+   "y": 384,
+   "w": 111,
+   "h": 14
+  },
+  {
+   "text": "KHASAB AIRPORT",
+   "x": 1104,
+   "y": 746,
+   "w": 111,
+   "h": 14
+  },
+  {
+   "text": "SAQR PORT",
+   "x": 1070,
+   "y": 807,
+   "w": 73,
+   "h": 14
+  },
+  {
+   "text": "PORT OF SHAHID RAJAEE",
+   "x": 933,
+   "y": 468,
+   "w": 163,
+   "h": 14
+  },
+  {
+   "text": "TRANSIT GATE",
+   "x": 1227,
+   "y": 565,
+   "w": 116,
+   "h": 16
+  }
+ ],
+ "labelOwners": [
+  {
+   "text": "S-300PMU-2",
+   "owner": "osint-icon:ad-ir-s300-bandar-abbas",
+   "nearest": "osint-icon:ad-ir-s300-bandar-abbas",
+   "leader": false
+  },
+  {
+   "text": "3RD KHORDAD",
+   "owner": "osint-icon:ad-ir-3khordad-qeshm",
+   "nearest": "osint-icon:ad-ir-3khordad-qeshm",
+   "leader": false
+  },
+  {
+   "text": "KHALIJ FARS",
+   "owner": "osint-icon:radar-ir-khalij-fars",
+   "nearest": "osint-icon:radar-ir-khalij-fars",
+   "leader": false
+  },
+  {
+   "text": "QESHM AIR BASE",
+   "owner": "facility-icon:apt-ir-0123",
+   "nearest": "facility-icon:apt-ir-0123",
+   "leader": false
+  },
+  {
+   "text": "OGHAB 44 AIRBASE",
+   "owner": "facility-icon:apt-ir-0161",
+   "nearest": "facility-icon:apt-ir-0161",
+   "leader": false
+  },
+  {
+   "text": "ABU MUSA ISLAND APT",
+   "owner": "facility-icon:apt-oiba",
+   "nearest": "facility-icon:apt-oiba",
+   "leader": true
+  },
+  {
+   "text": "TONB-E BOZORG AIRPORT",
+   "owner": "facility-icon:apt-oibx",
+   "nearest": "facility-icon:apt-oibx",
+   "leader": false
+  },
+  {
+   "text": "HAVADARYA AIRPORT",
+   "owner": "facility-icon:apt-oikp",
+   "nearest": "facility-icon:osint-ir-bandar-abbas",
+   "leader": true
+  },
+  {
+   "text": "KISH INTL",
+   "owner": "facility-icon:apt-oibk",
+   "nearest": "facility-icon:apt-oibk",
+   "leader": true
+  },
+  {
+   "text": "BANDAR ABBAS INTL",
+   "owner": "facility-icon:apt-oikb",
+   "nearest": "facility-icon:apt-oikb",
+   "leader": true
+  },
+  {
+   "text": "BANDAR ABBAS NAVAL",
+   "owner": "facility-icon:osint-ir-bandar-abbas",
+   "nearest": "facility-icon:osint-ir-bandar-abbas",
+   "leader": false
+  },
+  {
+   "text": "TONB-E KOCHAK AIRPORT",
+   "owner": "facility-icon:apt-ir-0085",
+   "nearest": "facility-icon:apt-ir-0085",
+   "leader": false
+  },
+  {
+   "text": "BANDAR LENGEH INTL",
+   "owner": "facility-icon:apt-oibl-2",
+   "nearest": "facility-icon:apt-oibl-2",
+   "leader": false
+  },
+  {
+   "text": "SIRI AIRPORT",
+   "owner": "facility-icon:apt-oibs",
+   "nearest": "facility-icon:apt-oibs",
+   "leader": true
+  },
+  {
+   "text": "LAVAN AIRPORT",
+   "owner": "facility-icon:apt-oibv",
+   "nearest": "facility-icon:apt-oibv",
+   "leader": true
+  },
+  {
+   "text": "LAR AIRPORT",
+   "owner": "facility-icon:apt-oisl",
+   "nearest": "facility-icon:apt-oisl",
+   "leader": false
+  },
+  {
+   "text": "LAMERD AIRPORT",
+   "owner": "facility-icon:apt-oisr",
+   "nearest": "facility-icon:apt-way-1479282125",
+   "leader": true
+  },
+  {
+   "text": "KHASAB AIRPORT",
+   "owner": "facility-icon:apt-ookb",
+   "nearest": "facility-icon:apt-ookb",
+   "leader": false
+  },
+  {
+   "text": "SAQR PORT",
+   "owner": "facility-icon:port-way-1346137201",
+   "nearest": "facility-icon:port-way-1346137201",
+   "leader": false
+  },
+  {
+   "text": "PORT OF SHAHID RAJAEE",
+   "owner": "facility-icon:port-way-489941811",
+   "nearest": "facility-icon:port-way-489941811",
+   "leader": false
+  }
+ ],
+ "centres": {
+  "apt-oikb": {
+   "x": 1198.8513111115847,
+   "y": 439.8726916831667
+  },
+  "apt-oikp": {
+   "x": 1139.9674068653967,
+   "y": 458.973314920701
+  },
+  "apt-oibk": {
+   "x": 511.2490753319701,
+   "y": 660.4435053930115
+  },
+  "apt-omfj": {
+   "x": 1184.5849428835995,
+   "y": 1111.5429243938697
+  },
+  "ad-ir-s300-bandar-abbas": {
+   "x": 1139.9674068653967,
+   "y": 432.97331492070106
+  },
+  "ad-ir-3khordad-qeshm": {
+   "x": 1076.609128989202,
+   "y": 577.8961102982895
+  },
+  "ad-us-thaad-dhafra": {
+   "x": 701.9441841707778,
+   "y": 1383.3853763131988
+  },
+  "radar-ir-khalij-fars": {
+   "x": 1119.1730422387604,
+   "y": 525.2843119270095
+  },
+  "radar-ir-sepehr": {
+   "x": 230.03469268600327,
+   "y": -286.49217566821744
+  },
+  "radar-us-tpy2-udeid": {
+   "x": -225.25502311928585,
+   "y": 1106.712848717508
+  },
+  "nuc-ir-bushehr-reactor": {
+   "x": -403.15302265474367,
+   "y": -75.2018828490789
+  },
+  "nuc-ae-barakah": {
+   "x": 17.788764083086654,
+   "y": 1477.1320365974905
+  }
+ },
+ "panels": {
+  "facility": null,
+  "osint": "S-300PMU-2 battery, Bandar AbbasXLayerSAM · samSystemS-300PMU-2OperatorIranSideIranEngagement range200 km (108 nm)ESTIMATEDStatusassessedPosition27.1583N 56.1725EPlacementanchored to a real facility (assumption)Platform DBno recordNotesNo platform DB record carries S-300PMU-2; the OSINT range is used as published.Notional placement at the IRIAF fighter base that defends the strait's northern shore. 200 km is the public maximum range of the 48N6E2 missile.SourceIran is a documented S-300PMU-2 operator (Auftragstaktik record ir-s300-isfahan, CSIS Missile Threat); placement at Bandar Abbas is a scenario assumptionCSIS Missile Defense Project: S-300S-300 missile system (Wikipedia)"
+ },
+ "dom": [
+  {
+   "s": "HORNET 101\nC350 S450 FL250",
+   "r": [
+    [
+     1339,
+     797,
+     82.61,
+     17
+    ],
+    [
+     1339,
+     811.94,
+     123.91,
+     17
+    ]
+   ],
+   "at": "plot-track/tx-block"
+  },
+  {
+   "s": "HORNET 102",
+   "r": [
+    [
+     1161,
+     793,
+     82.61,
+     17
+    ]
+   ],
+   "at": "plot-track/tx-block"
+  },
+  {
+   "s": "054°30'E",
+   "r": [
+    [
+     637,
+     51,
+     56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "055°00'E",
+   "r": [
+    [
+     781,
+     51,
+     56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "055°30'E",
+   "r": [
+    [
+     924,
+     51,
+     56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "056°00'E",
+   "r": [
+    [
+     1067,
+     51,
+     56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "056°30'E",
+   "r": [
+    [
+     1211,
+     51,
+     56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "057°00'E",
+   "r": [
+    [
+     1354,
+     51,
+     56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "26°00'N",
+   "r": [
+    [
+     371,
+     811,
+     49,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "26°30'N",
+   "r": [
+    [
+     371,
+     652,
+     49,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "27°00'N",
+   "r": [
+    [
+     371,
+     492,
+     49,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "27°30'N",
+   "r": [
+    [
+     371,
+     333,
+     49,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "28°00'N",
+   "r": [
+    [
+     371,
+     174,
+     49,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "S-300PMU-2",
+   "r": [
+    [
+     1048,
+     425,
+     74.81,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "3RD KHORDAD",
+   "r": [
+    [
+     1094,
+     570,
+     82.28,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "KHALIJ FARS",
+   "r": [
+    [
+     1020,
+     517,
+     82.28,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "QESHM AIR BASE",
+   "r": [
+    [
+     1093,
+     596,
+     104.73,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "OGHAB 44 AIRBASE",
+   "r": [
+    [
+     893,
+     188,
+     119.69,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "ABU MUSA ISLAND APT",
+   "r": [
+    [
+     742,
+     812,
+     142.13,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "TONB-E BOZORG AIRPORT",
+   "r": [
+    [
+     816,
+     717,
+     157.09,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "HAVADARYA AIRPORT",
+   "r": [
+    [
+     1160,
+     475,
+     127.17,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "KISH INTL",
+   "r": [
+    [
+     538,
+     652,
+     67.33,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "BANDAR ABBAS INTL",
+   "r": [
+    [
+     1226,
+     432,
+     127.17,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "BANDAR ABBAS NAVAL",
+   "r": [
+    [
+     1184,
+     454,
+     134.64,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "TONB-E KOCHAK AIRPORT",
+   "r": [
+    [
+     672,
+     742,
+     157.09,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "BANDAR LENGEH INTL",
+   "r": [
+    [
+     686,
+     630,
+     134.64,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "SIRI AIRPORT",
+   "r": [
+    [
+     555,
+     849,
+     89.77,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "LAVAN AIRPORT",
+   "r": [
+    [
+     359,
+     562,
+     97.25,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "LAR AIRPORT",
+   "r": [
+    [
+     643,
+     287,
+     82.28,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "LAMERD AIRPORT",
+   "r": [
+    [
+     371,
+     383,
+     104.73,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "KHASAB AIRPORT",
+   "r": [
+    [
+     1107,
+     745,
+     104.73,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "SAQR PORT",
+   "r": [
+    [
+     1073,
+     806,
+     67.33,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "PORT OF SHAHID RAJAEE",
+   "r": [
+    [
+     936,
+     467,
+     157.09,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "TRANSIT GATE",
+   "r": [
+    [
+     1233,
+     565,
+     104.17,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-obj-label"
+  },
+  {
+   "s": "SANDKASTEN",
+   "r": [
+    [
+     14,
+     10.3,
+     148,
+     21
+    ]
+   ],
+   "at": "tx-top/tx-brand"
+  },
+  {
+   "s": "STRAIT OF HORMUZ STANDOFF",
+   "r": [
+    [
+     191,
+     11.7,
+     200,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "2026-03-15 06:00:00Z",
+   "r": [
+    [
+     420,
+     11.7,
+     174,
+     18
+    ]
+   ],
+   "at": "sim-clock/tx-clock"
+  },
+  {
+   "s": "[HOLD]",
+   "r": [
+    [
+     604,
+     11.7,
+     48,
+     18
+    ]
+   ],
+   "at": "sim-state/tx-state"
+  },
+  {
+   "s": "SAVE BATTLE",
+   "r": [
+    [
+     1246.34,
+     11.7,
+     100.33,
+     18
+    ]
+   ],
+   "at": "cmd-save/tx-btn"
+  },
+  {
+   "s": "LOAD BATTLE",
+   "r": [
+    [
+     1374.67,
+     11.7,
+     100.33,
+     18
+    ]
+   ],
+   "at": "cmd-load/tx-btn"
+  },
+  {
+   "s": "US NAVY",
+   "r": [
+    [
+     1513,
+     11.7,
+     56,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "0",
+   "r": [
+    [
+     1577,
+     11.7,
+     8,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-score"
+  },
+  {
+   "s": "IRAN",
+   "r": [
+    [
+     1595,
+     11.7,
+     32,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "0",
+   "r": [
+    [
+     1635,
+     11.7,
+     8,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-score"
+  },
+  {
+   "s": "CSR",
+   "r": [
+    [
+     1672,
+     11.7,
+     24,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "27°14.4'N 056°10.4'E",
+   "r": [
+    [
+     1706,
+     11.7,
+     160,
+     18
+    ]
+   ],
+   "at": "cursor-readout/tx-cursor"
+  },
+  {
+   "s": "[ MISSION ]",
+   "r": [
+    [
+     19,
+     57,
+     103.41,
+     18
+    ]
+   ],
+   "at": "mission-panel/"
+  },
+  {
+   "s": "PENDING",
+   "r": [
+    [
+     269.19,
+     57,
+     65.81,
+     18
+    ]
+   ],
+   "at": "mission-status/tx-mission-status"
+  },
+  {
+   "s": "WIN",
+   "r": [
+    [
+     19,
+     82.59,
+     27.38,
+     18
+    ]
+   ],
+   "at": "mission-win/"
+  },
+  {
+   "s": "USS Nimitz enters the transit gate afloat",
+   "r": [
+    [
+     67,
+     82.59,
+     232,
+     18
+    ],
+    [
+     19,
+     101.48,
+     88,
+     18
+    ]
+   ],
+   "at": "mission-win/tx-mission-line"
+  },
+  {
+   "s": "LOSE",
+   "r": [
+    [
+     19,
+     120.38,
+     36.48,
+     18
+    ]
+   ],
+   "at": "mission-lose/"
+  },
+  {
+   "s": "USS Nimitz is destroyed",
+   "r": [
+    [
+     67,
+     120.38,
+     184,
+     18
+    ]
+   ],
+   "at": "mission-lose/tx-mission-line"
+  },
+  {
+   "s": "USS NIMITZ",
+   "r": [
+    [
+     19,
+     139.27,
+     80,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "AFLOAT, UNDAMAGED",
+   "r": [
+    [
+     107,
+     139.27,
+     136,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "  //  ",
+   "r": [
+    [
+     243,
+     139.27,
+     32,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "89 NM TO GATE EDGE",
+   "r": [
+    [
+     275,
+     139.27,
+     64,
+     18
+    ],
+    [
+     19,
+     158.16,
+     72,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "GATE",
+   "r": [
+    [
+     28,
+     187.25,
+     36.48,
+     18
+    ]
+   ],
+   "at": "mission-focus-gate/tx-btn"
+  },
+  {
+   "s": "NIMITZ",
+   "r": [
+    [
+     90.48,
+     187.25,
+     54.73,
+     18
+    ]
+   ],
+   "at": "mission-focus-unit/tx-btn"
+  },
+  {
+   "s": "B",
+   "r": [
+    [
+     168.72,
+     188.64,
+     7,
+     16
+    ]
+   ],
+   "at": "mission-panel/tx-cap"
+  },
+  {
+   "s": "BRIEFING",
+   "r": [
+    [
+     194.22,
+     187.25,
+     72.97,
+     18
+    ]
+   ],
+   "at": "mission-briefing/tx-btn"
+  },
+  {
+   "s": "Forces",
+   "r": [
+    [
+     24.38,
+     227.05,
+     54.73,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-forces/tx-tab"
+  },
+  {
+   "s": "Intel",
+   "r": [
+    [
+     114.44,
+     227.05,
+     45.61,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-messages/tx-tab"
+  },
+  {
+   "s": "Combat",
+   "r": [
+    [
+     195.38,
+     227.05,
+     54.73,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-combat/tx-tab"
+  },
+  {
+   "s": "Media",
+   "r": [
+    [
+     285.44,
+     227.05,
+     45.61,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-media/tx-tab"
+  },
+  {
+   "s": "Forces (",
+   "r": [
+    [
+     47.2,
+     264.64,
+     75.2,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "8",
+   "r": [
+    [
+     122.41,
+     264.64,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": ")",
+   "r": [
+    [
+     131.81,
+     264.64,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "USS Nimitz (CVN-68)",
+   "r": [
+    [
+     37,
+     291.23,
+     152,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Chosin (CG-65)",
+   "r": [
+    [
+     37,
+     314.83,
+     144,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Mahan (DDG-72)",
+   "r": [
+    [
+     37,
+     338.42,
+     144,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Cole (DDG-67)",
+   "r": [
+    [
+     37,
+     362.02,
+     136,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Nitze (DDG-94)",
+   "r": [
+    [
+     37,
+     385.61,
+     144,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Hornet 101",
+   "r": [
+    [
+     37,
+     409.2,
+     80,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Hornet 102",
+   "r": [
+    [
+     37,
+     432.8,
+     80,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Hawkeye 601",
+   "r": [
+    [
+     37,
+     456.39,
+     88,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Contacts (",
+   "r": [
+    [
+     47.2,
+     494.98,
+     94,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "0",
+   "r": [
+    [
+     141.2,
+     494.98,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": ")",
+   "r": [
+    [
+     150.61,
+     494.98,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "No contacts detected",
+   "r": [
+    [
+     27,
+     528.58,
+     160,
+     18
+    ]
+   ],
+   "at": "contact-list-empty/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "S-300PMU-2 battery, Bandar Abbas",
+   "r": [
+    [
+     1533,
+     62,
+     278.41,
+     18
+    ]
+   ],
+   "at": "osint-panel-title/text-[var(--color-terminal-amber)]"
+  },
+  {
+   "s": "X",
+   "r": [
+    [
+     1887,
+     61.2,
+     8,
+     18
+    ]
+   ],
+   "at": "osint-panel-close/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "Layer",
+   "r": [
+    [
+     1533,
+     100,
+     43.5,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "SAM · sam",
+   "r": [
+    [
+     1827,
+     100,
+     72,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": "System",
+   "r": [
+    [
+     1533,
+     123.59,
+     52.2,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "S-300PMU-2",
+   "r": [
+    [
+     1819,
+     123.59,
+     80,
+     18
+    ]
+   ],
+   "at": "osint-system/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": "Operator",
+   "r": [
+    [
+     1533,
+     147.19,
+     69.61,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "Iran",
+   "r": [
+    [
+     1867,
+     147.19,
+     32,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": "Side",
+   "r": [
+    [
+     1533,
+     170.78,
+     34.81,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "Iran",
+   "r": [
+    [
+     1867,
+     170.78,
+     32,
+     18
+    ]
+   ],
+   "at": "osint-side/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": "Engagement range",
+   "r": [
+    [
+     1533,
+     194.38,
+     139.2,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "200",
+   "r": [
+    [
+     1689,
+     194.38,
+     24,
+     18
+    ]
+   ],
+   "at": "osint-range/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": " km (",
+   "r": [
+    [
+     1713,
+     194.38,
+     40,
+     18
+    ]
+   ],
+   "at": "osint-range/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": "108",
+   "r": [
+    [
+     1753,
+     194.38,
+     24,
+     18
+    ]
+   ],
+   "at": "osint-range/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": " nm)",
+   "r": [
+    [
+     1777,
+     194.38,
+     32,
+     18
+    ]
+   ],
+   "at": "osint-range/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": "ESTIMATED",
+   "r": [
+    [
+     1822,
+     194.38,
+     72,
+     18
+    ]
+   ],
+   "at": "osint-estimated/ml-2"
+  },
+  {
+   "s": "Status",
+   "r": [
+    [
+     1533,
+     217.97,
+     52.2,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "assessed",
+   "r": [
+    [
+     1835,
+     217.97,
+     64,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": "Position",
+   "r": [
+    [
+     1533,
+     241.56,
+     69.61,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "27.1583N 56.1725E",
+   "r": [
+    [
+     1763,
+     241.56,
+     136,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": "Placement",
+   "r": [
+    [
+     1533,
+     265.16,
+     78.31,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "anchored to a real facility (assumption)",
+   "r": [
+    [
+     1683,
+     265.16,
+     216,
+     18
+    ],
+    [
+     1803,
+     284.75,
+     96,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": "Platform DB",
+   "r": [
+    [
+     1533,
+     308.34,
+     95.7,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "no record",
+   "r": [
+    [
+     1827,
+     308.34,
+     72,
+     18
+    ]
+   ],
+   "at": "osint-platform/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": "Notes",
+   "r": [
+    [
+     1533,
+     346.94,
+     43.5,
+     18
+    ]
+   ],
+   "at": "osint-panel/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "No platform DB record carries S-300PMU-2; the OSINT range is used as published",
+   "r": [
+    [
+     1533,
+     370.53,
+     360,
+     18
+    ],
+    [
+     1533,
+     390.13,
+     256,
+     18
+    ]
+   ],
+   "at": "osint-panel/"
+  },
+  {
+   "s": ".",
+   "r": [
+    [
+     1789,
+     390.13,
+     8,
+     18
+    ]
+   ],
+   "at": "osint-panel/"
+  },
+  {
+   "s": "Notional placement at the IRIAF fighter base that defends the strait's northern shore. 200 km is the public maximum range of the 48N6E2 missile.",
+   "r": [
+    [
+     1533,
+     413.72,
+     352,
+     18
+    ],
+    [
+     1533,
+     433.31,
+     360,
+     18
+    ],
+    [
+     1533,
+     452.91,
+     352,
+     18
+    ],
+    [
+     1533,
+     472.5,
+     64,
+     18
+    ]
+   ],
+   "at": "osint-panel/mt-1"
+  },
+  {
+   "s": "Source",
+   "r": [
+    [
+     1533,
+     509.09,
+     52.2,
+     18
+    ]
+   ],
+   "at": "osint-source/uppercase"
+  },
+  {
+   "s": "Iran is a documented S-300PMU-2 operator (Auftragstaktik record ir-s300-isfahan, CSIS Missile Threat); placement at Bandar Abbas is a scenario assumption",
+   "r": [
+    [
+     1533,
+     532.69,
+     320,
+     18
+    ],
+    [
+     1533,
+     552.28,
+     352,
+     18
+    ],
+    [
+     1533,
+     571.88,
+     360,
+     18
+    ],
+    [
+     1533,
+     591.47,
+     168,
+     18
+    ]
+   ],
+   "at": "osint-source/text-[var(--color-tactical-text)]"
+  },
+  {
+   "s": "CSIS Missile Defense Project: S-300",
+   "r": [
+    [
+     1533,
+     611.06,
+     280,
+     18
+    ]
+   ],
+   "at": "osint-source/underline"
+  },
+  {
+   "s": "S-300 missile system (Wikipedia)",
+   "r": [
+    [
+     1533,
+     630.66,
+     256,
+     18
+    ]
+   ],
+   "at": "osint-source/underline"
+  },
+  {
+   "s": "Facilities © OpenStreetMap contributors (ODbL), OurAirports (public domain). Land, coast, depth: Natural Earth, NOAA ETOPO1 (public domain). ",
+   "r": [
+    [
+     730,
+     835,
+     987,
+     16
+    ]
+   ],
+   "at": "plot-attribution/tx-credit"
+  },
+  {
+   "s": "OSINT sites: Auftragstaktik (MIT), public sources; ranges ESTIMATED.",
+   "r": [
+    [
+     1717,
+     835,
+     189,
+     16
+    ],
+    [
+     1626,
+     851,
+     280,
+     16
+    ]
+   ],
+   "at": "plot-attribution/tx-credit"
+  },
+  {
+   "s": "OSINT",
+   "r": [
+    [
+     371,
+     62.59,
+     41,
+     16
+    ]
+   ],
+   "at": "plot-osint-toggles/tx-group-label"
+  },
+  {
+   "s": "AD",
+   "r": [
+    [
+     427,
+     61.2,
+     18.25,
+     18
+    ]
+   ],
+   "at": "plot-toggle-osint-ad/tx-btn"
+  },
+  {
+   "s": "RADAR",
+   "r": [
+    [
+     469.25,
+     61.2,
+     45.61,
+     18
+    ]
+   ],
+   "at": "plot-toggle-osint-radar/tx-btn"
+  },
+  {
+   "s": "NUC",
+   "r": [
+    [
+     538.86,
+     61.2,
+     27.38,
+     18
+    ]
+   ],
+   "at": "plot-toggle-osint-nuclear/tx-btn"
+  },
+  {
+   "s": "[ TRAFFIC ]",
+   "r": [
+    [
+     371,
+     877,
+     90.2,
+     16
+    ]
+   ],
+   "at": "teletype/"
+  },
+  {
+   "s": "25 NM",
+   "r": [
+    [
+     1190.11,
+     877,
+     41,
+     16
+    ]
+   ],
+   "at": "plot-scale/tx-scale-label"
+  },
+  {
+   "s": "NO TRAFFIC",
+   "r": [
+    [
+     1819,
+     877,
+     82,
+     16
+    ]
+   ],
+   "at": "teletype/tx-dim"
+  },
+  {
+   "s": "SPC",
+   "r": [
+    [
+     16,
+     1044.09,
+     21,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "PLAY",
+   "r": [
+    [
+     53,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "sim-toggle-pause/tx-btn"
+  },
+  {
+   "s": "TIME",
+   "r": [
+    [
+     123.48,
+     1044.09,
+     32.81,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-group-label"
+  },
+  {
+   "s": "1",
+   "r": [
+    [
+     170.8,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "1",
+   "r": [
+    [
+     196.3,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     205.42,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "2",
+   "r": [
+    [
+     238.05,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "2",
+   "r": [
+    [
+     263.55,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     272.67,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "3",
+   "r": [
+    [
+     305.3,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "5",
+   "r": [
+    [
+     330.8,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     339.92,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "4",
+   "r": [
+    [
+     372.55,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "10",
+   "r": [
+    [
+     398.05,
+     1042.7,
+     18.25,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     416.3,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "5",
+   "r": [
+    [
+     448.92,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "30",
+   "r": [
+    [
+     474.42,
+     1042.7,
+     18.25,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     492.67,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "6",
+   "r": [
+    [
+     525.3,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "60",
+   "r": [
+    [
+     550.8,
+     1042.7,
+     18.25,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     569.05,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "S",
+   "r": [
+    [
+     618.67,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "SENSORS",
+   "r": [
+    [
+     644.17,
+     1042.7,
+     63.84,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "M",
+   "r": [
+    [
+     731.52,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "MEASURE",
+   "r": [
+    [
+     757.02,
+     1042.7,
+     63.84,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "G",
+   "r": [
+    [
+     844.36,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "GOD",
+   "r": [
+    [
+     869.86,
+     1042.7,
+     27.38,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "T",
+   "r": [
+    [
+     920.73,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "TILT",
+   "r": [
+    [
+     946.23,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "E",
+   "r": [
+    [
+     1023.22,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "ENGAGE",
+   "r": [
+    [
+     1048.72,
+     1042.7,
+     54.73,
+     18
+    ]
+   ],
+   "at": "cmd-engage/tx-btn"
+  },
+  {
+   "s": "R",
+   "r": [
+    [
+     1126.95,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "ROE",
+   "r": [
+    [
+     1152.45,
+     1042.7,
+     27.38,
+     18
+    ]
+   ],
+   "at": "cmd-roe/tx-btn"
+  },
+  {
+   "s": "A",
+   "r": [
+    [
+     1203.33,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "AUTO",
+   "r": [
+    [
+     1228.83,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "H",
+   "r": [
+    [
+     1305.81,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "HELP",
+   "r": [
+    [
+     1331.31,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "RESET",
+   "r": [
+    [
+     1853.39,
+     1042.7,
+     45.61,
+     18
+    ]
+   ],
+   "at": "cmd-reset/tx-btn"
+  }
+ ]
+}

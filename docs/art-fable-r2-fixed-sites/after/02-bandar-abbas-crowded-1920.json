@@ -1,0 +1,1982 @@
+{
+ "pose": "02-bandar-abbas-crowded",
+ "vp": "1920",
+ "note": "Bandar Abbas and Havadarya, dist 150 km: co-located facilities, AD and radar",
+ "host": {
+  "x": 0,
+  "y": 0,
+  "w": 1920,
+  "h": 1080
+ },
+ "dpr": 2,
+ "viewport": {
+  "w": 1920,
+  "h": 1080
+ },
+ "view": {
+  "dist": 150,
+  "tilt": 0,
+  "target": {
+   "x": -32.59810164709687,
+   "y": 72.7672938111768
+  }
+ },
+ "clock": 15499.999999999794,
+ "renderer": {
+  "renderer": "ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)",
+  "vendor": "Google Inc. (Microsoft Corporation)",
+  "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+ },
+ "facilities": {
+  "symbols": 597,
+  "runways": 202,
+  "labels": 12,
+  "total": 597
+ },
+ "osint": {
+  "sites": 14,
+  "rings": 12,
+  "labels": 2,
+  "total": 14
+ },
+ "tracks": {
+  "units": 8,
+  "contacts": 0
+ },
+ "occupancy": [
+  {
+   "kind": "label",
+   "id": "056°00'E",
+   "x": 883,
+   "y": 52,
+   "w": 62,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "056°15'E",
+   "x": 1217,
+   "y": 52,
+   "w": 62,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "056°30'E",
+   "x": 1552,
+   "y": 52,
+   "w": 62,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "27°00'N",
+   "x": 368,
+   "y": 678,
+   "w": 55,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "27°15'N",
+   "x": 368,
+   "y": 306,
+   "w": 55,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "S-300PMU-2",
+   "x": 1045,
+   "y": 426,
+   "w": 80.8125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "KHALIJ FARS",
+   "x": 1057,
+   "y": 761,
+   "w": 88.28125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "HAVADARYA AIRPORT",
+   "x": 983,
+   "y": 452,
+   "w": 133.171875,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "BANDAR ABBAS INTL",
+   "x": 1438,
+   "y": 363,
+   "w": 133.171875,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "BANDAR ABBAS NAVAL",
+   "x": 1283,
+   "y": 464,
+   "w": 140.640625,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "PORT OF SHAHID RAJAEE",
+   "x": 1007,
+   "y": 525,
+   "w": 163.09375,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "QESHM BLUE SKY TOURISM",
+   "x": 1249,
+   "y": 787,
+   "w": 170.5625,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "BAHMAN PORT",
+   "x": 1302,
+   "y": 764,
+   "w": 88.28125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "FISHING PIER",
+   "x": 1276,
+   "y": 733,
+   "w": 95.765625,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "NAVY SPECIALIZED HOSP",
+   "x": 1229,
+   "y": 439,
+   "w": 163.09375,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "KHALIJ-E FARS HOSP",
+   "x": 1203,
+   "y": 375,
+   "w": 140.640625,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "SHAHID MOHAMMADI HOSP",
+   "x": 1321,
+   "y": 399,
+   "w": 163.09375,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "SHAHID BAHONAR PORT",
+   "x": 1032,
+   "y": 487,
+   "w": 148.125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "BANDAR KHAMIR HELIPORT",
+   "x": 354,
+   "y": 758,
+   "w": 170.5625,
+   "h": 14
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-oikp",
+   "x": 1129.6132107212127,
+   "y": 448.6833228008868,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0057",
+   "x": 1226.1047989652611,
+   "y": 784.4001214067389,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0193",
+   "x": 1206.2684092055613,
+   "y": 436.2933851941385,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0070",
+   "x": 1347.130869280506,
+   "y": 371.6547538668534,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0071",
+   "x": 1297.6871285434488,
+   "y": 396.1672203550187,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0194",
+   "x": 1187.6768131352308,
+   "y": 460.1076177884036,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "osint-ir-bandar-abbas",
+   "x": 1260.1157749297674,
+   "y": 461.0138362464538,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "port-way-489941811",
+   "x": 983.7314212536265,
+   "y": 521.5819125326741,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "port-node-1589742199",
+   "x": 1278.8947592974157,
+   "y": 761.2544106257885,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "port-node-1589742393",
+   "x": 1253.3965659828223,
+   "y": 729.5070525135335,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "osint-icon",
+   "id": "ad-ir-s300-bandar-abbas",
+   "x": 1128.6132107212127,
+   "y": 421.68332280088686,
+   "w": 22,
+   "h": 22
+  },
+  {
+   "kind": "osint-icon",
+   "id": "radar-ir-khalij-fars",
+   "x": 1031.5728424635759,
+   "y": 757.1346421636599,
+   "w": 22,
+   "h": 22
+  },
+  {
+   "kind": "scale",
+   "id": "5 NM",
+   "x": 1057.703125,
+   "y": 877,
+   "w": 164.8125,
+   "h": 16.796875
+  }
+ ],
+ "labels": [
+  {
+   "text": "S-300PMU-2",
+   "x": 1045,
+   "y": 426,
+   "w": 81,
+   "h": 14
+  },
+  {
+   "text": "KHALIJ FARS",
+   "x": 1057,
+   "y": 761,
+   "w": 88,
+   "h": 14
+  },
+  {
+   "text": "HAVADARYA AIRPORT",
+   "x": 983,
+   "y": 452,
+   "w": 133,
+   "h": 14
+  },
+  {
+   "text": "BANDAR ABBAS INTL",
+   "x": 1438,
+   "y": 363,
+   "w": 133,
+   "h": 14
+  },
+  {
+   "text": "BANDAR ABBAS NAVAL",
+   "x": 1283,
+   "y": 464,
+   "w": 141,
+   "h": 14
+  },
+  {
+   "text": "PORT OF SHAHID RAJAEE",
+   "x": 1007,
+   "y": 525,
+   "w": 163,
+   "h": 14
+  },
+  {
+   "text": "QESHM BLUE SKY TOURISM",
+   "x": 1249,
+   "y": 787,
+   "w": 171,
+   "h": 14
+  },
+  {
+   "text": "BAHMAN PORT",
+   "x": 1302,
+   "y": 764,
+   "w": 88,
+   "h": 14
+  },
+  {
+   "text": "FISHING PIER",
+   "x": 1276,
+   "y": 733,
+   "w": 96,
+   "h": 14
+  },
+  {
+   "text": "NAVY SPECIALIZED HOSP",
+   "x": 1229,
+   "y": 439,
+   "w": 163,
+   "h": 14
+  },
+  {
+   "text": "KHALIJ-E FARS HOSP",
+   "x": 1203,
+   "y": 375,
+   "w": 141,
+   "h": 14
+  },
+  {
+   "text": "SHAHID MOHAMMADI HOSP",
+   "x": 1321,
+   "y": 399,
+   "w": 163,
+   "h": 14
+  },
+  {
+   "text": "SHAHID BAHONAR PORT",
+   "x": 1032,
+   "y": 487,
+   "w": 148,
+   "h": 14
+  },
+  {
+   "text": "BANDAR KHAMIR HELIPORT",
+   "x": 354,
+   "y": 758,
+   "w": 171,
+   "h": 14
+  }
+ ],
+ "labelOwners": [
+  {
+   "text": "S-300PMU-2",
+   "owner": "osint-icon:ad-ir-s300-bandar-abbas",
+   "nearest": "osint-icon:ad-ir-s300-bandar-abbas",
+   "leader": false
+  },
+  {
+   "text": "KHALIJ FARS",
+   "owner": "osint-icon:radar-ir-khalij-fars",
+   "nearest": "osint-icon:radar-ir-khalij-fars",
+   "leader": false
+  },
+  {
+   "text": "HAVADARYA AIRPORT",
+   "owner": "facility-icon:apt-oikp",
+   "nearest": "facility-icon:apt-oikp",
+   "leader": true
+  },
+  {
+   "text": "BANDAR ABBAS INTL",
+   "owner": "facility-icon:apt-oikb",
+   "nearest": "facility-icon:apt-oikb",
+   "leader": true
+  },
+  {
+   "text": "BANDAR ABBAS NAVAL",
+   "owner": "facility-icon:osint-ir-bandar-abbas",
+   "nearest": "facility-icon:osint-ir-bandar-abbas",
+   "leader": false
+  },
+  {
+   "text": "PORT OF SHAHID RAJAEE",
+   "owner": "facility-icon:port-way-489941811",
+   "nearest": "facility-icon:port-way-489941811",
+   "leader": false
+  },
+  {
+   "text": "QESHM BLUE SKY TOURISM",
+   "owner": "facility-icon:apt-ir-0057",
+   "nearest": "facility-icon:apt-ir-0057",
+   "leader": false
+  },
+  {
+   "text": "BAHMAN PORT",
+   "owner": "facility-icon:port-node-1589742199",
+   "nearest": "facility-icon:port-node-1589742199",
+   "leader": false
+  },
+  {
+   "text": "FISHING PIER",
+   "owner": "facility-icon:port-node-1589742393",
+   "nearest": "facility-icon:port-node-1589742393",
+   "leader": false
+  },
+  {
+   "text": "NAVY SPECIALIZED HOSP",
+   "owner": "facility-icon:apt-ir-0193",
+   "nearest": "facility-icon:apt-ir-0193",
+   "leader": false
+  },
+  {
+   "text": "KHALIJ-E FARS HOSP",
+   "owner": "facility-icon:apt-ir-0070",
+   "nearest": "facility-icon:apt-ir-0070",
+   "leader": false
+  },
+  {
+   "text": "SHAHID MOHAMMADI HOSP",
+   "owner": "facility-icon:apt-ir-0071",
+   "nearest": "facility-icon:apt-ir-0071",
+   "leader": false
+  },
+  {
+   "text": "SHAHID BAHONAR PORT",
+   "owner": "facility-icon:apt-ir-0194",
+   "nearest": "facility-icon:apt-ir-0194",
+   "leader": true
+  },
+  {
+   "text": "BANDAR KHAMIR HELIPORT",
+   "owner": "facility-icon:apt-ir-0195",
+   "nearest": "facility-icon:apt-ir-0195",
+   "leader": false
+  }
+ ],
+ "centres": {
+  "apt-oikb": {
+   "x": 1414.4047638700886,
+   "y": 369.5470810257265
+  },
+  "apt-oikp": {
+   "x": 1139.6132107212127,
+   "y": 458.6833228008868
+  },
+  "apt-oibk": {
+   "x": -1794.4056697681121,
+   "y": 1398.877545005002
+  },
+  "apt-omfj": {
+   "x": 1347.828378806158,
+   "y": 3504.008167009008
+  },
+  "ad-ir-s300-bandar-abbas": {
+   "x": 1139.6132107212127,
+   "y": 432.68332280088686
+  },
+  "ad-ir-3khordad-qeshm": {
+   "x": 843.9412472989699,
+   "y": 1108.9897012296335
+  },
+  "ad-us-thaad-dhafra": {
+   "x": -1007.1618285203429,
+   "y": 4779.93960929921
+  },
+  "radar-ir-khalij-fars": {
+   "x": 1042.5728424635759,
+   "y": 768.1346421636599
+  },
+  "radar-ir-sepehr": {
+   "x": -3106.7394554492894,
+   "y": -3020.1556332807327
+  },
+  "radar-us-tpy2-udeid": {
+   "x": -5334.09146254064,
+   "y": 3488.8011471859872
+  },
+  "nuc-ir-bushehr-reactor": {
+   "x": -5958.948793706108,
+   "y": -2026.800933458086
+  },
+  "nuc-ae-barakah": {
+   "x": -4097.220455596234,
+   "y": 5210.090690625905
+  }
+ },
+ "panels": {
+  "facility": null,
+  "osint": null
+ },
+ "picks": [
+  {
+   "kind": "facility-icon",
+   "id": "apt-oikp",
+   "x": 1139.6132107212127,
+   "y": 458.6833228008868,
+   "picked": "facility:Havadarya Airport"
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0057",
+   "x": 1236.1047989652611,
+   "y": 794.4001214067389,
+   "picked": "facility:Qeshm Blue Sky Tourism Airport"
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0193",
+   "x": 1216.2684092055613,
+   "y": 446.2933851941385,
+   "picked": "facility:Navy Specialized Hospital Heliport"
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0070",
+   "x": 1357.130869280506,
+   "y": 381.6547538668534,
+   "picked": "facility:Khalij-e Fars (Persian Gulf) Hospital Heliport"
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0071",
+   "x": 1307.6871285434488,
+   "y": 406.1672203550187,
+   "picked": "facility:Shahid Mohammadi Hospital Heliport"
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0194",
+   "x": 1197.6768131352308,
+   "y": 470.1076177884036,
+   "picked": "facility:Shahid Bahonar Port Heliport"
+  },
+  {
+   "kind": "facility-icon",
+   "id": "osint-ir-bandar-abbas",
+   "x": 1270.1157749297674,
+   "y": 471.0138362464538,
+   "picked": "facility:Bandar Abbas Naval Base"
+  },
+  {
+   "kind": "facility-icon",
+   "id": "port-way-489941811",
+   "x": 993.7314212536265,
+   "y": 531.5819125326741,
+   "picked": "facility:Port of Shahid Rajaee"
+  },
+  {
+   "kind": "facility-icon",
+   "id": "port-node-1589742199",
+   "x": 1288.8947592974157,
+   "y": 771.2544106257885,
+   "picked": "facility:Bahman Port"
+  },
+  {
+   "kind": "facility-icon",
+   "id": "port-node-1589742393",
+   "x": 1263.3965659828223,
+   "y": 739.5070525135335,
+   "picked": "facility:Fishing pier"
+  },
+  {
+   "kind": "osint-icon",
+   "id": "ad-ir-s300-bandar-abbas",
+   "x": 1139.6132107212127,
+   "y": 432.68332280088686,
+   "picked": "osint:S-300PMU-2 battery, Bandar Abbas"
+  },
+  {
+   "kind": "osint-icon",
+   "id": "radar-ir-khalij-fars",
+   "x": 1042.5728424635759,
+   "y": 768.1346421636599,
+   "picked": "osint:Khalij Fars, Strait of Hormuz coast"
+  }
+ ],
+ "dom": [
+  {
+   "s": "056°00'E",
+   "r": [
+    [
+     886,
+     51,
+     56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "056°15'E",
+   "r": [
+    [
+     1220,
+     51,
+     56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "056°30'E",
+   "r": [
+    [
+     1555,
+     51,
+     56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "27°00'N",
+   "r": [
+    [
+     371,
+     677,
+     49,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "27°15'N",
+   "r": [
+    [
+     371,
+     305,
+     49,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-grid-label"
+  },
+  {
+   "s": "S-300PMU-2",
+   "r": [
+    [
+     1048,
+     425,
+     74.81,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "KHALIJ FARS",
+   "r": [
+    [
+     1060,
+     760,
+     82.28,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "HAVADARYA AIRPORT",
+   "r": [
+    [
+     986,
+     451,
+     127.17,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "BANDAR ABBAS INTL",
+   "r": [
+    [
+     1441,
+     362,
+     127.17,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "BANDAR ABBAS NAVAL",
+   "r": [
+    [
+     1286,
+     463,
+     134.64,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "PORT OF SHAHID RAJAEE",
+   "r": [
+    [
+     1010,
+     524,
+     157.09,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "QESHM BLUE SKY TOURISM",
+   "r": [
+    [
+     1252,
+     786,
+     164.56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "BAHMAN PORT",
+   "r": [
+    [
+     1305,
+     763,
+     82.28,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "FISHING PIER",
+   "r": [
+    [
+     1279,
+     732,
+     89.77,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "NAVY SPECIALIZED HOSP",
+   "r": [
+    [
+     1232,
+     438,
+     157.09,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "KHALIJ-E FARS HOSP",
+   "r": [
+    [
+     1206,
+     374,
+     134.64,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "SHAHID MOHAMMADI HOSP",
+   "r": [
+    [
+     1324,
+     398,
+     157.09,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "SHAHID BAHONAR PORT",
+   "r": [
+    [
+     1035,
+     486,
+     142.13,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "BANDAR KHAMIR HELIPORT",
+   "r": [
+    [
+     357,
+     757,
+     164.56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "SANDKASTEN",
+   "r": [
+    [
+     14,
+     10.3,
+     148,
+     21
+    ]
+   ],
+   "at": "tx-top/tx-brand"
+  },
+  {
+   "s": "STRAIT OF HORMUZ STANDOFF",
+   "r": [
+    [
+     191,
+     11.7,
+     200,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "2026-03-15 06:00:00Z",
+   "r": [
+    [
+     420,
+     11.7,
+     174,
+     18
+    ]
+   ],
+   "at": "sim-clock/tx-clock"
+  },
+  {
+   "s": "[HOLD]",
+   "r": [
+    [
+     604,
+     11.7,
+     48,
+     18
+    ]
+   ],
+   "at": "sim-state/tx-state"
+  },
+  {
+   "s": "SAVE BATTLE",
+   "r": [
+    [
+     1246.34,
+     11.7,
+     100.33,
+     18
+    ]
+   ],
+   "at": "cmd-save/tx-btn"
+  },
+  {
+   "s": "LOAD BATTLE",
+   "r": [
+    [
+     1374.67,
+     11.7,
+     100.33,
+     18
+    ]
+   ],
+   "at": "cmd-load/tx-btn"
+  },
+  {
+   "s": "US NAVY",
+   "r": [
+    [
+     1513,
+     11.7,
+     56,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "0",
+   "r": [
+    [
+     1577,
+     11.7,
+     8,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-score"
+  },
+  {
+   "s": "IRAN",
+   "r": [
+    [
+     1595,
+     11.7,
+     32,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "0",
+   "r": [
+    [
+     1635,
+     11.7,
+     8,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-score"
+  },
+  {
+   "s": "CSR",
+   "r": [
+    [
+     1672,
+     11.7,
+     24,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "--",
+   "r": [
+    [
+     1706,
+     11.7,
+     16,
+     18
+    ]
+   ],
+   "at": "cursor-readout/tx-cursor"
+  },
+  {
+   "s": "[ MISSION ]",
+   "r": [
+    [
+     19,
+     57,
+     103.41,
+     18
+    ]
+   ],
+   "at": "mission-panel/"
+  },
+  {
+   "s": "PENDING",
+   "r": [
+    [
+     269.19,
+     57,
+     65.81,
+     18
+    ]
+   ],
+   "at": "mission-status/tx-mission-status"
+  },
+  {
+   "s": "WIN",
+   "r": [
+    [
+     19,
+     82.59,
+     27.38,
+     18
+    ]
+   ],
+   "at": "mission-win/"
+  },
+  {
+   "s": "USS Nimitz enters the transit gate afloat",
+   "r": [
+    [
+     67,
+     82.59,
+     232,
+     18
+    ],
+    [
+     19,
+     101.48,
+     88,
+     18
+    ]
+   ],
+   "at": "mission-win/tx-mission-line"
+  },
+  {
+   "s": "LOSE",
+   "r": [
+    [
+     19,
+     120.38,
+     36.48,
+     18
+    ]
+   ],
+   "at": "mission-lose/"
+  },
+  {
+   "s": "USS Nimitz is destroyed",
+   "r": [
+    [
+     67,
+     120.38,
+     184,
+     18
+    ]
+   ],
+   "at": "mission-lose/tx-mission-line"
+  },
+  {
+   "s": "USS NIMITZ",
+   "r": [
+    [
+     19,
+     139.27,
+     80,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "AFLOAT, UNDAMAGED",
+   "r": [
+    [
+     107,
+     139.27,
+     136,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "  //  ",
+   "r": [
+    [
+     243,
+     139.27,
+     32,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "89 NM TO GATE EDGE",
+   "r": [
+    [
+     275,
+     139.27,
+     64,
+     18
+    ],
+    [
+     19,
+     158.16,
+     72,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "GATE",
+   "r": [
+    [
+     28,
+     187.25,
+     36.48,
+     18
+    ]
+   ],
+   "at": "mission-focus-gate/tx-btn"
+  },
+  {
+   "s": "NIMITZ",
+   "r": [
+    [
+     90.48,
+     187.25,
+     54.73,
+     18
+    ]
+   ],
+   "at": "mission-focus-unit/tx-btn"
+  },
+  {
+   "s": "B",
+   "r": [
+    [
+     168.72,
+     188.64,
+     7,
+     16
+    ]
+   ],
+   "at": "mission-panel/tx-cap"
+  },
+  {
+   "s": "BRIEFING",
+   "r": [
+    [
+     194.22,
+     187.25,
+     72.97,
+     18
+    ]
+   ],
+   "at": "mission-briefing/tx-btn"
+  },
+  {
+   "s": "Forces",
+   "r": [
+    [
+     24.38,
+     227.05,
+     54.73,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-forces/tx-tab"
+  },
+  {
+   "s": "Intel",
+   "r": [
+    [
+     114.44,
+     227.05,
+     45.61,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-messages/tx-tab"
+  },
+  {
+   "s": "Combat",
+   "r": [
+    [
+     195.38,
+     227.05,
+     54.73,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-combat/tx-tab"
+  },
+  {
+   "s": "Media",
+   "r": [
+    [
+     285.44,
+     227.05,
+     45.61,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-media/tx-tab"
+  },
+  {
+   "s": "Forces (",
+   "r": [
+    [
+     47.2,
+     264.64,
+     75.2,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "8",
+   "r": [
+    [
+     122.41,
+     264.64,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": ")",
+   "r": [
+    [
+     131.81,
+     264.64,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "USS Nimitz (CVN-68)",
+   "r": [
+    [
+     37,
+     291.23,
+     152,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Chosin (CG-65)",
+   "r": [
+    [
+     37,
+     314.83,
+     144,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Mahan (DDG-72)",
+   "r": [
+    [
+     37,
+     338.42,
+     144,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Cole (DDG-67)",
+   "r": [
+    [
+     37,
+     362.02,
+     136,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Nitze (DDG-94)",
+   "r": [
+    [
+     37,
+     385.61,
+     144,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Hornet 101",
+   "r": [
+    [
+     37,
+     409.2,
+     80,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Hornet 102",
+   "r": [
+    [
+     37,
+     432.8,
+     80,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Hawkeye 601",
+   "r": [
+    [
+     37,
+     456.39,
+     88,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Contacts (",
+   "r": [
+    [
+     47.2,
+     494.98,
+     94,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "0",
+   "r": [
+    [
+     141.2,
+     494.98,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": ")",
+   "r": [
+    [
+     150.61,
+     494.98,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "No contacts detected",
+   "r": [
+    [
+     27,
+     528.58,
+     160,
+     18
+    ]
+   ],
+   "at": "contact-list-empty/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "Facilities © OpenStreetMap contributors (ODbL), OurAirports (public domain). Land, coast, depth: Natural Earth, NOAA ETOPO1 (public domain). ",
+   "r": [
+    [
+     730,
+     835,
+     987,
+     16
+    ]
+   ],
+   "at": "plot-attribution/tx-credit"
+  },
+  {
+   "s": "OSINT sites: Auftragstaktik (MIT), public sources; ranges ESTIMATED.",
+   "r": [
+    [
+     1717,
+     835,
+     189,
+     16
+    ],
+    [
+     1626,
+     851,
+     280,
+     16
+    ]
+   ],
+   "at": "plot-attribution/tx-credit"
+  },
+  {
+   "s": "OSINT",
+   "r": [
+    [
+     371,
+     62.59,
+     41,
+     16
+    ]
+   ],
+   "at": "plot-osint-toggles/tx-group-label"
+  },
+  {
+   "s": "AD",
+   "r": [
+    [
+     427,
+     61.2,
+     18.25,
+     18
+    ]
+   ],
+   "at": "plot-toggle-osint-ad/tx-btn"
+  },
+  {
+   "s": "RADAR",
+   "r": [
+    [
+     469.25,
+     61.2,
+     45.61,
+     18
+    ]
+   ],
+   "at": "plot-toggle-osint-radar/tx-btn"
+  },
+  {
+   "s": "NUC",
+   "r": [
+    [
+     538.86,
+     61.2,
+     27.38,
+     18
+    ]
+   ],
+   "at": "plot-toggle-osint-nuclear/tx-btn"
+  },
+  {
+   "s": "[ TRAFFIC ]",
+   "r": [
+    [
+     371,
+     877,
+     90.2,
+     16
+    ]
+   ],
+   "at": "teletype/"
+  },
+  {
+   "s": "5 NM",
+   "r": [
+    [
+     1189.7,
+     877,
+     32.81,
+     16
+    ]
+   ],
+   "at": "plot-scale/tx-scale-label"
+  },
+  {
+   "s": "NO TRAFFIC",
+   "r": [
+    [
+     1819,
+     877,
+     82,
+     16
+    ]
+   ],
+   "at": "teletype/tx-dim"
+  },
+  {
+   "s": "SPC",
+   "r": [
+    [
+     16,
+     1044.09,
+     21,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "PLAY",
+   "r": [
+    [
+     53,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "sim-toggle-pause/tx-btn"
+  },
+  {
+   "s": "TIME",
+   "r": [
+    [
+     123.48,
+     1044.09,
+     32.81,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-group-label"
+  },
+  {
+   "s": "1",
+   "r": [
+    [
+     170.8,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "1",
+   "r": [
+    [
+     196.3,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     205.42,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "2",
+   "r": [
+    [
+     238.05,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "2",
+   "r": [
+    [
+     263.55,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     272.67,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "3",
+   "r": [
+    [
+     305.3,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "5",
+   "r": [
+    [
+     330.8,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     339.92,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "4",
+   "r": [
+    [
+     372.55,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "10",
+   "r": [
+    [
+     398.05,
+     1042.7,
+     18.25,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     416.3,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "5",
+   "r": [
+    [
+     448.92,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "30",
+   "r": [
+    [
+     474.42,
+     1042.7,
+     18.25,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     492.67,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "6",
+   "r": [
+    [
+     525.3,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "60",
+   "r": [
+    [
+     550.8,
+     1042.7,
+     18.25,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     569.05,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "S",
+   "r": [
+    [
+     618.67,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "SENSORS",
+   "r": [
+    [
+     644.17,
+     1042.7,
+     63.84,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "M",
+   "r": [
+    [
+     731.52,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "MEASURE",
+   "r": [
+    [
+     757.02,
+     1042.7,
+     63.84,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "G",
+   "r": [
+    [
+     844.36,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "GOD",
+   "r": [
+    [
+     869.86,
+     1042.7,
+     27.38,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "T",
+   "r": [
+    [
+     920.73,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "TILT",
+   "r": [
+    [
+     946.23,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "E",
+   "r": [
+    [
+     1023.22,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "ENGAGE",
+   "r": [
+    [
+     1048.72,
+     1042.7,
+     54.73,
+     18
+    ]
+   ],
+   "at": "cmd-engage/tx-btn"
+  },
+  {
+   "s": "R",
+   "r": [
+    [
+     1126.95,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "ROE",
+   "r": [
+    [
+     1152.45,
+     1042.7,
+     27.38,
+     18
+    ]
+   ],
+   "at": "cmd-roe/tx-btn"
+  },
+  {
+   "s": "A",
+   "r": [
+    [
+     1203.33,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "AUTO",
+   "r": [
+    [
+     1228.83,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "H",
+   "r": [
+    [
+     1305.81,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "HELP",
+   "r": [
+    [
+     1331.31,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "RESET",
+   "r": [
+    [
+     1853.39,
+     1042.7,
+     45.61,
+     18
+    ]
+   ],
+   "at": "cmd-reset/tx-btn"
+  }
+ ]
+}

@@ -1,0 +1,1630 @@
+{
+ "pose": "10-kish-two-runways",
+ "vp": "1920",
+ "note": "Kish close view: two runways, symbol withdrawn",
+ "host": {
+  "x": 0,
+  "y": 0,
+  "w": 1920,
+  "h": 1080
+ },
+ "dpr": 2,
+ "viewport": {
+  "w": 1920,
+  "h": 1080
+ },
+ "view": {
+  "dist": 17.752246076362876,
+  "tilt": 0,
+  "target": {
+   "x": -251.01049964390975,
+   "y": 2.809620933813747
+  }
+ },
+ "clock": 65499.999999996195,
+ "renderer": {
+  "renderer": "ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)",
+  "vendor": "Google Inc. (Microsoft Corporation)",
+  "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+ },
+ "facilities": {
+  "symbols": 597,
+  "runways": 202,
+  "labels": 12,
+  "total": 597
+ },
+ "osint": {
+  "sites": 14,
+  "rings": 12,
+  "labels": 0,
+  "total": 14
+ },
+ "tracks": {
+  "units": 8,
+  "contacts": 0
+ },
+ "occupancy": [
+  {
+   "kind": "label",
+   "id": "KISH INTL",
+   "x": 1104,
+   "y": 483,
+   "w": 73.328125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "KISH ISLAND AIR BASE",
+   "x": 1408,
+   "y": 597,
+   "w": 155.609375,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "UNNAMED AIRFIELD",
+   "x": 1043,
+   "y": 120,
+   "w": 125.6875,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "KFZO VILLA HELIPORT",
+   "x": 1771,
+   "y": 366,
+   "w": 148.125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "KISH POLICE COMMAND",
+   "x": 1405,
+   "y": 314,
+   "w": 148.125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "KISH HOSPITAL HELIPORT",
+   "x": 1101,
+   "y": 54,
+   "w": 170.5625,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "09L",
+   "x": 907,
+   "y": 398,
+   "w": 28.453125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "27R",
+   "x": 1359,
+   "y": 437,
+   "w": 28.453125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "09R",
+   "x": 905,
+   "y": 432,
+   "w": 28.453125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "27L",
+   "x": 1358,
+   "y": 472,
+   "w": 28.453125,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "10",
+   "x": 985,
+   "y": 145,
+   "w": 20.96875,
+   "h": 14
+  },
+  {
+   "kind": "label",
+   "id": "28",
+   "x": 1175,
+   "y": 163,
+   "w": 20.96875,
+   "h": 14
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-node-8625983990",
+   "x": 1384.9921580093733,
+   "y": 594.3542492609376,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0196",
+   "x": 1747.9215124513225,
+   "y": 363.38251171179957,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0198",
+   "x": 1382.2778219213274,
+   "y": 310.78623017206104,
+   "w": 20,
+   "h": 20
+  },
+  {
+   "kind": "facility-icon",
+   "id": "apt-ir-0199",
+   "x": 1176.5537659133122,
+   "y": 44,
+   "w": 20,
+   "h": 7.3606389849024225
+  },
+  {
+   "kind": "scale",
+   "id": "1 NM",
+   "x": 1014.703125,
+   "y": 877,
+   "w": 250.8125,
+   "h": 16.796875
+  }
+ ],
+ "labels": [
+  {
+   "text": "KISH INTL",
+   "x": 1104,
+   "y": 483,
+   "w": 73,
+   "h": 14
+  },
+  {
+   "text": "KISH ISLAND AIR BASE",
+   "x": 1408,
+   "y": 597,
+   "w": 156,
+   "h": 14
+  },
+  {
+   "text": "UNNAMED AIRFIELD",
+   "x": 1043,
+   "y": 120,
+   "w": 126,
+   "h": 14
+  },
+  {
+   "text": "KFZO VILLA HELIPORT",
+   "x": 1771,
+   "y": 366,
+   "w": 148,
+   "h": 14
+  },
+  {
+   "text": "KISH POLICE COMMAND",
+   "x": 1405,
+   "y": 314,
+   "w": 148,
+   "h": 14
+  },
+  {
+   "text": "KISH HOSPITAL HELIPORT",
+   "x": 1101,
+   "y": 54,
+   "w": 171,
+   "h": 14
+  },
+  {
+   "text": "09L",
+   "x": 907,
+   "y": 398,
+   "w": 28,
+   "h": 14
+  },
+  {
+   "text": "27R",
+   "x": 1359,
+   "y": 437,
+   "w": 28,
+   "h": 14
+  },
+  {
+   "text": "09R",
+   "x": 905,
+   "y": 432,
+   "w": 28,
+   "h": 14
+  },
+  {
+   "text": "27L",
+   "x": 1358,
+   "y": 472,
+   "w": 28,
+   "h": 14
+  },
+  {
+   "text": "10",
+   "x": 985,
+   "y": 145,
+   "w": 21,
+   "h": 14
+  },
+  {
+   "text": "28",
+   "x": 1175,
+   "y": 163,
+   "w": 21,
+   "h": 14
+  }
+ ],
+ "labelOwners": [
+  {
+   "text": "KISH INTL",
+   "owner": "facility-icon:apt-oibk",
+   "nearest": "facility-icon:apt-oibk",
+   "leader": true
+  },
+  {
+   "text": "KISH ISLAND AIR BASE",
+   "owner": "facility-icon:apt-node-8625983990",
+   "nearest": "facility-icon:apt-node-8625983990",
+   "leader": false
+  },
+  {
+   "text": "UNNAMED AIRFIELD",
+   "owner": "facility-icon:apt-way-668439607",
+   "nearest": "facility-icon:apt-way-668439607",
+   "leader": true
+  },
+  {
+   "text": "KFZO VILLA HELIPORT",
+   "owner": "facility-icon:apt-ir-0196",
+   "nearest": "facility-icon:apt-ir-0196",
+   "leader": false
+  },
+  {
+   "text": "KISH POLICE COMMAND",
+   "owner": "facility-icon:apt-ir-0198",
+   "nearest": "facility-icon:apt-ir-0198",
+   "leader": false
+  },
+  {
+   "text": "KISH HOSPITAL HELIPORT",
+   "owner": "facility-icon:apt-ir-0199",
+   "nearest": "facility-icon:apt-ir-0199",
+   "leader": false
+  }
+ ],
+ "centres": {
+  "apt-oikb": {
+   "x": 28253.687041439538,
+   "y": -8238.725095915348
+  },
+  "apt-oikp": {
+   "x": 25931.798712772546,
+   "y": -7485.556386515989
+  },
+  "apt-oibk": {
+   "x": 1140.410052416161,
+   "y": 458.7416321103748
+  },
+  "apt-omfj": {
+   "x": 27691.140887187732,
+   "y": 18246.327041995395
+  },
+  "ad-ir-s300-bandar-abbas": {
+   "x": 25931.798712772546,
+   "y": -7511.55638651599
+  },
+  "ad-ir-3khordad-qeshm": {
+   "x": 23433.47853838123,
+   "y": -1797.0143320664793
+  },
+  "ad-us-thaad-dhafra": {
+   "x": 7583.743396561578,
+   "y": 29042.381300535963
+  },
+  "radar-ir-khalij-fars": {
+   "x": 25111.84301950244,
+   "y": -4870.8056837178165
+  },
+  "radar-ir-sepehr": {
+   "x": -9948.331451357977,
+   "y": -36880.47583319121
+  },
+  "radar-us-tpy2-udeid": {
+   "x": -28977.232736325674,
+   "y": 18132.732544886043
+  },
+  "nuc-ir-bushehr-reactor": {
+   "x": -33839.869558943596,
+   "y": -28472.09191156484
+  },
+  "nuc-ae-barakah": {
+   "x": -18317.53438956339,
+   "y": 32662.101668017614
+  }
+ },
+ "panels": {
+  "facility": null,
+  "osint": null
+ },
+ "dom": [
+  {
+   "s": "KISH INTL",
+   "r": [
+    [
+     1107,
+     482,
+     67.33,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "KISH ISLAND AIR BASE",
+   "r": [
+    [
+     1411,
+     596,
+     149.61,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "UNNAMED AIRFIELD",
+   "r": [
+    [
+     1046,
+     119,
+     119.69,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "KFZO VILLA HELIPORT",
+   "r": [
+    [
+     1774,
+     365,
+     142.13,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "KISH POLICE COMMAND",
+   "r": [
+    [
+     1408,
+     313,
+     142.13,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "KISH HOSPITAL HELIPORT",
+   "r": [
+    [
+     1104,
+     53,
+     164.56,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "09L",
+   "r": [
+    [
+     910,
+     397,
+     22.45,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "27R",
+   "r": [
+    [
+     1362,
+     436,
+     22.45,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "09R",
+   "r": [
+    [
+     908,
+     431,
+     22.45,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "27L",
+   "r": [
+    [
+     1361,
+     471,
+     22.45,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "10",
+   "r": [
+    [
+     988,
+     144,
+     14.97,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "28",
+   "r": [
+    [
+     1178,
+     162,
+     14.97,
+     16
+    ]
+   ],
+   "at": "tactical-plot-wrap/tx-fac-label"
+  },
+  {
+   "s": "SANDKASTEN",
+   "r": [
+    [
+     14,
+     10.3,
+     148,
+     21
+    ]
+   ],
+   "at": "tx-top/tx-brand"
+  },
+  {
+   "s": "STRAIT OF HORMUZ STANDOFF",
+   "r": [
+    [
+     191,
+     11.7,
+     200,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "2026-03-15 06:00:00Z",
+   "r": [
+    [
+     420,
+     11.7,
+     174,
+     18
+    ]
+   ],
+   "at": "sim-clock/tx-clock"
+  },
+  {
+   "s": "[HOLD]",
+   "r": [
+    [
+     604,
+     11.7,
+     48,
+     18
+    ]
+   ],
+   "at": "sim-state/tx-state"
+  },
+  {
+   "s": "SAVE BATTLE",
+   "r": [
+    [
+     1246.34,
+     11.7,
+     100.33,
+     18
+    ]
+   ],
+   "at": "cmd-save/tx-btn"
+  },
+  {
+   "s": "LOAD BATTLE",
+   "r": [
+    [
+     1374.67,
+     11.7,
+     100.33,
+     18
+    ]
+   ],
+   "at": "cmd-load/tx-btn"
+  },
+  {
+   "s": "US NAVY",
+   "r": [
+    [
+     1513,
+     11.7,
+     56,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "0",
+   "r": [
+    [
+     1577,
+     11.7,
+     8,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-score"
+  },
+  {
+   "s": "IRAN",
+   "r": [
+    [
+     1595,
+     11.7,
+     32,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "0",
+   "r": [
+    [
+     1635,
+     11.7,
+     8,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-score"
+  },
+  {
+   "s": "CSR",
+   "r": [
+    [
+     1672,
+     11.7,
+     24,
+     18
+    ]
+   ],
+   "at": "tx-top/tx-dim"
+  },
+  {
+   "s": "--",
+   "r": [
+    [
+     1706,
+     11.7,
+     16,
+     18
+    ]
+   ],
+   "at": "cursor-readout/tx-cursor"
+  },
+  {
+   "s": "[ MISSION ]",
+   "r": [
+    [
+     19,
+     57,
+     103.41,
+     18
+    ]
+   ],
+   "at": "mission-panel/"
+  },
+  {
+   "s": "PENDING",
+   "r": [
+    [
+     269.19,
+     57,
+     65.81,
+     18
+    ]
+   ],
+   "at": "mission-status/tx-mission-status"
+  },
+  {
+   "s": "WIN",
+   "r": [
+    [
+     19,
+     82.59,
+     27.38,
+     18
+    ]
+   ],
+   "at": "mission-win/"
+  },
+  {
+   "s": "USS Nimitz enters the transit gate afloat",
+   "r": [
+    [
+     67,
+     82.59,
+     232,
+     18
+    ],
+    [
+     19,
+     101.48,
+     88,
+     18
+    ]
+   ],
+   "at": "mission-win/tx-mission-line"
+  },
+  {
+   "s": "LOSE",
+   "r": [
+    [
+     19,
+     120.38,
+     36.48,
+     18
+    ]
+   ],
+   "at": "mission-lose/"
+  },
+  {
+   "s": "USS Nimitz is destroyed",
+   "r": [
+    [
+     67,
+     120.38,
+     184,
+     18
+    ]
+   ],
+   "at": "mission-lose/tx-mission-line"
+  },
+  {
+   "s": "USS NIMITZ",
+   "r": [
+    [
+     19,
+     139.27,
+     80,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "AFLOAT, UNDAMAGED",
+   "r": [
+    [
+     107,
+     139.27,
+     136,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "  //  ",
+   "r": [
+    [
+     243,
+     139.27,
+     32,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "89 NM TO GATE EDGE",
+   "r": [
+    [
+     275,
+     139.27,
+     64,
+     18
+    ],
+    [
+     19,
+     158.16,
+     72,
+     18
+    ]
+   ],
+   "at": "mission-progress/tx-mission-line"
+  },
+  {
+   "s": "GATE",
+   "r": [
+    [
+     28,
+     187.25,
+     36.48,
+     18
+    ]
+   ],
+   "at": "mission-focus-gate/tx-btn"
+  },
+  {
+   "s": "NIMITZ",
+   "r": [
+    [
+     90.48,
+     187.25,
+     54.73,
+     18
+    ]
+   ],
+   "at": "mission-focus-unit/tx-btn"
+  },
+  {
+   "s": "B",
+   "r": [
+    [
+     168.72,
+     188.64,
+     7,
+     16
+    ]
+   ],
+   "at": "mission-panel/tx-cap"
+  },
+  {
+   "s": "BRIEFING",
+   "r": [
+    [
+     194.22,
+     187.25,
+     72.97,
+     18
+    ]
+   ],
+   "at": "mission-briefing/tx-btn"
+  },
+  {
+   "s": "Forces",
+   "r": [
+    [
+     24.38,
+     227.05,
+     54.73,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-forces/tx-tab"
+  },
+  {
+   "s": "Intel",
+   "r": [
+    [
+     114.44,
+     227.05,
+     45.61,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-messages/tx-tab"
+  },
+  {
+   "s": "Combat",
+   "r": [
+    [
+     195.38,
+     227.05,
+     54.73,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-combat/tx-tab"
+  },
+  {
+   "s": "Media",
+   "r": [
+    [
+     285.44,
+     227.05,
+     45.61,
+     18
+    ]
+   ],
+   "at": "sidebar-tab-media/tx-tab"
+  },
+  {
+   "s": "Forces (",
+   "r": [
+    [
+     47.2,
+     264.64,
+     75.2,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "8",
+   "r": [
+    [
+     122.41,
+     264.64,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": ")",
+   "r": [
+    [
+     131.81,
+     264.64,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "USS Nimitz (CVN-68)",
+   "r": [
+    [
+     37,
+     291.23,
+     152,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Chosin (CG-65)",
+   "r": [
+    [
+     37,
+     314.83,
+     144,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Mahan (DDG-72)",
+   "r": [
+    [
+     37,
+     338.42,
+     144,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Cole (DDG-67)",
+   "r": [
+    [
+     37,
+     362.02,
+     136,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "USS Nitze (DDG-94)",
+   "r": [
+    [
+     37,
+     385.61,
+     144,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Hornet 101",
+   "r": [
+    [
+     37,
+     409.2,
+     80,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Hornet 102",
+   "r": [
+    [
+     37,
+     432.8,
+     80,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Hawkeye 601",
+   "r": [
+    [
+     37,
+     456.39,
+     88,
+     18
+    ]
+   ],
+   "at": "force-row/tx-truncate"
+  },
+  {
+   "s": "Contacts (",
+   "r": [
+    [
+     47.2,
+     494.98,
+     94,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "0",
+   "r": [
+    [
+     141.2,
+     494.98,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": ")",
+   "r": [
+    [
+     150.61,
+     494.98,
+     9.41,
+     18
+    ]
+   ],
+   "at": "side-panel/tx-section-head"
+  },
+  {
+   "s": "No contacts detected",
+   "r": [
+    [
+     27,
+     528.58,
+     160,
+     18
+    ]
+   ],
+   "at": "contact-list-empty/text-[var(--color-tactical-text-dim)]"
+  },
+  {
+   "s": "Facilities © OpenStreetMap contributors (ODbL), OurAirports (public domain). Land, coast, depth: Natural Earth, NOAA ETOPO1 (public domain). ",
+   "r": [
+    [
+     730,
+     835,
+     987,
+     16
+    ]
+   ],
+   "at": "plot-attribution/tx-credit"
+  },
+  {
+   "s": "OSINT sites: Auftragstaktik (MIT), public sources; ranges ESTIMATED.",
+   "r": [
+    [
+     1717,
+     835,
+     189,
+     16
+    ],
+    [
+     1626,
+     851,
+     280,
+     16
+    ]
+   ],
+   "at": "plot-attribution/tx-credit"
+  },
+  {
+   "s": "OSINT",
+   "r": [
+    [
+     371,
+     62.59,
+     41,
+     16
+    ]
+   ],
+   "at": "plot-osint-toggles/tx-group-label"
+  },
+  {
+   "s": "AD",
+   "r": [
+    [
+     427,
+     61.2,
+     18.25,
+     18
+    ]
+   ],
+   "at": "plot-toggle-osint-ad/tx-btn"
+  },
+  {
+   "s": "RADAR",
+   "r": [
+    [
+     469.25,
+     61.2,
+     45.61,
+     18
+    ]
+   ],
+   "at": "plot-toggle-osint-radar/tx-btn"
+  },
+  {
+   "s": "NUC",
+   "r": [
+    [
+     538.86,
+     61.2,
+     27.38,
+     18
+    ]
+   ],
+   "at": "plot-toggle-osint-nuclear/tx-btn"
+  },
+  {
+   "s": "[ TRAFFIC ]",
+   "r": [
+    [
+     371,
+     877,
+     90.2,
+     16
+    ]
+   ],
+   "at": "teletype/"
+  },
+  {
+   "s": "1 NM",
+   "r": [
+    [
+     1232.7,
+     877,
+     32.81,
+     16
+    ]
+   ],
+   "at": "plot-scale/tx-scale-label"
+  },
+  {
+   "s": "NO TRAFFIC",
+   "r": [
+    [
+     1819,
+     877,
+     82,
+     16
+    ]
+   ],
+   "at": "teletype/tx-dim"
+  },
+  {
+   "s": "SPC",
+   "r": [
+    [
+     16,
+     1044.09,
+     21,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "PLAY",
+   "r": [
+    [
+     53,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "sim-toggle-pause/tx-btn"
+  },
+  {
+   "s": "TIME",
+   "r": [
+    [
+     123.48,
+     1044.09,
+     32.81,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-group-label"
+  },
+  {
+   "s": "1",
+   "r": [
+    [
+     170.8,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "1",
+   "r": [
+    [
+     196.3,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     205.42,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "2",
+   "r": [
+    [
+     238.05,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "2",
+   "r": [
+    [
+     263.55,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     272.67,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "3",
+   "r": [
+    [
+     305.3,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "5",
+   "r": [
+    [
+     330.8,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     339.92,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "4",
+   "r": [
+    [
+     372.55,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "10",
+   "r": [
+    [
+     398.05,
+     1042.7,
+     18.25,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     416.3,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "5",
+   "r": [
+    [
+     448.92,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "30",
+   "r": [
+    [
+     474.42,
+     1042.7,
+     18.25,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     492.67,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "6",
+   "r": [
+    [
+     525.3,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "60",
+   "r": [
+    [
+     550.8,
+     1042.7,
+     18.25,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "x",
+   "r": [
+    [
+     569.05,
+     1042.7,
+     9.13,
+     18
+    ]
+   ],
+   "at": "sim-speed/tx-btn"
+  },
+  {
+   "s": "S",
+   "r": [
+    [
+     618.67,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "SENSORS",
+   "r": [
+    [
+     644.17,
+     1042.7,
+     63.84,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "M",
+   "r": [
+    [
+     731.52,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "MEASURE",
+   "r": [
+    [
+     757.02,
+     1042.7,
+     63.84,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "G",
+   "r": [
+    [
+     844.36,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "GOD",
+   "r": [
+    [
+     869.86,
+     1042.7,
+     27.38,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "T",
+   "r": [
+    [
+     920.73,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "TILT",
+   "r": [
+    [
+     946.23,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "E",
+   "r": [
+    [
+     1023.22,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "ENGAGE",
+   "r": [
+    [
+     1048.72,
+     1042.7,
+     54.73,
+     18
+    ]
+   ],
+   "at": "cmd-engage/tx-btn"
+  },
+  {
+   "s": "R",
+   "r": [
+    [
+     1126.95,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "ROE",
+   "r": [
+    [
+     1152.45,
+     1042.7,
+     27.38,
+     18
+    ]
+   ],
+   "at": "cmd-roe/tx-btn"
+  },
+  {
+   "s": "A",
+   "r": [
+    [
+     1203.33,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "AUTO",
+   "r": [
+    [
+     1228.83,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "H",
+   "r": [
+    [
+     1305.81,
+     1044.09,
+     7,
+     16
+    ]
+   ],
+   "at": "command-bar/tx-cap"
+  },
+  {
+   "s": "HELP",
+   "r": [
+    [
+     1331.31,
+     1042.7,
+     36.48,
+     18
+    ]
+   ],
+   "at": "command-bar/tx-btn"
+  },
+  {
+   "s": "RESET",
+   "r": [
+    [
+     1853.39,
+     1042.7,
+     45.61,
+     18
+    ]
+   ],
+   "at": "cmd-reset/tx-btn"
+  }
+ ]
+}

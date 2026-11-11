@@ -1,0 +1,21 @@
+base (launch tip): 4057be10113c399b6f3c16ef92b2f3faa26bcf60
+ART1 R2 base 443af2c vs launch tip, product paths: no difference
+tracked files changed: src/lib/plot/facilityLayer.ts, src/lib/plot/osintLayer.ts
+untracked: docs/art-fable-r2-fixed-sites/, tests/sand-art2-frames.spec.ts
+PASS  tracked changes are exactly the two drawers
+PASS  untracked files are the capture tool and this lane's evidence folder
+PASS  no change to Playwright config, dependencies or data
+src/lib/plot/facilityLayer.ts: iconTexture drawing body is lines 74-106 before, 74-107 after
+PASS  src/lib/plot/facilityLayer.ts: everything up to and including the iconTexture declaration is byte-identical
+PASS  src/lib/plot/facilityLayer.ts: everything from the texture construction to the end of the file is byte-identical
+PASS  src/lib/plot/facilityLayer.ts: the 6 new lines are comments or statements on the 2D context `g` only
+PASS  src/lib/plot/facilityLayer.ts: string literals identical before and after (35 literals)
+src/lib/plot/facilityLayer.ts: hunks (old start,len -> new start,len): -87,1 +87,2; -89,4 +90,4
+src/lib/plot/osintLayer.ts: glyphTexture drawing body is lines 35-63 before, 35-68 after
+PASS  src/lib/plot/osintLayer.ts: everything up to and including the glyphTexture declaration is byte-identical
+PASS  src/lib/plot/osintLayer.ts: everything from the texture construction to the end of the file is byte-identical
+PASS  src/lib/plot/osintLayer.ts: the 9 new lines are comments or statements on the 2D context `g` only
+PASS  src/lib/plot/osintLayer.ts: string literals identical before and after (26 literals)
+src/lib/plot/osintLayer.ts: hunks (old start,len -> new start,len): -51,0 +52,8; -53,4 +61,1
+PASS  no host launch flag or GPU env name in source, tests or the Playwright config
+RESULT PASS

@@ -1,0 +1,1030 @@
+{
+ "lane": "co3-sandart2-t501",
+ "branch": "co3/sand-art2-site-glyphs",
+ "art1_r2_base": "443af2c1441c285f2bb64db112ac0964bfbc68ed",
+ "launch_tip": "4057be10113c399b6f3c16ef92b2f3faa26bcf60",
+ "launch_tip_note": "the card commit on top of the ART1 R2 base; git diff 443af2c..tip touches only docs/handoffs/sand-art2-site-glyphs-s409/",
+ "host": {
+  "os": "WSL2 Linux 6.6.87.2-microsoft-standard-WSL2",
+  "scratch": "/home/ray/lanes-d/sand-art2-host-1794374249-673838",
+  "port": 3017,
+  "env": {
+   "GALLIUM_DRIVER": "d3d12",
+   "MESA_D3D12_DEFAULT_ADAPTER_NAME": "NVIDIA",
+   "SAND_E2E_GPU": "1",
+   "SAND_E2E_PORT": "3017",
+   "TMPDIR": "/home/ray/lanes-d/sand-art2-host-1794374249-673838/tmp"
+  },
+  "chromium_args": [
+   "--mute-audio",
+   "--no-sandbox",
+   "--use-gl=angle",
+   "--use-angle=gl-egl",
+   "--ignore-gpu-blocklist"
+  ],
+  "config": "external: /home/ray/lanes-d/sand-art2-host-1794374249-673838/playwright.host.config.ts (imports the repo config, workers 1, reuseExistingServer false); nothing host-specific is in the repo",
+  "gpu_fallback_used": false
+ },
+ "renderer": {
+  "renderer": "ANGLE (Microsoft Corporation, D3D12 (NVIDIA GeForce RTX 3050), OpenGL ES 3.1)",
+  "vendor": "Google Inc. (Microsoft Corporation)",
+  "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+ },
+ "capture_tool": "tests/sand-art2-frames.spec.ts (skipped unless SAND_ART2_SET is set)",
+ "clock": "virtual: performance.now and the rAF timestamp are replaced in the page; time advances 1/60 s per displayed frame only while the test steps it; each pose is settled by 330 stepped frames after the camera command (the opening by 120 + 360)",
+ "ids_from_data": {
+  "apt-oikb": "Bandar Abbas Intl",
+  "apt-oikp": "Havadarya",
+  "apt-oibk": "Kish Intl",
+  "apt-omfj": "Fujairah Intl",
+  "ad-ir-s300-bandar-abbas": "AD, estimated 200 km ring",
+  "radar-ir-khalij-fars": "radar on its true position",
+  "radar-us-tpy2-udeid": "coalition radar beside Al Udeid",
+  "nuc-ir-bushehr-reactor": "nuclear, measured 20 km ring",
+  "nuc-ae-barakah": "coalition nuclear site"
+ },
+ "sets": {
+  "before": {
+   "tree": "launch tip, product untouched, capture tool added",
+   "log": "logs/capture-before.log"
+  },
+  "control": {
+   "tree": "same as before (second untouched run)",
+   "log": "logs/capture-control.log"
+  },
+  "after": {
+   "tree": "launch tip + the two drawing hunks (final)",
+   "log": "logs/capture-after.log"
+  },
+  "after-attempt1 (not kept in repo)": {
+   "tree": "first radar redraw, rejected on production evidence",
+   "where": "/home/ray/lanes-d/sand-art2-host-1794374249-673838/after-attempt1",
+   "row": "exploration/radar-attempt1-production-row-rejected.png"
+  }
+ },
+ "pose_rename": "frames first captured as 05-bushehr-all-seven were renamed 05-bushehr-nuclear-wide in all three sets (files, pose lists, JSON pose/note) once the frame was seen to hold four kinds, not seven; pixels and state untouched",
+ "texture_sha256": {
+  "airbase": {
+   "before": "bbba3c97159236c847712a8ad34b8550a375c232a6557a0496ed8f0606719191",
+   "control": "bbba3c97159236c847712a8ad34b8550a375c232a6557a0496ed8f0606719191",
+   "after": "d16241e24855c3651d521debcccb0161f8e68005b47c3dd4fbe17bf5b311f2ee"
+  },
+  "heliport": {
+   "before": "04ecf5de5dd9fd736bedb5cd26df1809085a0e018eeeff82c1b87c2f77f43a5f",
+   "control": "04ecf5de5dd9fd736bedb5cd26df1809085a0e018eeeff82c1b87c2f77f43a5f",
+   "after": "04ecf5de5dd9fd736bedb5cd26df1809085a0e018eeeff82c1b87c2f77f43a5f"
+  },
+  "naval_base": {
+   "before": "174b69163c6e7f20e91a2296f3b317a22e32594bc052bc18bc5551ef43ceda37",
+   "control": "174b69163c6e7f20e91a2296f3b317a22e32594bc052bc18bc5551ef43ceda37",
+   "after": "174b69163c6e7f20e91a2296f3b317a22e32594bc052bc18bc5551ef43ceda37"
+  },
+  "port": {
+   "before": "a85dbebdea39ce13ec6d0c76af9d2a756017e159907420e7646da693990d2bd4",
+   "control": "a85dbebdea39ce13ec6d0c76af9d2a756017e159907420e7646da693990d2bd4",
+   "after": "a85dbebdea39ce13ec6d0c76af9d2a756017e159907420e7646da693990d2bd4"
+  },
+  "ad": {
+   "before": "7c7c863f072d3521ba2abbe09aed12f1c841d23b5dade9454b14699c7fbbfb8a",
+   "control": "7c7c863f072d3521ba2abbe09aed12f1c841d23b5dade9454b14699c7fbbfb8a",
+   "after": "7c7c863f072d3521ba2abbe09aed12f1c841d23b5dade9454b14699c7fbbfb8a"
+  },
+  "radar": {
+   "before": "c87ce7218793fee8265134ad6ca2965ac140b25445560d257ef89cade3555ff6",
+   "control": "c87ce7218793fee8265134ad6ca2965ac140b25445560d257ef89cade3555ff6",
+   "after": "bb72ab40f02f3e6b9b2969346f4aec439ca32ff00f0240cbe77ae929a87cc981"
+  },
+  "nuclear": {
+   "before": "69e49d8543f2eb25fdd3ebfc01d52e27395f053f4d176443153e045a7f1e069a",
+   "control": "69e49d8543f2eb25fdd3ebfc01d52e27395f053f4d176443153e045a7f1e069a",
+   "after": "69e49d8543f2eb25fdd3ebfc01d52e27395f053f4d176443153e045a7f1e069a"
+  }
+ },
+ "poses": {
+  "00-briefing-1920": {
+   "note": "cold boot, briefing on screen as first seen",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 631.7238963512558,
+    "tilt": 0,
+    "target": {
+     "x": 123.74436519468098,
+     "y": -55.235464324055116
+    }
+   },
+   "virtual_clock_ms": 3499.9999999999914,
+   "drawn": {
+    "facilities": {
+     "symbols": 250,
+     "runways": 202,
+     "labels": 20,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 3,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 40,
+   "picks_recorded": 0
+  },
+  "01-cold-chart-1920": {
+   "note": "cold chart after the briefing is closed",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 631.7238963512558,
+    "tilt": 0,
+    "target": {
+     "x": 123.74436519468098,
+     "y": -55.235464324055116
+    }
+   },
+   "virtual_clock_ms": 9999.999999999995,
+   "drawn": {
+    "facilities": {
+     "symbols": 250,
+     "runways": 202,
+     "labels": 20,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 3,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 40,
+   "picks_recorded": 0
+  },
+  "02-bandar-abbas-crowded-1920": {
+   "note": "Bandar Abbas and Havadarya, dist 150 km: co-located facilities, AD and radar",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 150,
+    "tilt": 0,
+    "target": {
+     "x": -32.59810164709687,
+     "y": 72.7672938111768
+    }
+   },
+   "virtual_clock_ms": 15499.999999999794,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 12,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 2,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 12,
+   "picks_recorded": 12
+  },
+  "03-bandar-abbas-close-1920": {
+   "note": "Bandar Abbas and Havadarya, dist 60 km: heliports, naval base, port, airbases, AD",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 60,
+    "tilt": 0,
+    "target": {
+     "x": -32.61556955147987,
+     "y": 72.78159536330806
+    }
+   },
+   "virtual_clock_ms": 21000.0000000001,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 13,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 1,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 7,
+   "picks_recorded": 0
+  },
+  "04-ad-selected-rings-1920": {
+   "note": "ad-ir-s300-bandar-abbas selected at 700 km: estimated dashed rings, selection ring, panel",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 700,
+    "tilt": 0,
+    "target": {
+     "x": -32.61556955147987,
+     "y": 72.78159536330806
+    }
+   },
+   "virtual_clock_ms": 28500.000000000644,
+   "drawn": {
+    "facilities": {
+     "symbols": 250,
+     "runways": 202,
+     "labels": 17,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 3,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 38,
+   "picks_recorded": 0
+  },
+  "05-bushehr-nuclear-wide-1920": {
+   "note": "Bushehr reactor at 380 km (the widest scale that still draws heliports): nuclear, two AD sites, airbases, heliports",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 380,
+    "tilt": 0,
+    "target": {
+     "x": -498.12046566768714,
+     "y": 257.63741994843485
+    }
+   },
+   "virtual_clock_ms": 35000.00000000063,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 14,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 4,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 18,
+   "picks_recorded": 0
+  },
+  "06-bushehr-nuclear-close-1920": {
+   "note": "Bushehr at 200 km: nuclear with measured 20 km ring, two co-located AD sites, facilities",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 200,
+    "tilt": 0,
+    "target": {
+     "x": -498.12046566768714,
+     "y": 257.6374199999994
+    }
+   },
+   "virtual_clock_ms": 40499.99999999983,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 6,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 3,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 8,
+   "picks_recorded": 8
+  },
+  "07-radar-khalij-fars-1920": {
+   "note": "radar-ir-khalij-fars at 120 km: radar symbol on its true position",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 120,
+    "tilt": 0,
+    "target": {
+     "x": -39.87504910382355,
+     "y": 49.76982722969248
+    }
+   },
+   "virtual_clock_ms": 45999.99999999903,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 12,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 3,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 9,
+   "picks_recorded": 0
+  },
+  "08-barakah-nuclear-1920": {
+   "note": "nuc-ae-barakah at 120 km: coalition-tint nuclear site with its heliports",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 120,
+    "tilt": 0,
+    "target": {
+     "x": -422.38494292455067,
+     "y": -280.8396261603812
+    }
+   },
+   "virtual_clock_ms": 51499.99999999823,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 18,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 1,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 13,
+   "picks_recorded": 0
+  },
+  "08b-barakah-nuc-off-1920": {
+   "note": "fringe calibration: same camera as 08, NUC layer off",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 120,
+    "tilt": 0,
+    "target": {
+     "x": -422.38494292455067,
+     "y": -280.8396261603812
+    }
+   },
+   "virtual_clock_ms": 52999.999999998014,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 18,
+     "total": 597
+    },
+    "osint": {
+     "sites": 12,
+     "rings": 10,
+     "labels": 0,
+     "total": 12
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 12,
+   "picks_recorded": 0
+  },
+  "09-udeid-radar-ad-1920": {
+   "note": "Al Udeid at 150 km: coalition radar and AD beside the airbase",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 150,
+    "tilt": 0,
+    "target": {
+     "x": -498.12046566768714,
+     "y": -152.89066983569094
+    }
+   },
+   "virtual_clock_ms": 59999.999999996995,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 11,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 2,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 12,
+   "picks_recorded": 0
+  },
+  "10-kish-two-runways-1920": {
+   "note": "Kish close view: two runways, symbol withdrawn",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 17.752246076362876,
+    "tilt": 0,
+    "target": {
+     "x": -251.01049964390975,
+     "y": 2.809620933813747
+    }
+   },
+   "virtual_clock_ms": 65499.999999996195,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 12,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 0,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 4,
+   "picks_recorded": 0
+  },
+  "11-fujairah-construction-1920": {
+   "note": "Fujairah close view: construction strip",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 15,
+    "tilt": 0,
+    "target": {
+     "x": -17.132358452386807,
+     "y": -153.87166831937367
+    }
+   },
+   "virtual_clock_ms": 70999.99999999777,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 10,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 0,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 6,
+   "picks_recorded": 0
+  },
+  "12-havadarya-panel-1920": {
+   "note": "Havadarya selected: facility panel open",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 15,
+    "tilt": 0,
+    "target": {
+     "x": -32.62664840602274,
+     "y": 72.7873226981707
+    }
+   },
+   "virtual_clock_ms": 78499.99999999996,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 5,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 1,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 3,
+   "picks_recorded": 0
+  },
+  "13-bandar-abbas-tilt-1920": {
+   "note": "Bandar Abbas at 150 km, tilted",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 150,
+    "tilt": 1,
+    "target": {
+     "x": -32.62664840602274,
+     "y": 72.7873226981707
+    }
+   },
+   "virtual_clock_ms": 90500.00000000345,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 11,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 2,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 11,
+   "picks_recorded": 0
+  },
+  "14-bandar-abbas-osint-off-1920": {
+   "note": "Bandar Abbas at 150 km with the three OSINT layers switched off",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 150,
+    "tilt": 0,
+    "target": {
+     "x": -32.62664840602274,
+     "y": 72.7873226981707
+    }
+   },
+   "virtual_clock_ms": 97500.00000000549,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 12,
+     "total": 597
+    },
+    "osint": {
+     "sites": 0,
+     "rings": 0,
+     "labels": 0,
+     "total": 0
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 10,
+   "picks_recorded": 0
+  },
+  "15-control-no-glyphs-1920": {
+   "note": "layers-off control: OSINT off, carrier group at 40 km in open water, no fixed-site glyph on screen",
+   "viewport": {
+    "w": 1920,
+    "h": 1080
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 40,
+    "tilt": 0,
+    "target": {
+     "x": 99.61917733132822,
+     "y": -143.73815137995564
+    }
+   },
+   "virtual_clock_ms": 105000.00000000767,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 0,
+     "total": 597
+    },
+    "osint": {
+     "sites": 0,
+     "rings": 0,
+     "labels": 0,
+     "total": 0
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 0,
+   "picks_recorded": 0
+  },
+  "01-cold-chart-1440": {
+   "note": "cold chart after the briefing is closed",
+   "viewport": {
+    "w": 1440,
+    "h": 900
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 672.2190179122338,
+    "tilt": 0,
+    "target": {
+     "x": 148.3554658521712,
+     "y": -55.231911500641395
+    }
+   },
+   "virtual_clock_ms": 7500.000000000048,
+   "drawn": {
+    "facilities": {
+     "symbols": 250,
+     "runways": 202,
+     "labels": 9,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 2,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 29,
+   "picks_recorded": 0
+  },
+  "02-bandar-abbas-crowded-1440": {
+   "note": "Bandar Abbas and Havadarya, dist 150 km",
+   "viewport": {
+    "w": 1440,
+    "h": 900
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 150,
+    "tilt": 0,
+    "target": {
+     "x": -32.59127355674315,
+     "y": 72.76566958883733
+    }
+   },
+   "virtual_clock_ms": 12999.999999999885,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 10,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 2,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 11,
+   "picks_recorded": 0
+  },
+  "05-bushehr-nuclear-wide-1440": {
+   "note": "Bushehr reactor at 380 km (the widest scale that still draws heliports): nuclear, two AD sites, airbases, heliports",
+   "viewport": {
+    "w": 1440,
+    "h": 900
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 380,
+    "tilt": 0,
+    "target": {
+     "x": -498.12046566768714,
+     "y": 257.63741994843036
+    }
+   },
+   "virtual_clock_ms": 18499.999999999916,
+   "drawn": {
+    "facilities": {
+     "symbols": 250,
+     "runways": 202,
+     "labels": 11,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 3,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 12,
+   "picks_recorded": 0
+  },
+  "06-bushehr-nuclear-close-1440": {
+   "note": "Bushehr at 200 km",
+   "viewport": {
+    "w": 1440,
+    "h": 900
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 200,
+    "tilt": 0,
+    "target": {
+     "x": -498.12046566768714,
+     "y": 257.6374199999994
+    }
+   },
+   "virtual_clock_ms": 24000.000000000317,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 6,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 3,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 7,
+   "picks_recorded": 0
+  },
+  "01-cold-chart-1280": {
+   "note": "cold chart after the briefing is closed",
+   "viewport": {
+    "w": 1280,
+    "h": 720
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 743.7316793922587,
+    "tilt": 0,
+    "target": {
+     "x": 191.81872756035034,
+     "y": -55.22811374875866
+    }
+   },
+   "virtual_clock_ms": 7500.000000000048,
+   "drawn": {
+    "facilities": {
+     "symbols": 250,
+     "runways": 202,
+     "labels": 5,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 2,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 29,
+   "picks_recorded": 0
+  },
+  "02-bandar-abbas-crowded-1280": {
+   "note": "Bandar Abbas and Havadarya, dist 150 km",
+   "viewport": {
+    "w": 1280,
+    "h": 720
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 150,
+    "tilt": 0,
+    "target": {
+     "x": -32.57967500945689,
+     "y": 72.763933493788
+    }
+   },
+   "virtual_clock_ms": 12999.999999999885,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 7,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 2,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 10,
+   "picks_recorded": 0
+  },
+  "05-bushehr-nuclear-wide-1280": {
+   "note": "Bushehr reactor at 380 km (the widest scale that still draws heliports): nuclear, two AD sites, airbases, heliports",
+   "viewport": {
+    "w": 1280,
+    "h": 720
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 380,
+    "tilt": 0,
+    "target": {
+     "x": -498.12046566768714,
+     "y": 257.6374199484299
+    }
+   },
+   "virtual_clock_ms": 18499.999999999916,
+   "drawn": {
+    "facilities": {
+     "symbols": 250,
+     "runways": 202,
+     "labels": 5,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 3,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 13,
+   "picks_recorded": 0
+  },
+  "06-bushehr-nuclear-close-1280": {
+   "note": "Bushehr at 200 km",
+   "viewport": {
+    "w": 1280,
+    "h": 720
+   },
+   "dpr": 2,
+   "camera": {
+    "dist": 200,
+    "tilt": 0,
+    "target": {
+     "x": -498.12046566768714,
+     "y": 257.6374199999994
+    }
+   },
+   "virtual_clock_ms": 24000.000000000317,
+   "drawn": {
+    "facilities": {
+     "symbols": 597,
+     "runways": 202,
+     "labels": 5,
+     "total": 597
+    },
+    "osint": {
+     "sites": 14,
+     "rings": 12,
+     "labels": 3,
+     "total": 14
+    },
+    "tracks": {
+     "units": 8,
+     "contacts": 0
+    }
+   },
+   "icons_listed": 7,
+   "picks_recorded": 0
+  }
+ }
+}

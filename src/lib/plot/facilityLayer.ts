@@ -84,12 +84,13 @@ function iconTexture(kind: IconKind): THREE.CanvasTexture {
   const c = S / 2;
   if (kind === "airbase") {
     g.beginPath(); g.arc(c, c, 21, 0, Math.PI * 2); g.stroke();
-    g.lineWidth = 3;
+    // the aircraft stands clear of the ring: slim fuselage, swept wing and tailplane read as separate parts at 20 px
+    g.lineWidth = 2;
     g.beginPath();
-    g.moveTo(c, c - 15); g.lineTo(c + 3, c - 6); g.lineTo(c + 15, c + 3); g.lineTo(c + 15, c + 7); g.lineTo(c + 3, c + 3);
-    g.lineTo(c + 2, c + 11); g.lineTo(c + 7, c + 14); g.lineTo(c + 7, c + 16); g.lineTo(c, c + 14);
-    g.lineTo(c - 7, c + 16); g.lineTo(c - 7, c + 14); g.lineTo(c - 2, c + 11); g.lineTo(c - 3, c + 3);
-    g.lineTo(c - 15, c + 7); g.lineTo(c - 15, c + 3); g.lineTo(c - 3, c - 6); g.closePath(); g.fill(); g.stroke();
+    g.moveTo(c, c - 14.5); g.lineTo(c + 2.8, c - 9.5); g.lineTo(c + 2.8, c - 4.8); g.lineTo(c + 13.5, c + 3.2); g.lineTo(c + 13.5, c + 6.6); g.lineTo(c + 2.8, c + 3.6);
+    g.lineTo(c + 2.8, c + 8.4); g.lineTo(c + 6.5, c + 11.3); g.lineTo(c + 6.5, c + 13.5); g.lineTo(c, c + 12.2);
+    g.lineTo(c - 6.5, c + 13.5); g.lineTo(c - 6.5, c + 11.3); g.lineTo(c - 2.8, c + 8.4); g.lineTo(c - 2.8, c + 3.6);
+    g.lineTo(c - 13.5, c + 6.6); g.lineTo(c - 13.5, c + 3.2); g.lineTo(c - 2.8, c - 4.8); g.lineTo(c - 2.8, c - 9.5); g.closePath(); g.fill(); g.stroke();
   } else if (kind === "heliport") {
     g.beginPath(); g.arc(c, c, 21, 0, Math.PI * 2); g.stroke();
     g.beginPath(); g.moveTo(c - 8, c - 11); g.lineTo(c - 8, c + 11); g.moveTo(c + 8, c - 11); g.lineTo(c + 8, c + 11); g.moveTo(c - 8, c); g.lineTo(c + 8, c); g.stroke();

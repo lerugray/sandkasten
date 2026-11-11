@@ -1,0 +1,48 @@
+diff --git a/src/lib/plot/facilityLayer.ts b/src/lib/plot/facilityLayer.ts
+index e673abb..ed3c75d 100644
+--- a/src/lib/plot/facilityLayer.ts
++++ b/src/lib/plot/facilityLayer.ts
+@@ -84,12 +84,13 @@ function iconTexture(kind: IconKind): THREE.CanvasTexture {
+   const c = S / 2;
+   if (kind === "airbase") {
+     g.beginPath(); g.arc(c, c, 21, 0, Math.PI * 2); g.stroke();
+-    g.lineWidth = 3;
++    // the aircraft stands clear of the ring: slim fuselage, swept wing and tailplane read as separate parts at 20 px
++    g.lineWidth = 2;
+     g.beginPath();
+-    g.moveTo(c, c - 15); g.lineTo(c + 3, c - 6); g.lineTo(c + 15, c + 3); g.lineTo(c + 15, c + 7); g.lineTo(c + 3, c + 3);
+-    g.lineTo(c + 2, c + 11); g.lineTo(c + 7, c + 14); g.lineTo(c + 7, c + 16); g.lineTo(c, c + 14);
+-    g.lineTo(c - 7, c + 16); g.lineTo(c - 7, c + 14); g.lineTo(c - 2, c + 11); g.lineTo(c - 3, c + 3);
+-    g.lineTo(c - 15, c + 7); g.lineTo(c - 15, c + 3); g.lineTo(c - 3, c - 6); g.closePath(); g.fill(); g.stroke();
++    g.moveTo(c, c - 14.5); g.lineTo(c + 2.8, c - 9.5); g.lineTo(c + 2.8, c - 4.8); g.lineTo(c + 13.5, c + 3.2); g.lineTo(c + 13.5, c + 6.6); g.lineTo(c + 2.8, c + 3.6);
++    g.lineTo(c + 2.8, c + 8.4); g.lineTo(c + 6.5, c + 11.3); g.lineTo(c + 6.5, c + 13.5); g.lineTo(c, c + 12.2);
++    g.lineTo(c - 6.5, c + 13.5); g.lineTo(c - 6.5, c + 11.3); g.lineTo(c - 2.8, c + 8.4); g.lineTo(c - 2.8, c + 3.6);
++    g.lineTo(c - 13.5, c + 6.6); g.lineTo(c - 13.5, c + 3.2); g.lineTo(c - 2.8, c - 4.8); g.lineTo(c - 2.8, c - 9.5); g.closePath(); g.fill(); g.stroke();
+   } else if (kind === "heliport") {
+     g.beginPath(); g.arc(c, c, 21, 0, Math.PI * 2); g.stroke();
+     g.beginPath(); g.moveTo(c - 8, c - 11); g.lineTo(c - 8, c + 11); g.moveTo(c + 8, c - 11); g.lineTo(c + 8, c + 11); g.moveTo(c - 8, c); g.lineTo(c + 8, c); g.stroke();
+diff --git a/src/lib/plot/osintLayer.ts b/src/lib/plot/osintLayer.ts
+index b798b84..4a8b2a3 100644
+--- a/src/lib/plot/osintLayer.ts
++++ b/src/lib/plot/osintLayer.ts
+@@ -49,11 +49,16 @@ function glyphTexture(layer: OsintLayer): THREE.CanvasTexture {
+     g.beginPath(); g.moveTo(c - 15, c + 15); g.lineTo(c + 15, c + 15); g.moveTo(c - 11, c + 9); g.lineTo(c + 10, c - 14); g.stroke();
+     g.beginPath(); g.moveTo(c + 16, c - 18); g.lineTo(c + 3, c - 14); g.lineTo(c + 13, c - 5); g.closePath(); g.fill();
+   } else if (layer === "radar") {
++    // a dish, not a canopy: solid bowl on a foot, looking up and right, and one wavefront. The feed sits on the symbol's
++    // centre, so the true-position point of a site drawn on its own position lands on the feed and not on the bowl.
++    g.lineWidth = 2;
++    g.beginPath(); g.moveTo(c - 19, c - 4); g.quadraticCurveTo(c - 19.5, c + 14.5, c - 1, c + 14); g.closePath(); g.fill(); g.stroke();
++    g.beginPath(); g.moveTo(c - 12, c + 11); g.lineTo(c - 15.5, c + 17.5); g.lineTo(c - 6.5, c + 17.5); g.closePath(); g.fill(); g.stroke();
++    g.lineWidth = 3;
++    g.beginPath(); g.moveTo(c - 10, c + 5); g.lineTo(c, c); g.stroke();
++    g.beginPath(); g.arc(c, c, 3, 0, Math.PI * 2); g.fill();
+     g.lineWidth = 5;
+-    g.beginPath(); g.arc(c - 4, c + 4, 16, Math.PI * 1.05, Math.PI * 1.95); g.stroke();
+-    g.beginPath(); g.moveTo(c - 4, c + 4); g.lineTo(c - 4, c + 17); g.stroke();
+-    g.lineWidth = 3.5;
+-    for (const r of [12, 20]) { g.beginPath(); g.arc(c - 8, c + 8, r + 8, -Math.PI * 0.42, -Math.PI * 0.08); g.stroke(); }
++    g.beginPath(); g.arc(c, c, 16.5, -Math.PI * 0.5, 0); g.stroke();
+   } else {
+     for (let i = 0; i < 3; i++) {
+       const a = (i * 2 * Math.PI) / 3 - Math.PI / 2;

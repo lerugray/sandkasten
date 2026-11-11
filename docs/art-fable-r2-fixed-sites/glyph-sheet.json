@@ -1,0 +1,159 @@
+{
+ "airbase": {
+  "changed": true,
+  "texture_sha256_before": "bbba3c97159236c847712a8ad34b8550a375c232a6557a0496ed8f0606719191",
+  "texture_sha256_after": "d16241e24855c3651d521debcccb0161f8e68005b47c3dd4fbe17bf5b311f2ee",
+  "crops": [
+   {
+    "tint": "civil (phosphor dim)",
+    "id": "apt-ir-0057",
+    "pose": "14-bandar-abbas-osint-off-1920",
+    "centre_device_px": [
+     2472.976671204382,
+     1589.3384343454159
+    ]
+   },
+   {
+    "tint": "military (phosphor)",
+    "id": "apt-ir-0003",
+    "pose": "05-bushehr-nuclear-wide-1920",
+    "centre_device_px": [
+     1822.9768500388873,
+     277.86104207300656
+    ]
+   }
+  ]
+ },
+ "heliport": {
+  "changed": false,
+  "texture_sha256_before": "04ecf5de5dd9fd736bedb5cd26df1809085a0e018eeeff82c1b87c2f77f43a5f",
+  "texture_sha256_after": "04ecf5de5dd9fd736bedb5cd26df1809085a0e018eeeff82c1b87c2f77f43a5f",
+  "crops": [
+   {
+    "tint": "civil (phosphor dim)",
+    "id": "apt-ae-0185",
+    "pose": "11-fujairah-construction-1920",
+    "centre_device_px": [
+     2109.2097999649422,
+     135.3281372780821
+    ]
+   },
+   {
+    "tint": "military (phosphor)",
+    "id": "apt-ir-0193",
+    "pose": "07-radar-khalij-fars-1920",
+    "centre_device_px": [
+     2715.09246170652,
+     113.7840394381451
+    ]
+   }
+  ]
+ },
+ "naval_base": {
+  "changed": false,
+  "texture_sha256_before": "174b69163c6e7f20e91a2296f3b317a22e32594bc052bc18bc5551ef43ceda37",
+  "texture_sha256_after": "174b69163c6e7f20e91a2296f3b317a22e32594bc052bc18bc5551ef43ceda37",
+  "crops": [
+   {
+    "tint": "military (phosphor)",
+    "id": "osint-ir-bandar-abbas",
+    "pose": "07-radar-khalij-fars-1920",
+    "centre_device_px": [
+     2849.710876017036,
+     175.5851670689333
+    ]
+   }
+  ]
+ },
+ "port": {
+  "changed": false,
+  "texture_sha256_before": "a85dbebdea39ce13ec6d0c76af9d2a756017e159907420e7646da693990d2bd4",
+  "texture_sha256_after": "a85dbebdea39ce13ec6d0c76af9d2a756017e159907420e7646da693990d2bd4",
+  "crops": [
+   {
+    "tint": "civil (phosphor dim)",
+    "id": "port-node-1589742199",
+    "pose": "07-radar-khalij-fars-1920",
+    "centre_device_px": [
+     2896.6583369361565,
+     926.18660301727
+    ]
+   }
+  ]
+ },
+ "ad": {
+  "changed": false,
+  "texture_sha256_before": "7c7c863f072d3521ba2abbe09aed12f1c841d23b5dade9454b14699c7fbbfb8a",
+  "texture_sha256_after": "7c7c863f072d3521ba2abbe09aed12f1c841d23b5dade9454b14699c7fbbfb8a",
+  "crops": [
+   {
+    "tint": "Iran (alarm)",
+    "id": "ad-ir-tor-bushehr",
+    "pose": "06-bushehr-nuclear-close-1920",
+    "centre_device_px": [
+     1111.283628196688,
+     913.9999999999925
+    ]
+   },
+   {
+    "tint": "coalition (phosphor hi)",
+    "id": "ad-us-patriot-udeid",
+    "pose": "09-udeid-radar-ad-1920",
+    "centre_device_px": [
+     1784.759499926522,
+     865.9999990409566
+    ]
+   }
+  ]
+ },
+ "radar": {
+  "changed": true,
+  "texture_sha256_before": "c87ce7218793fee8265134ad6ca2965ac140b25445560d257ef89cade3555ff6",
+  "texture_sha256_after": "bb72ab40f02f3e6b9b2969346f4aec439ca32ff00f0240cbe77ae929a87cc981",
+  "crops": [
+   {
+    "tint": "Iran (alarm)",
+    "id": "radar-ir-khalij-fars",
+    "pose": "07-radar-khalij-fars-1920",
+    "centre_device_px": [
+     2280.853544851557,
+     918.3871818619484
+    ]
+   },
+   {
+    "tint": "coalition (phosphor hi)",
+    "id": "radar-us-tpy2-udeid",
+    "pose": "09-udeid-radar-ad-1920",
+    "centre_device_px": [
+     1840.759499926522,
+     913.9999990409563
+    ]
+   }
+  ]
+ },
+ "nuclear": {
+  "changed": false,
+  "texture_sha256_before": "69e49d8543f2eb25fdd3ebfc01d52e27395f053f4d176443153e045a7f1e069a",
+  "texture_sha256_after": "69e49d8543f2eb25fdd3ebfc01d52e27395f053f4d176443153e045a7f1e069a",
+  "crops": [
+   {
+    "tint": "Iran (alarm)",
+    "id": "nuc-ir-bushehr-reactor",
+    "pose": "06-bushehr-nuclear-close-1920",
+    "centre_device_px": [
+     999.283628196689,
+     913.9999999999925
+    ]
+   },
+   {
+    "tint": "coalition (phosphor hi)",
+    "id": "nuc-ae-barakah",
+    "pose": "08-barakah-nuclear-1920",
+    "centre_device_px": [
+     2279.2875229326046,
+     918.6158053885921
+    ]
+   }
+  ]
+ }
+}
