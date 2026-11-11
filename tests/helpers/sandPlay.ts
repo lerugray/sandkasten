@@ -224,6 +224,56 @@ export async function restoreDice(page: Page) {
   await page.evaluate(() => { const w = window as any; if (w.__origRandom) Math.random = w.__origRandom; });
 }
 
+/**
+ * SAND-ART1-FIX6 (test-only): put Nimitz inside ir-fac-1's radar horizon and give Iran a firm radar
+ * track so weapons-free FAC fires the opening C-802 on the same tick Transit Complete ends the run.
+ *
+ * FIX5's teleport alone is not enough: the wrap debrief pins Math.random at 0.7, and at ~8 nm that
+ * roll fails surface-radar detection, so Iran never holds a DETECTED+ contact and launches.length
+ * stays 0. Keep the FIX5 in-horizon point (still inside the transit gate — victory ends the overlay
+ * after combat's same-tick salvo). Do not call from production paths.
+ */
+export async function primeWrapDebriefLaunch(page: Page) {
+  await page.evaluate(() => {
+    const s = (window as unknown as W).__sandSession as {
+      gameState: {
+        simTime: number;
+        sides: { units: { id: string; position: { lng: number; lat: number } }[] }[];
+        sideContacts: Record<string, unknown[]>;
+        schedule: { engageAt: number };
+      };
+      setRoe: (unitId: string, roe: string) => void;
+    };
+    const nim = s.gameState.sides.flatMap((x) => x.units).find((u) => u.id === "us-cvn-1");
+    if (!nim) throw new Error("us-cvn-1 missing");
+    // ~8 nm from ir-fac-1 toward the gate (FIX5). Inside horizon (~11 nm) and inside transit-gate.
+    nim.position = { lng: 56.38, lat: 26.78 };
+    const t = s.gameState.simTime;
+    const prior = (s.gameState.sideContacts.Iran ?? []).filter((c) => (c as { actualUnitId?: string }).actualUnitId !== "us-cvn-1");
+    s.gameState.sideContacts = {
+      ...s.gameState.sideContacts,
+      Iran: [
+        ...prior,
+        {
+          id: "e2e-iran-cvn-track",
+          detectedById: "ir-fac-1",
+          actualUnitId: "us-cvn-1",
+          side: "Iran",
+          classification: "tracked",
+          position: { ...nim.position },
+          positionUncertainty: 0.5,
+          baseUncertainty: 0.5,
+          lastUpdateTime: t,
+          lastFixTime: t,
+          sensorType: "radar",
+        },
+      ],
+    };
+    s.gameState.schedule.engageAt = t;
+    s.setRoe("ir-fac-1", "weapons-free");
+  });
+}
+
 /** After a result nothing may change: keys, buttons and map clicks are all refused. */
 export async function assertFrozen(page: Page, opts: { selected?: boolean } = { selected: true }) {
   const before = await sessionState(page);
