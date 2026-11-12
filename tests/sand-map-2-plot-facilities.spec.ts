@@ -47,9 +47,11 @@ test.describe("SAND-MAP-2 default /play facilities", () => {
 
   test("clicking Oghab 44 opens the facility panel with runways; X closes it", async ({ page }) => {
     await openPlot(page);
+    const framesBefore = await page.evaluate(() => window.__sandPlot!.frames());
     await page.evaluate(() => window.__sandPlot!.focusFacility("apt-ir-0161"));
     await expect.poll(() => page.evaluate(() => window.__sandPlot!.view().dist), { timeout: 10_000 }).toBeLessThan(30);
-    await page.waitForTimeout(2500);
+    // One paint after the snap so pick discs and runway hit geometry match the camera.
+    await page.waitForFunction((n) => (window.__sandPlot?.frames() ?? 0) > n, framesBefore, { timeout: 10_000 });
     const host = (await page.getByTestId("tactical-plot").boundingBox())!;
     const s = (await page.evaluate(() => window.__sandPlot!.facilityScreen("apt-ir-0161")))!;
     await page.mouse.click(host.x + s.x, host.y + s.y);
@@ -64,9 +66,10 @@ test.describe("SAND-MAP-2 default /play facilities", () => {
 
   test("clicking a military airbase at close zoom opens its panel (Havadarya)", async ({ page }) => {
     await openPlot(page);
+    const framesBefore = await page.evaluate(() => window.__sandPlot!.frames());
     await page.evaluate(() => window.__sandPlot!.focusFacility("apt-oikp"));
     await expect.poll(() => page.evaluate(() => window.__sandPlot!.view().dist), { timeout: 10_000 }).toBeLessThan(40);
-    await page.waitForTimeout(2500);
+    await page.waitForFunction((n) => (window.__sandPlot?.frames() ?? 0) > n, framesBefore, { timeout: 10_000 });
     const host = (await page.getByTestId("tactical-plot").boundingBox())!;
     const s = (await page.evaluate(() => window.__sandPlot!.facilityScreen("apt-oikp")))!;
     await page.mouse.click(host.x + s.x, host.y + s.y);

@@ -48,7 +48,8 @@ async function fits(page: Page, testId: string) {
 
 for (const size of SIZES) {
   test(`pixel inspection at ${size.width}x${size.height} DPR 2`, async ({ browser }, info) => {
-    test.setTimeout(240_000);
+    // 1920×1080 DPR 2 under software GL routinely needs >4 min wall time on cpu landbat hosts.
+    test.setTimeout(size.width >= 1920 ? 420_000 : 300_000);
     mkdirSync(OUT, { recursive: true });
     const ctx = await browser.newContext({ viewport: size, deviceScaleFactor: 2 });
     const page = await ctx.newPage();

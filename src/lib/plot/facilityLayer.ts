@@ -438,7 +438,8 @@ export class FacilityPlotLayer {
     if (!this.root.visible) return null;
     const mt = this.maxTier(kmPerPx);
     let best: FacilityItem | null = null;
-    let bestD = SYMBOL_PX * 0.75;
+    // Slightly generous hit disc: DPR-2 and sub-pixel project() can land a click just outside 0.75×.
+    let bestD = SYMBOL_PX * 1.15;
     if (mt >= 0) {
       for (const g of this.groups) {
         const count = g.tierEnd[mt];

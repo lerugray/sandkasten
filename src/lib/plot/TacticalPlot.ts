@@ -860,16 +860,31 @@ export class TacticalPlot {
     this.glide = t.to.clone();
   }
 
-  /** Glide to a facility and zoom until its longest runway fills a good part of the screen. */
+  /**
+   * Jump the camera onto a facility and zoom until its longest runway fills a good part of the screen.
+   * Snaps (no glide): under a capped frame dt the old ease could leave the view mid-move for seconds on a slow
+   * WebGL host, so clicks and occupancy checks saw the wrong pose.
+   */
   focusFacility(facilityId: string) {
     const it = this.facilityLayer?.get(facilityId);
     if (!it) return;
     let longestKm = 0;
     for (const r of it.facility.runways ?? []) longestKm = Math.max(longestKm, r.lengthM / 1000);
+    const dist = THREE.MathUtils.clamp(Math.max(longestKm, 1.2) * 2.6 / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 400);
+    this.snapView(it.x, it.y, dist);
+  }
+
+  /** Snap pan/zoom immediately and force the next frame to re-declutter and relabel. */
+  private snapView(x: number, y: number, dist: number) {
     this.vel.set(0, 0);
-    this.glide = new THREE.Vector2(it.x, it.y);
+    this.glide = null;
     this.zoomAnchor = null;
-    this.distGoal = THREE.MathUtils.clamp(Math.max(longestKm, 1.2) * 2.6 / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 400);
+    this.target.set(x, y);
+    this.distGoal = dist;
+    this.dist = dist;
+    this.declKey = "";
+    this.viewHash = "";
+    this.updateCamera();
   }
 
   private rebuildAreaFills(areas: PlotArea[]) {
@@ -1127,10 +1142,7 @@ export class TacticalPlot {
       focusOsint: (id: string, dist?: number) => {
         const it = this.osintLayer?.get(id);
         if (!it) return;
-        this.vel.set(0, 0);
-        this.glide = new THREE.Vector2(it.x, it.y);
-        this.zoomAnchor = null;
-        this.distGoal = dist ?? 120;
+        this.snapView(it.x, it.y, dist ?? 120);
       },
       setDist: (km: number) => { this.distGoal = this.dist = km; this.updateCamera(); },
       drawnTracks: () => ({ units: this.drawn.unitSprites, contacts: this.drawn.contactSprites }),
@@ -1159,7 +1171,8 @@ export class TacticalPlot {
     });
     this.leaderSvg.remove();
     this.composer.dispose();
-    this.renderer.forceContextLoss();
+    // Do not forceContextLoss(): Chrome then blacklists WebGL for the origin after a few remounts
+    // (overlap walks /play → snapshot, and the landbat suite remounts the plot dozens of times).
     this.renderer.dispose();
     this.renderer.domElement.remove();
   }
@@ -2416,6 +2429,36 @@ export class TacticalPlot {
               if (!this.slotClear(r)) continue;
               this.labelAt(e.ident, cls, r, true);
               this.gLab.add(r);
+              used++;
+              break;
+            }
+          }
+        }
+      }
+      // Close-zoom runway grids can blanket every ordinary slot. Keep at least the centred field's name so the
+      // view stays readable (and occupancy proofs see a label) even when every neighbour plate was rejected.
+      if (close && layer && used === 0) {
+        let nearest: (typeof layer.items)[number] | null = null;
+        let best = Infinity;
+        for (const it of layer.items) {
+          if (it.decl) continue;
+          const d = Math.hypot(it.x - this.target.x, it.y - this.target.y);
+          if (d < best) { best = d; nearest = it; }
+        }
+        if (nearest) {
+          const s = this.toScreen(nearest.x, nearest.y, 0);
+          if (s.z < 1) {
+            const text = facilityLabelText(nearest.facility);
+            const cls = "tx-fac-label tx-fac-label--sel";
+            const { w, h } = this.textBox(text, cls);
+            for (const [ox, oy] of labelSlots(FACILITY_SYMBOL_PX / 2, w, h)) {
+              const r: Rect = { x: Math.round(s.x + ox), y: Math.round(s.y + oy), w, h };
+              if (this.underChrome(r)) continue;
+              const idx = this.labelAt(text, cls, r, true);
+              this.gLab.add(r);
+              this.labelMeta[idx] = { text, owner: `facility-icon:${nearest.facility.id}`, nearest: `facility-icon:${nearest.facility.id}`, leader: true };
+              const ex = Math.max(r.x, Math.min(s.x, r.x + r.w)), ey = Math.max(r.y, Math.min(s.y, r.y + r.h));
+              this.siteLeaders.push({ ev: idx, d: `M${s.x.toFixed(1)} ${s.y.toFixed(1)}L${ex.toFixed(1)} ${ey.toFixed(1)}` });
               used++;
               break;
             }

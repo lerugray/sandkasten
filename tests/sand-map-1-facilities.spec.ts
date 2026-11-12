@@ -96,6 +96,8 @@ test.describe("SAND-MAP-1 facilities + globe/terrain", () => {
   });
 
   test("globe projection toggles; terrain and satellite switch on", async ({ page }) => {
+    // Software-GL hosts spend longer on projection/terrain paints; keep the assertion budget above the default 30s.
+    test.setTimeout(90_000);
     await openMap(page);
     await withMap(page, (m) => m.jumpTo({ zoom: 3.5 }));
     await expect.poll(() => globeness(page)).toBe(1);

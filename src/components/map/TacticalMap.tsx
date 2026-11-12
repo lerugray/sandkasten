@@ -209,6 +209,9 @@ export function TacticalMap({
       if (map.getSource(TERRAIN_SOURCE_ID) && (terrainOn || map.getTerrain())) {
         map.setTerrain(terrainOn ? { source: TERRAIN_SOURCE_ID, exaggeration: 1.5 } : null);
       }
+      // Projection / terrain / sat swaps only take effect on the next paint; without an explicit repaint a
+      // software-GL host can sit on a stale transitionState long enough for the toggle e2e to time out.
+      map.triggerRepaint();
     };
     // isStyleLoaded() is false while tiles stream in, so track readiness ourselves: not ready only between setStyle and style.load.
     if (styleReadyRef.current || map.isStyleLoaded()) apply();
