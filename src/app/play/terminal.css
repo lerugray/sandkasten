@@ -756,6 +756,10 @@
   right: 16px;
   top: 76px;
   width: min(540px, calc(100vw - 420px));
+  /* ART1 WeGo block + taller title must still fit a 900 px window; scroll inside, never clip */
+  max-height: calc(100vh - 76px - 16px);
+  overflow-x: hidden;
+  overflow-y: auto;
   z-index: 25;
   padding: 0 0 12px;
 }

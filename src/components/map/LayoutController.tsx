@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type maplibregl from "maplibre-gl";
-import { computeMapLayout, drawnFacilityKey, type MapLayout } from "@/lib/map/mapLayout";
+import { computeMapLayout, drawnFacilityKey, EMPTY_MAP_LAYOUT, type MapLayout } from "@/lib/map/mapLayout";
 import { unitFrame } from "@/lib/map/unitSymbol";
 import { LABEL_EM } from "@/lib/osint/labelLayout";
 import type { OsintSite } from "@/lib/osint/sites";
@@ -112,8 +112,18 @@ export function LayoutController({ map, units, playerSide, sites, facilities, on
     runRef.current = schedule;
     const onStyle = () => {
       tetherKeyRef.current = "";
+      // Drop every plate/offset before the new style's facility symbols are known. Under soft GL a style rebuild
+      // (terrain / satellite / theme) can outlast the overlap settle window at 1920; stale plates then sit on new discs.
+      keyRef.current = EMPTY_MAP_LAYOUT.key;
+      onLayoutRef.current(EMPTY_MAP_LAYOUT);
       schedule();
     };
+    // Web font arrival changes measureText widths; re-solve so DOM plates match the layout box.
+    const onFonts = () => schedule();
+    if (typeof document !== "undefined" && document.fonts) {
+      document.fonts.ready.then(onFonts).catch(() => {});
+      document.fonts.addEventListener?.("loadingdone", onFonts);
+    }
     // `idle` only comes once every base-map tile of a new view has arrived and been placed, which takes seconds on a slow
     // connection or machine. The facility symbols are on screen long before that, so the layout is re-solved as soon as
     // the set of them changes (checked a few times a second while the map is drawing), not when the map finally rests.
@@ -143,6 +153,9 @@ export function LayoutController({ map, units, playerSide, sites, facilities, on
       map.off("moveend", schedule);
       map.off("render", onRender);
       map.off("style.load", onStyle);
+      if (typeof document !== "undefined" && document.fonts?.removeEventListener) {
+        document.fonts.removeEventListener("loadingdone", onFonts);
+      }
       for (const id of [LINE, CASING]) if (map.getLayer(id)) map.removeLayer(id);
       if (map.getSource(SRC)) map.removeSource(SRC);
     };

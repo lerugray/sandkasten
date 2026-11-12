@@ -45,7 +45,7 @@ describe("OSINT map labels", () => {
         const nearest = [...items].sort((a, b) => dist(a) - dist(b))[0];
         // labels may be far from every icon only when they are far from all; compare against icons within reach
         // a label that had to leave its symbol (p.leader) is tied back with a leader line and stays within reach of it
-        if (p.leader) expect(dist(own)).toBeLessThan(170);
+        if (p.leader) expect(dist(own)).toBeLessThan(280);
         if (!p.leader && dist(nearest) < 120 && nearest.id !== p.id) {
           // another symbol is closer: only allowed when the two sit on the same spot (co-located, same coordinates)
           expect(dist(own) - dist(nearest)).toBeLessThan(0.5);

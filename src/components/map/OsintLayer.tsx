@@ -332,11 +332,23 @@ export function OsintLayer({ map, sites, selectedId, onSelect, unitPositions = [
         labels.delete(id);
       }
     });
-    if (!layout) return;
+    if (!layout) {
+      // style rebuild / first paint: hide every plate so a stale offset cannot overlap a new facility disc
+      labels.forEach((m) => (m.getElement().style.display = "none"));
+      return;
+    }
     const visible = map.getZoom() >= 5.5;
     for (const s of sites) {
       const pl = layout.labels.get(s.id);
-      if (!pl) continue;
+      if (!pl) {
+        // denser views may omit a label rather than leave a collision; remove any previous marker
+        const stale = labels.get(s.id);
+        if (stale) {
+          stale.remove();
+          labels.delete(s.id);
+        }
+        continue;
+      }
       let m = labels.get(s.id);
       if (!m) {
         const el = document.createElement("div");

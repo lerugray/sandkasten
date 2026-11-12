@@ -149,7 +149,8 @@ export function layoutLabels(items: LabelInput[], unitsPx: [number, number][], t
     // no clear spot beside the symbol: walk outward on a ring, flanks first, and tie the label back with a leader
     const flank = [0, Math.PI, -0.5, Math.PI + 0.5, 0.5, Math.PI - 0.5, -1, Math.PI + 1, 1, Math.PI - 1, -Math.PI / 2, Math.PI / 2];
     const dirs = [...flank, ...Array.from({ length: 12 }, (_, i) => (i * Math.PI) / 6 + Math.PI / 12)];
-    for (let d = ICON_RADIUS + 9; d <= ICON_RADIUS + 140; d += 4) {
+    // 220 px: denser 1920-wide theatre views pack more facilities on screen than the old 140 px ring could escape
+    for (let d = ICON_RADIUS + 9; d <= ICON_RADIUS + 220; d += 4) {
       for (const a of dirs) {
         const cx = icx + Math.cos(a) * (d + (w / 2) * Math.abs(Math.cos(a)));
         const cy = icy + Math.sin(a) * (d + (LABEL_H / 2) * Math.abs(Math.sin(a)));
@@ -159,7 +160,7 @@ export function layoutLabels(items: LabelInput[], unitsPx: [number, number][], t
         return { id: it.id, cand: cands.length, anchor: "top-left" as Anchor, offset: [r.x - it.x, r.y - it.y] as [number, number], rect: r, iconX: icx, iconY: icy, leader: true };
       }
     }
-    // solid area: least bad adjacent spot
+    // solid area: least-bad adjacent spot (computeMapLayout may still drop it if the residue overlaps)
     let bestScore = Infinity;
     let bi = 0;
     rects.forEach((r, k) => {

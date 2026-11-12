@@ -85,6 +85,36 @@ describe("/map layout: facility symbols from z9 come from the data", () => {
     });
   }
 
+  it("drops a label that would still overlap a facility disc after the ring search", () => {
+    // Force a solid neighbourhood: many facility discs around one site so every candidate and ring spot hits.
+    const { map, project } = fakeMap(QESHM, 1920, 900);
+    const site = osintSites.find((s) => s.id === "radar-ir-khalij-fars")!;
+    const p = project([site.position.lng, site.position.lat]);
+    const base = hormuzFacilities.find((f) => f.kind === "airbase")!;
+    const wall = Array.from({ length: 48 }, (_, i) => {
+      const a = (i / 48) * Math.PI * 2;
+      const ll = map.unproject([p.x + Math.cos(a) * 18, p.y + Math.sin(a) * 18]);
+      return { ...base, id: `wall-${i}`, position: { lng: ll.lng, lat: ll.lat } };
+    });
+    const layout = computeMapLayout(map, {
+      units: [],
+      sites: [site],
+      textWidth,
+      facilities: [...hormuzFacilities, ...wall],
+    });
+    // Either the label is clear of every facility disc, or it was omitted — never a residue overlap.
+    const l = layout.labels.get(site.id);
+    if (!l) return;
+    const label: Rect = { x: p.x + l.off[0] - 2, y: p.y + l.off[1], w: l.w, h: LABEL_H };
+    const d = 28 * facilityIconSize(QESHM.zoom);
+    for (const f of [...hormuzFacilities, ...wall]) {
+      if (f.kind === "military_area") continue;
+      const a = project([f.position.lng, f.position.lat]);
+      const icon: Rect = { x: a.x - d / 2, y: a.y - d / 2, w: d, h: d };
+      expect(touches(label, icon, 0), f.id).toBe(false);
+    }
+  });
+
   it("below z9 the layout still follows the symbols the renderer placed", () => {
     const view = { center: QESHM.center, zoom: 8.5 };
     const site = osintSites.find((s) => s.id === "radar-ir-khalij-fars")!;

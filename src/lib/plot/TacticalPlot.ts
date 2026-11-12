@@ -906,8 +906,10 @@ export class TacticalPlot {
   }
 
   /**
-   * Glide to a mission area and zoom until it fills a good part of the free area between the panels.
-   * `include` widens the frame to more points; `avoidRight` keeps that many px on the right clear (a docked card).
+   * Jump to a mission area and zoom until it fills a good part of the free area between the panels.
+   * Snaps (no glide): under soft GL / capped frame dt the old ease left SHOW GATE mid-pose for seconds, so
+   * occupancy and shot checks saw the wrong framing. `include` widens the frame; `avoidRight` keeps that many
+   * px on the right clear (a docked card).
    */
   focusArea(areaId: string, opts: { include?: { lng: number; lat: number }[]; avoidRight?: number } = {}) {
     const a = this.input?.areas?.find((x) => x.id === areaId);
@@ -927,11 +929,9 @@ export class TacticalPlot {
     const fill = opts.include?.length ? 0.68 : 0.55;
     // world km that one screen pixel spans at distance d is 2 d tan(FOV/2) / H
     const need = Math.max(((x1 - x0) * this.H) / (fill * freeW), ((y1 - y0) * this.H) / (fill * freeH));
-    this.vel.set(0, 0);
-    this.zoomAnchor = null;
-    this.distGoal = THREE.MathUtils.clamp(need / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 2600);
-    const kmPerPx = (2 * this.distGoal * Math.tan(THREE.MathUtils.degToRad(FOV / 2))) / this.H;
-    this.glide = new THREE.Vector2((x0 + x1) / 2 + (avoid / 2) * kmPerPx, (y0 + y1) / 2);
+    const dist = THREE.MathUtils.clamp(need / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 2600);
+    const kmPerPx = (2 * dist * Math.tan(THREE.MathUtils.degToRad(FOV / 2))) / this.H;
+    this.snapView((x0 + x1) / 2 + (avoid / 2) * kmPerPx, (y0 + y1) / 2, dist);
   }
 
   /** Back to the opening theater view (a fresh run). */
@@ -1494,7 +1494,17 @@ export class TacticalPlot {
     const h = Math.max(1, this.host.clientHeight);
     this.W = w;
     this.H = h;
-    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Soft GL (SwiftShader / llvmpipe) at CSS DPR 2 paints a 4K buffer every frame and starves the play-shots
+    // path under Xvfb. Cap the drawing buffer; window.devicePixelRatio itself stays whatever the host set.
+    let cap = 2;
+    try {
+      const gl = this.renderer.getContext() as WebGLRenderingContext | null;
+      const name = gl ? String(gl.getParameter(gl.RENDERER) ?? "") : "";
+      if (/swiftshader|llvmpipe|softpipe|software/i.test(name)) cap = 1;
+    } catch {
+      /* context not ready yet */
+    }
+    this.dpr = Math.min(window.devicePixelRatio || 1, cap);
     this.renderer.setPixelRatio(this.dpr);
     this.renderer.setSize(w, h, false);
     this.composer.setPixelRatio(this.dpr);

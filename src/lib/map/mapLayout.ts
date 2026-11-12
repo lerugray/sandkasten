@@ -1,5 +1,5 @@
 import type maplibregl from "maplibre-gl";
-import { placeAll, rectAt, type Placeable, type Rect } from "./declutter";
+import { placeAll, rectAt, touches, type Placeable, type Rect } from "./declutter";
 import { ICON_RADIUS, LABEL_H, layoutLabels, siteSlots, slotPx } from "@/lib/osint/labelLayout";
 import { siteLabel } from "@/lib/osint/sites";
 import type { OsintSite } from "@/lib/osint/sites";
@@ -34,6 +34,16 @@ export interface MapLayout {
   tethers: [[number, number], [number, number]][];
   key: string;
 }
+
+/** Cleared layout published while the base style is rebuilding so stale plates cannot sit on new facility symbols. */
+export const EMPTY_MAP_LAYOUT: MapLayout = {
+  units: new Map(),
+  icons: new Map(),
+  labels: new Map(),
+  unitObstacles: [],
+  tethers: [],
+  key: "empty",
+};
 
 /** The facility symbol tiers: tier t is drawn from `minzoom`, its map text from `labelMinzoom`. One table for the layers and the layout. */
 export const FACILITY_POINT_TIERS = [
@@ -153,7 +163,8 @@ export function computeMapLayout(
     const [sx, sy] = slotPx(slots.get(s.id) ?? -1);
     return { id: s.id, x: p.x, y: p.y, px: p.x + sx, py: p.y + sy, w: d, h: d, prefAngle: sx === 0 && sy === 0 ? -Math.PI / 2 : Math.atan2(sy, sx) };
   });
-  const iconPlaced = placeAll(iconItems, iconBlockers, { gap: 3, maxR: 90, bounds });
+  // maxR 140: a 1920-wide view keeps more facility discs on screen than 1440; icons need farther escape room
+  const iconPlaced = placeAll(iconItems, iconBlockers, { gap: 3, maxR: 140, bounds });
   const icons: MapLayout["icons"] = new Map();
   for (const it of iconItems) {
     const c = iconPlaced.get(it.id)!;
@@ -172,7 +183,7 @@ export function computeMapLayout(
   const unitPlaced = placeAll(
     unitItems.filter((u) => onScreen(u.x, u.y)),
     unitBlockers,
-    { gap: 3, maxR: 130, bounds },
+    { gap: 3, maxR: 200, bounds },
   );
   const units: MapLayout["units"] = new Map();
   const unitRects: Rect[] = [];
@@ -194,8 +205,19 @@ export function computeMapLayout(
   });
   const placed = layoutLabels(labelItems, [], input.textWidth, { unitRects, blockers: fixed });
   const labels: MapLayout["labels"] = new Map();
+  const labelTaken: Rect[] = [];
+  const iconRects = labelItems.map((it) => rectAt(it.iconX, it.iconY, ICON_RADIUS * 2 + 4));
   for (const pl of placed) {
     const it = labelItems.find((i) => i.id === pl.id)!;
+    // Prefer a missing plate over a collision: the least-bad fallback can still leave a residue the overlap
+    // e2e catches at 1920×1080 when more discs share the screen than at 1440.
+    const hit =
+      unitRects.some((u) => touches(pl.rect, u, 1)) ||
+      fixed.some((o) => touches(pl.rect, o, 1)) ||
+      labelTaken.some((p) => touches(pl.rect, p, 1)) ||
+      iconRects.some((ic, m) => touches(pl.rect, ic, labelItems[m].id === pl.id ? 0 : 1));
+    if (hit) continue;
+    labelTaken.push(pl.rect);
     labels.set(pl.id, { off: [r1(pl.rect.x + 2 - it.x), r1(pl.rect.y - it.y)], w: pl.rect.w, leader: pl.leader, iconOff: icons.get(pl.id)!.off });
   }
 
