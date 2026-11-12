@@ -99,6 +99,11 @@ export type LabelOpts = {
   unitRects?: Rect[];
   /** any other rect a label must stay clear of: facility icons, contact markers */
   blockers?: Rect[];
+  /**
+   * Dense /map zooms (many facility discs on screen): skip the least-bad fallback so computeMapLayout
+   * omits the plate instead of leaving a residue overlap the e2e catches at 1920.
+   */
+  omitIfBlocked?: boolean;
 };
 
 const LABEL_GAP = 1.5;
@@ -159,6 +164,12 @@ export function layoutLabels(items: LabelInput[], unitsPx: [number, number][], t
         placed.push(r);
         return { id: it.id, cand: cands.length, anchor: "top-left" as Anchor, offset: [r.x - it.x, r.y - it.y] as [number, number], rect: r, iconX: icx, iconY: icy, leader: true };
       }
+    }
+    if (opts.omitIfBlocked) {
+      // No clear ring spot: leave a zero-size rect so computeMapLayout drops the plate (no least-bad residue).
+      const empty: Rect = { x: -1e6, y: -1e6, w: 0, h: 0 };
+      placed.push(empty);
+      return { id: it.id, cand: -1, anchor: "top-left" as Anchor, offset: [0, 0], rect: empty, iconX: icx, iconY: icy, leader: false };
     }
     // solid area: least-bad adjacent spot (computeMapLayout may still drop it if the residue overlaps)
     let bestScore = Infinity;

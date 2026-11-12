@@ -24,8 +24,8 @@ export interface LayoutUnit {
 export interface MapLayout {
   /** px the unit symbol sits from its true position */
   units: Map<string, [number, number]>;
-  /** px the OSINT symbol's centre sits from its site point; `moved` when it left its slot (gets a tether line) */
-  icons: Map<string, { off: [number, number]; moved: boolean }>;
+  /** px the OSINT symbol's centre sits from its site point; `moved` when it left its slot (gets a tether line); `hidden` when dense zoom could not clear a facility disc */
+  icons: Map<string, { off: [number, number]; moved: boolean; hidden?: boolean }>;
   /** label box top-left (text starts 2 px right of the box) relative to the site point */
   labels: Map<string, { off: [number, number]; w: number; leader: boolean; iconOff: [number, number] }>;
   /** displaced unit positions, for the invisible obstacle layers that keep map text off units */
@@ -152,27 +152,33 @@ export function computeMapLayout(
   const bounds = { w: host.clientWidth, h: host.clientHeight };
   const fixed: Rect[] = [...facilityIconRects(map, input.facilities), ...contactRects(map)];
 
+  // Dense theater zooms pack many facility discs; at 1920 more of them share the screen than at 1440.
+  const zoom = map.getZoom();
+  const dense = zoom >= 8 || (bounds.w >= 1800 && fixed.length >= 24);
+
   // 1. OSINT icons
   const slots = siteSlots(input.sites);
   const sitePx = new Map(input.sites.map((s) => [s.id, map.project([s.position.lng, s.position.lat])]));
   const ordered = [...input.sites].sort((a, b) => Number(b.layer === "ad") - Number(a.layer === "ad") || a.id.localeCompare(b.id));
   const d = ICON_RADIUS * 2;
-  const iconBlockers = [...fixed];
   const iconItems: Placeable[] = ordered.map((s) => {
     const p = sitePx.get(s.id)!;
     const [sx, sy] = slotPx(slots.get(s.id) ?? -1);
     return { id: s.id, x: p.x, y: p.y, px: p.x + sx, py: p.y + sy, w: d, h: d, prefAngle: sx === 0 && sy === 0 ? -Math.PI / 2 : Math.atan2(sy, sx) };
   });
   // maxR 140: a 1920-wide view keeps more facility discs on screen than 1440; icons need farther escape room
-  const iconPlaced = placeAll(iconItems, iconBlockers, { gap: 3, maxR: 140, bounds });
+  const iconPlaced = placeAll(iconItems, [...fixed], { gap: dense ? 4 : 3, maxR: dense ? 180 : 140, bounds });
   const icons: MapLayout["icons"] = new Map();
+  const visibleIconRects: Rect[] = [];
   for (const it of iconItems) {
     const c = iconPlaced.get(it.id)!;
-    icons.set(it.id, { off: [r1(c.x - it.x), r1(c.y - it.y)], moved: Math.hypot(c.x - it.px!, c.y - it.py!) > 2 });
+    const hidden = dense && !c.free;
+    icons.set(it.id, { off: [r1(c.x - it.x), r1(c.y - it.y)], moved: Math.hypot(c.x - it.px!, c.y - it.py!) > 2, hidden });
+    if (!hidden) visibleIconRects.push(rectAt(c.x, c.y, d));
   }
 
-  // 2. unit symbols, clear of every icon
-  const unitBlockers = [...iconBlockers];
+  // 2. unit symbols, clear of every visible icon
+  const unitBlockers = [...fixed, ...visibleIconRects];
   const unitItems: Placeable[] = [...input.units]
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((u) => {
@@ -203,19 +209,24 @@ export function computeMapLayout(
     const ic = icons.get(s.id)!;
     return { id: s.id, label: siteLabel(s), slot: slots.get(s.id) ?? -1, x: p.x, y: p.y, iconX: p.x + ic.off[0], iconY: p.y + ic.off[1] };
   });
-  const placed = layoutLabels(labelItems, [], input.textWidth, { unitRects, blockers: fixed });
+  const placed = layoutLabels(labelItems, [], input.textWidth, { unitRects, blockers: fixed, omitIfBlocked: dense });
   const labels: MapLayout["labels"] = new Map();
   const labelTaken: Rect[] = [];
-  const iconRects = labelItems.map((it) => rectAt(it.iconX, it.iconY, ICON_RADIUS * 2 + 4));
+  const iconRects = labelItems
+    .filter((it) => !icons.get(it.id)?.hidden)
+    .map((it) => ({ id: it.id, r: rectAt(it.iconX, it.iconY, ICON_RADIUS * 2 + 4) }));
   for (const pl of placed) {
     const it = labelItems.find((i) => i.id === pl.id)!;
+    if (pl.rect.w <= 0 || pl.rect.h <= 0) continue;
+    if (icons.get(pl.id)?.hidden) continue;
     // Prefer a missing plate over a collision: the least-bad fallback can still leave a residue the overlap
     // e2e catches at 1920×1080 when more discs share the screen than at 1440.
+    const gap = dense ? 2 : 1;
     const hit =
-      unitRects.some((u) => touches(pl.rect, u, 1)) ||
-      fixed.some((o) => touches(pl.rect, o, 1)) ||
-      labelTaken.some((p) => touches(pl.rect, p, 1)) ||
-      iconRects.some((ic, m) => touches(pl.rect, ic, labelItems[m].id === pl.id ? 0 : 1));
+      unitRects.some((u) => touches(pl.rect, u, gap)) ||
+      fixed.some((o) => touches(pl.rect, o, gap)) ||
+      labelTaken.some((p) => touches(pl.rect, p, gap)) ||
+      iconRects.some(({ id, r }) => touches(pl.rect, r, id === pl.id ? 0 : gap));
     if (hit) continue;
     labelTaken.push(pl.rect);
     labels.set(pl.id, { off: [r1(pl.rect.x + 2 - it.x), r1(pl.rect.y - it.y)], w: pl.rect.w, leader: pl.leader, iconOff: icons.get(pl.id)!.off });
@@ -229,6 +240,7 @@ export function computeMapLayout(
   for (const s of ordered) {
     const p = sitePx.get(s.id)!;
     const ic = icons.get(s.id)!;
+    if (ic.hidden) continue;
     const cx = p.x + ic.off[0];
     const cy = p.y + ic.off[1];
     const slot = slotPx(slots.get(s.id) ?? -1);

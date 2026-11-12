@@ -1,5 +1,9 @@
 # Session Notes
 
+## LANDGATE3 (t589) — 2026-11-12
+- Cleared map@1920 settle hang (image-decode) + dense omit; play-shots frames warm on load.
+- Dirty tree for harvester; no commit/push. Report: `docs/lane-reports/SAND-ART1-LANDGATE3-REPORT.md`.
+
 ## Session 1 — 2026-03-22 (GDD Refinement + DB Exploration)
 
 ### Key Decisions

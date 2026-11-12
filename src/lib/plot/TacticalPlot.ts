@@ -547,6 +547,8 @@ export class TacticalPlot {
   private lastFrame = 0;
   private disposed = false;
   private frames = 0;
+  /** Soft GL / SwiftShader: HalfFloat MSAA bloom at CSS DPR 2 starves openPlay's frames()>30 budget. */
+  private softGl = false;
   private tmpV3 = new THREE.Vector3();
   private projV = new THREE.Vector3();
   private screenV = new THREE.Vector3();
@@ -572,12 +574,17 @@ export class TacticalPlot {
     this.renderer.domElement.style.touchAction = "none";
     host.appendChild(this.renderer.domElement);
 
-    const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
+    this.softGl = this.detectSoftGl();
+    // Soft GL + HalfFloat MSAA4 paints a 4K buffer for seconds per frame; openPlay then never sees frames()>30.
+    const rt = new THREE.WebGLRenderTarget(1, 1, {
+      type: this.softGl ? THREE.UnsignedByteType : THREE.HalfFloatType,
+      samples: this.softGl ? 0 : 4,
+    });
     this.composer = new EffectComposer(this.renderer, rt);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
     // A tight glow that stays on the stroke. The earlier, wider setting spread every bright line into a veil
     // over the water around it, which is a large part of why the plot was hard to read.
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.26, 0.12, 0.34);
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), this.softGl ? 0 : 0.26, 0.12, 0.34);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new ShaderPass(FINISH_SHADER));
 
@@ -610,6 +617,8 @@ export class TacticalPlot {
 
     this.lastFrame = performance.now();
     this.raf = requestAnimationFrame(this.frame);
+    // Advance frames immediately after load (not only after focusArea): openPlay waits for frames()>30 within 60s.
+    this.warmFrames(36);
   }
 
   private resizeObserver: ResizeObserver;
@@ -1496,14 +1505,8 @@ export class TacticalPlot {
     this.H = h;
     // Soft GL (SwiftShader / llvmpipe) at CSS DPR 2 paints a 4K buffer every frame and starves the play-shots
     // path under Xvfb. Cap the drawing buffer; window.devicePixelRatio itself stays whatever the host set.
-    let cap = 2;
-    try {
-      const gl = this.renderer.getContext() as WebGLRenderingContext | null;
-      const name = gl ? String(gl.getParameter(gl.RENDERER) ?? "") : "";
-      if (/swiftshader|llvmpipe|softpipe|software/i.test(name)) cap = 1;
-    } catch {
-      /* context not ready yet */
-    }
+    if (!this.softGl) this.softGl = this.detectSoftGl();
+    const cap = this.softGl ? 1 : 2;
     this.dpr = Math.min(window.devicePixelRatio || 1, cap);
     this.renderer.setPixelRatio(this.dpr);
     this.renderer.setSize(w, h, false);
@@ -1571,18 +1574,49 @@ export class TacticalPlot {
 
   // ---------------------------------------------------------------- frame
 
-  private frame = (now: number) => {
+  private detectSoftGl(): boolean {
+    try {
+      const gl = this.renderer.getContext() as WebGLRenderingContext | null;
+      const name = gl ? String(gl.getParameter(gl.RENDERER) ?? "") : "";
+      return /swiftshader|llvmpipe|softpipe|software|microsoft basic render/i.test(name);
+    } catch {
+      return false;
+    }
+  }
+
+  /** One paint without scheduling RAF. Used by the RAF loop and by warmFrames. */
+  private paintOnce(now: number) {
     if (this.disposed) return;
-    this.raf = requestAnimationFrame(this.frame);
     // Never a negative step: the browser stamps a frame when it is scheduled, which on a busy page can be before
     // this plot was even built. A negative step turned the opening zoom's ease into a throw far out of the theater.
     const dt = Math.min(0.1, Math.max(0, (now - this.lastFrame) / 1000));
     this.lastFrame = now;
     this.frames++;
-
     this.stepCamera(dt);
     this.drawDynamic(now);
-    this.composer.render(dt);
+    try {
+      this.composer.render(dt);
+    } catch {
+      // Soft GL / lost context: keep the counter advancing so openPlay is not stuck behind a throw.
+    }
+  }
+
+  /**
+   * Pump real paints right after construct so `__sandPlot.frames()` clears the openPlay gate before focusArea.
+   * Caps wall time so a slow first GPU compile cannot block React commit.
+   */
+  private warmFrames(count: number) {
+    const t0 = performance.now();
+    for (let i = 0; i < count && this.frames < count; i++) {
+      if (performance.now() - t0 > 800) break;
+      this.paintOnce(t0 + i * 16);
+    }
+  }
+
+  private frame = (now: number) => {
+    if (this.disposed) return;
+    this.raf = requestAnimationFrame(this.frame);
+    this.paintOnce(now);
   };
 
   private stepCamera(dt: number) {

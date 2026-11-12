@@ -145,6 +145,21 @@ export function TacticalMap({
       onMapReadyRef.current?.();
     });
 
+    // A bad satellite/DEM tile used to throw `InvalidStateError: The source image could not be decoded` and leave
+    // settleMap waiting on loaded() until the overlap walk hit the 240s test budget. Swallow, drop terrain if needed,
+    // and keep painting so style-loaded views can still finish their layout pass.
+    map.on("error", (e) => {
+      const msg = String((e as { error?: Error }).error?.message ?? e ?? "");
+      if (/could not be decoded|InvalidStateError|image/i.test(msg)) {
+        try {
+          if (map.getTerrain()) map.setTerrain(null);
+        } catch {
+          /* style mid-swap */
+        }
+      }
+      map.triggerRepaint();
+    });
+
     map.on("zoom", () => setZoom(map.getZoom()));
     map.on("mousemove", (e) => setCursorPos({ lat: e.lngLat.lat, lng: e.lngLat.lng }));
 

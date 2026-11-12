@@ -87,6 +87,16 @@ describe("OSINT map labels", () => {
     expect(Math.hypot(p.rect.x + p.rect.w / 2 - 500, p.rect.y + p.rect.h / 2 - 500)).toBeLessThan(170);
   });
 
+  it("omitIfBlocked skips the least-bad fallback so a solid neighbourhood yields an empty plate", () => {
+    // Fill a 500 px disc so every ring spot out to the 220 px leader reach collides.
+    const blockers = [{ x: 200, y: 200, w: 600, h: 600 }];
+    const [p] = layoutLabels([{ id: "a", label: "S-300PMU-2", slot: -1, x: 500, y: 500 }], [], textW, { blockers, omitIfBlocked: true });
+    expect(p.rect.w).toBe(0);
+    expect(p.cand).toBe(-1);
+    const [kept] = layoutLabels([{ id: "a", label: "S-300PMU-2", slot: -1, x: 500, y: 500 }], [], textW, { blockers });
+    expect(kept.rect.w).toBeGreaterThan(0);
+  });
+
   it("the unit symbol names the English label only: no OSINT label or site name holds Arabic script", () => {
     for (const s of osintSites) {
       expect(ARABIC_SCRIPT.test(siteLabel(s))).toBe(false);

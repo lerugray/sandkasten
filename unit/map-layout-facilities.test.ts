@@ -104,7 +104,10 @@ describe("/map layout: facility symbols from z9 come from the data", () => {
     });
     // Either the label is clear of every facility disc, or it was omitted — never a residue overlap.
     const l = layout.labels.get(site.id);
-    if (!l) return;
+    if (!l) {
+      expect(layout.icons.get(site.id)?.hidden ?? true).toBe(true);
+      return;
+    }
     const label: Rect = { x: p.x + l.off[0] - 2, y: p.y + l.off[1], w: l.w, h: LABEL_H };
     const d = 28 * facilityIconSize(QESHM.zoom);
     for (const f of [...hormuzFacilities, ...wall]) {
@@ -112,6 +115,32 @@ describe("/map layout: facility symbols from z9 come from the data", () => {
       const a = project([f.position.lng, f.position.lat]);
       const icon: Rect = { x: a.x - d / 2, y: a.y - d / 2, w: d, h: d };
       expect(touches(label, icon, 0), f.id).toBe(false);
+    }
+  });
+
+  it("1920 Bandar Abbas dense zoom: every kept label clears every drawn facility disc", () => {
+    const view = { center: [55.709, 26.858] as [number, number], zoom: 8.1 };
+    const w = 1920, h = 1080;
+    const d = 28 * facilityIconSize(view.zoom);
+    const { project } = fakeMap(view, w, h);
+    const rendered = hormuzFacilities
+      .filter((f) => f.kind !== "military_area" && view.zoom >= FACILITY_POINT_TIERS[facilityTier(f)].minzoom)
+      .map((f) => {
+        const p = project([f.position.lng, f.position.lat]);
+        return { id: f.id, lngLat: [f.position.lng, f.position.lat] as [number, number], p };
+      })
+      .filter((r) => r.p.x >= -d && r.p.y >= -d && r.p.x <= w + d && r.p.y <= h + d);
+    // Below z9 the layout reads queryRenderedFeatures — feed the discs the renderer would show.
+    const { map } = fakeMap(view, w, h, rendered.map((r) => ({ id: r.id, lngLat: r.lngLat })));
+    const layout = computeMapLayout(map, { units: [], sites: osintSites, textWidth, facilities: hormuzFacilities });
+    for (const [id, l] of layout.labels) {
+      const site = osintSites.find((s) => s.id === id)!;
+      const p = project([site.position.lng, site.position.lat]);
+      const label: Rect = { x: p.x + l.off[0] - 2, y: p.y + l.off[1], w: l.w, h: LABEL_H };
+      for (const r of rendered) {
+        const icon: Rect = { x: r.p.x - d / 2, y: r.p.y - d / 2, w: d, h: d };
+        expect(touches(label, icon, 0), `${id} vs ${r.id}`).toBe(false);
+      }
     }
   });
 
