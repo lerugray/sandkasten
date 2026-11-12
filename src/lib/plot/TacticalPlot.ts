@@ -546,8 +546,12 @@ export class TacticalPlot {
   private raf = 0;
   private lastFrame = 0;
   private disposed = false;
+  private started = false;
   private frames = 0;
-  /** Soft GL / SwiftShader: HalfFloat MSAA bloom at CSS DPR 2 starves openPlay's frames()>30 budget. */
+  /**
+   * Soft GL / SwiftShader: drop bloom and cap drawing-buffer DPR. Composer target is UnsignedByte
+   * without MSAA on every host — HalfFloat+MSAA4 stalls real ANGLE D3D12 the same way soft GL did.
+   */
   private softGl = false;
   private tmpV3 = new THREE.Vector3();
   private projV = new THREE.Vector3();
@@ -575,15 +579,18 @@ export class TacticalPlot {
     host.appendChild(this.renderer.domElement);
 
     this.softGl = this.detectSoftGl();
-    // Soft GL + HalfFloat MSAA4 paints a 4K buffer for seconds per frame; openPlay then never sees frames()>30.
+    // UnsignedByte + no MSAA on every host: HalfFloat MSAA4 (even on RTX via Mesa/ANGLE D3D12) can stall the
+    // first composer.render for longer than openPlay's frames()>30 budget, and LANDGATE3's sync warmFrames
+    // ran that stall *before* __sandPlot was published — so the live RAF loop the player sees never started.
     const rt = new THREE.WebGLRenderTarget(1, 1, {
-      type: this.softGl ? THREE.UnsignedByteType : THREE.HalfFloatType,
-      samples: this.softGl ? 0 : 4,
+      type: THREE.UnsignedByteType,
+      samples: 0,
     });
     this.composer = new EffectComposer(this.renderer, rt);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
     // A tight glow that stays on the stroke. The earlier, wider setting spread every bright line into a veil
     // over the water around it, which is a large part of why the plot was hard to read.
+    // Soft GL drops bloom; real GPU keeps the KEEP-art glow on the cheap UnsignedByte target.
     this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), this.softGl ? 0 : 0.26, 0.12, 0.34);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new ShaderPass(FINISH_SHADER));
@@ -614,11 +621,7 @@ export class TacticalPlot {
     const ro = new ResizeObserver(() => this.resize());
     ro.observe(host);
     this.resizeObserver = ro;
-
-    this.lastFrame = performance.now();
-    this.raf = requestAnimationFrame(this.frame);
-    // Advance frames immediately after load (not only after focusArea): openPlay waits for frames()>30 within 60s.
-    this.warmFrames(36);
+    // Paint loop starts from start() after PlotView publishes __sandPlot — not here.
   }
 
   private resizeObserver: ResizeObserver;
@@ -1162,9 +1165,34 @@ export class TacticalPlot {
     };
   }
 
+  /**
+   * Begin the player-visible paint loop. Call only after `__sandPlot` is published so the witness
+   * and the theater start together; LANDGATE3's in-constructor warmFrames missed that ordering.
+   */
+  start() {
+    if (this.disposed || this.started) return;
+    this.started = true;
+    this.lastFrame = performance.now();
+    // Pump cheap paints now that the handle is live (UnsignedByte target): clears frames()>30 before focusArea
+    // without blocking construct, and without the HalfFloat MSAA stall that ate LANDGATE3's warmFrames.
+    const t0 = this.lastFrame;
+    for (let i = 0; i < 36 && this.frames < 36; i++) {
+      if (performance.now() - t0 > 400) break;
+      this.paintOnce(t0 + i * 16);
+    }
+    this.renderer.setAnimationLoop(this.frame);
+  }
+
   dispose() {
     this.disposed = true;
+    this.started = false;
     cancelAnimationFrame(this.raf);
+    this.raf = 0;
+    try {
+      this.renderer.setAnimationLoop(null);
+    } catch {
+      /* context already gone */
+    }
     this.resizeObserver.disconnect();
     this.unbindInput();
     for (const t of this.tracks.values()) this.disposeTrack(t);
@@ -1584,38 +1612,32 @@ export class TacticalPlot {
     }
   }
 
-  /** One paint without scheduling RAF. Used by the RAF loop and by warmFrames. */
+  /** One paint without scheduling the next frame. Used by start() and the animation loop. */
   private paintOnce(now: number) {
     if (this.disposed) return;
-    // Never a negative step: the browser stamps a frame when it is scheduled, which on a busy page can be before
-    // this plot was even built. A negative step turned the opening zoom's ease into a throw far out of the theater.
-    const dt = Math.min(0.1, Math.max(0, (now - this.lastFrame) / 1000));
-    this.lastFrame = now;
-    this.frames++;
-    this.stepCamera(dt);
-    this.drawDynamic(now);
     try {
+      // Never a negative step: the browser stamps a frame when it is scheduled, which on a busy page can be before
+      // this plot was even built. A negative step turned the opening zoom's ease into a throw far out of the theater.
+      const dt = Math.min(0.1, Math.max(0, (now - this.lastFrame) / 1000));
+      this.lastFrame = now;
+      this.frames++;
+      this.stepCamera(dt);
+      this.drawDynamic(now);
       this.composer.render(dt);
     } catch {
-      // Soft GL / lost context: keep the counter advancing so openPlay is not stuck behind a throw.
-    }
-  }
-
-  /**
-   * Pump real paints right after construct so `__sandPlot.frames()` clears the openPlay gate before focusArea.
-   * Caps wall time so a slow first GPU compile cannot block React commit.
-   */
-  private warmFrames(count: number) {
-    const t0 = performance.now();
-    for (let i = 0; i < count && this.frames < count; i++) {
-      if (performance.now() - t0 > 800) break;
-      this.paintOnce(t0 + i * 16);
+      // Soft GL / lost context / first-compile glitch: keep the counter and loop alive for openPlay.
     }
   }
 
   private frame = (now: number) => {
-    if (this.disposed) return;
-    this.raf = requestAnimationFrame(this.frame);
+    if (this.disposed) {
+      try {
+        this.renderer.setAnimationLoop(null);
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
     this.paintOnce(now);
   };
 

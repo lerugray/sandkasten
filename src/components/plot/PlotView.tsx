@@ -41,12 +41,18 @@ export function PlotView({ input, origin, tilt, insets, readouts, zoomRequest, f
     });
     plotRef.current = plot;
     const host = hostRef.current as HTMLDivElement & { __plot?: unknown };
-    host.__plot = plot.getHandle();
-    (window as unknown as { __sandPlot?: unknown }).__sandPlot = host.__plot;
+    const handle = plot.getHandle();
+    host.__plot = handle;
+    // Publish the witness before the paint loop so openPlay sees a live handle whose frames() advance
+    // on the same loop the player sees (LANDGATE3 warmed inside construct, before this assignment).
+    const w = window as unknown as { __sandPlot?: unknown };
+    w.__sandPlot = handle;
+    plot.start();
     return () => {
       plot.dispose();
       plotRef.current = null;
       delete host.__plot;
+      if (w.__sandPlot === handle) delete w.__sandPlot;
     };
     // origin is fixed for a scenario
     // eslint-disable-next-line react-hooks/exhaustive-deps

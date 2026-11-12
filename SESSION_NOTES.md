@@ -1,5 +1,10 @@
 # Session Notes
 
+## LANDGATE4 (t591) — 2026-11-12
+- Plot/Play blank theater on real GPU: HalfFloat+MSAA4 stall + warmFrames before `__sandPlot`.
+- Fix: UnsignedByte composer always; `plot.start()` after handle publish; clear zombie handle on dispose.
+- Dirty tree for harvester; no commit/push. Report: `docs/lane-reports/SAND-ART1-LANDGATE4-REPORT.md`.
+
 ## LANDGATE3 (t589) — 2026-11-12
 - Cleared map@1920 settle hang (image-decode) + dense omit; play-shots frames warm on load.
 - Dirty tree for harvester; no commit/push. Report: `docs/lane-reports/SAND-ART1-LANDGATE3-REPORT.md`.
