@@ -4,6 +4,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PLATFORM_RECORDS, getPlatformRecord } from "@/data/platforms";
 import { createSymbolSVG } from "@/lib/symbols/milsymbolFactory";
 import type { Grade, PlatformRecord, Provenance, SpecBlock } from "@/types/platformDb";
+import {
+  DEFAULT_TERMINAL_FONT,
+  terminalFontFromSearch,
+  type TerminalFontId,
+} from "@/lib/terminalFont";
 
 const GRADES: Grade[] = ["very-low", "low", "medium", "high", "very-high"];
 
@@ -469,8 +474,13 @@ export function PlatformDatabase({ initialId, onClose, syncUrl = false }: Platfo
     document.querySelector(`[data-rail-slug="${slug}"]`)?.scrollIntoView({ block: "nearest" });
   }, [slug]);
 
+  const [terminalFont, setTerminalFont] = useState<TerminalFontId>(DEFAULT_TERMINAL_FONT);
+  useEffect(() => {
+    setTerminalFont(terminalFontFromSearch());
+  }, []);
+
   return (
-    <div className="db-root" data-testid="db-root">
+    <div className="db-root" data-testid="db-root" data-font={terminalFont}>
       <div className="db-topbar">
         <span className="db-brand">SANDKASTEN // PLATFORM MANUAL</span>
         <span className="db-dim">

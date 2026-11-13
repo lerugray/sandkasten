@@ -1,21 +1,7 @@
 /* Platform manual. Same terminal register as /play (see
-   docs/handoffs/threejs-play-view-2026-11-03/NOTES.md). Font: JetBrains Mono (SIL OFL 1.1),
-   vendored in public/fonts/jetbrains-mono. */
-
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono/jetbrains-mono-latin-400-normal.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono/jetbrains-mono-latin-700-normal.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+   docs/handoffs/threejs-play-view-2026-11-03/NOTES.md). Font: --tx-font from
+   terminal-font.css (same faces and ?font= override as /play).
+   terminal-font.css is imported from the database page / modal alongside this file. */
 
 .db-root {
   --db-field: #020604;
@@ -34,9 +20,10 @@
   flex-direction: column;
   background: var(--db-field);
   color: var(--db-text);
-  font-family: "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 14px;
-  line-height: 1.5;
+  font-family: var(--tx-font);
+  font-size: var(--tx-font-size);
+  line-height: var(--tx-line-height);
+  letter-spacing: var(--tx-letter-spacing);
   text-shadow: 0 0 5px rgba(76, 245, 142, 0.22);
   -webkit-font-smoothing: antialiased;
 }

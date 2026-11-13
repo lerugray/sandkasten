@@ -1,6 +1,7 @@
 "use client";
 
 import { PlatformDatabase } from "./PlatformDatabase";
+import "@/app/terminal-font.css";
 import "@/app/database/database.css";
 
 export interface PlatformDatabaseModalProps {

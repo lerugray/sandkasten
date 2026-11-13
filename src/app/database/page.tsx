@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { PlatformDatabase } from "@/components/database";
+import "@/app/terminal-font.css";
 import "./database.css";
 
 function DatabaseView() {

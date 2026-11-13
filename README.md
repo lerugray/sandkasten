@@ -45,7 +45,7 @@ Shares its map renderer and NATO symbology with [Auftragstaktik](https://github.
 - Track history dots, contacts fade as their data ages, radar sweeps on emitting units
 - Missiles fly with trails and target lines; intercepts and hits flash briefly
 - Drag to pan (it coasts when you let go), wheel to zoom at the cursor, `T` tilts the plot into a low 3D theater with NOAA relief, wireframe sensor domes and aircraft at altitude
-- Terminal chrome: vendored JetBrains Mono, one phosphor green, one alarm red, function-key command bar, teletype traffic strip fed by the combat log, intel and autopause
+- Terminal chrome: vendored VT323 (default; SIL OFL 1.1), with Glass TTY VT220 and IBM 3270 as `?font=` compare faces, one phosphor green, one alarm red, function-key command bar, teletype traffic strip fed by the combat log, intel and autopause
 - Keys: `B` briefing, `Space` pause, `1`-`6` speed, `S` sensors, `M` measure, `G` god mode, `T` tilt, `A` autopause, `H`/`?` help, `E` engage the chosen contact, `N` next contact, `R` cycle rules of engagement, `F` weapons free, `X` weapons hold
 - The Hormuz mission is on screen from the first frame. A MISSION panel names the protected ship (USS Nimitz), the win condition (the living carrier enters the transit gate) and the loss condition (the carrier is destroyed), with its state and the distance to the gate edge; distance is information, only the game's own result counts. The real `transit-gate` polygon is drawn on the plot with a label. The panel, the briefing, the gate and the result are all read from the scenario's own events and reference points, so they cannot disagree with the rules. `B` or the BRIEFING button recalls the briefing (it pauses a running clock); `Esc` or `Enter` closes it. The briefing no longer closes on any stray key or click. GATE and NIMITZ in the panel (and SHOW GATE in the briefing) frame the gate or the ship
 - When the scenario decides, the clock stops, ordering stops (Space, speed keys, ENGAGE, ROE, waypoint and throttle controls and map clicks do nothing), and the result card says which condition decided it, when, what was lost and destroyed, and the last events. PLAY AGAIN (or RESET at any time) returns to a fresh paused scenario with the briefing up, default fog of war (not GOD mode), no selection, no armed waypoint or measure mode and no leftover timers or listeners. Snapshot and legacy routes do not get the Hormuz objective
@@ -248,6 +248,16 @@ See [TASKS.md](TASKS.md) for the full breakdown and [GDD.md](GDD.md) for design 
 ## License
 
 MIT
+
+### Fonts (terminal /play and /database)
+
+| Face | Path | Licence |
+|------|------|---------|
+| **VT323** (default) | `public/fonts/vt323/` | SIL Open Font License 1.1 (`OFL.txt`) |
+| **Glass TTY VT220** (`?font=glasstty`) | `public/fonts/glasstty/` | Public domain / Unlicense (`LICENSE`) |
+| **IBM 3270** (`?font=ibm3270`) | `public/fonts/ibm3270/` | BSD-style (`LICENSE.txt`; 3270font project) |
+
+Classic MapLibre pages keep IBM Plex. No remote font requests on `/play`.
 
 ---
 

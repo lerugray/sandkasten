@@ -67,16 +67,17 @@ test.describe("Terminal register design system", () => {
   test("vendored terminal font is loaded and used", async ({ page }) => {
     const fontResponses: { url: string; status: number }[] = [];
     page.on("response", (r) => {
-      if (r.url().includes("/fonts/jetbrains-mono/")) fontResponses.push({ url: r.url(), status: r.status() });
+      if (r.url().includes("/fonts/vt323/")) fontResponses.push({ url: r.url(), status: r.status() });
     });
     await page.goto("/play");
     await expect(page.locator("canvas").first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("terminal-root")).toHaveAttribute("data-font", "vt323");
     await page.evaluate(() => document.fonts.ready);
     const title = page.getByRole("link", { name: "SANDKASTEN" });
     const fontFamily = await title.evaluate((el) => getComputedStyle(el).fontFamily);
-    expect(fontFamily.toLowerCase()).toContain("jetbrains mono");
+    expect(fontFamily.toLowerCase()).toContain("vt323");
     await expect
-      .poll(() => page.evaluate(() => document.fonts.check('14px "JetBrains Mono"') && document.fonts.check('bold 14px "JetBrains Mono"')))
+      .poll(() => page.evaluate(() => document.fonts.check('14px "VT323"') && document.fonts.check('bold 14px "VT323"')))
       .toBe(true);
     expect(fontResponses.length).toBeGreaterThan(0);
     for (const r of fontResponses) expect(r.status).toBeLessThan(400);

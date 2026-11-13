@@ -1,0 +1,85 @@
+/* Terminal faces for /play and /database (SAND-FONT1).
+   VT323 — SIL OFL 1.1 (public/fonts/vt323/OFL.txt)
+   Glass TTY VT220 — public domain / Unlicense (public/fonts/glasstty/LICENSE)
+   IBM 3270 — BSD-like (public/fonts/ibm3270/LICENSE.txt)
+   Override: ?font=vt323|glasstty|ibm3270  (data-font on .tx-root / .db-root). */
+
+@font-face {
+  font-family: "VT323";
+  src: url("/fonts/vt323/vt323-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "VT323";
+  src: url("/fonts/vt323/vt323-latin-400-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Glass TTY VT220";
+  src: url("/fonts/glasstty/Glass_TTY_VT220.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Glass TTY VT220";
+  src: url("/fonts/glasstty/Glass_TTY_VT220.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM 3270";
+  src: url("/fonts/ibm3270/3270-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM 3270";
+  src: url("/fonts/ibm3270/3270-Regular.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --tx-font-vt323: "VT323", ui-monospace, monospace;
+  --tx-font-glasstty: "Glass TTY VT220", ui-monospace, monospace;
+  --tx-font-ibm3270: "IBM 3270", ui-monospace, monospace;
+  /* Default face (proposal): VT323 — clearest 80s terminal at UI sizes.
+     Keep 14px body so chrome geometry matches the prior JetBrains metrics
+     (e2e: briefing must not cover the command bar / autopause panel). */
+  --tx-font: var(--tx-font-vt323);
+  --tx-font-size: 14px;
+  --tx-line-height: 1.4;
+  --tx-letter-spacing: 0.02em;
+}
+
+[data-font="vt323"] {
+  --tx-font: var(--tx-font-vt323);
+  --tx-font-size: 14px;
+  --tx-line-height: 1.4;
+  --tx-letter-spacing: 0.02em;
+}
+
+[data-font="glasstty"] {
+  --tx-font: var(--tx-font-glasstty);
+  --tx-font-size: 14px;
+  --tx-line-height: 1.5;
+  /* Wider glyphs: keep tracking tight so chrome labels stay on fewer lines. */
+  --tx-letter-spacing: 0.01em;
+}
+
+[data-font="ibm3270"] {
+  --tx-font: var(--tx-font-ibm3270);
+  --tx-font-size: 14px;
+  --tx-line-height: 1.4;
+  --tx-letter-spacing: 0;
+}

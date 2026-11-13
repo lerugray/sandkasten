@@ -1,22 +1,8 @@
 /* Terminal register for /play. Near-black field, one phosphor hue, one alarm
    hue, thin rules, bracketed labels. Palette mirrors src/lib/plot/palette.ts.
-   Font: JetBrains Mono (SIL OFL 1.1), vendored in public/fonts/jetbrains-mono. */
-
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono/jetbrains-mono-latin-400-normal.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono/jetbrains-mono-latin-700-normal.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+   Font: --tx-font from terminal-font.css (VT323 OFL default; Glass TTY VT220
+   public domain; IBM 3270 BSD). Override ?font=vt323|glasstty|ibm3270.
+   terminal-font.css is imported from TerminalPlay.tsx alongside this file. */
 
 .tx-root {
   --tx-field: #020604;
@@ -28,7 +14,6 @@
   --tx-text: #b9f4cf;
   --tx-dim: #3fbf74;
   --tx-alarm: #ff4b3a;
-  --tx-font: "JetBrains Mono", ui-monospace, monospace;
 
   /* the shared panels read these, so they pick up the register unchanged */
   --color-tactical-dark: var(--tx-field);
@@ -50,8 +35,9 @@
   background: var(--tx-field);
   color: var(--tx-text);
   font-family: var(--tx-font);
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: var(--tx-font-size);
+  line-height: var(--tx-line-height);
+  letter-spacing: var(--tx-letter-spacing);
   text-shadow: 0 0 5px rgba(76, 245, 142, 0.22);
   -webkit-font-smoothing: antialiased;
 }
@@ -74,8 +60,8 @@
   box-shadow: none !important;
 }
 .tx-root .text-xs {
-  font-size: 14px !important;
-  line-height: 1.4 !important;
+  font-size: var(--tx-font-size) !important;
+  line-height: var(--tx-line-height) !important;
 }
 .tx-root .text-\[10px\],
 .tx-root .text-\[11px\] {
@@ -606,7 +592,9 @@
   right: 0;
   bottom: 0;
   height: 56px;
-  z-index: 11;
+  /* Above the briefing (25): popovers live in this stacking context, and wider
+     terminal faces wrap the briefing into the AUTO panel's hit area. */
+  z-index: 30;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -646,7 +634,8 @@
   left: 0;
   width: 300px;
   padding: 10px 12px;
-  z-index: 20;
+  /* Above the briefing: wider terminal faces wrap the briefing taller into this zone. */
+  z-index: 30;
 }
 .tx-popover-head {
   display: flex;
@@ -756,8 +745,9 @@
   right: 16px;
   top: 76px;
   width: min(540px, calc(100vw - 420px));
-  /* ART1 WeGo block + taller title must still fit a 900 px window; scroll inside, never clip */
-  max-height: calc(100vh - 76px - 16px);
+  /* ART1 WeGo block + taller title must still fit a 900 px window; scroll inside, never clip.
+     Leave the command bar (+ autopause panel) clear: wider terminal faces wrap taller. */
+  max-height: calc(100vh - 76px - 72px);
   overflow-x: hidden;
   overflow-y: auto;
   z-index: 25;
@@ -1138,9 +1128,6 @@
   min-width: 7ch;
   font-weight: 700;
   letter-spacing: 0.06em;
-}
-.tx-rec-text {
-  flex-basis: 100%;
 }
 .tx-wif-row.is-god {
   color: var(--tx-alarm);
@@ -1598,11 +1585,10 @@
   padding-left: 3ch;
   text-indent: -3ch;
 }
-/* record entries: the engine's last-line rule ignores a long last word ("WEAPONS-FREE." sat alone), so entries
-   of up to six lines break evenly instead; longer ones are left as they were */
+/* record entries: turns come from turnAtSpaces (Measured) so a lone last word cannot soft-wrap in. */
 .tx-rec-text {
-  overflow-wrap: break-word;
-  text-wrap: balance;
+  flex-basis: 100%;
+  overflow-wrap: normal;
 }
 /* help rows (shared panel): same last-line rule */
 .tx-root .space-y-1 > div {

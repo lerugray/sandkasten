@@ -11,6 +11,7 @@ import {
   type RecordRow,
   type RecordScope,
 } from "@/lib/simulation/combatRecord";
+import { Measured, nowrapTokens, turnAtSpaces } from "@/components/terminal/textWrap";
 
 export interface RecordView {
   category: RecordCategory;
@@ -206,10 +207,12 @@ export function CombatRecord({ rows, turnIds, view, onView, force, ownUnits, sel
           >
             <span className="tx-rec-time">{hhmmss(r.time)}Z</span>
             <span className="tx-rec-tag">{r.debug ? "GOD" : r.tag}</span>
-            <span className="tx-rec-text">
-              {r.debug ? `[${r.tag}] ` : ""}
-              {r.text}
-            </span>
+            <Measured className="tx-rec-text">
+              {(cols) => {
+                const body = `${r.debug ? `[${r.tag}] ` : ""}${r.text}`;
+                return <span className="tx-turns">{nowrapTokens(turnAtSpaces(body, cols))}</span>;
+              }}
+            </Measured>
             {r.ownUnitIds.map((id) => (
               <button
                 key={id}

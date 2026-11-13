@@ -1,7 +1,8 @@
 "use client";
 
+import "@/app/terminal-font.css";
 import "@/app/play/terminal.css";
-import { useState, useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { DetailPanel } from "@/components/map/DetailPanel";
 import { FacilityPanel } from "@/components/map/FacilityPanel";
@@ -33,13 +34,17 @@ import type { GeoPoint } from "@/lib/plot/projection";
 import type { Contact } from "@/lib/simulation/gameState";
 import { buildFog, contactDisplayName, ownForce, projectRecord, stateWord, visibleWeapons } from "@/lib/simulation/combatRecord";
 import { Teletype, type TtyLine } from "./Teletype";
+import { Measured, nowrapTokens, turnAtSpaces } from "./textWrap";
+import {
+  DEFAULT_TERMINAL_FONT,
+  TERMINAL_FONT_FILES,
+  terminalFontFromSearch,
+  type TerminalFontId,
+} from "@/lib/terminalFont";
 
 const PlotView = dynamic(() => import("@/components/plot/PlotView"), { ssr: false });
 
-const FONT_URLS = [
-  "/fonts/jetbrains-mono/jetbrains-mono-latin-400-normal.woff2",
-  "/fonts/jetbrains-mono/jetbrains-mono-latin-700-normal.woff2",
-];
+const FONT_URLS = TERMINAL_FONT_FILES[DEFAULT_TERMINAL_FONT];
 
 // Chrome geometry in CSS px. The plot canvas always fills the window; these
 // only tell it where the free area sits so the theater centres in it.
@@ -123,99 +128,8 @@ function Cmd({
  * view with a fresh one built on the restored session, so no selection, order mode, dialog, God mode, timer or media
  * callback of the discarded run can survive into the loaded one.
  */
-/**
- * `text` with its line turns written in as newlines, taken at spaces only, for a line of `cols` characters whose
- * first line already holds `lead` of them. Fewest lines first, then the narrowest measure that keeps that count, so
- * a second line is not left with one word. The browser's own wrap also turns after a hyphen, which split "C-802",
- * "(CVN-68)" and the "->" of a weapon row, and no CSS wrap mode forbids that turn; so the turns are chosen here.
- * The words are untouched. Before the first measurement (`cols` 0) the text is returned as it came.
- */
-function turnAtSpaces(text: string, cols: number, lead = 0): string {
-  if (cols <= lead) return text;
-  const words = text.split(/\s+/).filter(Boolean);
-  const lay = (width: number) => {
-    const lines: string[] = [];
-    let line = "";
-    let room = width - lead;
-    let fits = true;
-    for (const w of words) {
-      if (line && line.length + 1 + w.length > room) {
-        lines.push(line);
-        line = w;
-        room = width;
-      } else line = line ? `${line} ${w}` : w;
-      if (line.length > room) fits = false;
-    }
-    lines.push(line);
-    return { lines, fits };
-  };
-  let { lines } = lay(cols);
-  if (lines.length === 1) return text;
-  for (let width = cols - 1; width > lead; width--) {
-    const narrower = lay(width);
-    if (!narrower.fits || narrower.lines.length !== lines.length) break;
-    lines = narrower.lines;
-  }
-  return lines.join("\n");
-}
-
-/**
- * Keep hyphenated / parenthetical tokens (C-802, (CVN-68)) on one glyph run. Breaks stay at the spaces
- * turnAtSpaces already chose; a soft wrap must not cut inside those tokens.
- */
-function nowrapTokens(text: string): ReactNode {
-  const out: ReactNode[] = [];
-  const re = /(\S+)/g;
-  let m: RegExpExecArray | null;
-  let last = 0;
-  let n = 0;
-  while ((m = re.exec(text))) {
-    if (m.index > last) out.push(text.slice(last, m.index));
-    const tok = m[1];
-    if (/[-–—/]/.test(tok) || /^\([^)]*\)$/.test(tok)) {
-      out.push(<span key={n++} className="tx-nowrap">{tok}</span>);
-    } else {
-      out.push(tok);
-    }
-    last = m.index + tok.length;
-  }
-  if (last < text.length) out.push(text.slice(last));
-  return out.length === 1 ? out[0] : out;
-}
-
 /** What a record line holds ahead of its text, less the tag: "06:00:00Z " and the space after the tag. */
 const RECORD_LEAD = 11;
-
-/**
- * A block that knows how many characters fit across it (the terminal face is monospace) and hands that count to
- * its children. The count comes from a hidden probe as wide as the block's content, holding a rule 10ch long; both
- * are watched, so a resize, a scrollbar or the web font arriving re-measures. The first count lands before paint.
- * The probe inherits the block's font, so the lines measured for must be set in that same size.
- */
-function Measured({ children, ...rest }: Omit<React.HTMLAttributes<HTMLDivElement>, "children"> & { children: (cols: number) => React.ReactNode }) {
-  const [cols, setCols] = useState(0);
-  const watch = useRef<ResizeObserver | null>(null);
-  const probe = useCallback((el: HTMLSpanElement | null) => {
-    watch.current?.disconnect();
-    watch.current = null;
-    const rule = el?.firstElementChild;
-    if (!el || !rule) return;
-    const measure = () => {
-      const ch = rule.getBoundingClientRect().width / 10;
-      setCols(ch > 0 ? Math.floor(el.getBoundingClientRect().width / ch) : 0);
-    };
-    measure();
-    watch.current = new ResizeObserver(measure);
-    watch.current.observe(el);
-    watch.current.observe(rule);
-  }, []);
-  return (
-    <div {...rest}>
-      <span className="tx-cols" ref={probe} aria-hidden="true"><i /></span>
-      {children(cols)}
-    </div>
-  );
-}
 
 export function TerminalPlay({ configId = "hormuz" }: { configId?: BuiltinId }) {
   const [run, setRun] = useState<{ configId: BuiltinId; session: SimulationSession | null; epoch: number }>({ configId, session: null, epoch: 0 });
@@ -223,7 +137,12 @@ export function TerminalPlay({ configId = "hormuz" }: { configId?: BuiltinId }) 
     setRun((r) => ({ configId: nextId, session, epoch: r.epoch + 1 }));
     // keep the address honest: a reload of this page opens the scenario that is now on screen
     try {
-      const url = nextId === "snapshot" ? "/play?scenario=snapshot" : "/play";
+      const keep = new URLSearchParams();
+      const font = new URLSearchParams(window.location.search).get("font");
+      if (font) keep.set("font", font);
+      if (nextId === "snapshot") keep.set("scenario", "snapshot");
+      const q = keep.toString();
+      const url = q ? `/play?${q}` : "/play";
       if (window.location.pathname + window.location.search !== url) window.history.replaceState(window.history.state, "", url);
     } catch {
       // the address is a courtesy only
@@ -314,6 +233,10 @@ function TerminalPlayView({
   const [measureEnd, setMeasureEnd] = useState<GeoPoint | null>(null);
   const [showAutopauseSettings, setShowAutopauseSettings] = useState(false);
   const [tilt, setTilt] = useState(false);
+  const [terminalFont, setTerminalFont] = useState<TerminalFontId>(DEFAULT_TERMINAL_FONT);
+  useEffect(() => {
+    setTerminalFont(terminalFontFromSearch());
+  }, []);
   const [, forcePrefsRender] = useState(0);
   const [holds, setHolds] = useState<TtyLine[]>([]);
   const [focusRequest, setFocusRequest] = useState<{ n: number; unitId: string } | null>(null);
@@ -933,7 +856,7 @@ function TerminalPlayView({
   const theater = config.scenario.theater.center;
 
   return (
-    <div className="tx-root" data-testid="terminal-root">
+    <div className="tx-root" data-testid="terminal-root" data-font={terminalFont}>
       {FONT_URLS.map((href) => (
         <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="anonymous" />
       ))}
@@ -1327,8 +1250,8 @@ function TerminalPlayView({
           <div className="tx-briefing-foot">
             <span>
               {isWeGo
-                ? "ESC OR ENTER TO TAKE COMMAND  //  COMMIT ORDERS (ENTER) STARTS TURN 1  //  B RECALLS THIS BRIEFING"
-                : "ESC OR ENTER TO TAKE COMMAND  //  SPC STARTS THE CLOCK  //  B RECALLS THIS BRIEFING"}
+                ? "ESC OR ENTER TO TAKE COMMAND  //  COMMIT ORDERS (ENTER) STARTS TURN 1  //  B RECALLS THIS\u00A0BRIEFING"
+                : "ESC OR ENTER TO TAKE COMMAND  //  SPC STARTS THE CLOCK  //  B RECALLS THIS\u00A0BRIEFING"}
             </span>
             <span className="tx-briefing-actions">
               {objective && (
