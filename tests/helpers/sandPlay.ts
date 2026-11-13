@@ -63,11 +63,111 @@ export async function runUntilResult(page: Page, timeoutMs: number) {
   const t0 = Date.now();
   while (Date.now() - t0 < timeoutMs) {
     if (await overlay.isVisible()) return;
+    // Authoritative pause/result when the E2E handle is present. After SAND-THREAT-1 the opening
+    // picket line sits inside the CSG radar picture, so the first detection tick autopauses; under a
+    // heavy plot frame the DOM label can still read PAUSE while the session is already held, and a
+    // label-only resume loop then burns the wall budget with a stopped clock.
+    const live = await page
+      .evaluate(() => {
+        const s = (window as unknown as W).__sandSession as unknown as { snapshot?: () => {
+          gameState: { isPaused: boolean };
+          eventState?: { scenarioResult?: { result?: string } };
+        } } | undefined;
+        if (!s?.snapshot) return null;
+        const snap = s.snapshot();
+        return {
+          paused: !!snap.gameState.isPaused,
+          result: (snap.eventState?.scenarioResult?.result ?? null) as string | null,
+        };
+      })
+      .catch(() => null);
+    if (live?.result) {
+      await expect(overlay).toBeVisible({ timeout: 120_000 });
+      return;
+    }
     const label = ((await page.getByTestId("sim-toggle-pause").textContent({ timeout: 2000 }).catch(() => null)) ?? "").trim();
-    if (/PLAY/i.test(label)) await page.getByTestId("sim-toggle-pause").click({ timeout: 2000 }).catch(() => {});
+    if (live?.paused || /PLAY/i.test(label)) {
+      await page.getByTestId("sim-toggle-pause").click({ timeout: 2000 }).catch(() => {});
+    }
     await page.waitForTimeout(400);
   }
   await expect(overlay).toBeVisible({ timeout: 1000 });
+}
+
+/** What the game clock and the scenario rules say right now, read from the live session (needs the E2E handle). */
+async function simClock(page: Page) {
+  return page.evaluate(() => {
+    const s = (window as unknown as W).__sandSession as unknown as { snapshot(): any };
+    const snap = s.snapshot();
+    const g = snap.gameState;
+    return {
+      simHours: (g.simTime - new Date(g.scenario.startTime).getTime()) / 3.6e6,
+      paused: g.isPaused as boolean,
+      result: (snap.eventState?.scenarioResult?.result ?? null) as string | null,
+    };
+  });
+}
+
+export type SimClockRun = { resumes: number; wallSeconds: number; simHours: number };
+
+/**
+ * Run a continuous game to its result on the GAME clock, not the wall clock. PLAY is pressed (the real button) every
+ * time the game pauses itself, and the wait ends when the session has a result. A slow machine only makes this take
+ * longer; it cannot turn a result that the rules do reach into a failure.
+ *
+ * It fails when the game clock passes `maxSimHours` with no result (a real miss: the rules did not end the scenario),
+ * when the clock stands still for `stallMs` while the game says it is running (a hang), or at `wallCapMs` overall.
+ * Needs the E2E handle.
+ */
+export async function runUntilResultOnSimClock(
+  page: Page,
+  opts: { maxSimHours: number; wallCapMs?: number; stallMs?: number },
+): Promise<SimClockRun> {
+  const wallCapMs = opts.wallCapMs ?? 1_500_000;
+  const stallMs = opts.stallMs ?? 120_000;
+  const play = page.getByTestId("sim-toggle-pause");
+  const t0 = Date.now();
+  let resumes = 0;
+  let lastSim = -Infinity;
+  let lastAdvance = t0;
+  let simHours = 0;
+  for (;;) {
+    const now = await simClock(page);
+    simHours = now.simHours;
+    if (now.result) break;
+    if (now.simHours >= opts.maxSimHours) {
+      throw new Error(`no scenario result by T+${now.simHours.toFixed(2)} h of game time (limit T+${opts.maxSimHours} h): the rules did not end this run`);
+    }
+    const wall = Date.now() - t0;
+    if (wall > wallCapMs) {
+      throw new Error(`no scenario result after ${Math.round(wall / 1000)} s of wall time; the game clock had reached T+${now.simHours.toFixed(2)} h after ${resumes} resumes`);
+    }
+    if (now.simHours > lastSim) {
+      lastSim = now.simHours;
+      lastAdvance = Date.now();
+    }
+    if (now.paused) {
+      // the game paused itself (autopause): press PLAY once the button offers it, as a player would
+      await expect(play).toHaveText(/PLAY/i, { timeout: 60_000 });
+      await play.click({ timeout: 60_000 });
+      resumes++;
+      lastAdvance = Date.now();
+      continue;
+    }
+    if (Date.now() - lastAdvance > stallMs) {
+      throw new Error(`the game clock stood still at T+${now.simHours.toFixed(2)} h for ${Math.round(stallMs / 1000)} s while running`);
+    }
+    // wait for the next thing a player would react to: the game pausing itself or ending
+    await page
+      .waitForFunction(() => {
+        const snap = ((window as unknown as W).__sandSession as unknown as { snapshot(): any }).snapshot();
+        return snap.gameState.isPaused || !!snap.eventState?.scenarioResult;
+      }, null, { polling: 100, timeout: 5000 })
+      .catch(() => {});
+  }
+  // the session has its result; the debrief is the next render
+  await expect(page.getByTestId("result-overlay")).toBeVisible({ timeout: 120_000 });
+  return { resumes, wallSeconds: Math.round((Date.now() - t0) / 100) / 10, simHours };
 }
 
 /** Counts live window listeners and intervals so a replay can prove nothing accumulates. */
@@ -146,6 +246,56 @@ export async function injectKillOnCarrier(page: Page) {
 
 export async function restoreDice(page: Page) {
   await page.evaluate(() => { const w = window as any; if (w.__origRandom) Math.random = w.__origRandom; });
+}
+
+/**
+ * SAND-ART1-FIX6 (test-only): put Nimitz inside ir-fac-1's radar horizon and give Iran a firm radar
+ * track so weapons-free FAC fires the opening C-802 on the same tick Transit Complete ends the run.
+ *
+ * FIX5's teleport alone is not enough: the wrap debrief pins Math.random at 0.7, and at ~8 nm that
+ * roll fails surface-radar detection, so Iran never holds a DETECTED+ contact and launches.length
+ * stays 0. Keep the FIX5 in-horizon point (still inside the transit gate — victory ends the overlay
+ * after combat's same-tick salvo). Do not call from production paths.
+ */
+export async function primeWrapDebriefLaunch(page: Page) {
+  await page.evaluate(() => {
+    const s = (window as unknown as W).__sandSession as {
+      gameState: {
+        simTime: number;
+        sides: { units: { id: string; position: { lng: number; lat: number } }[] }[];
+        sideContacts: Record<string, unknown[]>;
+        schedule: { engageAt: number };
+      };
+      setRoe: (unitId: string, roe: string) => void;
+    };
+    const nim = s.gameState.sides.flatMap((x) => x.units).find((u) => u.id === "us-cvn-1");
+    if (!nim) throw new Error("us-cvn-1 missing");
+    // ~8 nm from ir-fac-1 toward the gate (FIX5). Inside horizon (~11 nm) and inside transit-gate.
+    nim.position = { lng: 56.38, lat: 26.78 };
+    const t = s.gameState.simTime;
+    const prior = (s.gameState.sideContacts.Iran ?? []).filter((c) => (c as { actualUnitId?: string }).actualUnitId !== "us-cvn-1");
+    s.gameState.sideContacts = {
+      ...s.gameState.sideContacts,
+      Iran: [
+        ...prior,
+        {
+          id: "e2e-iran-cvn-track",
+          detectedById: "ir-fac-1",
+          actualUnitId: "us-cvn-1",
+          side: "Iran",
+          classification: "tracked",
+          position: { ...nim.position },
+          positionUncertainty: 0.5,
+          baseUncertainty: 0.5,
+          lastUpdateTime: t,
+          lastFixTime: t,
+          sensorType: "radar",
+        },
+      ],
+    };
+    s.gameState.schedule.engageAt = t;
+    s.setRoe("ir-fac-1", "weapons-free");
+  });
 }
 
 /** After a result nothing may change: keys, buttons and map clicks are all refused. */

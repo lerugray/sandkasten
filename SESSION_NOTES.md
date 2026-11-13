@@ -1,5 +1,19 @@
 # Session Notes
 
+## LANDGATE5 (t696) — 2026-11-13
+- Play never reached result-overlay: THREAT-1 pickets autopaused after unpause-before-teleport; clock stopped; `runUntilResult` label-only resume missed the hold under heavy frames.
+- Fix: teleport while held then PLAY; `runUntilResult` resumes from `__sandSession` pause/result. Win rule unchanged.
+- vitest 355/355; play-shots + play-result 4/4. Dirty tree for harvester; no commit/push. Report: `docs/lane-reports/SAND-ART1-LANDGATE5-REPORT.md`.
+
+## LANDGATE4 (t591) — 2026-11-12
+- Plot/Play blank theater on real GPU: HalfFloat+MSAA4 stall + warmFrames before `__sandPlot`.
+- Fix: UnsignedByte composer always; `plot.start()` after handle publish; clear zombie handle on dispose.
+- Dirty tree for harvester; no commit/push. Report: `docs/lane-reports/SAND-ART1-LANDGATE4-REPORT.md`.
+
+## LANDGATE3 (t589) — 2026-11-12
+- Cleared map@1920 settle hang (image-decode) + dense omit; play-shots frames warm on load.
+- Dirty tree for harvester; no commit/push. Report: `docs/lane-reports/SAND-ART1-LANDGATE3-REPORT.md`.
+
 ## Session 1 — 2026-03-22 (GDD Refinement + DB Exploration)
 
 ### Key Decisions
@@ -350,3 +364,17 @@ Next: the seat reviews, merges with the s386 round-3 lane (touched-lines list in
 
 **What changed (UI only):** editor LOAD now validates the file (`src/lib/scenarios/parseScenarioFile`) and shows a message instead of the browser error page when the JSON is not a scenario; the ORDERS panel keeps THROTTLE/ROE fixed with the route list last in a bounded box, scrolls into view on every selection, and the stale inline `max-height` sidebar clip is gone (the MORE cue is a fixed row). Space no longer re-presses a focused sidebar button. Report: `docs/lane-reports/SAND-RC-FIX1-REPORT.md`.
 **Next:** a new RC sha for the confirming cold play; GS real-GPU run of the long victory/WEGO/combat e2e plays (they did not run clean in the cloud container on base or after). MEDIA tab bug did not reproduce.
+
+## SAND-THREAT-1 (2026-11-10, co3 t438 backup lane, branch claude/sand-threat-1-t438-lane-fr9no6)
+
+**What changed (scenario data only):** `src/lib/scenarios/demo.ts` now has six Kaman missile boats (two moved out of the strait, four added) on a picket line in the eastern approach, 18 km north-east of the strike group's base course. `demoConfig.ts`: the Missile Boat Patrol runs that line and its `prosecutionRange` is 25 km, not 130. Nothing else moved: no engine, AI, combat, victory-rule, platform, UI or save-code change.
+**Result:** with no orders, or with the Nimitz sent alone at FLANK straight to the gate, the carrier is sunk before the gate (20 of 20 seeds each, continuous 60x). Escorts ahead with ROE FREE, or a dog-leg round the line, still win (20 of 20 each). Proofs: `src/lib/scenarios/__tests__/hormuzThreat.test.ts` and `tests/sand-threat-1-passive.spec.ts`. Report with the diagnosis, every knob and the seed tables: `docs/lane-reports/SAND-THREAT-1-REPORT.md`.
+**Decisions needed from main:** (1) Hormuz battle saves made before this change are refused by the existing revision check (snapshot saves still load). (2) The carrier is sunk mostly by 76 mm gunfire, because missiles are stopped 85 % of the time with no saturation rule and guns skip the defence roll. (3) In WeGo with 15-minute turns the passive run is not lost, because the enemy re-plans once per turn. All three are rules, not tuning; the report lists them.
+**Next:** the seat's end review, the real-GPU land battery (the long DPR-2 e2e plays cannot start in the cloud container) and a cold play that reports whether a defeat was seen.
+
+## SAND-THREAT-1 FIX3 (2026-11-11, co3 t486 backup lane, branch claude/sand-threat-fix3-t486-lane-na6tvi)
+
+**Item 1, the passive-defeat proof (tests only):** the game does defeat a passive player on every run measured (headless: 17 frame-time patterns x 20 seeds, 340 of 340, T+2.11 to 2.52 h; browser at 1x, 4x and 6x CPU throttle: DEFEAT each time). The red on the attribution host was the proof's 480 s wall-clock wait: the missile attack fires about 110 to 135 autopauses and a slow host spends the wait resuming them. `tests/sand-threat-1-passive.spec.ts` now waits on the game clock (`runUntilResultOnSimClock` in `tests/helpers/sandPlay.ts`, fails at T+4 h of game time with no result). New unit proofs in `hormuzThreat.test.ts`: the defeat and both wins hold however a slow machine delivers frames.
+**Item 2, the two OSINT overlap reds (real overlap, fixed in the layout):** on `/map` the label layout read facility symbols from the renderer and re-solved only at MapLibre's `idle`, which waits for every base-map tile; after the zoom to Qeshm the Khalij Fars plate lay on the Qeshm airport symbol until then. `src/lib/map/mapLayout.ts` now takes facility symbols from the data from z9, and `LayoutController.tsx` re-solves after a pan and when the drawn symbols change. New hermetic spec `tests/sand-osint-1-overlap-map-loading.spec.ts`, unit `unit/map-layout-facilities.test.ts`. No /play styling touched.
+**Report:** `docs/lane-reports/SAND-THREAT-FIX3-REPORT.md`; receipts in `docs/verification/sand-threat-fix3-t486/`.
+**Next:** the seat's end review and the land battery on a real-GPU host that can reach the tile server (the original `/map` and plot zero-overlap specs cannot run in the cloud container). Not merged, not deployed.

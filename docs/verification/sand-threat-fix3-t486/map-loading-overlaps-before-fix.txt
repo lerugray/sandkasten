@@ -1,0 +1,110 @@
+Running 2 tests using 2 workers
+  ✘  1 [chromium] › tests/sand-osint-1-overlap-map-loading.spec.ts:43:7 › /map has zero overlaps while a view is still loading, at 1440x900 (1.1m)
+  ✘  2 [chromium] › tests/sand-osint-1-overlap-map-loading.spec.ts:43:7 › /map has zero overlaps while a view is still loading, at 1920x1080 (1.1m)
+  1) [chromium] › tests/sand-osint-1-overlap-map-loading.spec.ts:43:7 › /map has zero overlaps while a view is still loading, at 1440x900 
+    Error: gulf z6.3, still loading:
+      osint-icon:ad-bh-patriot-isa [383,385 24x24] x facility-icon:apt-bh-0002 [385,383 18x18]
+      osint-icon:ad-sa-patriot-dhahran [336,341 24x24] x facility-icon:port-way-545704310 [344,334 18x18]
+      osint-icon:ad-sa-patriot-dhahran [336,341 24x24] x facility-icon:apt-way-662013600 [342,360 18x18]
+      osint-icon:ad-us-patriot-dhafra [827,596 24x24] x facility-icon:apt-omnk [826,594 18x18]
+    qeshm z9, still loading:
+      site-label:radar-ir-khalij-fars [811,270 83x16] x facility-icon:apt-ir-0057 [887,281 23x23]
+    dhafra z10, still loading:
+      osint-icon:ad-us-patriot-dhafra [708,329 24x24] x facility-icon:apt-omam [708,347 25x25]
+    udeid z10, still loading:
+      osint-icon:ad-us-patriot-udeid [708,329 24x24] x facility-icon:apt-otbh [708,347 25x25]
+    abu-musa-sharjah-dubai z8.2, still loading:
+      unit:us-e2c-1 [998,182 30x32] x facility-icon:apt-omrs [985,208 21x21]
+    zoomed-bandar-abbas z8.1, still loading:
+      site-label:ad-ir-s300-bandar-abbas [919,201 75x16] x facility-icon:apt-oikb [970,191 21x21]
+      unit:ir-f4-2 [887,226 30x35] x facility-icon:apt-oikp [890,217 21x21]
+      osint-icon:ad-ir-s300-bandar-abbas [889,197 24x24] x facility-icon:apt-oikp [890,217 21x21]
+    expect(received).toEqual(expected) // deep equality
+    - Expected  -  1
+    + Received  + 19
+    - Array []
+    + Array [
+    +   "gulf z6.3, still loading:
+    +   osint-icon:ad-bh-patriot-isa [383,385 24x24] x facility-icon:apt-bh-0002 [385,383 18x18]
+    +   osint-icon:ad-sa-patriot-dhahran [336,341 24x24] x facility-icon:port-way-545704310 [344,334 18x18]
+    +   osint-icon:ad-sa-patriot-dhahran [336,341 24x24] x facility-icon:apt-way-662013600 [342,360 18x18]
+    +   osint-icon:ad-us-patriot-dhafra [827,596 24x24] x facility-icon:apt-omnk [826,594 18x18]",
+    +   "qeshm z9, still loading:
+    +   site-label:radar-ir-khalij-fars [811,270 83x16] x facility-icon:apt-ir-0057 [887,281 23x23]",
+    +   "dhafra z10, still loading:
+    +   osint-icon:ad-us-patriot-dhafra [708,329 24x24] x facility-icon:apt-omam [708,347 25x25]",
+    +   "udeid z10, still loading:
+    +   osint-icon:ad-us-patriot-udeid [708,329 24x24] x facility-icon:apt-otbh [708,347 25x25]",
+    +   "abu-musa-sharjah-dubai z8.2, still loading:
+    +   unit:us-e2c-1 [998,182 30x32] x facility-icon:apt-omrs [985,208 21x21]",
+    +   "zoomed-bandar-abbas z8.1, still loading:
+    +   site-label:ad-ir-s300-bandar-abbas [919,201 75x16] x facility-icon:apt-oikb [970,191 21x21]
+    +   unit:ir-f4-2 [887,226 30x35] x facility-icon:apt-oikp [890,217 21x21]
+    +   osint-icon:ad-ir-s300-bandar-abbas [889,197 24x24] x facility-icon:apt-oikp [890,217 21x21]",
+    + ]
+      80 |       if (settled.overlaps.length) failures.push(`${id} z${view.zoom}, settled:\n  ${settled.overlaps.join("\n  ")}`);
+      81 |     }
+    > 82 |     expect(failures, failures.join("\n")).toEqual([]);
+         |                                           ^
+      83 |   });
+      84 | }
+      85 |
+        at /home/user/sandkasten/tests/sand-osint-1-overlap-map-loading.spec.ts:82:43
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-osint-1-overlap-map-l-2dc3c-s-still-loading-at-1440x900-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error Context: test-results/sand-osint-1-overlap-map-l-2dc3c-s-still-loading-at-1440x900-chromium/error-context.md
+  2) [chromium] › tests/sand-osint-1-overlap-map-loading.spec.ts:43:7 › /map has zero overlaps while a view is still loading, at 1920x1080 
+    Error: gulf z6.3, still loading:
+      osint-icon:ad-bh-patriot-isa [623,485 24x24] x facility-icon:apt-bh-0002 [625,483 18x18]
+      osint-icon:ad-sa-patriot-dhahran [575,441 24x24] x facility-icon:port-way-545704310 [584,434 18x18]
+      osint-icon:ad-sa-patriot-dhahran [575,441 24x24] x facility-icon:apt-way-662013600 [581,460 18x18]
+    qeshm z9, still loading:
+      site-label:radar-ir-khalij-fars [1051,370 83x16] x facility-icon:apt-ir-0057 [1127,381 23x23]
+    dhafra z10, still loading:
+      osint-icon:ad-us-patriot-dhafra [948,429 24x24] x facility-icon:apt-omam [948,447 25x25]
+    udeid z10, still loading:
+      osint-icon:ad-us-patriot-udeid [948,429 24x24] x facility-icon:apt-otbh [948,447 25x25]
+    abu-musa-sharjah-dubai z8.2, still loading:
+      unit:us-e2c-1 [1238,282 30x32] x facility-icon:apt-omrs [1225,308 21x21]
+    zoomed-bandar-abbas z8.1, still loading:
+      site-label:ad-ir-s300-bandar-abbas [1159,301 75x16] x facility-icon:apt-oikb [1210,291 21x21]
+      unit:ir-f4-2 [1127,326 30x35] x facility-icon:apt-oikp [1130,317 21x21]
+      osint-icon:ad-ir-s300-bandar-abbas [1129,297 24x24] x facility-icon:apt-oikp [1130,317 21x21]
+    expect(received).toEqual(expected) // deep equality
+    - Expected  -  1
+    + Received  + 18
+    - Array []
+    + Array [
+    +   "gulf z6.3, still loading:
+    +   osint-icon:ad-bh-patriot-isa [623,485 24x24] x facility-icon:apt-bh-0002 [625,483 18x18]
+    +   osint-icon:ad-sa-patriot-dhahran [575,441 24x24] x facility-icon:port-way-545704310 [584,434 18x18]
+    +   osint-icon:ad-sa-patriot-dhahran [575,441 24x24] x facility-icon:apt-way-662013600 [581,460 18x18]",
+    +   "qeshm z9, still loading:
+    +   site-label:radar-ir-khalij-fars [1051,370 83x16] x facility-icon:apt-ir-0057 [1127,381 23x23]",
+    +   "dhafra z10, still loading:
+    +   osint-icon:ad-us-patriot-dhafra [948,429 24x24] x facility-icon:apt-omam [948,447 25x25]",
+    +   "udeid z10, still loading:
+    +   osint-icon:ad-us-patriot-udeid [948,429 24x24] x facility-icon:apt-otbh [948,447 25x25]",
+    +   "abu-musa-sharjah-dubai z8.2, still loading:
+    +   unit:us-e2c-1 [1238,282 30x32] x facility-icon:apt-omrs [1225,308 21x21]",
+    +   "zoomed-bandar-abbas z8.1, still loading:
+    +   site-label:ad-ir-s300-bandar-abbas [1159,301 75x16] x facility-icon:apt-oikb [1210,291 21x21]
+    +   unit:ir-f4-2 [1127,326 30x35] x facility-icon:apt-oikp [1130,317 21x21]
+    +   osint-icon:ad-ir-s300-bandar-abbas [1129,297 24x24] x facility-icon:apt-oikp [1130,317 21x21]",
+    + ]
+      80 |       if (settled.overlaps.length) failures.push(`${id} z${view.zoom}, settled:\n  ${settled.overlaps.join("\n  ")}`);
+      81 |     }
+    > 82 |     expect(failures, failures.join("\n")).toEqual([]);
+         |                                           ^
+      83 |   });
+      84 | }
+      85 |
+        at /home/user/sandkasten/tests/sand-osint-1-overlap-map-loading.spec.ts:82:43
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sand-osint-1-overlap-map-l-7b8e0--still-loading-at-1920x1080-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error Context: test-results/sand-osint-1-overlap-map-l-7b8e0--still-loading-at-1920x1080-chromium/error-context.md
+  2 failed
+    [chromium] › tests/sand-osint-1-overlap-map-loading.spec.ts:43:7 › /map has zero overlaps while a view is still loading, at 1440x900 
+    [chromium] › tests/sand-osint-1-overlap-map-loading.spec.ts:43:7 › /map has zero overlaps while a view is still loading, at 1920x1080 

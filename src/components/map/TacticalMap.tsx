@@ -145,6 +145,21 @@ export function TacticalMap({
       onMapReadyRef.current?.();
     });
 
+    // A bad satellite/DEM tile used to throw `InvalidStateError: The source image could not be decoded` and leave
+    // settleMap waiting on loaded() until the overlap walk hit the 240s test budget. Swallow, drop terrain if needed,
+    // and keep painting so style-loaded views can still finish their layout pass.
+    map.on("error", (e) => {
+      const msg = String((e as { error?: Error }).error?.message ?? e ?? "");
+      if (/could not be decoded|InvalidStateError|image/i.test(msg)) {
+        try {
+          if (map.getTerrain()) map.setTerrain(null);
+        } catch {
+          /* style mid-swap */
+        }
+      }
+      map.triggerRepaint();
+    });
+
     map.on("zoom", () => setZoom(map.getZoom()));
     map.on("mousemove", (e) => setCursorPos({ lat: e.lngLat.lat, lng: e.lngLat.lng }));
 
@@ -209,6 +224,9 @@ export function TacticalMap({
       if (map.getSource(TERRAIN_SOURCE_ID) && (terrainOn || map.getTerrain())) {
         map.setTerrain(terrainOn ? { source: TERRAIN_SOURCE_ID, exaggeration: 1.5 } : null);
       }
+      // Projection / terrain / sat swaps only take effect on the next paint; without an explicit repaint a
+      // software-GL host can sit on a stale transitionState long enough for the toggle e2e to time out.
+      map.triggerRepaint();
     };
     // isStyleLoaded() is false while tiles stream in, so track readiness ourselves: not ready only between setStyle and style.load.
     if (styleReadyRef.current || map.isStyleLoaded()) apply();
@@ -321,7 +339,14 @@ export function TacticalMap({
               unitPositions={obstaclePositions}
             />
           )}
-          <LayoutController map={mapRef.current} units={visibleUnits} playerSide={scenario.playerSide} sites={hasOsint ? osintVisible : []} onLayout={setLayout} />
+          <LayoutController
+            map={mapRef.current}
+            units={visibleUnits}
+            playerSide={scenario.playerSide}
+            sites={hasOsint ? osintVisible : []}
+            facilities={hasFacilities ? scenario.facilities : undefined}
+            onLayout={setLayout}
+          />
           {hasOsint && (
             <OsintLayer
               map={mapRef.current}

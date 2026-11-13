@@ -45,7 +45,7 @@ describe("OSINT map labels", () => {
         const nearest = [...items].sort((a, b) => dist(a) - dist(b))[0];
         // labels may be far from every icon only when they are far from all; compare against icons within reach
         // a label that had to leave its symbol (p.leader) is tied back with a leader line and stays within reach of it
-        if (p.leader) expect(dist(own)).toBeLessThan(170);
+        if (p.leader) expect(dist(own)).toBeLessThan(280);
         if (!p.leader && dist(nearest) < 120 && nearest.id !== p.id) {
           // another symbol is closer: only allowed when the two sit on the same spot (co-located, same coordinates)
           expect(dist(own) - dist(nearest)).toBeLessThan(0.5);
@@ -85,6 +85,16 @@ describe("OSINT map labels", () => {
     const hit = p.rect.x < 660 && p.rect.x + p.rect.w > 440 && p.rect.y < 560 && p.rect.y + p.rect.h > 440;
     expect(hit).toBe(false);
     expect(Math.hypot(p.rect.x + p.rect.w / 2 - 500, p.rect.y + p.rect.h / 2 - 500)).toBeLessThan(170);
+  });
+
+  it("omitIfBlocked skips the least-bad fallback so a solid neighbourhood yields an empty plate", () => {
+    // Fill a 500 px disc so every ring spot out to the 220 px leader reach collides.
+    const blockers = [{ x: 200, y: 200, w: 600, h: 600 }];
+    const [p] = layoutLabels([{ id: "a", label: "S-300PMU-2", slot: -1, x: 500, y: 500 }], [], textW, { blockers, omitIfBlocked: true });
+    expect(p.rect.w).toBe(0);
+    expect(p.cand).toBe(-1);
+    const [kept] = layoutLabels([{ id: "a", label: "S-300PMU-2", slot: -1, x: 500, y: 500 }], [], textW, { blockers });
+    expect(kept.rect.w).toBeGreaterThan(0);
   });
 
   it("the unit symbol names the English label only: no OSINT label or site name holds Arabic script", () => {

@@ -1,0 +1,23 @@
+# Shipped scenario after SAND-THREAT-1, WeGo, seeds 1-5 (dice seed = n * 7919), orders given once before turn 1, then every turn committed with no further orders.
+# Each cell: result@hours/Nimitz damage. und = undecided after 12 h. Plans as in after-20-seeds.txt.
+wego 1min nothing: def@2.3h/2886  def@2.2h/2894  def@2.3h/2886  def@2.2h/2881  def@2.3h/2886
+wego 5min nothing: def@2.3h/2888  def@2.3h/2892  def@2.4h/2888  def@2.4h/2884  def@2.4h/2884
+wego 15min nothing: und@12.0h/1746  und@12.0h/2367  und@12.0h/2485  und@12.0h/2123  und@12.0h/1699
+wego 1min careless: def@1.3h/2886  def@1.4h/2886  def@1.3h/2890  def@1.4h/2914  def@1.3h/2892
+wego 5min careless: def@1.4h/2899  def@1.4h/2886  def@1.4h/2888  def@1.4h/2888  def@1.3h/2894
+wego 15min careless: def@1.6h/2892  vic@3.1h/2623  def@1.5h/2894  vic@3.1h/2534  vic@3.1h/2326
+wego 1min oldA: def@1.5h/2886  def@1.4h/2886  def@1.3h/2890  def@1.4h/2884  def@1.3h/2892
+wego 5min oldA: def@1.4h/2884  def@1.4h/2886  def@1.4h/2888  def@1.4h/2886  def@1.2h/2894
+wego 15min oldA: def@1.6h/2892  vic@3.1h/2633  def@1.5h/2894  vic@3.1h/2331  vic@3.1h/2214
+wego 1min screen: vic@6.2h/0  vic@6.2h/0  vic@6.2h/0  vic@6.2h/0  vic@6.2h/0
+wego 5min screen: vic@6.2h/0  vic@6.2h/0  vic@6.2h/0  vic@6.2h/0  vic@6.2h/0
+wego 15min screen: vic@6.2h/0  vic@6.2h/0  vic@6.2h/0  vic@6.2h/0  vic@6.2h/0
+wego 1min dogleg2: vic@4.0h/0  vic@4.0h/0  vic@4.0h/0  vic@4.0h/0  vic@4.0h/0
+wego 5min dogleg2: vic@4.0h/0  vic@4.0h/0  vic@4.0h/0  vic@4.0h/0  vic@4.0h/0
+wego 15min dogleg2: vic@4.0h/0  vic@4.0h/0  vic@4.0h/0  vic@4.0h/0  vic@4.0h/0
+wego 1min oldB: vic@3.7h/0  vic@3.7h/345  vic@3.7h/0  vic@3.7h/0  vic@3.7h/0
+wego 5min oldB: vic@3.7h/0  vic@3.7h/435  vic@3.7h/0  vic@3.7h/0  vic@3.7h/270
+wego 15min oldB: vic@3.7h/225  vic@3.7h/0  vic@3.7h/345  vic@3.7h/0  vic@3.7h/0
+wego 1min dogleg4flank: vic@3.3h/5  vic@3.3h/15  vic@3.3h/7  vic@3.3h/20  vic@3.3h/40
+wego 5min dogleg4flank: vic@3.3h/20  vic@3.3h/5  vic@3.3h/5  vic@3.3h/17  vic@3.3h/5
+wego 15min dogleg4flank: vic@3.3h/199  vic@3.3h/15  vic@3.3h/11  vic@3.3h/26  vic@3.3h/16

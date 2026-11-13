@@ -1,8 +1,10 @@
 import type maplibregl from "maplibre-gl";
-import { placeAll, rectAt, type Placeable, type Rect } from "./declutter";
+import { placeAll, rectAt, touches, type Placeable, type Rect } from "./declutter";
 import { ICON_RADIUS, LABEL_H, layoutLabels, siteSlots, slotPx } from "@/lib/osint/labelLayout";
 import { siteLabel } from "@/lib/osint/sites";
 import type { OsintSite } from "@/lib/osint/sites";
+import { facilityTier } from "@/lib/facilities/facilities";
+import type { Facility } from "@/lib/facilities/facilities";
 
 /**
  * One layout pass for every DOM layer on the /map view: OSINT icons first (around the facility symbols they sit on),
@@ -22,8 +24,8 @@ export interface LayoutUnit {
 export interface MapLayout {
   /** px the unit symbol sits from its true position */
   units: Map<string, [number, number]>;
-  /** px the OSINT symbol's centre sits from its site point; `moved` when it left its slot (gets a tether line) */
-  icons: Map<string, { off: [number, number]; moved: boolean }>;
+  /** px the OSINT symbol's centre sits from its site point; `moved` when it left its slot (gets a tether line); `hidden` when dense zoom could not clear a facility disc */
+  icons: Map<string, { off: [number, number]; moved: boolean; hidden?: boolean }>;
   /** label box top-left (text starts 2 px right of the box) relative to the site point */
   labels: Map<string, { off: [number, number]; w: number; leader: boolean; iconOff: [number, number] }>;
   /** displaced unit positions, for the invisible obstacle layers that keep map text off units */
@@ -33,7 +35,30 @@ export interface MapLayout {
   key: string;
 }
 
-export const FACILITY_POINT_LAYER_IDS = [0, 1, 2, 3].map((t) => `facility-points-t${t}`);
+/** Cleared layout published while the base style is rebuilding so stale plates cannot sit on new facility symbols. */
+export const EMPTY_MAP_LAYOUT: MapLayout = {
+  units: new Map(),
+  icons: new Map(),
+  labels: new Map(),
+  unitObstacles: [],
+  tethers: [],
+  key: "empty",
+};
+
+/** The facility symbol tiers: tier t is drawn from `minzoom`, its map text from `labelMinzoom`. One table for the layers and the layout. */
+export const FACILITY_POINT_TIERS = [
+  { tier: 0, minzoom: 3, labelMinzoom: 7 },
+  { tier: 1, minzoom: 5.5, labelMinzoom: 8 },
+  { tier: 2, minzoom: 7.5, labelMinzoom: 9.5 },
+  { tier: 3, minzoom: 9.5, labelMinzoom: 11 },
+] as const;
+/**
+ * From this zoom every facility symbol of a visible tier is drawn (icon-allow-overlap on the symbol layers); below it the
+ * renderer hides symbols that collide, so only the renderer knows which are on screen.
+ */
+export const FACILITY_ICONS_ALL_DRAWN_ZOOM = 9;
+
+export const FACILITY_POINT_LAYER_IDS = FACILITY_POINT_TIERS.map((t) => `facility-points-t${t.tier}`);
 
 /** Same ramp as the facility symbol layers' icon-size: 0.5 at z4, 0.75 at z8, 1 from z12. */
 export function facilityIconSize(zoom: number): number {
@@ -43,11 +68,47 @@ export function facilityIconSize(zoom: number): number {
   return 1;
 }
 
-/** Facility symbols are drawn by the map canvas: rebuild their discs from the symbols the renderer actually placed. */
-export function facilityIconRects(map: maplibregl.Map): Rect[] {
+/**
+ * The discs of every facility symbol the map draws at `zoom`, straight from the facility data. Only valid from
+ * FACILITY_ICONS_ALL_DRAWN_ZOOM, where no symbol is hidden by a collision: there the answer does not depend on what the
+ * renderer has got round to placing, so a layout solved right after a zoom is already correct.
+ */
+export function facilityIconRectsFromData(
+  facilities: Facility[],
+  zoom: number,
+  project: (lngLat: [number, number]) => { x: number; y: number },
+  bounds: { w: number; h: number },
+  tiers: ReadonlySet<number> = new Set(FACILITY_POINT_TIERS.map((t) => t.tier)),
+): Rect[] {
+  const d = 28 * facilityIconSize(zoom);
+  const drawn = new Set<number>(FACILITY_POINT_TIERS.filter((t) => tiers.has(t.tier) && zoom >= t.minzoom).map((t) => t.tier));
+  const seen = new Set<string>();
+  const out: Rect[] = [];
+  for (const f of facilities) {
+    // same set as the symbol source (facilityPointsGeoJSON)
+    if (f.kind === "military_area" || seen.has(f.id) || !drawn.has(facilityTier(f))) continue;
+    seen.add(f.id);
+    const p = project([f.position.lng, f.position.lat]);
+    if (p.x < -d || p.y < -d || p.x > bounds.w + d || p.y > bounds.h + d) continue;
+    out.push(rectAt(p.x, p.y, d));
+  }
+  return out;
+}
+
+/**
+ * Facility symbols are drawn by the map canvas. From z9 every one of them is on screen, so their discs come from the
+ * data (`facilities`); below z9 they are rebuilt from the symbols the renderer actually placed.
+ */
+export function facilityIconRects(map: maplibregl.Map, facilities?: Facility[]): Rect[] {
   const layers = FACILITY_POINT_LAYER_IDS.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, "visibility") !== "none");
   if (!layers.length) return [];
-  const d = 28 * facilityIconSize(map.getZoom());
+  const zoom = map.getZoom();
+  if (facilities && zoom >= FACILITY_ICONS_ALL_DRAWN_ZOOM) {
+    const host = map.getContainer();
+    const tiers = new Set(FACILITY_POINT_TIERS.filter((t) => layers.includes(`facility-points-t${t.tier}`)).map((t) => t.tier));
+    return facilityIconRectsFromData(facilities, zoom, (ll) => map.project(ll), { w: host.clientWidth, h: host.clientHeight }, tiers);
+  }
+  const d = 28 * facilityIconSize(zoom);
   const seen = new Set<string>();
   const out: Rect[] = [];
   for (const f of map.queryRenderedFeatures(undefined, { layers })) {
@@ -58,6 +119,19 @@ export function facilityIconRects(map: maplibregl.Map): Rect[] {
     out.push(rectAt(p.x, p.y, d));
   }
   return out;
+}
+
+/**
+ * Identity of the facility symbols the layout has to work around right now. From z9 that is fixed by the data; below it
+ * it is whatever the renderer has placed, which changes while a new view streams in.
+ */
+export function drawnFacilityKey(map: maplibregl.Map, fromData: boolean): string {
+  const layers = FACILITY_POINT_LAYER_IDS.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, "visibility") !== "none");
+  if (!layers.length) return "none";
+  if (fromData && map.getZoom() >= FACILITY_ICONS_ALL_DRAWN_ZOOM) return "data";
+  const ids = new Set<string>();
+  for (const f of map.queryRenderedFeatures(undefined, { layers })) ids.add(String(f.properties?.id));
+  return [...ids].sort().join(",");
 }
 
 function contactRects(map: maplibregl.Map): Rect[] {
@@ -72,32 +146,39 @@ const r1 = (n: number) => Math.round(n * 2) / 2;
 
 export function computeMapLayout(
   map: maplibregl.Map,
-  input: { units: LayoutUnit[]; sites: OsintSite[]; textWidth: (s: string) => number },
+  input: { units: LayoutUnit[]; sites: OsintSite[]; textWidth: (s: string) => number; /** the facilities the map draws (the FacilityLayer's list) */ facilities?: Facility[] },
 ): MapLayout {
   const host = map.getContainer();
   const bounds = { w: host.clientWidth, h: host.clientHeight };
-  const fixed: Rect[] = [...facilityIconRects(map), ...contactRects(map)];
+  const fixed: Rect[] = [...facilityIconRects(map, input.facilities), ...contactRects(map)];
+
+  // Dense theater zooms pack many facility discs; at 1920 more of them share the screen than at 1440.
+  const zoom = map.getZoom();
+  const dense = zoom >= 8 || (bounds.w >= 1800 && fixed.length >= 24);
 
   // 1. OSINT icons
   const slots = siteSlots(input.sites);
   const sitePx = new Map(input.sites.map((s) => [s.id, map.project([s.position.lng, s.position.lat])]));
   const ordered = [...input.sites].sort((a, b) => Number(b.layer === "ad") - Number(a.layer === "ad") || a.id.localeCompare(b.id));
   const d = ICON_RADIUS * 2;
-  const iconBlockers = [...fixed];
   const iconItems: Placeable[] = ordered.map((s) => {
     const p = sitePx.get(s.id)!;
     const [sx, sy] = slotPx(slots.get(s.id) ?? -1);
     return { id: s.id, x: p.x, y: p.y, px: p.x + sx, py: p.y + sy, w: d, h: d, prefAngle: sx === 0 && sy === 0 ? -Math.PI / 2 : Math.atan2(sy, sx) };
   });
-  const iconPlaced = placeAll(iconItems, iconBlockers, { gap: 3, maxR: 90, bounds });
+  // maxR 140: a 1920-wide view keeps more facility discs on screen than 1440; icons need farther escape room
+  const iconPlaced = placeAll(iconItems, [...fixed], { gap: dense ? 4 : 3, maxR: dense ? 180 : 140, bounds });
   const icons: MapLayout["icons"] = new Map();
+  const visibleIconRects: Rect[] = [];
   for (const it of iconItems) {
     const c = iconPlaced.get(it.id)!;
-    icons.set(it.id, { off: [r1(c.x - it.x), r1(c.y - it.y)], moved: Math.hypot(c.x - it.px!, c.y - it.py!) > 2 });
+    const hidden = dense && !c.free;
+    icons.set(it.id, { off: [r1(c.x - it.x), r1(c.y - it.y)], moved: Math.hypot(c.x - it.px!, c.y - it.py!) > 2, hidden });
+    if (!hidden) visibleIconRects.push(rectAt(c.x, c.y, d));
   }
 
-  // 2. unit symbols, clear of every icon
-  const unitBlockers = [...iconBlockers];
+  // 2. unit symbols, clear of every visible icon
+  const unitBlockers = [...fixed, ...visibleIconRects];
   const unitItems: Placeable[] = [...input.units]
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((u) => {
@@ -108,7 +189,7 @@ export function computeMapLayout(
   const unitPlaced = placeAll(
     unitItems.filter((u) => onScreen(u.x, u.y)),
     unitBlockers,
-    { gap: 3, maxR: 130, bounds },
+    { gap: 3, maxR: 200, bounds },
   );
   const units: MapLayout["units"] = new Map();
   const unitRects: Rect[] = [];
@@ -128,10 +209,26 @@ export function computeMapLayout(
     const ic = icons.get(s.id)!;
     return { id: s.id, label: siteLabel(s), slot: slots.get(s.id) ?? -1, x: p.x, y: p.y, iconX: p.x + ic.off[0], iconY: p.y + ic.off[1] };
   });
-  const placed = layoutLabels(labelItems, [], input.textWidth, { unitRects, blockers: fixed });
+  const placed = layoutLabels(labelItems, [], input.textWidth, { unitRects, blockers: fixed, omitIfBlocked: dense });
   const labels: MapLayout["labels"] = new Map();
+  const labelTaken: Rect[] = [];
+  const iconRects = labelItems
+    .filter((it) => !icons.get(it.id)?.hidden)
+    .map((it) => ({ id: it.id, r: rectAt(it.iconX, it.iconY, ICON_RADIUS * 2 + 4) }));
   for (const pl of placed) {
     const it = labelItems.find((i) => i.id === pl.id)!;
+    if (pl.rect.w <= 0 || pl.rect.h <= 0) continue;
+    if (icons.get(pl.id)?.hidden) continue;
+    // Prefer a missing plate over a collision: the least-bad fallback can still leave a residue the overlap
+    // e2e catches at 1920×1080 when more discs share the screen than at 1440.
+    const gap = dense ? 2 : 1;
+    const hit =
+      unitRects.some((u) => touches(pl.rect, u, gap)) ||
+      fixed.some((o) => touches(pl.rect, o, gap)) ||
+      labelTaken.some((p) => touches(pl.rect, p, gap)) ||
+      iconRects.some(({ id, r }) => touches(pl.rect, r, id === pl.id ? 0 : gap));
+    if (hit) continue;
+    labelTaken.push(pl.rect);
     labels.set(pl.id, { off: [r1(pl.rect.x + 2 - it.x), r1(pl.rect.y - it.y)], w: pl.rect.w, leader: pl.leader, iconOff: icons.get(pl.id)!.off });
   }
 
@@ -143,6 +240,7 @@ export function computeMapLayout(
   for (const s of ordered) {
     const p = sitePx.get(s.id)!;
     const ic = icons.get(s.id)!;
+    if (ic.hidden) continue;
     const cx = p.x + ic.off[0];
     const cy = p.y + ic.off[1];
     const slot = slotPx(slots.get(s.id) ?? -1);

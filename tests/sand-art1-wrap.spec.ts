@@ -4,7 +4,7 @@
 // ("INCOMING WEAPON -" / "> USS NIMITZ (CVN-68)") and split the weapon id in the debrief ("4x C-" / "802 NOOR").
 // TerminalPlay now writes those turns itself (turnAtSpaces); this spec holds it to that at two window sizes.
 import { test, expect, type Page } from "@playwright/test";
-import { openPlay, runUntilResult, autopauseOff, restoreDice, GATE, type W } from "./helpers/sandPlay";
+import { openPlay, runUntilResult, autopauseOff, restoreDice, primeWrapDebriefLaunch } from "./helpers/sandPlay";
 
 type Any = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -94,11 +94,9 @@ for (const size of [{ width: 1920, height: 1080 }, { width: 1280, height: 720 }]
       test.setTimeout(240_000);
       await begin(page);
       await page.evaluate(() => { const w = window as Any; w.__origRandom = Math.random; Math.random = () => 0.7; });
-      await page.evaluate((c) => {
-        const s = (window as unknown as W).__sandSession as Any;
-        const u = s.gameState.sides.flatMap((x: Any) => x.units).find((x: Any) => x.id === "us-cvn-1");
-        u.position = { lng: c.lng, lat: c.lat };
-      }, GATE.centre);
+      // FIX5 put Nimitz in-horizon; FIX6 also seeds Iran a tracked radar contact + weapons-free on
+      // ir-fac-1 so the opening C-802 is on the record (fixed 0.7 dice fail natural detection at ~8 nm).
+      await primeWrapDebriefLaunch(page);
       await runUntilResult(page, 60_000);
       await restoreDice(page);
 

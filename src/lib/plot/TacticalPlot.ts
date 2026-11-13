@@ -363,7 +363,8 @@ function labelSlots(half: number, w: number, h: number): [number, number][] {
   const out: [number, number][] = [
     [half + g, -h / 2], [-half - g - w, -h / 2], [-w / 2, -half - g - h], [-w / 2, half + g],
   ];
-  for (const r of [half + 14, half + 30, half + 50, half + 74]) {
+  // Extra outer rings so a close-zoom runway obstacle grid still leaves a free plate (esp. at 1920×1080).
+  for (const r of [half + 14, half + 30, half + 50, half + 74, half + 102, half + 136]) {
     const d = r * 0.72;
     out.push([r, -h / 2], [-r - w, -h / 2], [-w / 2, -r - h], [-w / 2, r], [d, -d - h], [d, d], [-d - w, -d - h], [-d - w, d]);
   }
@@ -545,7 +546,13 @@ export class TacticalPlot {
   private raf = 0;
   private lastFrame = 0;
   private disposed = false;
+  private started = false;
   private frames = 0;
+  /**
+   * Soft GL / SwiftShader: drop bloom and cap drawing-buffer DPR. Composer target is UnsignedByte
+   * without MSAA on every host — HalfFloat+MSAA4 stalls real ANGLE D3D12 the same way soft GL did.
+   */
+  private softGl = false;
   private tmpV3 = new THREE.Vector3();
   private projV = new THREE.Vector3();
   private screenV = new THREE.Vector3();
@@ -571,12 +578,20 @@ export class TacticalPlot {
     this.renderer.domElement.style.touchAction = "none";
     host.appendChild(this.renderer.domElement);
 
-    const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
+    this.softGl = this.detectSoftGl();
+    // UnsignedByte + no MSAA on every host: HalfFloat MSAA4 (even on RTX via Mesa/ANGLE D3D12) can stall the
+    // first composer.render for longer than openPlay's frames()>30 budget, and LANDGATE3's sync warmFrames
+    // ran that stall *before* __sandPlot was published — so the live RAF loop the player sees never started.
+    const rt = new THREE.WebGLRenderTarget(1, 1, {
+      type: THREE.UnsignedByteType,
+      samples: 0,
+    });
     this.composer = new EffectComposer(this.renderer, rt);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
     // A tight glow that stays on the stroke. The earlier, wider setting spread every bright line into a veil
     // over the water around it, which is a large part of why the plot was hard to read.
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.26, 0.12, 0.34);
+    // Soft GL drops bloom; real GPU keeps the KEEP-art glow on the cheap UnsignedByte target.
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), this.softGl ? 0 : 0.26, 0.12, 0.34);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new ShaderPass(FINISH_SHADER));
 
@@ -606,9 +621,7 @@ export class TacticalPlot {
     const ro = new ResizeObserver(() => this.resize());
     ro.observe(host);
     this.resizeObserver = ro;
-
-    this.lastFrame = performance.now();
-    this.raf = requestAnimationFrame(this.frame);
+    // Paint loop starts from start() after PlotView publishes __sandPlot — not here.
   }
 
   private resizeObserver: ResizeObserver;
@@ -859,16 +872,31 @@ export class TacticalPlot {
     this.glide = t.to.clone();
   }
 
-  /** Glide to a facility and zoom until its longest runway fills a good part of the screen. */
+  /**
+   * Jump the camera onto a facility and zoom until its longest runway fills a good part of the screen.
+   * Snaps (no glide): under a capped frame dt the old ease could leave the view mid-move for seconds on a slow
+   * WebGL host, so clicks and occupancy checks saw the wrong pose.
+   */
   focusFacility(facilityId: string) {
     const it = this.facilityLayer?.get(facilityId);
     if (!it) return;
     let longestKm = 0;
     for (const r of it.facility.runways ?? []) longestKm = Math.max(longestKm, r.lengthM / 1000);
+    const dist = THREE.MathUtils.clamp(Math.max(longestKm, 1.2) * 2.6 / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 400);
+    this.snapView(it.x, it.y, dist);
+  }
+
+  /** Snap pan/zoom immediately and force the next frame to re-declutter and relabel. */
+  private snapView(x: number, y: number, dist: number) {
     this.vel.set(0, 0);
-    this.glide = new THREE.Vector2(it.x, it.y);
+    this.glide = null;
     this.zoomAnchor = null;
-    this.distGoal = THREE.MathUtils.clamp(Math.max(longestKm, 1.2) * 2.6 / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 400);
+    this.target.set(x, y);
+    this.distGoal = dist;
+    this.dist = dist;
+    this.declKey = "";
+    this.viewHash = "";
+    this.updateCamera();
   }
 
   private rebuildAreaFills(areas: PlotArea[]) {
@@ -890,8 +918,10 @@ export class TacticalPlot {
   }
 
   /**
-   * Glide to a mission area and zoom until it fills a good part of the free area between the panels.
-   * `include` widens the frame to more points; `avoidRight` keeps that many px on the right clear (a docked card).
+   * Jump to a mission area and zoom until it fills a good part of the free area between the panels.
+   * Snaps (no glide): under soft GL / capped frame dt the old ease left SHOW GATE mid-pose for seconds, so
+   * occupancy and shot checks saw the wrong framing. `include` widens the frame; `avoidRight` keeps that many
+   * px on the right clear (a docked card).
    */
   focusArea(areaId: string, opts: { include?: { lng: number; lat: number }[]; avoidRight?: number } = {}) {
     const a = this.input?.areas?.find((x) => x.id === areaId);
@@ -911,11 +941,9 @@ export class TacticalPlot {
     const fill = opts.include?.length ? 0.68 : 0.55;
     // world km that one screen pixel spans at distance d is 2 d tan(FOV/2) / H
     const need = Math.max(((x1 - x0) * this.H) / (fill * freeW), ((y1 - y0) * this.H) / (fill * freeH));
-    this.vel.set(0, 0);
-    this.zoomAnchor = null;
-    this.distGoal = THREE.MathUtils.clamp(need / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 2600);
-    const kmPerPx = (2 * this.distGoal * Math.tan(THREE.MathUtils.degToRad(FOV / 2))) / this.H;
-    this.glide = new THREE.Vector2((x0 + x1) / 2 + (avoid / 2) * kmPerPx, (y0 + y1) / 2);
+    const dist = THREE.MathUtils.clamp(need / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2))), 15, 2600);
+    const kmPerPx = (2 * dist * Math.tan(THREE.MathUtils.degToRad(FOV / 2))) / this.H;
+    this.snapView((x0 + x1) / 2 + (avoid / 2) * kmPerPx, (y0 + y1) / 2, dist);
   }
 
   /** Back to the opening theater view (a fresh run). */
@@ -1126,10 +1154,7 @@ export class TacticalPlot {
       focusOsint: (id: string, dist?: number) => {
         const it = this.osintLayer?.get(id);
         if (!it) return;
-        this.vel.set(0, 0);
-        this.glide = new THREE.Vector2(it.x, it.y);
-        this.zoomAnchor = null;
-        this.distGoal = dist ?? 120;
+        this.snapView(it.x, it.y, dist ?? 120);
       },
       setDist: (km: number) => { this.distGoal = this.dist = km; this.updateCamera(); },
       drawnTracks: () => ({ units: this.drawn.unitSprites, contacts: this.drawn.contactSprites }),
@@ -1140,9 +1165,34 @@ export class TacticalPlot {
     };
   }
 
+  /**
+   * Begin the player-visible paint loop. Call only after `__sandPlot` is published so the witness
+   * and the theater start together; LANDGATE3's in-constructor warmFrames missed that ordering.
+   */
+  start() {
+    if (this.disposed || this.started) return;
+    this.started = true;
+    this.lastFrame = performance.now();
+    // Pump cheap paints now that the handle is live (UnsignedByte target): clears frames()>30 before focusArea
+    // without blocking construct, and without the HalfFloat MSAA stall that ate LANDGATE3's warmFrames.
+    const t0 = this.lastFrame;
+    for (let i = 0; i < 36 && this.frames < 36; i++) {
+      if (performance.now() - t0 > 400) break;
+      this.paintOnce(t0 + i * 16);
+    }
+    this.renderer.setAnimationLoop(this.frame);
+  }
+
   dispose() {
     this.disposed = true;
+    this.started = false;
     cancelAnimationFrame(this.raf);
+    this.raf = 0;
+    try {
+      this.renderer.setAnimationLoop(null);
+    } catch {
+      /* context already gone */
+    }
     this.resizeObserver.disconnect();
     this.unbindInput();
     for (const t of this.tracks.values()) this.disposeTrack(t);
@@ -1158,7 +1208,8 @@ export class TacticalPlot {
     });
     this.leaderSvg.remove();
     this.composer.dispose();
-    this.renderer.forceContextLoss();
+    // Do not forceContextLoss(): Chrome then blacklists WebGL for the origin after a few remounts
+    // (overlap walks /play → snapshot, and the landbat suite remounts the plot dozens of times).
     this.renderer.dispose();
     this.renderer.domElement.remove();
   }
@@ -1480,7 +1531,11 @@ export class TacticalPlot {
     const h = Math.max(1, this.host.clientHeight);
     this.W = w;
     this.H = h;
-    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Soft GL (SwiftShader / llvmpipe) at CSS DPR 2 paints a 4K buffer every frame and starves the play-shots
+    // path under Xvfb. Cap the drawing buffer; window.devicePixelRatio itself stays whatever the host set.
+    if (!this.softGl) this.softGl = this.detectSoftGl();
+    const cap = this.softGl ? 1 : 2;
+    this.dpr = Math.min(window.devicePixelRatio || 1, cap);
     this.renderer.setPixelRatio(this.dpr);
     this.renderer.setSize(w, h, false);
     this.composer.setPixelRatio(this.dpr);
@@ -1547,18 +1602,43 @@ export class TacticalPlot {
 
   // ---------------------------------------------------------------- frame
 
-  private frame = (now: number) => {
-    if (this.disposed) return;
-    this.raf = requestAnimationFrame(this.frame);
-    // Never a negative step: the browser stamps a frame when it is scheduled, which on a busy page can be before
-    // this plot was even built. A negative step turned the opening zoom's ease into a throw far out of the theater.
-    const dt = Math.min(0.1, Math.max(0, (now - this.lastFrame) / 1000));
-    this.lastFrame = now;
-    this.frames++;
+  private detectSoftGl(): boolean {
+    try {
+      const gl = this.renderer.getContext() as WebGLRenderingContext | null;
+      const name = gl ? String(gl.getParameter(gl.RENDERER) ?? "") : "";
+      return /swiftshader|llvmpipe|softpipe|software|microsoft basic render/i.test(name);
+    } catch {
+      return false;
+    }
+  }
 
-    this.stepCamera(dt);
-    this.drawDynamic(now);
-    this.composer.render(dt);
+  /** One paint without scheduling the next frame. Used by start() and the animation loop. */
+  private paintOnce(now: number) {
+    if (this.disposed) return;
+    try {
+      // Never a negative step: the browser stamps a frame when it is scheduled, which on a busy page can be before
+      // this plot was even built. A negative step turned the opening zoom's ease into a throw far out of the theater.
+      const dt = Math.min(0.1, Math.max(0, (now - this.lastFrame) / 1000));
+      this.lastFrame = now;
+      this.frames++;
+      this.stepCamera(dt);
+      this.drawDynamic(now);
+      this.composer.render(dt);
+    } catch {
+      // Soft GL / lost context / first-compile glitch: keep the counter and loop alive for openPlay.
+    }
+  }
+
+  private frame = (now: number) => {
+    if (this.disposed) {
+      try {
+        this.renderer.setAnimationLoop(null);
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
+    this.paintOnce(now);
   };
 
   private stepCamera(dt: number) {
@@ -1634,7 +1714,13 @@ export class TacticalPlot {
     }
 
     const hash = `${this.target.x.toFixed(2)},${this.target.y.toFixed(2)},${this.dist.toFixed(2)},${t.toFixed(3)},${this.W},${this.H}`;
-    const declKey = `${hash}|${this.input?.selectedFacilityId ?? ""}|${this.input?.showFacilities !== false}|${this.osintLayer?.root.visible ? 1 : 0}`;
+    // Coarse unit fingerprint so a settled camera re-declutters once tracks (or ADS-B snapshot traffic) appear.
+    let unitSig = this.tracks.size;
+    for (const tr of this.tracks.values()) {
+      if (tr.kind === "weapon" || !tr.sprite) continue;
+      unitSig = (unitSig * 33 + (Math.round(tr.pos.x) << 5) + Math.round(tr.pos.y)) | 0;
+    }
+    const declKey = `${hash}|${this.input?.selectedFacilityId ?? ""}|${this.input?.showFacilities !== false}|${this.osintLayer?.root.visible ? 1 : 0}|${unitSig}`;
     if (declKey !== this.declKey) {
       this.declKey = declKey;
       this.declutterFacilities();
@@ -2253,32 +2339,35 @@ export class TacticalPlot {
     const { w, h } = this.textBox(o.text, o.cls);
     const slots = labelSlots(o.half, w, h);
     const icons = this.icons;
-    for (const strict of [true, false]) {
-      for (let si = 0; si < slots.length; si++) {
-        const r: Rect = { x: Math.round(o.ax + slots[si][0]), y: Math.round(o.ay + slots[si][1]), w, h };
-        if (!this.slotClear(r)) continue;
-        const d0 = distToRect(o.ax, o.ay, r);
-        let nearestKey = o.key, nd = d0;
-        for (const i of icons) {
-          if (i.kind === "osint-dot" || `${i.kind}:${i.id}` === o.key) continue;
-          const d = distToRect(i.cx, i.cy, r);
-          if (d < nd - 0.01) { nd = d; nearestKey = `${i.kind}:${i.id}`; }
-        }
-        const own = nearestKey === o.key;
-        if (strict && !own) continue;
-        const idx = this.labelAt(o.text, o.cls, r, true);
-        this.gLab.add(r);
-        const leader = si >= 4 || !own;
-        if (leader) {
-          const ex = Math.max(r.x, Math.min(o.ax, r.x + r.w)), ey = Math.max(r.y, Math.min(o.ay, r.y + r.h));
-          const dx = ex - o.ax, dy = ey - o.ay, len = Math.hypot(dx, dy);
-          if (len > o.half + 2) {
-            const sx = o.ax + (dx / len) * (o.half + 1), sy = o.ay + (dy / len) * (o.half + 1);
-            this.siteLeaders.push({ ev: idx, d: `M${sx.toFixed(1)} ${sy.toFixed(1)}L${ex.toFixed(1)} ${ey.toFixed(1)}` });
+    // Prefer slots clear of runways; if the strip grid blankets the field at close zoom, allow a led plate off the strip.
+    for (const avoidRun of [true, false]) {
+      for (const strict of [true, false]) {
+        for (let si = 0; si < slots.length; si++) {
+          const r: Rect = { x: Math.round(o.ax + slots[si][0]), y: Math.round(o.ay + slots[si][1]), w, h };
+          if (!this.slotClear(r, avoidRun)) continue;
+          const d0 = distToRect(o.ax, o.ay, r);
+          let nearestKey = o.key, nd = d0;
+          for (const i of icons) {
+            if (i.kind === "osint-dot" || `${i.kind}:${i.id}` === o.key) continue;
+            const d = distToRect(i.cx, i.cy, r);
+            if (d < nd - 0.01) { nd = d; nearestKey = `${i.kind}:${i.id}`; }
           }
+          const own = nearestKey === o.key;
+          if (strict && !own) continue;
+          const idx = this.labelAt(o.text, o.cls, r, true);
+          this.gLab.add(r);
+          const leader = si >= 4 || !own || !avoidRun;
+          if (leader) {
+            const ex = Math.max(r.x, Math.min(o.ax, r.x + r.w)), ey = Math.max(r.y, Math.min(o.ay, r.y + r.h));
+            const dx = ex - o.ax, dy = ey - o.ay, len = Math.hypot(dx, dy);
+            if (len > o.half + 2) {
+              const sx = o.ax + (dx / len) * (o.half + 1), sy = o.ay + (dy / len) * (o.half + 1);
+              this.siteLeaders.push({ ev: idx, d: `M${sx.toFixed(1)} ${sy.toFixed(1)}L${ex.toFixed(1)} ${ey.toFixed(1)}` });
+            }
+          }
+          this.labelMeta[idx] = { text: o.text, owner: o.key, nearest: nearestKey, leader };
+          return true;
         }
-        this.labelMeta[idx] = { text: o.text, owner: o.key, nearest: nearestKey, leader };
-        return true;
       }
     }
     return false;
@@ -2412,13 +2501,43 @@ export class TacticalPlot {
           }
         }
       }
+      // Close-zoom runway grids can blanket every ordinary slot. Keep at least the centred field's name so the
+      // view stays readable (and occupancy proofs see a label) even when every neighbour plate was rejected.
+      if (close && layer && used === 0) {
+        let nearest: (typeof layer.items)[number] | null = null;
+        let best = Infinity;
+        for (const it of layer.items) {
+          if (it.decl) continue;
+          const d = Math.hypot(it.x - this.target.x, it.y - this.target.y);
+          if (d < best) { best = d; nearest = it; }
+        }
+        if (nearest) {
+          const s = this.toScreen(nearest.x, nearest.y, 0);
+          if (s.z < 1) {
+            const text = facilityLabelText(nearest.facility);
+            const cls = "tx-fac-label tx-fac-label--sel";
+            const { w, h } = this.textBox(text, cls);
+            for (const [ox, oy] of labelSlots(FACILITY_SYMBOL_PX / 2, w, h)) {
+              const r: Rect = { x: Math.round(s.x + ox), y: Math.round(s.y + oy), w, h };
+              if (this.underChrome(r)) continue;
+              const idx = this.labelAt(text, cls, r, true);
+              this.gLab.add(r);
+              this.labelMeta[idx] = { text, owner: `facility-icon:${nearest.facility.id}`, nearest: `facility-icon:${nearest.facility.id}`, leader: true };
+              const ex = Math.max(r.x, Math.min(s.x, r.x + r.w)), ey = Math.max(r.y, Math.min(s.y, r.y + r.h));
+              this.siteLeaders.push({ ev: idx, d: `M${s.x.toFixed(1)} ${s.y.toFixed(1)}L${ex.toFixed(1)} ${ey.toFixed(1)}` });
+              used++;
+              break;
+            }
+          }
+        }
+      }
     }
     this.siteLabels = false;
     this.facilityLabelCount = used;
     this.osintLabelCount = osintUsed;
   }
 
-  /** Hide facility symbols that would sit on another symbol or on an OSINT icon; the icon with the better claim stays. */
+  /** Hide facility symbols that would sit on another symbol, an OSINT icon, or a unit glyph; the better claim stays. */
   private declutterFacilities() {
     const layer = this.facilityLayer;
     if (!layer || !layer.root.visible) return;
@@ -2429,7 +2548,14 @@ export class TacticalPlot {
         if (s.z < 1) osint.push({ cx: s.x, cy: s.y });
       }
     }
-    layer.declutter(this.kPx, this.input?.selectedFacilityId ?? null, (x, y) => this.toScreen(x, y, 0), osint, { w: this.W, h: this.H });
+    const units: { cx: number; cy: number; gap: number }[] = [];
+    for (const t of this.tracks.values()) {
+      if (t.kind === "weapon" || !t.sprite || !t.sprite.visible || t.alpha < 0.05 || !t.spriteW) continue;
+      const s = this.toScreen(t.pos.x + t.disp.x, t.pos.y + t.disp.y, t.z);
+      if (s.z >= 1) continue;
+      units.push({ cx: s.x, cy: s.y, gap: FACILITY_SYMBOL_PX / 2 + Math.max(t.spriteAx, t.spriteAy, t.spriteW / 2) + 1 });
+    }
+    layer.declutter(this.kPx, this.input?.selectedFacilityId ?? null, (x, y) => this.toScreen(x, y, 0), osint, { w: this.W, h: this.H }, FACILITY_SYMBOL_PX + 1, FACILITY_SYMBOL_PX / 2 + 11 + 1, units);
   }
 
   /** Every drawn facility symbol, OSINT symbol and OSINT true-position dot, as screen-space centres with a half size. */

@@ -756,6 +756,10 @@
   right: 16px;
   top: 76px;
   width: min(540px, calc(100vw - 420px));
+  /* ART1 WeGo block + taller title must still fit a 900 px window; scroll inside, never clip */
+  max-height: calc(100vh - 76px - 16px);
+  overflow-x: hidden;
+  overflow-y: auto;
   z-index: 25;
   padding: 0 0 12px;
 }
@@ -930,7 +934,8 @@
   font-size: 14px;
   line-height: 1.35;
   color: var(--tx-text);
-  overflow-wrap: anywhere;
+  /* ordinary wrap only: "anywhere" split weapon ids (C-802) and hull numbers ((CVN-68)) mid-token */
+  overflow-wrap: normal;
 }
 .tx-result-line.is-alarm {
   color: var(--tx-alarm);
@@ -1568,9 +1573,15 @@
 /* a weapon row or a debrief / turn-review record line that needs two lines splits them evenly (the old break left
    "68)" alone). The browser's balanced wrap did that by turning after a hyphen ("WEAPON -" / "> USS NIMITZ",
    "4x C-" / "802 NOOR"), and no wrap mode forbids that turn, so TerminalPlay writes these lines' turns into the text
-   at spaces only (turnAtSpaces) and they are honoured here. .tx-cols is the hidden probe it measures the line with. */
+   at spaces only (turnAtSpaces) and they are honoured here. .tx-cols is the hidden probe it measures the line with.
+   Hyphenated tokens (C-802, (CVN-68)) sit in .tx-nowrap so a soft wrap cannot split them either. */
 .tx-turns {
   white-space: pre-line;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.tx-nowrap {
+  white-space: nowrap;
 }
 .tx-cols,
 .tx-cols > i {

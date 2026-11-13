@@ -37,8 +37,16 @@ async function openPlot(page: Page, url: string) {
 }
 
 const focusFacility = (id: string): PlotViewSpec["enter"] => async (page) => {
+  const before = await page.evaluate(() => (window as unknown as W).__sandPlot!.frames());
   await page.evaluate((i) => (window as unknown as W).__sandPlot!.focusFacility(i), id);
-  await page.waitForTimeout(4500);
+  // Snap is instant; wait for paints that rebuild labels at the new pose (stale DOM labels from the
+  // previous view would otherwise satisfy a naive "any label" check and fail the overlap proof).
+  await page.waitForFunction((n) => {
+    const p = (window as unknown as W).__sandPlot;
+    if (!p || p.frames() <= n + 2 || p.view().dist >= 50) return false;
+    const kinds = new Set(p.occupancy().map((b) => b.kind));
+    return kinds.has("label") || kinds.has("facility-icon");
+  }, before, { timeout: 15_000 });
 };
 
 /** The views the overlap proof walks. They run in order on one page, switching URL where the view says so. */
@@ -53,8 +61,13 @@ export const PLOT_VIEWS: (PlotViewSpec & { url: string })[] = [
   {
     id: "osint-bandar-abbas", title: "OSINT focus ad-ir-s300-bandar-abbas at 700 km", url: "/play",
     enter: async (page) => {
+      const before = await page.evaluate(() => (window as unknown as W).__sandPlot!.frames());
       await page.evaluate(() => (window as unknown as W).__sandPlot!.focusOsint("ad-ir-s300-bandar-abbas", 700));
-      await page.waitForTimeout(4500);
+      await page.waitForFunction((n) => {
+        const p = (window as unknown as W).__sandPlot;
+        if (!p || p.frames() <= n + 2 || Math.abs(p.view().dist - 700) > 5) return false;
+        return p.occupancy().some((b) => b.kind === "label" || b.kind === "osint-icon");
+      }, before, { timeout: 15_000 });
     },
   },
   {
@@ -64,8 +77,13 @@ export const PLOT_VIEWS: (PlotViewSpec & { url: string })[] = [
   {
     id: "snapshot-qeshm", title: "snapshot, OSINT focus ad-ir-3khordad-qeshm at 60 km", url: "/play?scenario=snapshot",
     enter: async (page) => {
+      const before = await page.evaluate(() => (window as unknown as W).__sandPlot!.frames());
       await page.evaluate(() => (window as unknown as W).__sandPlot!.focusOsint("ad-ir-3khordad-qeshm", 60));
-      await page.waitForTimeout(4500);
+      await page.waitForFunction((n) => {
+        const p = (window as unknown as W).__sandPlot;
+        if (!p || p.frames() <= n + 2 || Math.abs(p.view().dist - 60) > 5) return false;
+        return p.occupancy().some((b) => b.kind === "label" || b.kind === "osint-icon" || b.kind === "facility-icon");
+      }, before, { timeout: 15_000 });
     },
   },
 ];

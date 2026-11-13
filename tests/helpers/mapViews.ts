@@ -35,6 +35,51 @@ export const QESHM_VIEW = { center: [56.0, 26.85] as [number, number], zoom: 9 }
 export const DHAFRA_VIEW = { center: [54.5477, 24.2482] as [number, number], zoom: 10 };
 export const UDEID_VIEW = { center: [51.315, 25.1173] as [number, number], zoom: 10 };
 
+/**
+ * Answers the base-map tile host locally, so a /map spec needs no tile server: a TileJSON, empty vector tiles and empty
+ * glyph ranges (the terrain and satellite hosts get empty answers too). `hold()` keeps back every base-map tile asked
+ * for from then on, as a slow connection would, until `release()`; while tiles are held the map cannot go idle.
+ */
+/** 1×1 PNG — empty 204 bodies made MapLibre throw `InvalidStateError: The source image could not be decoded` and left settleMap hung. */
+const TINY_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+  "base64",
+);
+/** 1×1 JPEG for the Sentinel raster host. */
+const TINY_JPG = Buffer.from(
+  "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAn/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAGcP//EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAQUCf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Bf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Bf//Z",
+  "base64",
+);
+
+export async function stubTileHost(page: Page) {
+  let open: Promise<void> = Promise.resolve();
+  let release = () => {};
+  await page.route(/tiles\.openfreemap\.org\/planet$/, (r) =>
+    r.fulfill({ contentType: "application/json", body: JSON.stringify({ tilejson: "3.0.0", tiles: ["https://tiles.openfreemap.org/planet/stub/{z}/{x}/{y}.pbf"], minzoom: 0, maxzoom: 14, vector_layers: [] }) }),
+  );
+  await page.route(/tiles\.openfreemap\.org\/planet\/stub\//, async (r) => {
+    await open;
+    await r.fulfill({ status: 204, body: "" }).catch(() => {});
+  });
+  await page.route(/tiles\.openfreemap\.org\/fonts\//, (r) => r.fulfill({ status: 200, contentType: "application/x-protobuf", body: "" }));
+  // Raster / DEM must decode: a 204 empty body hung settleMap after InvalidStateError on image decode.
+  await page.route(/s3\.amazonaws\.com\/elevation-tiles-prod\//, (r) =>
+    r.fulfill({ status: 200, contentType: "image/png", body: TINY_PNG }),
+  );
+  await page.route(/tiles\.maps\.eox\.at\//, (r) =>
+    r.fulfill({ status: 200, contentType: "image/jpeg", body: TINY_JPG }),
+  );
+  return {
+    hold() {
+      release();
+      open = new Promise<void>((ok) => { release = ok; });
+    },
+    release() {
+      release();
+    },
+  };
+}
+
 export async function openMap(page: Page) {
   await page.goto("/");
   await page.waitForSelector(".maplibregl-canvas", { timeout: 30_000 });
@@ -44,10 +89,19 @@ export async function openMap(page: Page) {
 
 /** Waits for tiles and style, then for the DOM layers (they relayout on zoomend / idle) to catch up. */
 export async function settleMap(page: Page, ms = 2200) {
-  await page.waitForFunction(() => {
-    const m = (window as unknown as W).__sandMap!;
-    return m.loaded() && m.isStyleLoaded();
-  }, null, { timeout: 45_000 });
+  try {
+    await page.waitForFunction(() => {
+      const m = (window as unknown as W).__sandMap!;
+      return m.loaded() && m.isStyleLoaded();
+    }, null, { timeout: 45_000 });
+  } catch {
+    // A failed raster/DEM decode can leave loaded() false while the style is up; layout still settles on idle.
+    await page.waitForFunction(() => (window as unknown as W).__sandMap!.isStyleLoaded(), null, { timeout: 10_000 });
+    await page.evaluate(() => {
+      const m = (window as unknown as W).__sandMap as unknown as { fire?: (e: string) => void; triggerRepaint?: () => void };
+      m.triggerRepaint?.();
+    });
+  }
   await page.waitForTimeout(ms);
 }
 
