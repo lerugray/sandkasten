@@ -63,8 +63,32 @@ export async function runUntilResult(page: Page, timeoutMs: number) {
   const t0 = Date.now();
   while (Date.now() - t0 < timeoutMs) {
     if (await overlay.isVisible()) return;
+    // Authoritative pause/result when the E2E handle is present. After SAND-THREAT-1 the opening
+    // picket line sits inside the CSG radar picture, so the first detection tick autopauses; under a
+    // heavy plot frame the DOM label can still read PAUSE while the session is already held, and a
+    // label-only resume loop then burns the wall budget with a stopped clock.
+    const live = await page
+      .evaluate(() => {
+        const s = (window as unknown as W).__sandSession as unknown as { snapshot?: () => {
+          gameState: { isPaused: boolean };
+          eventState?: { scenarioResult?: { result?: string } };
+        } } | undefined;
+        if (!s?.snapshot) return null;
+        const snap = s.snapshot();
+        return {
+          paused: !!snap.gameState.isPaused,
+          result: (snap.eventState?.scenarioResult?.result ?? null) as string | null,
+        };
+      })
+      .catch(() => null);
+    if (live?.result) {
+      await expect(overlay).toBeVisible({ timeout: 120_000 });
+      return;
+    }
     const label = ((await page.getByTestId("sim-toggle-pause").textContent({ timeout: 2000 }).catch(() => null)) ?? "").trim();
-    if (/PLAY/i.test(label)) await page.getByTestId("sim-toggle-pause").click({ timeout: 2000 }).catch(() => {});
+    if (live?.paused || /PLAY/i.test(label)) {
+      await page.getByTestId("sim-toggle-pause").click({ timeout: 2000 }).catch(() => {});
+    }
     await page.waitForTimeout(400);
   }
   await expect(overlay).toBeVisible({ timeout: 1000 });

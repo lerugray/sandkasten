@@ -88,13 +88,15 @@ for (const size of SIZES) {
       await shot("2-objective-focused");
       expect(await canvas()).toEqual(c0);
 
-      // 3. victory debrief: the living carrier is placed in the gate; the production tick + event path decides
-      await page.getByTestId("sim-toggle-pause").click();
+      // 3. victory debrief: place the living carrier in the gate while held, then one production tick
+      // decides. Unpausing first (pre-THREAT-1 order) opens the CSG under the picket line and the
+      // first detection tick autopauses before the write; the clock never reaches UnitEntersArea.
       await page.evaluate((c) => {
         const s = (window as unknown as W).__sandSession as any;
         const u = s.gameState.sides.flatMap((x: any) => x.units).find((x: any) => x.id === "us-cvn-1");
         u.position = { lng: c.lng, lat: c.lat };
       }, GATE.centre);
+      await page.getByTestId("sim-toggle-pause").click();
       await runUntilResult(page, 40_000);
       await expect(page.getByTestId("result-title")).toContainText(/VICTORY|COMPLETE/i);
       await page.waitForTimeout(600);

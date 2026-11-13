@@ -1,5 +1,10 @@
 # Session Notes
 
+## LANDGATE5 (t696) — 2026-11-13
+- Play never reached result-overlay: THREAT-1 pickets autopaused after unpause-before-teleport; clock stopped; `runUntilResult` label-only resume missed the hold under heavy frames.
+- Fix: teleport while held then PLAY; `runUntilResult` resumes from `__sandSession` pause/result. Win rule unchanged.
+- vitest 355/355; play-shots + play-result 4/4. Dirty tree for harvester; no commit/push. Report: `docs/lane-reports/SAND-ART1-LANDGATE5-REPORT.md`.
+
 ## LANDGATE4 (t591) — 2026-11-12
 - Plot/Play blank theater on real GPU: HalfFloat+MSAA4 stall + warmFrames before `__sandPlot`.
 - Fix: UnsignedByte composer always; `plot.start()` after handle publish; clear zombie handle on dispose.
