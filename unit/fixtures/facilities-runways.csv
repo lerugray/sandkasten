@@ -1,0 +1,4 @@
+"id","airport_ref","airport_ident","length_ft","width_ft","surface","lighted","closed","le_ident","le_latitude_deg","le_longitude_deg","le_elevation_ft","le_heading_degT","le_displaced_threshold_ft","he_ident","he_latitude_deg","he_longitude_deg","he_elevation_ft","he_heading_degT","he_displaced_threshold_ft"
+10,1,"OIKB",11811,148,"ASP",1,0,"03",27.2031,56.3685,,32.1,,"21",27.2327,56.3875,,212.1,
+11,2,"OIKQ",8858,148,"CON",1,0,"13",,,,128.0,,"31",,,,308.0,
+12,3,"XX01",3000,60,"GRASS",0,0,"09",,,,,,"27",,,,,

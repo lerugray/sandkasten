@@ -1,0 +1,12 @@
+{"elements":[
+{"type":"way","id":900,"tags":{"aeroway":"aerodrome","name":"Bandar Abbas Intl","icao":"OIKB","military":"airfield"},"geometry":[{"lat":27.19,"lon":56.35},{"lat":27.25,"lon":56.35},{"lat":27.25,"lon":56.40},{"lat":27.19,"lon":56.40},{"lat":27.19,"lon":56.35}]},
+{"type":"node","id":901,"lat":26.7552,"lon":55.9020,"tags":{"aeroway":"aerodrome","name":"Qeshm Airport"}},
+{"type":"way","id":902,"tags":{"aeroway":"aerodrome","name":"Jazireh-ye Test Air Base"},"geometry":[{"lat":26.50,"lon":55.50},{"lat":26.52,"lon":55.50},{"lat":26.52,"lon":55.53},{"lat":26.50,"lon":55.53},{"lat":26.50,"lon":55.50}]},
+{"type":"way","id":903,"tags":{"aeroway":"aerodrome","name":"Gone","disused":"yes"},"geometry":[{"lat":26.9,"lon":56.0},{"lat":26.91,"lon":56.0},{"lat":26.91,"lon":56.01},{"lat":26.9,"lon":56.0}]},
+{"type":"way","id":950,"tags":{"aeroway":"runway","ref":"03/21","surface":"asphalt","width":"45"},"geometry":[{"lat":27.2031,"lon":56.3685},{"lat":27.2327,"lon":56.3875}]},
+{"type":"way","id":951,"tags":{"aeroway":"runway","ref":"06/24","surface":"concrete"},"geometry":[{"lat":26.5100,"lon":55.5000},{"lat":26.5120,"lon":55.5250}]},
+{"type":"way","id":960,"tags":{"military":"naval_base","name":"Test Naval Base"},"geometry":[{"lat":27.1,"lon":56.2},{"lat":27.12,"lon":56.2},{"lat":27.12,"lon":56.22},{"lat":27.1,"lon":56.22},{"lat":27.1,"lon":56.2}]},
+{"type":"way","id":961,"tags":{"landuse":"port","name":"Shahid Rajaee Port"},"geometry":[{"lat":27.05,"lon":56.05},{"lat":27.08,"lon":56.05},{"lat":27.08,"lon":56.09},{"lat":27.05,"lon":56.09},{"lat":27.05,"lon":56.05}]},
+{"type":"way","id":962,"tags":{"landuse":"port"},"geometry":[{"lat":27.0,"lon":56.0},{"lat":27.01,"lon":56.0},{"lat":27.01,"lon":56.01},{"lat":27.0,"lon":56.0}]},
+{"type":"way","id":970,"tags":{"military":"danger_area","name":"Danger Area D1"},"geometry":[{"lat":26.0,"lon":57.0},{"lat":26.1,"lon":57.0},{"lat":26.1,"lon":57.1},{"lat":26.0,"lon":57.1},{"lat":26.0,"lon":57.0}]}
+]}

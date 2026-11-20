@@ -1,0 +1,74 @@
+name: Scenario submission
+description: Send us a scenario you built in the Sandkasten editor.
+title: "[Scenario] "
+labels: ["scenario-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for making a Sandkasten scenario. Fill this in and attach your JSON file, or paste it below. A human reads every submission before anything is published.
+  - type: input
+    id: name
+    attributes:
+      label: Scenario name
+      placeholder: Strait of Hormuz Standoff
+    validations:
+      required: true
+  - type: input
+    id: region
+    attributes:
+      label: Region
+      placeholder: Strait of Hormuz, Persian Gulf
+    validations:
+      required: true
+  - type: input
+    id: era
+    attributes:
+      label: Era
+      placeholder: 2026, or 1988
+    validations:
+      required: true
+  - type: textarea
+    id: sides
+    attributes:
+      label: Sides
+      description: Name each side and say which one the player controls.
+      placeholder: "US Navy (player) against Iran (AI)"
+    validations:
+      required: true
+  - type: textarea
+    id: briefing
+    attributes:
+      label: Briefing
+      description: What the player reads when the mission starts. Say what they command, what they must do, and what loses the game.
+    validations:
+      required: true
+  - type: textarea
+    id: victory
+    attributes:
+      label: Victory conditions
+      description: How the player wins and how they lose.
+    validations:
+      required: true
+  - type: textarea
+    id: json
+    attributes:
+      label: Scenario JSON
+      description: Paste the contents of the JSON file, or attach the file to the issue.
+      render: json
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Author credit
+      description: The name you want shown as the author.
+    validations:
+      required: true
+  - type: checkboxes
+    id: licence
+    attributes:
+      label: Licence
+      options:
+        - label: I confirm this scenario is my own work, or work I have the right to share. I licence it under the repository's MIT licence so it can ship with Sandkasten.
+          required: true

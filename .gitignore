@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+dist/
+
+# Environment
+.env
+.env.local
+.env.production
+
+
+# Claude Code local settings
+.claude/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Debug
+npm-debug.log*
+
+# GS state junction (gs-232 parallel-picker workaround)
+state/
+
+# GS bot worktree (parallel-mode dispatcher; internal WIP not public)
+.bot-worktree/
+
+
+# Facility pipeline raw cache
+.cache/
+tsconfig.tsbuildinfo

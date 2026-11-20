@@ -1,0 +1,42 @@
+name: Bug report
+description: Tell us what broke.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tell us what broke so we can fix it. No detail is too small.
+  - type: input
+    id: did
+    attributes:
+      label: What you did
+      placeholder: "I opened the snapshot scenario and pressed G."
+    validations:
+      required: true
+  - type: input
+    id: expected
+    attributes:
+      label: What you expected
+      placeholder: "The contacts stayed hidden."
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened
+      placeholder: "The page froze and the clock stopped."
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: "Chrome 126 on Windows 11"
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Screenshots, the scenario file, or the steps to reproduce.

@@ -1,0 +1,123 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+:root {
+  --color-tactical-dark: #0B1120;
+  --color-tactical-panel: #111827;
+  --color-tactical-border: #334155;
+  --color-tactical-surface: #1F2937;
+  --color-tactical-text: #E2E8F0;
+  --color-tactical-text-dim: #94A3B8;
+  --color-terminal-green: #3B82F6;
+  --color-terminal-green-dim: #2563EB;
+  --color-terminal-red: #EF4444;
+  --color-terminal-blue: #06B6D4;
+  --color-terminal-amber: #F59E0B;
+  --color-status-green: #22C55E;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+  --font-heading: "IBM Plex Sans", "Arial", sans-serif;
+}
+
+.theme-light {
+  --color-tactical-dark: #F1F5F9;
+  --color-tactical-panel: #FFFFFF;
+  --color-tactical-border: #CBD5E1;
+  --color-tactical-surface: #E2E8F0;
+  --color-tactical-text: #0F172A;
+  --color-tactical-text-dim: #475569;
+  --color-terminal-green: #1D4ED8;
+  --color-terminal-green-dim: #1E40AF;
+  --color-terminal-red: #DC2626;
+  --color-terminal-blue: #0E7490;
+  --color-terminal-amber: #B45309;
+  --color-status-green: #15803D;
+}
+
+.theme-light .maplibregl-ctrl-group {
+  background: var(--color-tactical-panel) !important;
+  border: 1px solid var(--color-tactical-border) !important;
+}
+
+.theme-light .maplibregl-ctrl-group button {
+  filter: none;
+}
+
+.theme-light .maplibregl-popup-content {
+  background: var(--color-tactical-panel) !important;
+  color: var(--color-tactical-text) !important;
+  border: 1px solid var(--color-tactical-border) !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--color-tactical-dark);
+  color: var(--color-tactical-text);
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+}
+
+/* MapLibre overrides */
+.maplibregl-ctrl-group {
+  background: var(--color-tactical-panel) !important;
+  border: 1px solid var(--color-tactical-border) !important;
+}
+
+.maplibregl-ctrl-group button {
+  filter: invert(0.8);
+}
+
+.maplibregl-ctrl-attrib {
+  background: rgba(11, 17, 32, 0.94) !important;
+  color: #cbd5e1 !important;
+  font-size: 12px !important;
+  border: 1px solid var(--color-tactical-border);
+}
+.maplibregl-ctrl-attrib.maplibregl-compact {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.maplibregl-ctrl-attrib a {
+  color: inherit !important;
+}
+
+/* Hide the compass button */
+.maplibregl-ctrl-compass {
+  display: none !important;
+}
+
+.maplibregl-popup-content {
+  background: var(--color-tactical-panel) !important;
+  color: var(--color-tactical-text) !important;
+  border: 1px solid var(--color-tactical-border) !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  font-family: "IBM Plex Mono", monospace !important;
+  font-size: 12px !important;
+}
+
+.maplibregl-popup-tip {
+  border-top-color: var(--color-tactical-border) !important;
+}
+
+/* Keep MapLibre's attribution control above the status bar (36px bar plus one or two 16px credit lines) */
+.maplibregl-ctrl-bottom-right,
+.maplibregl-ctrl-bottom-left {
+  bottom: 76px !important;
+}
+
+/* The attribution control sits in the map toolbar (above the map, not over it); when opened it drops over the map. */
+.map-attrib-slot .maplibregl-ctrl {
+  margin: 0 !important;
+  float: none;
+}
+.map-attrib-slot .maplibregl-ctrl-attrib.maplibregl-compact-show {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 30;
+  width: max-content;
+  max-width: min(520px, 90vw);
+}

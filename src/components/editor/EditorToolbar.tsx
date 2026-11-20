@@ -1,0 +1,202 @@
+"use client";
+
+import type { Scenario, Unit } from "@/types/game";
+import { IS_RELEASE } from "@/lib/release";
+
+interface EditorToolbarProps {
+  scenario: Scenario;
+  activePanel: "none" | "place" | "settings" | "reference" | "victory";
+  placingSide: string;
+  onSetActivePanel: (panel: "none" | "place" | "settings" | "reference" | "victory") => void;
+  onSetPlacingSide: (side: string) => void;
+  selectedUnit?: Unit;
+  onRemoveUnit: (unitId: string) => void;
+  /** Open the committed real-world snapshot scenario. */
+  onOpenSnapshot: () => void;
+  /** Fetch a fresh snapshot through /api/snapshot. */
+  onFetchSnapshot: () => void;
+  snapshotStatus: { busy: boolean; message: string | null };
+}
+
+export function EditorToolbar({
+  scenario,
+  activePanel,
+  placingSide,
+  onSetActivePanel,
+  onSetPlacingSide,
+  selectedUnit,
+  onRemoveUnit,
+  onOpenSnapshot,
+  onFetchSnapshot,
+  snapshotStatus,
+}: EditorToolbarProps) {
+  const unitCount = scenario.sides.reduce((n, s) => n + s.units.length, 0);
+
+  return (
+    <div className="w-48 bg-[var(--color-tactical-panel)] border-r border-[var(--color-tactical-border)] flex flex-col text-xs shrink-0">
+      <div className="p-2 border-b border-[var(--color-tactical-border)]">
+        <div className="text-[var(--color-tactical-text-dim)] uppercase tracking-wider mb-2">
+          Tools
+        </div>
+
+        <button
+          onClick={() => onSetActivePanel(activePanel === "place" ? "none" : "place")}
+          data-testid="editor-tool-place-unit"
+          className={`w-full text-left px-2 py-1.5 rounded mb-1 cursor-pointer ${
+            activePanel === "place"
+              ? "bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)]"
+              : "hover:bg-[var(--color-tactical-border)]"
+          }`}
+        >
+          + Place Unit
+        </button>
+
+        <button
+          onClick={() => onSetActivePanel(activePanel === "settings" ? "none" : "settings")}
+          data-testid="editor-tool-scenario-settings"
+          className={`w-full text-left px-2 py-1.5 rounded mb-1 cursor-pointer ${
+            activePanel === "settings"
+              ? "bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)]"
+              : "hover:bg-[var(--color-tactical-border)]"
+          }`}
+        >
+          Scenario Settings
+        </button>
+
+        <button
+          onClick={() => onSetActivePanel(activePanel === "reference" ? "none" : "reference")}
+          data-testid="editor-tool-reference-points"
+          className={`w-full text-left px-2 py-1.5 rounded mb-1 cursor-pointer ${
+            activePanel === "reference"
+              ? "bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)]"
+              : "hover:bg-[var(--color-tactical-border)]"
+          }`}
+        >
+          Reference Points
+        </button>
+
+        <button
+          onClick={() => onSetActivePanel(activePanel === "victory" ? "none" : "victory")}
+          data-testid="editor-tool-victory-conditions"
+          className={`w-full text-left px-2 py-1.5 rounded mb-1 cursor-pointer ${
+            activePanel === "victory"
+              ? "bg-[var(--color-terminal-green)] text-[var(--color-tactical-dark)]"
+              : "hover:bg-[var(--color-tactical-border)]"
+          }`}
+        >
+          Victory Conditions
+        </button>
+      </div>
+
+      {/* Real-world snapshot (ADS-B, adsb.lol) */}
+      <div className="p-2 border-b border-[var(--color-tactical-border)]">
+        <div className="text-[var(--color-tactical-text-dim)] uppercase tracking-wider mb-2">
+          Snapshot
+        </div>
+        <button
+          onClick={onOpenSnapshot}
+          data-testid="editor-snapshot-open"
+          title="Open the committed real-world Hormuz ADS-B snapshot"
+          className="w-full text-left px-2 py-1.5 rounded mb-1 cursor-pointer hover:bg-[var(--color-tactical-border)]"
+        >
+          SNAPSHOT
+        </button>
+        {!IS_RELEASE && (
+          <button
+            onClick={onFetchSnapshot}
+            disabled={snapshotStatus.busy}
+            data-testid="editor-snapshot-fetch"
+            title="Fetch a fresh snapshot from adsb.lol (about 6 seconds, keyless)"
+            className="w-full text-left px-2 py-1 rounded mb-1 cursor-pointer text-[var(--color-tactical-text-dim)] hover:bg-[var(--color-tactical-border)] disabled:opacity-60 disabled:cursor-wait"
+          >
+            {snapshotStatus.busy ? "Fetching..." : "Fetch fresh"}
+          </button>
+        )}
+        {snapshotStatus.message && (
+          <div data-testid="editor-snapshot-status" className="text-[var(--color-tactical-text-dim)] break-words">
+            {snapshotStatus.message}
+          </div>
+        )}
+      </div>
+
+      {/* Side selector for placement */}
+      {activePanel === "place" && (
+        <div className="p-2 border-b border-[var(--color-tactical-border)]">
+          <div className="text-[var(--color-tactical-text-dim)] uppercase tracking-wider mb-2">
+            Placing For
+          </div>
+          {scenario.sides.map((side) => (
+            <button
+              key={side.name}
+              onClick={() => onSetPlacingSide(side.name)}
+              className={`w-full text-left px-2 py-1 rounded mb-1 cursor-pointer ${
+                placingSide === side.name
+                  ? "border border-current"
+                  : "hover:bg-[var(--color-tactical-border)]"
+              }`}
+              style={{
+                color: placingSide === side.name ? side.color : undefined,
+              }}
+            >
+              {side.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Sides / unit counts */}
+      <div className="p-2 border-b border-[var(--color-tactical-border)]">
+        <div className="text-[var(--color-tactical-text-dim)] uppercase tracking-wider mb-2">
+          Forces ({unitCount})
+        </div>
+        {scenario.sides.map((side) => (
+          <div key={side.name} className="mb-2">
+            <div className="font-bold" style={{ color: side.color }}>
+              {side.name} ({side.units.length})
+            </div>
+            <div className="ml-2 space-y-0.5">
+              {side.units.map((u) => (
+                <div
+                  key={u.id}
+                  className={`truncate cursor-pointer hover:text-[var(--color-tactical-text)] ${
+                    selectedUnit?.id === u.id
+                      ? "text-[var(--color-terminal-green)]"
+                      : "text-[var(--color-tactical-text-dim)]"
+                  }`}
+                >
+                  {u.name}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Selected unit actions */}
+      {selectedUnit && (
+        <div className="p-2 border-b border-[var(--color-tactical-border)]">
+          <div className="text-[var(--color-tactical-text-dim)] uppercase tracking-wider mb-2">
+            Selected
+          </div>
+          <div className="text-[var(--color-terminal-green)] mb-2 truncate">
+            {selectedUnit.name}
+          </div>
+          <button
+            onClick={() => onRemoveUnit(selectedUnit.id)}
+            className="w-full text-left px-2 py-1 rounded text-[var(--color-terminal-red)] hover:bg-[var(--color-tactical-border)] cursor-pointer"
+          >
+            Delete Unit
+          </button>
+        </div>
+      )}
+
+      <div className="flex-1" />
+
+      <div className="p-2 text-[var(--color-tactical-text-dim)] text-xs">
+        Click map to place units.
+        <br />
+        Shift+click for range rings.
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,360 @@
+{
+ "_comment": "Curated supplement. Auftragstaktik has no AD site inside the Hormuz bbox, so these placements are notional: the SYSTEM is publicly documented in service with the operator, the PLACEMENT is anchored to the named real facility and is a scenario assumption, not a surveyed location. Ranges are the published maximum engagement/detection figures. Every site is ESTIMATED (platform DB has no land-based SAM or radar record).",
+ "sites": [
+  {
+   "id": "ad-ir-s300-bandar-abbas",
+   "layer": "ad",
+   "system": "S-300PMU-2",
+   "kind": "sam",
+   "name": "S-300PMU-2 battery, Bandar Abbas",
+   "operator": "Iran",
+   "affiliation": "iran",
+   "facilityId": "apt-oikp",
+   "rangeKm": 200,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Iran is a documented S-300PMU-2 operator (Auftragstaktik record ir-s300-isfahan, CSIS Missile Threat); placement at Bandar Abbas is a scenario assumption",
+   "notes": "Notional placement at the IRIAF fighter base that defends the strait's northern shore. 200 km is the public maximum range of the 48N6E2 missile.",
+   "citations": [
+    {
+     "label": "CSIS Missile Defense Project: S-300",
+     "url": "https://missilethreat.csis.org/"
+    },
+    {
+     "label": "S-300 missile system (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/S-300_missile_system"
+    }
+   ]
+  },
+  {
+   "id": "ad-ir-s300-bushehr",
+   "layer": "ad",
+   "system": "S-300PMU-2",
+   "kind": "sam",
+   "name": "S-300PMU-2 battery, Bushehr",
+   "operator": "Iran",
+   "affiliation": "iran",
+   "anchor": {
+    "nuclearId": "ir-bushehr-reactor"
+   },
+   "rangeKm": 200,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Iran is a documented S-300PMU-2 operator (CSIS Missile Threat); a battery guarding the Bushehr plant has been reported in open sources, placement here is a scenario assumption",
+   "notes": "Placed at the Bushehr nuclear plant. 200 km is the public maximum range of the 48N6E2 missile.",
+   "citations": [
+    {
+     "label": "CSIS Missile Defense Project: S-300",
+     "url": "https://missilethreat.csis.org/"
+    },
+    {
+     "label": "Bushehr Nuclear Power Plant (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Bushehr_Nuclear_Power_Plant"
+    }
+   ]
+  },
+  {
+   "id": "ad-ir-tor-bushehr",
+   "layer": "ad",
+   "system": "Tor-M1",
+   "kind": "sam",
+   "name": "Tor-M1 point defence, Bushehr",
+   "operator": "Iran",
+   "affiliation": "iran",
+   "anchor": {
+    "nuclearId": "ir-bushehr-reactor"
+   },
+   "rangeKm": 12,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Iran took delivery of 29 Tor-M1 systems from Russia in 2007 (Wikipedia: Tor missile system); use for point defence of the Bushehr plant is reported, placement is a scenario assumption",
+   "notes": "Short-range point defence, 12 km maximum engagement range.",
+   "citations": [
+    {
+     "label": "Tor missile system (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Tor_missile_system"
+    }
+   ]
+  },
+  {
+   "id": "ad-ir-3khordad-qeshm",
+   "layer": "ad",
+   "system": "3rd Khordad",
+   "kind": "sam",
+   "name": "3rd Khordad battery, Qeshm",
+   "operator": "Iran",
+   "affiliation": "iran",
+   "facilityId": "apt-ir-0123",
+   "rangeKm": 75,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "3rd Khordad is an Iranian-built medium-range SAM publicly shown by Iranian state media (about 75 km); placement on Qeshm is a scenario assumption",
+   "notes": "Notional coverage of the strait's central approaches from Qeshm Island. Range is the Iranian-stated figure.",
+   "citations": [
+    {
+     "label": "CSIS Missile Defense Project: Iranian air defense",
+     "url": "https://missilethreat.csis.org/"
+    }
+   ]
+  },
+  {
+   "id": "ad-us-patriot-udeid",
+   "layer": "ad",
+   "system": "MIM-104 Patriot",
+   "kind": "sam",
+   "name": "Patriot battery, Al Udeid",
+   "operator": "United States / Qatar",
+   "affiliation": "us-gulf",
+   "facilityId": "apt-otbh",
+   "rangeKm": 160,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Patriot batteries defend Al Udeid Air Base (US and Qatari operation, public reporting); placement is anchored to the base",
+   "notes": "160 km is the Auftragstaktik SYSTEM_RANGES figure for MIM-104 Patriot.",
+   "citations": [
+    {
+     "label": "Al Udeid Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Al_Udeid_Air_Base"
+    },
+    {
+     "label": "MIM-104 Patriot (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/MIM-104_Patriot"
+    }
+   ]
+  },
+  {
+   "id": "ad-us-patriot-dhafra",
+   "layer": "ad",
+   "system": "MIM-104 Patriot",
+   "kind": "sam",
+   "name": "Patriot battery, Al Dhafra",
+   "operator": "United States / UAE",
+   "affiliation": "us-gulf",
+   "facilityId": "apt-omam",
+   "rangeKm": 160,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Patriot batteries have been deployed at Al Dhafra Air Base (public reporting); placement is anchored to the base",
+   "notes": "160 km is the Auftragstaktik SYSTEM_RANGES figure for MIM-104 Patriot.",
+   "citations": [
+    {
+     "label": "Al Dhafra Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Al_Dhafra_Air_Base"
+    },
+    {
+     "label": "MIM-104 Patriot (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/MIM-104_Patriot"
+    }
+   ]
+  },
+  {
+   "id": "ad-us-thaad-dhafra",
+   "layer": "ad",
+   "system": "THAAD",
+   "kind": "sam",
+   "name": "THAAD battery, Al Dhafra",
+   "operator": "UAE / United States",
+   "affiliation": "us-gulf",
+   "facilityId": "apt-omam",
+   "rangeKm": 200,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "The UAE operates THAAD and US THAAD batteries deployed to the UAE (public reporting); placement is anchored to Al Dhafra",
+   "notes": "Exo-/endo-atmospheric ballistic missile defence, about 200 km engagement range (Lockheed Martin / MDA public figure). Shares the Al Dhafra anchor with the Patriot battery; the panel fans out co-located sites.",
+   "citations": [
+    {
+     "label": "Terminal High Altitude Area Defense (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Terminal_High_Altitude_Area_Defense"
+    }
+   ]
+  },
+  {
+   "id": "ad-bh-patriot-isa",
+   "layer": "ad",
+   "system": "MIM-104 Patriot",
+   "kind": "sam",
+   "name": "Patriot battery, Isa Air Base",
+   "operator": "Bahrain",
+   "affiliation": "gulf",
+   "facilityId": "apt-obbs",
+   "rangeKm": 160,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Bahrain is a Patriot operator (public reporting); placement at Isa Air Base is a scenario assumption",
+   "notes": "160 km is the Auftragstaktik SYSTEM_RANGES figure for MIM-104 Patriot.",
+   "citations": [
+    {
+     "label": "Isa Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Isa_Air_Base"
+    },
+    {
+     "label": "MIM-104 Patriot (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/MIM-104_Patriot"
+    }
+   ]
+  },
+  {
+   "id": "ad-sa-patriot-dhahran",
+   "layer": "ad",
+   "system": "MIM-104 Patriot",
+   "kind": "sam",
+   "name": "Patriot battery, Dhahran",
+   "operator": "Saudi Arabia",
+   "affiliation": "gulf",
+   "facilityId": "apt-oedr",
+   "rangeKm": 160,
+   "rangeKind": "engagement",
+   "status": "assessed",
+   "source": "Saudi Arabia is a Patriot operator (Auftragstaktik record sa-patriot-riyadh); Dhahran has been defended by Patriot since 1991, placement is anchored to King Abdulaziz Air Base",
+   "notes": "160 km is the Auftragstaktik SYSTEM_RANGES figure for MIM-104 Patriot.",
+   "citations": [
+    {
+     "label": "MIM-104 Patriot (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/MIM-104_Patriot"
+    }
+   ]
+  },
+  {
+   "id": "radar-us-tpy2-udeid",
+   "layer": "radar",
+   "system": "AN/TPY-2",
+   "kind": "tracking",
+   "name": "AN/TPY-2 X-band radar, Qatar",
+   "operator": "United States",
+   "affiliation": "us-gulf",
+   "facilityId": "apt-otbh",
+   "rangeKm": 1000,
+   "rangeKind": "detection",
+   "status": "assessed",
+   "source": "A forward-based AN/TPY-2 radar in Qatar is publicly reported (US missile defence cooperation); placement is anchored to Al Udeid, the range is the public figure for the forward-based mode",
+   "notes": "Ring drawn only when selected (range exceeds the map's useful ring size).",
+   "citations": [
+    {
+     "label": "AN/TPY-2 transportable radar (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/AN/TPY-2_transportable_radar"
+    },
+    {
+     "label": "Al Udeid Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Al_Udeid_Air_Base"
+    }
+   ]
+  }
+ ],
+ "installations": {
+  "apt-otbh": {
+   "affiliation": "us-gulf",
+   "function": "Forward headquarters of US Central Command air component; USAF 379th Air Expeditionary Wing and Qatar Emiri Air Force",
+   "source": "Public reporting",
+   "citations": [
+    {
+     "label": "Al Udeid Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Al_Udeid_Air_Base"
+    }
+   ]
+  },
+  "apt-omam": {
+   "affiliation": "us-gulf",
+   "function": "UAE Air Force base hosting the USAF 380th Air Expeditionary Wing",
+   "source": "Public reporting",
+   "citations": [
+    {
+     "label": "Al Dhafra Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Al_Dhafra_Air_Base"
+    }
+   ]
+  },
+  "nav-way-28654027": {
+   "affiliation": "us",
+   "function": "Headquarters of US Naval Forces Central Command and the US Fifth Fleet",
+   "source": "US Navy public information",
+   "citations": [
+    {
+     "label": "Naval Support Activity Bahrain (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Naval_Support_Activity_Bahrain"
+    }
+   ]
+  },
+  "apt-obbs": {
+   "affiliation": "gulf",
+   "function": "Royal Bahraini Air Force base, also used by US forces",
+   "source": "Public reporting",
+   "citations": [
+    {
+     "label": "Isa Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Isa_Air_Base"
+    }
+   ]
+  },
+  "apt-omdm": {
+   "affiliation": "gulf",
+   "function": "UAE Air Force base; hosts allied forces",
+   "source": "Public reporting",
+   "citations": [
+    {
+     "label": "Al Minhad Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Al_Minhad_Air_Base"
+    }
+   ]
+  },
+  "apt-oiba": {
+   "affiliation": "iran",
+   "function": "Island garrisoned by Iran and claimed by the UAE; Iranian military presence",
+   "source": "Public reporting",
+   "citations": [
+    {
+     "label": "Abu Musa (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Abu_Musa"
+    }
+   ]
+  },
+  "apt-oiss": {
+   "affiliation": "iran",
+   "function": "IRIAF 7th Tactical Air Base (shared with Shiraz International Airport)",
+   "source": "Public reporting",
+   "citations": [
+    {
+     "label": "Shiraz International Airport (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Shiraz_International_Airport"
+    }
+   ]
+  },
+  "apt-oedr": {
+   "affiliation": "gulf",
+   "function": "Royal Saudi Air Force base at Dhahran",
+   "source": "Public reporting",
+   "citations": [
+    {
+     "label": "King Abdulaziz Air Base (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/King_Abdulaziz_Air_Base"
+    }
+   ]
+  }
+ },
+ "auftragstaktik": {
+  "installations": {
+   "ir-bandar-abbas": {
+    "create": {
+     "kind": "naval_base",
+     "id": "osint-ir-bandar-abbas",
+     "name": "Bandar Abbas Naval Base"
+    },
+    "affiliation": "iran"
+   },
+   "ir-bushehr-airbase": {
+    "facilityId": "apt-oibb",
+    "affiliation": "iran"
+   },
+   "ir-kharg-island": {
+    "create": {
+     "kind": "port",
+     "id": "osint-ir-kharg-island",
+     "name": "Kharg Island Oil Terminal"
+    },
+    "affiliation": "iran"
+   }
+  },
+  "dropped": {
+   "cp-hormuz": "Chokepoint, not a facility: the strait is the theater itself and has no single position"
+  }
+ }
+}

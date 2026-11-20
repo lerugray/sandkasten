@@ -1,0 +1,107 @@
+{
+ "apt-oibv": {
+  "closed": false,
+  "ends": [
+   {
+    "ident": "11",
+    "lat": 26.81544,
+    "lng": 53.3406
+   },
+   {
+    "ident": "29",
+    "lat": 26.80683,
+    "lng": 53.36602
+   }
+  ]
+ },
+ "apt-oikj": {
+  "closed": false,
+  "ends": [
+   {
+    "ident": "13",
+    "lat": 28.73323,
+    "lng": 57.66146
+   },
+   {
+    "ident": "31",
+    "lat": 28.71463,
+    "lng": 57.68783
+   }
+  ]
+ },
+ "apt-omar": {
+  "closed": false,
+  "ends": [
+   {
+    "ident": "13",
+    "lat": 24.78333,
+    "lng": 52.55673
+   },
+   {
+    "ident": "31",
+    "lat": 24.77834,
+    "lng": 52.56309
+   }
+  ]
+ },
+ "apt-omaz": {
+  "closed": false,
+  "ends": [
+   {
+    "ident": "13",
+    "lat": 24.86774,
+    "lng": 53.07089
+   },
+   {
+    "ident": "31",
+    "lat": 24.85599,
+    "lng": 53.08485
+   }
+  ]
+ },
+ "apt-omby": {
+  "closed": false,
+  "ends": [
+   {
+    "ident": "13",
+    "lat": 24.29131,
+    "lng": 52.57119
+   },
+   {
+    "ident": "31",
+    "lat": 24.27596,
+    "lng": 52.58958
+   }
+  ]
+ },
+ "apt-ookb": {
+  "closed": false,
+  "ends": [
+   {
+    "ident": "01",
+    "lat": 26.1583,
+    "lng": 56.23702
+   },
+   {
+    "ident": "19",
+    "lat": 26.18266,
+    "lng": 56.24356
+   }
+  ]
+ },
+ "apt-ot62": {
+  "closed": false,
+  "ends": [
+   {
+    "ident": "16",
+    "lat": 25.70505,
+    "lng": 51.36128
+   },
+   {
+    "ident": "34",
+    "lat": 25.69656,
+    "lng": 51.36469
+   }
+  ]
+ }
+}

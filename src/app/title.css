@@ -1,0 +1,227 @@
+/* Title screen ("/") in the terminal register. Reuses the shared tokens and the generic
+   chrome classes from terminal.css (tx-top, tx-cmd, tx-panel, tx-btn, tx-key, tx-cap, tx-scan,
+   tx-modal). This file only lays out the title's own pieces: wordmark, intro, scenario menu,
+   about panel. Phosphor on black, JetBrains Mono, no rounded web chrome. */
+
+.title-root {
+  /* terminal.css already fixes the frame; nothing else needs to change */
+}
+
+/* ---- top strip ---- */
+.title-top .tx-top-right {
+  letter-spacing: 0.14em;
+  font-size: 12px;
+  color: var(--tx-dim);
+}
+
+/* ---- centered body, safe-centre via pseudo spacers so an overflow scrolls instead of clipping ---- */
+.title-body {
+  position: absolute;
+  top: 44px;
+  bottom: 56px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px 44px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.title-body::before,
+.title-body::after {
+  content: "";
+  flex: 1 0 16px;
+}
+
+.title-wordmark {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  color: var(--tx-hi);
+  text-shadow: 0 0 2px rgba(207, 255, 224, 0.9), 0 0 18px rgba(76, 245, 142, 0.6);
+}
+
+/* ---- intro: teletype type-on (a one-shot CSS steps reveal, never a loop) ---- */
+.title-intro {
+  margin: 18px 0 6px;
+}
+.title-line {
+  display: block;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--tx-text);
+  letter-spacing: 0.06em;
+}
+.title-line-text {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  /* reveal by clip, not by a width in ch: letter-spacing makes the line wider than n ch, which cut every line short (s467 look) */
+  animation: title-type var(--d, 900ms) steps(var(--n, 40), end) both;
+}
+@keyframes title-type {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+/* the last intro line is the bright one and carries the steady print head (it does not blink) */
+.title-line:last-child {
+  color: var(--tx-hi);
+  font-weight: 700;
+}
+.title-line:last-child .title-line-text::after {
+  content: "";
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  margin-left: 4px;
+  vertical-align: -0.14em;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* ---- scenario menu ---- */
+.title-menu {
+  margin-top: 6px;
+}
+.title-menu-head {
+  margin-bottom: 8px;
+}
+.title-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 7px 10px 7px 6px;
+  margin: 3px 0;
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: var(--tx-text);
+  text-align: left;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.title-entry:hover {
+  background: rgba(76, 245, 142, 0.06);
+  color: var(--tx-hi);
+}
+.title-entry.is-on {
+  border-left-color: var(--tx-phosphor);
+  background: rgba(76, 245, 142, 0.08);
+  color: var(--tx-hi);
+}
+.title-entry:focus-visible {
+  outline: 1px solid var(--tx-hi);
+  outline-offset: 1px;
+}
+.title-entry-key {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--tx-rule-hi);
+  color: var(--tx-phosphor);
+  font-weight: 700;
+  font-size: 12px;
+}
+.title-entry.is-on .title-entry-key {
+  background: var(--tx-phosphor);
+  border-color: var(--tx-phosphor);
+  color: var(--tx-field);
+  text-shadow: none;
+}
+.title-entry-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.title-entry-title {
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.title-entry-brief {
+  color: var(--tx-dim);
+  font-size: 14px;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+.title-entry.is-on .title-entry-brief {
+  color: var(--tx-text);
+}
+.title-entry-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--tx-dim);
+}
+.title-entry-facts b {
+  display: inline-block;
+  min-width: 6ch;
+  color: var(--tx-phosphor);
+  font-weight: 700;
+}
+.title-entry-mark {
+  margin-left: auto;
+  width: 1ch;
+  color: var(--tx-phosphor);
+  white-space: pre;
+  flex-shrink: 0;
+}
+
+.title-foot-hint {
+  margin-top: 14px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--tx-dim);
+}
+
+/* ---- command bar ---- */
+.title-cmd .tx-key {
+  color: var(--tx-dim);
+  letter-spacing: 0.08em;
+  font-size: 12px;
+}
+.title-cmd .tx-cmd-right {
+  letter-spacing: 0.14em;
+}
+
+/* ---- about panel ---- */
+.title-about-panel {
+  text-align: left;
+  width: min(720px, calc(100vw - 48px));
+}
+.title-credits {
+  margin: 0 0 12px;
+  padding: 0;
+}
+.title-credit-row {
+  display: flex;
+  gap: 14px;
+  margin: 2px 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.title-credit-row dt {
+  flex: 0 0 200px;
+  white-space: nowrap;
+  color: var(--tx-phosphor);
+  letter-spacing: 0.06em;
+}
+.title-credit-row dd {
+  margin: 0;
+  color: var(--tx-text);
+}
+
+/* ABOUT head: keep the version apart from the name */
+.title-about-panel .tx-modal-head {
+  display: flex;
+  gap: 1.5ch;
+  align-items: baseline;
+}

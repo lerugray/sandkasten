@@ -1,0 +1,77 @@
+"use client";
+
+import type { CombatEvent } from "@/lib/simulation/combat";
+
+interface CombatLogProps {
+  events: CombatEvent[];
+  simTime: number;
+  playerSide: string;
+  /** Text to show for an event; the terminal view applies fog of war to enemy names. */
+  describe?: (event: CombatEvent) => string;
+}
+
+const EVENT_COLORS: Record<CombatEvent["type"], string> = {
+  launch: "text-[var(--color-terminal-amber)]",
+  intercept: "text-[var(--color-terminal-blue)]",
+  hit: "text-[var(--color-terminal-red)]",
+  miss: "text-[var(--color-tactical-text-dim)]",
+  destroyed: "text-[var(--color-terminal-red)]",
+  damaged: "text-[var(--color-terminal-amber)]",
+  defended: "text-[var(--color-status-green)]",
+};
+
+const EVENT_ICONS: Record<CombatEvent["type"], string> = {
+  launch: ">>",
+  intercept: "<>",
+  hit: "**",
+  miss: "--",
+  destroyed: "XX",
+  damaged: "!!",
+  defended: "[]",
+};
+
+export function CombatLog({ events, simTime, playerSide, describe }: CombatLogProps) {
+  if (events.length === 0) {
+    return (
+      <div
+        data-testid="combat-log-empty"
+        className="text-[var(--color-tactical-text-dim)] text-center py-4 italic"
+      >
+        No combat activity
+      </div>
+    );
+  }
+
+  // Show newest first, limit to last 50
+  const recent = [...events].reverse().slice(0, 50);
+
+  return (
+    <div data-testid="combat-log" className="space-y-1">
+      {recent.map((evt) => {
+        const ageMs = simTime - evt.time;
+        const ageSecs = Math.floor(ageMs / 1000);
+        const ageStr =
+          ageSecs < 60
+            ? `${ageSecs}s`
+            : ageSecs < 3600
+              ? `${Math.floor(ageSecs / 60)}m`
+              : `${Math.floor(ageSecs / 3600)}h`;
+
+        return (
+          <div
+            key={evt.id}
+            data-testid="combat-log-entry"
+            data-event-type={evt.type}
+            className={`text-sm leading-tight ${EVENT_COLORS[evt.type]}`}
+          >
+            <span className="text-[var(--color-tactical-text-dim)] mr-1">
+              {ageStr}
+            </span>
+            <span className="font-mono mr-1">{EVENT_ICONS[evt.type]}</span>
+            {describe ? describe(evt) : evt.description}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
